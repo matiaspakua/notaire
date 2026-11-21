@@ -1,11 +1,11 @@
-<!-- Governed by CONSTITUTION.md. CU76, issue #2384. -->
+# factory-dashboard Specification
 
 ## Purpose
 
 The factory dashboard is a client of the AI SDLC factory-control contract that serves several workspaces, users and
 AI providers, coaches the local agent harnesses, and reaches a detached RepoLens.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: The dashboard reads and writes only through the factory-control contract
 
@@ -58,8 +58,8 @@ it to the browser.
 
 `aisdlc coach` MUST report, per local harness (Claude Code, OpenCode, Codex, Gemini/AGY), the sessions, user turns,
 models and tool calls, and MUST flag anti-patterns (mega-sessions, repeated prompts, prompt bloat, runaway tool
-loops, no planning turn). The report MUST NOT contain prompt or response text. It MUST be available from the CLI
-and from `GET /factory/coach`.
+loops, unguarded autonomy, no planning turn). The report MUST NOT contain prompt or response text. It MUST be
+available from the CLI and, to the owner, from `GET /factory/coach`.
 
 #### Scenario: a Claude Code session
 
@@ -68,8 +68,13 @@ and from `GET /factory/coach`.
 
 #### Scenario: through the contract
 
-- **WHEN** `GET /factory/coach` is called with a read token
+- **WHEN** `GET /factory/coach` is called with the owner's token
 - **THEN** it returns the same report as `aisdlc coach --json`
+
+#### Scenario: another user's token
+
+- **WHEN** `GET /factory/coach` is called with a read token
+- **THEN** it is refused as forbidden, naming the owner scope, because the report describes the host's user
 
 ### Requirement: RepoLens is a detached system
 
@@ -80,6 +85,11 @@ dashboard MUST reach it only through its HTTP API.
 
 - **WHEN** a user searches knowledge in a workspace with a RepoLens endpoint
 - **THEN** the dashboard proxies the query to that RepoLens and returns its hits labelled by repository
+
+#### Scenario: a literal secret
+
+- **WHEN** a user saves a provider whose `api_key` is a literal value instead of `env:NAME`
+- **THEN** the kit refuses it with `literal_secret` and stores nothing
 
 #### Scenario: independence
 
