@@ -266,3 +266,24 @@ def test_a_tool_answer_is_sent_once(kg):
     result = asyncio.run(build(kg).call_tool("node", {"ref": "CodeController"}))
     assert not isinstance(result, tuple)  # no structured copy of the same text
     assert "CodeController" in result[0].text
+
+
+def test_metrics_describe_the_served_store_and_bench_results_only_from_a_configured_folder(kg, tmp_path, monkeypatch):
+    """`/api/metrics` reports on the store it serves; benchmark files are optional and never named in code."""
+    from fastapi.testclient import TestClient
+
+    from repolens.api import create_app
+
+    monkeypatch.delenv("REPOLENS_BENCH_RESULTS", raising=False)
+    body = TestClient(create_app(kg)).get("/api/metrics").json()
+    assert body["index"]["nodes"] > 0
+    assert {"isolated", "history_only"} <= body["orphans"].keys()
+    assert "server" in body["usage"] and "sessions" in body["usage"]
+    assert body["bench"] == []
+
+    (tmp_path / "retrieval-any.json").write_text(json.dumps({
+        "label": "any", "summary": {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}}))
+    monkeypatch.setenv("REPOLENS_BENCH_RESULTS", str(tmp_path))
+    bench = TestClient(create_app(kg)).get("/api/metrics").json()["bench"]
+    assert bench == [{"name": "retrieval-any", "label": "any",
+                      "summary": {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}}]
