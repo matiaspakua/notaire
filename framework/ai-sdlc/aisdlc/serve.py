@@ -23,7 +23,7 @@ from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import config_view, list_plugins, redact, resolve_max_open_prs
 from aisdlc.kitroot import kit_root
-from aisdlc.serve_token import ServeToken, ensure_token, load_token, require_token
+from aisdlc.serve_token import ServeToken, authenticate, ensure_token, load_token, load_tokens
 
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 LOOPBACK = {"127.0.0.1", "::1", "localhost"}
@@ -291,12 +291,12 @@ def start_server(
         def log_message(self, format: str, *args) -> None:  # noqa: A003
             return
 
-        def _token(self) -> ServeToken:
-            # Reload so scope/identity edits to serve.token take effect without restart.
-            current = load_token(ctx.root)
-            if current is None:
+        def _authenticate(self, need: str) -> ServeToken:
+            # Reload on every request so token edits (add, revoke, scope) take effect without restart.
+            tokens = load_tokens(ctx.root)
+            if not tokens:
                 raise KitError("unauthorized", "serve token missing")
-            return current
+            return authenticate(self.headers.get("Authorization"), tokens, need=need)
 
         def _send(self, status: int, payload: bytes, content_type: str) -> None:
             self.send_response(status)
@@ -365,8 +365,7 @@ def start_server(
             parsed = urlparse(self.path)
             path = parsed.path or "/"
             try:
-                active = self._token()
-                require_token(self.headers.get("Authorization"), active, need="read")
+                self._authenticate("read")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
                 return
@@ -390,8 +389,7 @@ def start_server(
                     self._send_json(200, data)
                     return
                 if method == "PUT":
-                    active = self._token()
-                    require_token(self.headers.get("Authorization"), active, need="write")
+                    active = self._authenticate("write")
                     _require_csrf(self.headers, active)
                     expected = _parse_if_match(self.headers.get("If-Match"))
                     body = self._read_json_body()
@@ -402,8 +400,7 @@ def start_server(
                     self._send_json(200, data)
                     return
                 if method == "POST":
-                    active = self._token()
-                    require_token(self.headers.get("Authorization"), active, need="write")
+                    active = self._authenticate("write")
                     _require_csrf(self.headers, active)
                     body = self._read_json_body()
                     actor = from_token_identity(active.identity, active.scope)
