@@ -26,8 +26,8 @@ test.use({ locale: "en-US" });
 
 test("an owner sees the production line from the kit's evidence, accessibly in both themes", async ({ page }) => {
   await signIn(page, tokens().owner.token);
-  await expect(page.getByRole("heading", { level: 1, name: "Overview" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "1 Queued" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Queued: 1 runs" })).toBeVisible();
   await expect(page.getByText("No runner adapter reports; requested runs stay queued.")).toBeVisible();
   await expect(page.locator(".who")).toContainText("maria");
   await expectAccessible(page);
@@ -48,7 +48,7 @@ test("a writer creates a provider whose credential is an env reference, recorded
   await values.nth(1).fill("https://api.anthropic.com");
   await page.getByLabel("api_key (env:NAME)").fill("ANTHROPIC_API_KEY");
   await page.getByRole("button", { name: "Create entry" }).click();
-  await expect(page.locator(".env")).toContainText("ANTHROPIC_API_KEY");
+  await expect(page.locator(".tag.env")).toContainText("ANTHROPIC_API_KEY");
   await expect(page.getByText("ui:maria")).toBeVisible();
 });
 
@@ -97,7 +97,7 @@ test.describe("phone width", () => {
 
   test("no horizontal scroll and every section reachable", async ({ page }) => {
     await signIn(page, tokens().owner.token);
-    for (const view of ["overview", "runs", "projects", "catalogs", "knowledge", "coach"]) {
+    for (const view of ["overview", "runs", "metrics", "projects", "catalogs", "knowledge", "coach"]) {
       await page.goto(`/#/e2e/${view}`);
       await page.waitForLoadState("networkidle");
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
