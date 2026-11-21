@@ -82,10 +82,17 @@ describe("workspaces", () => {
     const reply = await app.inject({ method: "GET", url: "/api/workspaces" });
     expect(reply.statusCode).toBe(200);
     expect(reply.json()).toEqual([
-      { id: "alpha", label: "Alpha", knowledge: true },
-      { id: "beta", label: "Beta", knowledge: false },
+      { id: "alpha", label: "Alpha", knowledge: true, reachable: true },
+      { id: "beta", label: "Beta", knowledge: false, reachable: true },
     ]);
     expect(reply.body).not.toContain("kit-a");
+    expect(seen.every((call) => !call.headers.Authorization)).toBe(true);
+  });
+
+  it("marks a workspace whose kit does not answer as unreachable", async () => {
+    await start({ down: true });
+    const reply = await app.inject({ method: "GET", url: "/api/workspaces" });
+    expect(reply.json().map((ws: { reachable: boolean }) => ws.reachable)).toEqual([false, false]);
   });
 
   it("sends security headers on every answer", async () => {
