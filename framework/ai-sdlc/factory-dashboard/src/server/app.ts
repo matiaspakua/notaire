@@ -200,7 +200,7 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
 
   const root = staticRoot ?? join(import.meta.dirname, "../../dist/ui");
   if (existsSync(join(root, "index.html"))) {
-    app.register(fastifyStatic, { root, wildcard: false });
+    app.register(fastifyStatic, { root });
     app.setNotFoundHandler((request, reply) => {
       if (request.method === "GET" && !request.url.startsWith("/api/")) {
         return reply.type("text/html").sendFile("index.html");
