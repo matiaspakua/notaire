@@ -56,8 +56,10 @@
 
 - `framework/ai-sdlc/aisdlc/**`
 - `framework/ai-sdlc/tests/**`
+- `framework/ai-sdlc/plugins/junie/**`
 - `framework/ai-sdlc/docs/HARNESS-REPORTING.md`
 - `framework/ai-sdlc/CHANGELOG.md`
+- `.aisdlc/aisdlc.toml`
 - `docs/openspec/changes/fix-2385-harness-report-unknown-adapter/**`
 
 ### Architecture review

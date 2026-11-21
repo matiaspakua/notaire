@@ -96,6 +96,7 @@
 
 - **`tests/test_runs.py` had to register the `local-worker` adapter.** Mechanical: the new validation rule now applies to existing tests that call `harness report`. The profile string in `test_runs.py` was updated to include `[[harness.adapters]]` so the test continues to pass.
 - **Kit suite has one pre-existing failure (`test_boundaries`).** This failure already exists on `main`; it is caused by RepoLens naming the adopter and is fixed by PR #2383. It is unrelated to this change.
+- **Reference adapter accepted without registration (regression found in Foreman review) and Junie harness stub registered, so the factory's own worker can keep reporting.** Mechanical: the correction batch touched `framework/ai-sdlc/plugins/junie/**` and `.aisdlc/aisdlc.toml`, which are now covered by the write set.
 
 ## Definition of Done
 
