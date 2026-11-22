@@ -46,7 +46,7 @@ docs → PR → merge → smoke.
 | Ops workflow | `.claude/rules/ai-agent-workflow.md` |
 | Modules | `python3 workspace/modules.py …` / `workspace/modules.yaml` |
 | OpenSpec | `docs/openspec/` (run CLI from `docs/`) |
-| Preflight | `bash workspace/sdlc/preflight.sh --full` (mandatory before a PR; runs the suites the branch touches; `--all` runs every suite) |
+| Preflight | `bash workspace/sdlc/preflight.sh --full` (mandatory before a PR; branch-scoped; `--all` = every suite) |
 | Board Status/labels | `python3 workspace/sdlc/check-board-status-label-coherence.py` |
 | Skills catalog | `.claude/skills/README.md` (load on demand) |
 
