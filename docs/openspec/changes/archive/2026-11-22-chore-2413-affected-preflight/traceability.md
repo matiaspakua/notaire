@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2413 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/chore-2413-affected-preflight/` | <!-- --> |
-| Branch | `chore/2413_affected_preflight` | <!-- --> |
-| Tasks | `tasks.md` | <!-- n/N complete --> |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Specification | `docs/openspec/changes/chore-2413-affected-preflight/` | written |
+| Branch | `chore/2413_affected_preflight` | created |
+| Tasks | `tasks.md` | groups 1-8 complete |
+| Commits | 1cab9ea5, f54e928d, 42b21df5, c15e33a6, ef5ff310 | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,13 +35,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| A factory-only branch skips the product suites | `workspace/tests/test_preflight_affected.py` | pending |
-| A backend branch runs the backend and the server-backed suites | `workspace/tests/test_preflight_affected.py` | pending |
-| A docs branch runs Pages | `workspace/tests/test_preflight_affected.py` | pending |
-| Changing the gate runs everything | `workspace/tests/test_preflight_affected.py` | pending |
-| No comparison base runs everything | `workspace/tests/test_preflight_affected.py` | pending |
-| Same commit pushed again | `workspace/tests/test_preflight_hook_cache.py` | pending |
-| A new commit runs the gate | `workspace/tests/test_preflight_hook_cache.py` | pending |
+| A factory-only branch skips the product suites | `workspace/tests/test_preflight_affected.py` | passing |
+| A backend branch runs the backend and the server-backed suites | `workspace/tests/test_preflight_affected.py` | passing |
+| A docs branch runs Pages | `workspace/tests/test_preflight_affected.py` | passing |
+| Changing the gate runs everything | `workspace/tests/test_preflight_affected.py` | passing |
+| No comparison base runs everything | `workspace/tests/test_preflight_affected.py` | passing |
+| Same commit pushed again | `workspace/tests/test_preflight_hook_cache.py` | passing |
+| A new commit runs the gate | `workspace/tests/test_preflight_hook_cache.py` | passing |
 
 ## Permanent documentation updated
 
