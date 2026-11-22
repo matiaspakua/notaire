@@ -19,7 +19,7 @@ The Overview lists the line as stacked cards, so nobody can see at a glance how 
 - The Overview's station cards become a diagram: a rail with one station per line stage, a token at the running station that moves with live events, a kind marker per station (AI agent, deterministic step, human decision), gates hanging under each station with their last evidence state, a correction-loop arc from pre-push back to red, and per-station throughput and cost from telemetry.
 - An intent progress strip above the line: the run's intent (or that none is attached), stations completed of total as a segmented bar, elapsed time, cost so far and the current step.
 - A detail panel for the selected station: kind, agents, skills, MCP and tools, model, effort, inputs, outputs, grants and a gates table.
-- The approved `factory-feature` workflow gets a new version whose steps name their line stage, so runs map onto stations.
+- The approved `factory-feature` workflow gets a new version whose steps name their line stage, so runs map onto stations. (moved to #2410)
 
 ## Reglas de negocio
 
