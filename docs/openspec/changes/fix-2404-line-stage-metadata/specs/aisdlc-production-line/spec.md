@@ -22,15 +22,17 @@ Values when the stage has NO `[[stages]]` block (gate-only stage):
 #### Scenario: stage always carries all keys with a configured stage
 
 - **GIVEN** a profile with a `[[stages]]` block for `plan` declaring
-  `agents = ["planner"]`, `skills = ["openspec"]`, `mcp = ["github"]`,
-  `model = "claude-sonnet-4-20250514"`, and `[[grants]]` with one entry
-  targeting stage `plan`
+  `agents = ["openspec-planner"]`, `skills = ["openspec-propose","openspec-update-change"]`,
+  `mcp = ["repolens"]`, `model = "claude-sonnet-5-5-high"`,
+  `effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }`,
+  and `[[grants]]` with one entry targeting stage `plan`
 - **WHEN** `build_line(ctx)` is called
 - **THEN** the `plan` stage entry has all keys present:
-  `agents = ["planner"]`, `skills = ["openspec"]`, `mcp = ["github"]`,
-  `tools = ["github"]`, `model = "claude-sonnet-4-20250514"`,
-  `effort` is an object (may be `{}`), and `guardrails` is a non-empty list
-  containing the grant serialized with `"kind": "grant"`
+  `agents = ["openspec-planner"]`, `skills = ["openspec-propose","openspec-update-change"]`,
+  `mcp = ["repolens"]`, `tools = ["repolens"]`,
+  `model = "claude-sonnet-5-5-high"`,
+  `effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }`,
+  and `guardrails` is a non-empty list containing the grant serialized with `"kind": "grant"`
 
 #### Scenario: gate-only stage carries empty values
 
