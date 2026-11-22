@@ -15,7 +15,7 @@ CLI and API endpoint. This design implements Store A.
 - Persistent SQLite store at `.aisdlc/factory.db` with versioned schema migrations.
 - Idempotent sync from evidence ledger, cost log, and RepoLens usage.
 - Telemetry record/report CLI with grouping by intent, stage, agent, skill, tool.
-- Dual-write hooks in harness report and run request (fail-open).
+- Dual-write mirror at `evidence._append` choke point via `telemetry_store.mirror_line` (fail-open).
 - `GET /factory/telemetry` read-only endpoint.
 - No secrets, prompts, or RepoLens query text stored in any row.
 
@@ -66,7 +66,7 @@ explicitly — they are not covered by the regex but contain sensitive content.
 
 The report returns a JSON object with:
 - `group`: the grouping dimension (intent, stage, agent, skill, tool).
-- `rows`: array of `{key, runs, duration_s, usd, failures, repolens_calls, repolens_ms}`.
+- `rows`: array of `{key, runs, duration_s, usd, failures}`.
 - `total_runs`, `total_duration_s`, `total_usd`, `total_failures`.
 - `failures_by_integration`: object mapping integration name (tool/adapter id such as
   `repolens` or the harness adapter id) to the failure count.
@@ -102,7 +102,7 @@ The report returns a JSON object with:
 
 | Scenario (spec) | Test level | Test class / file |
 |-----------------|------------|-------------------|
-| Store schema creates all tables | unit | `tests/test_store.py::test_schema_creates_tables` |
+| Store schema creates all tables | unit | `tests/test_store.py::test_schema_creates_all_tables` |
 | Schema migration is idempotent | unit | `tests/test_store.py::test_migration_idempotent` |
 | Sync imports ledger rows | unit | `tests/test_telemetry_store.py::test_sync_ledger` |
 | Sync is idempotent (no duplicates) | unit | `tests/test_telemetry_store.py::test_sync_idempotent` |
@@ -116,8 +116,8 @@ The report returns a JSON object with:
 | Report math (sums, counts) | unit | `tests/test_telemetry_store.py::test_report_math` |
 | Absent store gives empty report | unit | `tests/test_telemetry_store.py::test_absent_store_empty_report` |
 | Store stats returns counts | unit | `tests/test_telemetry_store.py::test_stats` |
-| Dual-write fail-open (harness) | unit | `tests/test_telemetry_store.py::test_dual_write_fail_open` |
-| GET /factory/telemetry returns report | integration | `tests/test_telemetry_store.py::test_serve_telemetry_endpoint` |
+| Dual-write fail-open (mirror) | unit | `tests/test_telemetry_store.py::test_mirror_fail_open_runs_start` |
+| GET /factory/telemetry returns report | integration | `tests/test_telemetry_store.py::test_telemetry_endpoint_with_read_token` |
 
 - New unit tests (`framework/ai-sdlc/tests/`):
   - `test_store.py` — schema, migrations, gitignore.
@@ -127,8 +127,8 @@ The report returns a JSON object with:
 ## Regression Strategy
 
 - Existing tests affected: None — new modules and new functions in existing modules
-  (cli.py new subparsers, serve.py new route, harness.py/runs.py new dual-write calls).
-  The dual-write hooks wrap store calls in try/except so existing behavior is unchanged.
+  (cli.py new subparsers, serve.py new route, evidence.py new mirror call at `_append`).
+  The dual-write mirror wraps store calls in try/except so existing behavior is unchanged.
 - Full suite command: `cd framework/ai-sdlc && python3 -m pytest tests/ -v`
 - HTTP/Bruno API suite: N/A — no backend-api changes.
 - Legacy paths at risk: None.

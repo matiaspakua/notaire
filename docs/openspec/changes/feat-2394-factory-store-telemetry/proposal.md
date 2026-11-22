@@ -29,9 +29,9 @@ making the factory observable across sessions.
    `report()` groups by intent, stage, agent, skill, or tool with time, cost, and failure counts.
 3. **CLI extensions in `aisdlc/cli.py`** — new subparsers: `aisdlc store sync`,
    `aisdlc store stats --json`, `aisdlc telemetry record`, `aisdlc telemetry report --group --json`.
-4. **Dual-write hooks** — `aisdlc/runs.py::start()` (run.request event) and
-   `aisdlc/runs.py::append_harness_event()` (all harness events; `harness.report_event` delegates to it)
-   write events to the store (fail-open: store failure never breaks the primary path).
+4. **Dual-write mirror** — `aisdlc/evidence.py::_append()` (single choke point for ledger
+   and cost writes) mirrors each line to the store via `telemetry_store.mirror_line`
+   (fail-open: store failure never breaks the primary path).
 5. **Serve route in `aisdlc/serve.py`** — `GET /factory/telemetry?group=intent|stage|agent|skill|tool`
    returns the telemetry report (read scope).
 6. **OpenAPI contract update** — new endpoint `GET /factory/telemetry` in
@@ -93,8 +93,6 @@ making the factory observable across sessions.
 - `framework/ai-sdlc/aisdlc/telemetry_store.py`
 - `framework/ai-sdlc/aisdlc/cli.py`
 - `framework/ai-sdlc/aisdlc/serve.py`
-- `framework/ai-sdlc/aisdlc/runs.py`
-- `framework/ai-sdlc/aisdlc/harness.py`
 - `framework/ai-sdlc/aisdlc/evidence.py`
 - `framework/ai-sdlc/aisdlc/contract.py`
 - `framework/ai-sdlc/aisdlc/serve_token.py`

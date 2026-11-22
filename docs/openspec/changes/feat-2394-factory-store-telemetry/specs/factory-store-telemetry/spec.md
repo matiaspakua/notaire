@@ -6,14 +6,14 @@ The system SHALL create a SQLite database at `.aisdlc/factory.db` with tables
 `events` (ts, kind, run_id, intent_id, stage, step, actor, data), `intents`,
 `telemetry` (ts, intent_id, run_id, stage, step, agent, model, skill, tool,
 metric, value, ok), `benchmarks` (name, ts, data), `config_snapshots` (ts,
-digest, files), and a `schema_migrations` version table. The file SHALL be
-git-ignored via `.aisdlc/.gitignore`. Schema migration SHALL be idempotent —
-calling it repeatedly produces the same schema without error.
+digest, files), `sync_keys` (source, hash), and a `schema_migrations` version table.
+The file SHALL be git-ignored via `.aisdlc/.gitignore`. Schema migration SHALL be
+idempotent — calling it repeatedly produces the same schema without error.
 
 #### Scenario: first migration creates all tables
 
 - **WHEN** the store is opened on a fresh directory with no `.aisdlc/factory.db`
-- **THEN** the database is created with all five data tables and `schema_migrations`,
+- **THEN** the database is created with all six data tables and `schema_migrations`,
   and the migration version is recorded
 
 #### Scenario: re-running migration is a no-op
