@@ -1,4 +1,4 @@
-"""Production line model (#2396): ordered stage view with gates, I/O, and guardrails.
+"""Production line model (#2396/#2404): ordered stage view with gates, I/O, metadata and guardrails.
 
 ``build_line(ctx)`` composes from existing kit functions — it owns no new extraction
 logic. ``render_text(payload)`` formats the payload for human consumption.
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from aisdlc import catalogs, isolator
+from aisdlc import catalogs, grants, isolator
 from aisdlc.context import Context
 from aisdlc.stages import stage_dicts
 
@@ -137,6 +137,31 @@ def build_line(ctx: Context) -> dict:
             outputs = list(defaults.get("outputs", []))
             io_source = "default"
 
+        # Per-stage metadata from stage_dicts (same source as GET /factory/config stages[]).
+        sd = sd_by_id.get(sid)
+        if sd is not None:
+            agents = sd.get("agents", [])
+            skills = sd.get("skills", [])
+            mcp = sd.get("mcp", [])
+            model = sd.get("model")
+            effort = sd.get("effort", {})
+        else:
+            # Gate-only stage: no [[stages]] block → empty defaults.
+            agents, skills, mcp = [], [], []
+            model = None
+            effort = {}
+
+        # tools = mcp ids (profile has no other tool source).
+        tools = list(mcp)
+
+        # Per-stage guardrails: grants whose stage == sid, serialized with kind="grant".
+        stage_guardrails: list[dict] = []
+        for g in profile.grants:
+            if g.stage == sid:
+                gd = grants.grant_dict(g)
+                gd["kind"] = "grant"
+                stage_guardrails.append(gd)
+
         stages_out.append(
             {
                 "id": sid,
@@ -144,6 +169,13 @@ def build_line(ctx: Context) -> dict:
                 "inputs": inputs,
                 "outputs": outputs,
                 "io_source": io_source,
+                "agents": agents,
+                "skills": skills,
+                "mcp": mcp,
+                "tools": tools,
+                "model": model,
+                "effort": effort,
+                "guardrails": stage_guardrails,
             }
         )
 
@@ -189,6 +221,12 @@ def render_text(payload: dict) -> str:
             lines.append(f"  inputs:  {', '.join(stage['inputs'])}")
         if stage.get("outputs"):
             lines.append(f"  outputs: {', '.join(stage['outputs'])}")
+        if stage.get("agents"):
+            lines.append(f"  agents: {', '.join(stage['agents'])}")
+        if stage.get("skills"):
+            lines.append(f"  skills: {', '.join(stage['skills'])}")
+        if stage.get("model"):
+            lines.append(f"  model: {stage['model']}")
         gate_list = stage.get("gates", [])
         if gate_list:
             lines.append(f"  gates ({len(gate_list)}):")
