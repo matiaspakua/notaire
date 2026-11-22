@@ -577,6 +577,81 @@ class StatusWithRunTest(unittest.TestCase):
         self.assertEqual("skip", prev[0]["status"])
         self.assertNotEqual("pass", prev[0]["status"])
 
+    def test_finished_run_step_and_stage_are_none(self) -> None:
+        """A finished run with a dangling step.started shows step=None, stage=None."""
+        from aisdlc import evidence
+        from aisdlc.status import status
+
+        started = self.repo.run(
+            "run", "start", "--project", "alpha",
+            "--workflow", "feature-delivery", "--json",
+        )
+        self.assertEqual(0, started.returncode, output(started))
+        run_id = json.loads(started.stdout)["id"]
+
+        ctx = self._ctx()
+        evidence.append_record(ctx, {
+            "kind": "run.started",
+            "run_id": run_id,
+            "ts": "2026-11-22T10:00:00+00:00",
+        })
+        evidence.append_record(ctx, {
+            "kind": "step.started",
+            "run_id": run_id,
+            "step": "implement",
+            "ts": "2026-11-22T10:01:00+00:00",
+        })
+        # Run finishes without step.finished for implement
+        evidence.append_record(ctx, {
+            "kind": "run.finished",
+            "run_id": run_id,
+            "ok": True,
+            "ts": "2026-11-22T10:02:00+00:00",
+        })
+
+        result = status(ctx)
+        self.assertIsNone(result["step"])
+        self.assertIsNone(result["stage"])
+
+    def test_blocked_run_step_and_stage_are_none(self) -> None:
+        """A blocked run shows step=None, stage=None even with step.started."""
+        from aisdlc import evidence
+        from aisdlc.status import status
+
+        started = self.repo.run(
+            "run", "start", "--project", "alpha",
+            "--workflow", "feature-delivery", "--json",
+        )
+        self.assertEqual(0, started.returncode, output(started))
+        run_id = json.loads(started.stdout)["id"]
+
+        ctx = self._ctx()
+        evidence.append_record(ctx, {
+            "kind": "run.started",
+            "run_id": run_id,
+            "ts": "2026-11-22T10:00:00+00:00",
+        })
+        evidence.append_record(ctx, {
+            "kind": "step.started",
+            "run_id": run_id,
+            "step": "implement",
+            "ts": "2026-11-22T10:01:00+00:00",
+        })
+        # Budget overrun blocks the run
+        evidence.append_record(ctx, {
+            "kind": "step.finished",
+            "run_id": run_id,
+            "step": "implement",
+            "step_status": "pass",
+            "budget_overrun": True,
+            "ts": "2026-11-22T10:02:00+00:00",
+        })
+
+        result = status(ctx)
+        self.assertEqual("blocked", result["run_status"])
+        self.assertIsNone(result["step"])
+        self.assertIsNone(result["stage"])
+
 
 if __name__ == "__main__":
     unittest.main()

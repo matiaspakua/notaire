@@ -807,6 +807,10 @@ def build_parser() -> argparse.ArgumentParser:
     rpt.add_argument("--group", default="stage")
     rpt.add_argument("--json", action="store_true")
 
+    # status subcommand (#2397)
+    p = sub.add_parser("status", help="show live factory status")
+    p.add_argument("--json", action="store_true", help="output as JSON")
+
     return parser
 
 
@@ -923,6 +927,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "intent": lambda: _intent(ctx, args),
         "store": lambda: _store_cmd(ctx, args),
         "telemetry": lambda: _telemetry_cmd(ctx, args),
+        "status": lambda: _status_cmd(ctx, args),
     }
     return simple[args.command]()
 
@@ -1848,6 +1853,29 @@ def _telemetry_cmd(ctx: Context, args: argparse.Namespace) -> int:
         return 0
     print(f"error: unknown telemetry action {args.action!r}")
     return 2
+
+
+def _status_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle status command (#2397)."""
+    from aisdlc.status import status as status_fn
+
+    result = status_fn(ctx)
+    if getattr(args, "json", False):
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        run = result.get("run") or "(none)"
+        intent = result.get("intent") or "(none)"
+        step = result.get("step") or "(none)"
+        stage = result.get("stage") or "(none)"
+        prev_count = len(result.get("previous", []))
+        next_list = ", ".join(n.get("step", "?") for n in result.get("next", []))
+        next_str = next_list if next_list else "(none)"
+        print(f"run: {run}")
+        print(f"intent: {intent}")
+        print(f"step: {step}  stage: {stage}")
+        print(f"previous: {prev_count} completed")
+        print(f"next: {next_str}")
+    return 0
 
 
 def parse_vars(pairs: list[str]) -> dict[str, str]:
