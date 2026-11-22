@@ -30,10 +30,6 @@ def _line_hash(line: str) -> str:
     return hashlib.sha256(line.encode("utf-8")).hexdigest()
 
 
-def _record_key(source: str, line: str) -> str:
-    return f"{source}:{_line_hash(line)}"
-
-
 def _mark_key(conn: sqlite3.Connection, source: str, line: str) -> bool:
     """INSERT OR IGNORE into sync_keys; returns True when newly inserted."""
     cur = conn.execute(
@@ -58,8 +54,8 @@ def _is_new_key(conn: sqlite3.Connection, source: str, line: str) -> bool:
 def import_line(conn: sqlite3.Connection, source: str, line: str) -> bool:
     """Insert rows for one raw ledger/cost/repolens line.
 
+    Returns ``True`` when a new row was inserted (parsed or malformed).
     Returns ``False`` when the line was already imported (idempotent).
-    Derives telemetry rows from real ledger shapes.
     """
     if not _is_new_key(conn, source, line):
         return False
@@ -68,7 +64,7 @@ def import_line(conn: sqlite3.Connection, source: str, line: str) -> bool:
         record = json.loads(line)
     except json.JSONDecodeError:
         _mark_key(conn, source, line)
-        return True
+        return False
 
     clean = redact_attributes(dict(record))
 
@@ -81,6 +77,14 @@ def import_line(conn: sqlite3.Connection, source: str, line: str) -> bool:
 
     _mark_key(conn, source, line)
     return True
+
+
+def _is_stage_run(record: dict[str, Any]) -> bool:
+    """Classify a ledger row as a stage run.
+
+    Real stage-run rows have 'gates' and 'stage' keys but NO 'kind' key.
+    """
+    return "gates" in record and "stage" in record and "kind" not in record
 
 
 def _import_ledger_line(conn: sqlite3.Connection, record: dict[str, Any]) -> None:
@@ -98,9 +102,75 @@ def _import_ledger_line(conn: sqlite3.Connection, record: dict[str, Any]) -> Non
     if record.get("step_status") == "fail" and ok_val is not False:
         ok_val = False
 
-    data_json = json.dumps(record, sort_keys=True)
+    # Propagate intent_id from a prior run.request event
+    if run_id and intent_id is None:
+        prior = conn.execute(
+            "SELECT intent_id FROM events WHERE run_id=? AND kind='run.request' "
+            "AND intent_id IS NOT NULL LIMIT 1",
+            (run_id,),
+        ).fetchone()
+        if prior:
+            intent_id = prior[0]
 
-    # Always write the events row
+    if _is_stage_run(record):
+        _import_stage_run(conn, record, ts, run_id, intent_id, stage, actor, ok_val)
+    elif kind in ("step.started", "step.finished"):
+        _import_step_event(conn, record, kind, ts, run_id, intent_id, stage, step, actor, ok_val)
+    elif kind == "run.request":
+        _import_run_request(conn, record, ts, run_id, intent_id, stage, step, actor)
+    else:
+        # Generic event row (run.started, run.finished, etc.)
+        data_json = json.dumps(record, sort_keys=True)
+        conn.execute(
+            "INSERT INTO events "
+            "(ts, kind, run_id, intent_id, stage, step, actor, data) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (ts, kind, run_id, intent_id, stage, step, actor, data_json),
+        )
+
+
+def _import_stage_run(
+        conn: sqlite3.Connection, record: dict[str, Any],
+        ts: str | None, run_id: str | None, intent_id: str | None,
+        stage: str | None, actor: str | None, ok_val: Any,
+) -> None:
+    """Import a stage-run ledger row (no 'kind' key, has 'gates' and 'stage')."""
+    # Strip gates tail arrays from data (command output)
+    data_for_store = {k: v for k, v in record.items()}
+    gates = data_for_store.get("gates") or []
+    clean_gates = []
+    for g in gates:
+        clean_g = {kk: vv for kk, vv in g.items() if kk != "tail"}
+        clean_gates.append(clean_g)
+    data_for_store["gates"] = clean_gates
+    data_json = json.dumps(data_for_store, sort_keys=True)
+
+    # Events row with kind='stage-run'
+    conn.execute(
+        "INSERT INTO events "
+        "(ts, kind, run_id, intent_id, stage, step, actor, data) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (ts, "stage-run", run_id, intent_id, stage, None, actor, data_json),
+    )
+
+    # Telemetry row: duration_s = sum of gate seconds
+    duration_s = sum(float(g.get("seconds") or 0) for g in gates)
+    agent = record.get("agent") or actor
+    conn.execute(
+        "INSERT INTO telemetry (ts, run_id, intent_id, stage, agent, metric, value, ok) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (ts, run_id, intent_id, stage, agent, "duration_s", duration_s,
+         1 if ok_val else 0),
+    )
+
+
+def _import_step_event(
+        conn: sqlite3.Connection, record: dict[str, Any],
+        kind: str, ts: str | None, run_id: str | None, intent_id: str | None,
+        stage: str | None, step: str | None, actor: str | None, ok_val: Any,
+) -> None:
+    """Import a step.started or step.finished ledger row."""
+    data_json = json.dumps(record, sort_keys=True)
     conn.execute(
         "INSERT INTO events "
         "(ts, kind, run_id, intent_id, stage, step, actor, data) "
@@ -108,66 +178,49 @@ def _import_ledger_line(conn: sqlite3.Connection, record: dict[str, Any]) -> Non
         (ts, kind, run_id, intent_id, stage, step, actor, data_json),
     )
 
-    # Derive telemetry rows from real ledger shapes
-    if kind == "stage-run":
-        # One telemetry row: duration_s = sum of gate seconds
-        gates = record.get("gates") or []
-        duration_s = sum(float(g.get("seconds") or 0) for g in gates)
-        agent = record.get("agent") or actor
-        conn.execute(
-            "INSERT INTO telemetry (ts, run_id, stage, agent, metric, value, ok) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (ts, run_id, stage, agent, "duration_s", duration_s,
-             1 if ok_val else 0),
-        )
-
-    elif kind in ("step.started", "step.finished"):
-        # For step.finished: compute duration from step.started
-        if kind == "step.finished" and run_id and step:
-            started_row = conn.execute(
-                "SELECT ts FROM events WHERE run_id=? AND step=? AND kind='step.started'",
-                (run_id, step),
-            ).fetchone()
-            duration_s = None
-            if started_row and started_row[0] and ts:
-                try:
-                    t0 = datetime.fromisoformat(started_row[0])
-                    t1 = datetime.fromisoformat(ts)
-                    duration_s = (t1 - t0).total_seconds()
-                except (ValueError, TypeError):
-                    pass
-            if duration_s is not None and duration_s >= 0:
-                step_status = record.get("step_status", "")
-                ok_telem = 0 if step_status == "fail" else 1
-                agent = record.get("adapter") or actor
-                conn.execute(
-                    "INSERT INTO telemetry (ts, run_id, stage, step, agent, "
-                    "metric, value, ok) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (ts, run_id, stage or step, step, agent,
-                     "duration_s", duration_s, ok_telem),
-                )
-
-        # Fill intent_id from run.request carrying intent/intent_id
-        if kind == "run.request" and run_id:
-            intent = record.get("intent") or record.get("intent_id")
-            if intent:
-                conn.execute(
-                    "UPDATE events SET intent_id=? WHERE run_id=? AND intent_id IS NULL",
-                    (intent, run_id),
-                )
-                conn.execute(
-                    "UPDATE telemetry SET intent_id=? WHERE run_id=? AND intent_id IS NULL",
-                    (intent, run_id),
-                )
-
-    elif kind == "run.request":
-        # Fill intent_id if present
-        intent = record.get("intent") or record.get("intent_id")
-        if intent and run_id:
+    # For step.finished: compute duration from step.started
+    if kind == "step.finished" and run_id and step:
+        started_row = conn.execute(
+            "SELECT ts FROM events WHERE run_id=? AND step=? AND kind='step.started'",
+            (run_id, step),
+        ).fetchone()
+        duration_s = None
+        if started_row and started_row[0] and ts:
+            try:
+                t0 = datetime.fromisoformat(started_row[0])
+                t1 = datetime.fromisoformat(ts)
+                duration_s = (t1 - t0).total_seconds()
+            except (ValueError, TypeError):
+                pass
+        if duration_s is not None and duration_s >= 0:
+            step_status = record.get("step_status", "")
+            ok_telem = 0 if step_status == "fail" else 1
+            agent = record.get("adapter") or actor
             conn.execute(
-                "UPDATE events SET intent_id=? WHERE run_id=? AND intent_id IS NULL",
-                (intent, run_id),
+                "INSERT INTO telemetry (ts, run_id, intent_id, stage, step, agent, "
+                "metric, value, ok) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (ts, run_id, intent_id, stage or step, step, agent,
+                 "duration_s", duration_s, ok_telem),
             )
+
+
+def _import_run_request(
+        conn: sqlite3.Connection, record: dict[str, Any],
+        ts: str | None, run_id: str | None, intent_id: str | None,
+        stage: str | None, step: str | None, actor: str | None,
+) -> None:
+    """Import a run.request ledger row; sets intent_id for the run."""
+    intent = record.get("intent") or record.get("intent_id")
+    if intent and run_id:
+        intent_id = intent
+
+    data_json = json.dumps(record, sort_keys=True)
+    conn.execute(
+        "INSERT INTO events "
+        "(ts, kind, run_id, intent_id, stage, step, actor, data) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (ts, "run.request", run_id, intent_id, stage, step, actor, data_json),
+    )
 
 
 def _import_cost_line(conn: sqlite3.Connection, record: dict[str, Any]) -> None:

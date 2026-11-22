@@ -72,9 +72,17 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
-        # Write two ledger rows via evidence.append_record (mirror writes them).
-        evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00"})
-        evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-merge", "ok": False, "ts": "2026-01-01T00:01:00+00:00"})
+        # Write two REAL stage-run ledger rows (no 'kind' key, has 'gates' and 'stage').
+        evidence.append_record(ctx, {
+            "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00",
+            "gates": [{"exit": 0, "expect": "pass", "name": "gate1", "required": True,
+                        "seconds": 1.5, "status": "pass", "tail": [], "timed_out": False}],
+        })
+        evidence.append_record(ctx, {
+            "stage": "pre-merge", "ok": False, "ts": "2026-01-01T00:01:00+00:00",
+            "gates": [{"exit": 1, "expect": "pass", "name": "gate2", "required": True,
+                        "seconds": 2.0, "status": "fail", "tail": [], "timed_out": False}],
+        })
 
         # sync is idempotent — mirror already wrote, so sync inserts 0 new.
         result = sync(ctx)
@@ -85,8 +93,17 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         db_path = store_path(self.repo.root)
         conn = sqlite3.connect(str(db_path))
         rows = conn.execute("SELECT kind FROM events WHERE kind='stage-run'").fetchall()
-        conn.close()
         self.assertGreaterEqual(len(rows), 2)
+
+        # Telemetry should have duration_s derived from gate seconds.
+        telem = conn.execute(
+            "SELECT stage, metric, value FROM telemetry WHERE metric='duration_s'"
+        ).fetchall()
+        conn.close()
+        self.assertTrue(len(telem) >= 2)
+        stage_durations = {r[0]: r[2] for r in telem}
+        self.assertAlmostEqual(1.5, stage_durations.get("pre-push", 0), places=1)
+        self.assertAlmostEqual(2.0, stage_durations.get("pre-merge", 0), places=1)
 
     # ------------------------------------------------------------------
     # Cost sync
@@ -229,8 +246,12 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
-        # append_record mirrors to store, so sync inserts 0
-        evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00"})
+        # REAL stage-run shape: no 'kind', has 'gates' and 'stage'
+        evidence.append_record(ctx, {
+            "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00",
+            "gates": [{"exit": 0, "expect": "pass", "name": "g1", "required": True,
+                        "seconds": 1.0, "status": "pass", "tail": [], "timed_out": False}],
+        })
 
         first = sync(ctx)
         self.assertEqual(0, first["ledger"], "mirror already imported; sync inserts 0")
@@ -243,14 +264,19 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         self.assertEqual(stats_after_first["events"], stats_after_second["events"])
 
         # Append one new ledger line and sync again — mirror imports it, sync inserts 0.
-        evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-merge", "ok": True, "ts": "2026-01-01T00:02:00+00:00"})
+        evidence.append_record(ctx, {
+            "stage": "pre-merge", "ok": True, "ts": "2026-01-01T00:02:00+00:00",
+            "gates": [{"exit": 0, "expect": "pass", "name": "g2", "required": True,
+                        "seconds": 0.5, "status": "pass", "tail": [], "timed_out": False}],
+        })
         third = sync(ctx)
         self.assertEqual(0, third["ledger"], "mirror already imported; sync inserts 0")
         # But events count should have grown by 1 (from mirror)
         self.assertEqual(stats_after_second["events"] + 1, stats(ctx)["events"])
 
     def test_sync_repolens_malformed_and_missing_keys(self) -> None:
-        """Sync does not raise on malformed JSON or missing optional keys; counts all lines."""
+        """Sync does not raise on malformed JSON or missing optional keys;
+        malformed lines are marked but not counted as imported rows."""
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
         from aisdlc.telemetry_store import sync
@@ -267,7 +293,7 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             # Valid line
             json.dumps({"ts": 1794941929.0, "src": "server", "client": "mcp",
                         "tool": "search", "ms": 100.0}),
-            # Malformed JSON line (still counted as imported)
+            # Malformed JSON line (marked but not counted)
             "this is not json at all {{{",
             # Line missing optional keys (tokens, results)
             json.dumps({"ts": 1794941930.0, "src": "server", "client": "mcp",
@@ -281,8 +307,12 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         # Should not raise.
         result = sync(ctx)
         self.assertIn("repolens", result)
-        # 4 lines total (3 valid + 1 malformed, all counted as imported)
-        self.assertEqual(4, result["repolens"])
+        # 3 valid lines counted; malformed line is marked but returns False
+        self.assertEqual(3, result["repolens"])
+
+        # Second sync should insert 0 (idempotent — malformed already marked)
+        second = sync(ctx)
+        self.assertEqual(0, second["repolens"])
 
     # ------------------------------------------------------------------
     # RepoLens input and files never stored
@@ -344,9 +374,12 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
+        # REAL stage-run shape with secret-like keys
         evidence.append_record(ctx, {
-            "kind": "stage-run", "stage": "pre-push", "ok": True,
+            "stage": "pre-push", "ok": True,
             "ts": "2026-01-01T00:00:00+00:00",
+            "gates": [{"exit": 0, "expect": "pass", "name": "g1", "required": True,
+                        "seconds": 0.5, "status": "pass", "tail": [], "timed_out": False}],
             "secret_token": "sk-1234567890abcdef",
             "api_key": "Bearer abc",
         })
@@ -532,6 +565,108 @@ class TelemetryStoreReportTest(unittest.TestCase):
         self.assertIn("i2", rows)
         self.assertAlmostEqual(2.0, rows["i1"]["duration_s"], places=2)
         self.assertEqual(1, rows["i2"]["failures"])
+
+    def test_intent_id_propagates_from_run_request(self) -> None:
+        """run.request with intent -> step.started/finished -> stage report grouped by intent
+        shows the duration and runs=1."""
+        from aisdlc.store import open_store
+        from aisdlc.telemetry_store import import_line, report
+
+        conn = open_store(self.repo.root)
+        run_id = "run-001"
+
+        # 1. run.request with intent
+        import_line(conn, "ledger", json.dumps({
+            "kind": "run.request", "run_id": run_id,
+            "intent": "fix-login", "ts": "2026-01-01T00:00:00+00:00",
+        }))
+        # 2. step.started
+        import_line(conn, "ledger", json.dumps({
+            "kind": "step.started", "run_id": run_id,
+            "step": "compile", "ts": "2026-01-01T00:01:00+00:00",
+        }))
+        # 3. step.finished (10 seconds later)
+        import_line(conn, "ledger", json.dumps({
+            "kind": "step.finished", "run_id": run_id,
+            "step": "compile", "ts": "2026-01-01T00:01:10+00:00",
+        }))
+        conn.commit()
+        conn.close()
+
+        # All events and telemetry for this run should carry intent_id="fix-login"
+        from aisdlc.store import store_path
+        conn2 = sqlite3.connect(str(store_path(self.repo.root)))
+        intent_events = conn2.execute(
+            "SELECT COUNT(*) FROM events WHERE run_id=? AND intent_id='fix-login'",
+            (run_id,),
+        ).fetchone()[0]
+        self.assertEqual(3, intent_events, "all 3 events should have intent_id")
+
+        intent_telem = conn2.execute(
+            "SELECT COUNT(*) FROM telemetry WHERE run_id=? AND intent_id='fix-login'",
+            (run_id,),
+        ).fetchone()[0]
+        self.assertGreaterEqual(intent_telem, 1, "telemetry should have intent_id")
+        conn2.close()
+
+        # Report grouped by intent should show the duration
+        ctx = self._ctx()
+        result = report(ctx, "intent")
+        rows = {r["key"]: r for r in result["rows"]}
+        self.assertIn("fix-login", rows)
+        fix_row = rows["fix-login"]
+        self.assertGreater(fix_row["duration_s"], 0, "duration should be > 0")
+        self.assertGreaterEqual(fix_row["runs"], 1)
+
+    def test_stage_run_import_with_real_shape(self) -> None:
+        """Import a REAL stage-run row (no 'kind', has 'gates' and 'stage') and
+        verify duration_s is derived from gate seconds and tail is stripped."""
+        from aisdlc.store import open_store
+        from aisdlc.telemetry_store import import_line
+
+        conn = open_store(self.repo.root)
+
+        # REAL stage-run shape from ledger (no 'kind' key)
+        real_row = {
+            "base": "origin/main",
+            "commit": "abc123",
+            "gates": [
+                {"exit": 0, "expect": "pass", "name": "baseline ratchet",
+                 "required": True, "seconds": 0.165, "status": "pass",
+                 "tail": ["some command output"], "timed_out": False},
+                {"exit": 0, "expect": "pass", "name": "skills lint",
+                 "required": True, "seconds": 0.076, "status": "pass",
+                 "tail": [], "timed_out": False},
+            ],
+            "ok": True,
+            "prev": "genesis",
+            "stage": "signal",
+            "ts": "2026-11-17T17:59:51+00:00",
+        }
+        imported = import_line(conn, "ledger", json.dumps(real_row))
+        self.assertTrue(imported)
+        conn.commit()
+
+        # Verify events row has kind='stage-run'
+        ev = conn.execute(
+            "SELECT kind, stage, data FROM events WHERE kind='stage-run'"
+        ).fetchone()
+        self.assertIsNotNone(ev)
+        self.assertEqual("signal", ev[1])
+        # Verify tail is stripped from data
+        data = json.loads(ev[2])
+        for gate in data.get("gates", []):
+            self.assertNotIn("tail", gate, "tail should be stripped from stored data")
+
+        # Verify telemetry row has duration_s = sum of gate seconds
+        telem = conn.execute(
+            "SELECT stage, metric, value FROM telemetry WHERE metric='duration_s'"
+        ).fetchone()
+        self.assertIsNotNone(telem)
+        self.assertEqual("signal", telem[0])
+        expected_dur = 0.165 + 0.076
+        self.assertAlmostEqual(expected_dur, telem[2], places=4)
+        conn.close()
 
     def test_report_group_agent(self) -> None:
         """Report groups by agent with correct failure counts."""
