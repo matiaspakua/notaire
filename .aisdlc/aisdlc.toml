@@ -473,6 +473,20 @@ version = "1.0.0"
 manifest = "framework/ai-sdlc/plugins/cursor/plugin.toml"
 trusted = false
 
+[[plugins.entries]]
+id = "agy"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/agy/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "kiro"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/kiro/plugin.toml"
+trusted = false
+
 # Code knowledge. RepoLens is the default. The kit shells out to this command;
 # it does not import the package. Agent runs: anthropic when `claude` can
 # authenticate, otherwise the Cursor agent CLI (`aisdlc agent probe`).

@@ -1,0 +1,11 @@
+id = "kiro"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "kiro"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc-harness-describe", "kiro"]
+summary = "Inventory stub for Kiro IDE. Dry plan prints describe argv only. Never launches a session. sandbox=false forever until a real Isolator."
+sandbox = false
+auto_trust_hooks = false

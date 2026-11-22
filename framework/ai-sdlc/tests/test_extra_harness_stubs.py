@@ -5,7 +5,6 @@ import json
 import subprocess
 import sys
 import unittest
-from pathlib import Path
 
 from helpers import BIN, ENV, KIT, Repo, output
 
@@ -237,6 +236,7 @@ class ExtraHarnessStubsTest(unittest.TestCase):
             env=ENV,
             capture_output=True,
             text=True,
+            check=False,
         )
         self.assertEqual(0, result.returncode, output(result))
         rows = {row["id"]: row for row in json.loads(result.stdout)}

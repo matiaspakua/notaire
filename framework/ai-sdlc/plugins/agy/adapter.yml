@@ -1,0 +1,7 @@
+# HarnessPort stub (#2399). Discoverability only — not an OS sandbox.
+runtime: agy
+version: stub-1
+sandbox: false
+capabilities:
+  - describe
+note: "Stub inventory adapter for Agy (Antigravity) CLI. List/validate/plan never execute the runtime. A permission listed here is not isolation."
