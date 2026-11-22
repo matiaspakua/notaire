@@ -15,6 +15,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Factory dashboard Overview renders the line as a production-line diagram with station kinds, gate evidence states, correction loop, throughput, cost and an intent progress strip (#2407).
 - Factory dashboard v2: production-line timeline with gates, intent bar and intake form, live sync over SSE with polling fallback, configuration-as-code file tree and viewer, catalog delete with confirmation, telemetry panel (#2400).
 - `aisdlc store sync|stats` and `aisdlc telemetry record|report`: persistent SQLite store (`.aisdlc/factory.db`, git-ignored) mirroring the evidence ledger with idempotent sync, redacted telemetry rows, and grouped reports (#2394).
 - `GET /factory/telemetry?group=…` (read scope) on `aisdlc serve`: aggregated time, cost, and failure counts from the store (#2394).
