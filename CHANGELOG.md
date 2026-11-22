@@ -5,6 +5,74 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0](https://github.com/matiaspakua/notaire/compare/v0.8.0...v0.9.0) (2026-11-22)
+
+
+### Features
+
+* **aisdlc:** agy and kiro harness stubs ([f568553](https://github.com/matiaspakua/notaire/commit/f568553ef516c79bf91578e56dba975a0a6a6d9c)), closes [#2399](https://github.com/matiaspakua/notaire/issues/2399)
+* **aisdlc:** aisdlc intent submit|list|show ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([ebfc090](https://github.com/matiaspakua/notaire/commit/ebfc090205d80a0bd81a9cff6ab0c313d1f4f790))
+* **aisdlc:** aisdlc mcp stdio server ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([4a65cb8](https://github.com/matiaspakua/notaire/commit/4a65cb8306711ebbbd4e5e161f5c639c1cfb8f68))
+* **aisdlc:** catalog delete with If-Match, CSRF and evidence ([ebd7375](https://github.com/matiaspakua/notaire/commit/ebd737540f2b54c280d384d88e97153abfe9cc0c)), closes [#2398](https://github.com/matiaspakua/notaire/issues/2398)
+* **aisdlc:** catalogs guard_files and files field on revisions ([17e9ec3](https://github.com/matiaspakua/notaire/commit/17e9ec3ba436da2e2e5227b4abe08fb3ea82e975)), closes [#2399](https://github.com/matiaspakua/notaire/issues/2399)
+* **aisdlc:** config files tree and read with redaction ([588f329](https://github.com/matiaspakua/notaire/commit/588f329ae089fc1f1c05f6f96ce2928587703f81)), closes [#2398](https://github.com/matiaspakua/notaire/issues/2398)
+* **aisdlc:** configure Owner committer runtime_* (evaluable, advisory) ([#2177](https://github.com/matiaspakua/notaire/issues/2177)) ([67c0758](https://github.com/matiaspakua/notaire/commit/67c07584ece18a2f5d776ea7a9f0232eb4d45213)), closes [#2175](https://github.com/matiaspakua/notaire/issues/2175)
+* **aisdlc:** Cursor agent fallback, entity toolset, and empty-index bootstrap ([#2361](https://github.com/matiaspakua/notaire/issues/2361)) ([70784c9](https://github.com/matiaspakua/notaire/commit/70784c9e4702fb3dc6071dd7691470fd33ad4066))
+* **aisdlc:** derive live factory status ([05ddcdb](https://github.com/matiaspakua/notaire/commit/05ddcdb5cbf4a74ca0cb54ec4813424b442e9648)), closes [#2397](https://github.com/matiaspakua/notaire/issues/2397)
+* **aisdlc:** Grant profile schema (axiom 5) validate/list/show ([e2533fa](https://github.com/matiaspakua/notaire/commit/e2533faefaa5bb75726bce52c6039d31ac0be13f)), closes [#2192](https://github.com/matiaspakua/notaire/issues/2192)
+* **aisdlc:** Grant write-set policy dry-run (grant check) ([444e39b](https://github.com/matiaspakua/notaire/commit/444e39b82f5c4d10dd0c80ede7052e0255d29849))
+* **aisdlc:** intent model service and spec parser ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([9785f6f](https://github.com/matiaspakua/notaire/commit/9785f6f440e39b550f9df814d6eeb7ac68dbcd18))
+* **aisdlc:** intents API and run binding ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([0235b1f](https://github.com/matiaspakua/notaire/commit/0235b1f2bc4992d73630dc806e16998dda29a725))
+* **aisdlc:** Isolator sole-committer enforcement ([#2204](https://github.com/matiaspakua/notaire/issues/2204)) ([394a932](https://github.com/matiaspakua/notaire/commit/394a932ce62a6fc375bc95442911ff764a670bfb))
+* **aisdlc:** materialize.py import/materialize + cli wiring ([db996fe](https://github.com/matiaspakua/notaire/commit/db996fec5ebbdff227c02720df961301f176bf68)), closes [#2399](https://github.com/matiaspakua/notaire/issues/2399)
+* **aisdlc:** OpenAPI 3.1.0 factory control contract ([5218403](https://github.com/matiaspakua/notaire/commit/5218403e8e4a7587733c92c7d5f1331eff07ce96)), closes [#2136](https://github.com/matiaspakua/notaire/issues/2136)
+* **aisdlc:** optional inputs/outputs on StageProfile and stage_dicts ([3078370](https://github.com/matiaspakua/notaire/commit/30783704315b31e92cdf8f087c4d4973f60a427e)), closes [#2396](https://github.com/matiaspakua/notaire/issues/2396)
+* **aisdlc:** preflight feeds evidence via gate signal ([c5f948c](https://github.com/matiaspakua/notaire/commit/c5f948c3cbf1956b78a66370514cd66bd9cec36a)), closes [#2159](https://github.com/matiaspakua/notaire/issues/2159)
+* **aisdlc:** production line model, aisdlc line, and GET /factory/line ([f6f2026](https://github.com/matiaspakua/notaire/commit/f6f20264adce2d846b0bdeba3bb76d0344f76bec)), closes [#2396](https://github.com/matiaspakua/notaire/issues/2396)
+* **aisdlc:** read-only ForgePort live lead-time via gh ([849169f](https://github.com/matiaspakua/notaire/commit/849169f813b2ba44b5973d3d894113c2cb2a4022)), closes [#2184](https://github.com/matiaspakua/notaire/issues/2184)
+* **aisdlc:** record intent runs for RepoLens vs no-knowledge comparison ([#2375](https://github.com/matiaspakua/notaire/issues/2375)) ([c837165](https://github.com/matiaspakua/notaire/commit/c8371657cdaa5b972bc7b40238f97062045cbaa4))
+* **aisdlc:** sole-committer dry-run policy check ([dc01d74](https://github.com/matiaspakua/notaire/commit/dc01d7461b56ab8cc73c5cb879daa2587425a773)), closes [#2167](https://github.com/matiaspakua/notaire/issues/2167)
+* **aisdlc:** stream ledger events over SSE ([8b6ab3f](https://github.com/matiaspakua/notaire/commit/8b6ab3f6aae84746effff67a06cb2d6e1825c8e6)), closes [#2397](https://github.com/matiaspakua/notaire/issues/2397)
+* **aisdlc:** surface Wilson L0 autonomy in evidence report ([fdd0234](https://github.com/matiaspakua/notaire/commit/fdd0234c1bde58fb0da3163f10fe7b31ec3fbe35)), closes [#2165](https://github.com/matiaspakua/notaire/issues/2165)
+* **aisdlc:** Wilson L0 from signal ledger gates ([679bc0d](https://github.com/matiaspakua/notaire/commit/679bc0d30d2c9aeaab738f7aa4768baefa5b73d1)), closes [#2163](https://github.com/matiaspakua/notaire/issues/2163)
+* **aisdlc:** Wilson L1 no-evaluable until ≥2 stages have min_n ([#2172](https://github.com/matiaspakua/notaire/issues/2172)) ([1136b4c](https://github.com/matiaspakua/notaire/commit/1136b4cb62358e9aa3d72f97d00902b835dd226a)), closes [#2171](https://github.com/matiaspakua/notaire/issues/2171)
+* **dashboard:** configuration as code in Projects ([15cb7dd](https://github.com/matiaspakua/notaire/commit/15cb7dd150ca5da314d17fb7d6222323bccf3e9b)), closes [#2400](https://github.com/matiaspakua/notaire/issues/2400)
+* **dashboard:** delete catalog entries with inline confirmation ([5485515](https://github.com/matiaspakua/notaire/commit/5485515966a485608d8d5f0e94ded94736c2c884)), closes [#2400](https://github.com/matiaspakua/notaire/issues/2400)
+* **dashboard:** production line timeline, intent bar and live sync ([1d7a13e](https://github.com/matiaspakua/notaire/commit/1d7a13e692419d33abf69d4864d8fb99810c0543)), closes [#2400](https://github.com/matiaspakua/notaire/issues/2400)
+* **dashboard:** proxy DELETE and stream the events feed ([a13ccdb](https://github.com/matiaspakua/notaire/commit/a13ccdb90eedf4e73a104c8b7759615ef07d40c4)), closes [#2400](https://github.com/matiaspakua/notaire/issues/2400)
+* **dashboard:** telemetry panel in Metrics ([18dbe54](https://github.com/matiaspakua/notaire/commit/18dbe544f2ab24f5db918ba5d1556ba2cb7750b7)), closes [#2400](https://github.com/matiaspakua/notaire/issues/2400)
+* **pages:** anatomy figures for the system, the engineering loop and the AI SDLC ([b9d9bc5](https://github.com/matiaspakua/notaire/commit/b9d9bc5d845509b32f9b4ad13165ff8c40d6281b)), closes [#2089](https://github.com/matiaspakua/notaire/issues/2089)
+* **pages:** polish RepoLens UI with pipeline, motion, tooltips ([1d1cf99](https://github.com/matiaspakua/notaire/commit/1d1cf9900ad55cc16aa7ef13f604f473006db5c2))
+* **pages:** showcase RepoLens benches on the AI Factory ([aee9b53](https://github.com/matiaspakua/notaire/commit/aee9b53d95c147949d5e16c49f9a1f1961b70e45))
+* **repolens:** add CLI comparison experiment for AGY and kiro-cli ([#2381](https://github.com/matiaspakua/notaire/issues/2381)) ([0d9dc61](https://github.com/matiaspakua/notaire/commit/0d9dc613dc73c00c74cd2497e394ece74dca62f8)), closes [#2380](https://github.com/matiaspakua/notaire/issues/2380)
+
+
+### Bug Fixes
+
+* **aisdlc:** confine config files to profile roots, key-aware redaction, single catalog delete ([8551fe1](https://github.com/matiaspakua/notaire/commit/8551fe1ca514510184114123230cf7f1cdb4fc99)), closes [#2398](https://github.com/matiaspakua/notaire/issues/2398)
+* **aisdlc:** degrade optional OTel verify bootstrap without ensurepip ([#2181](https://github.com/matiaspakua/notaire/issues/2181)) ([a9057e1](https://github.com/matiaspakua/notaire/commit/a9057e152de1447951ffce97eb77a99a56cba7de)), closes [#2180](https://github.com/matiaspakua/notaire/issues/2180)
+* **aisdlc:** harden the MCP server and compact factory_status ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([bb9e80c](https://github.com/matiaspakua/notaire/commit/bb9e80cb8f739826d18a1df1b538999db9348988))
+* **aisdlc:** intent CLI errors go to stderr ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([ee9c586](https://github.com/matiaspakua/notaire/commit/ee9c586ee8e1c68b70a452ff59e5c22b21aacd92))
+* **aisdlc:** refuse absolute install paths before strip ([#2154](https://github.com/matiaspakua/notaire/issues/2154)) ([ec2f247](https://github.com/matiaspakua/notaire/commit/ec2f24778bf78f5dfd062b18aaa889b2598d88e2)), closes [#2153](https://github.com/matiaspakua/notaire/issues/2153)
+* **aisdlc:** run records its intent ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([918b47e](https://github.com/matiaspakua/notaire/commit/918b47e896c6c26eb098d5d73f3b2c099cc6b054))
+* **aisdlc:** surface skills-dir in catalog list; ignore proposals ([#2156](https://github.com/matiaspakua/notaire/issues/2156)) ([6752147](https://github.com/matiaspakua/notaire/commit/675214779802b455c8c596db7d9ec0e5d9ee3b0b)), closes [#2155](https://github.com/matiaspakua/notaire/issues/2155)
+* **aisdlc:** validate intent ids and titles, honest source ([#2395](https://github.com/matiaspakua/notaire/issues/2395)) ([c1b0731](https://github.com/matiaspakua/notaire/commit/c1b073167e5d989893fdfa7f381b4d3de3c64fcc))
+* **api:** copy ServerError returns ErrorResponse via GEH ([#2028](https://github.com/matiaspakua/notaire/issues/2028)) ([bd1f13e](https://github.com/matiaspakua/notaire/commit/bd1f13e31bddc4f6a427f0f6c2301f793f0fc57b)), closes [#579](https://github.com/matiaspakua/notaire/issues/579)
+* **api:** history ServerError returns ErrorResponse via GEH ([#2030](https://github.com/matiaspakua/notaire/issues/2030)) ([2febdc9](https://github.com/matiaspakua/notaire/commit/2febdc92aa845c82f34697f2633c14a011a12797)), closes [#579](https://github.com/matiaspakua/notaire/issues/579)
+* **api:** page the testimony movement list ([#2339](https://github.com/matiaspakua/notaire/issues/2339)) ([373a9b9](https://github.com/matiaspakua/notaire/commit/373a9b901e7a6b23c192fb4c70771e581d7d9a8e)), closes [#596](https://github.com/matiaspakua/notaire/issues/596)
+* **api:** record 0.3.0 as the OpenAPI info version ([c5948ac](https://github.com/matiaspakua/notaire/commit/c5948ac616117a73839f17ba786da73cca7d4d89))
+* **ci:** add missing v0.7 milestone train to fix GitHub Pages build ([#2378](https://github.com/matiaspakua/notaire/issues/2378)) ([1a5d283](https://github.com/matiaspakua/notaire/commit/1a5d283765ac925faf52e407fc2c08049d03212c))
+* **frontend:** table empty states teach the next action ([#2229](https://github.com/matiaspakua/notaire/issues/2229)) ([1836431](https://github.com/matiaspakua/notaire/commit/183643150c64a9203dfcefa231dcedabfe049de4)), closes [#2071](https://github.com/matiaspakua/notaire/issues/2071)
+* **pages:** correct stale story claims and the figure plate contrast ([d680ac5](https://github.com/matiaspakua/notaire/commit/d680ac5953537a9c4d7dbaaff1ebb89414da684b)), closes [#2089](https://github.com/matiaspakua/notaire/issues/2089)
+* **pages:** keep home factory door on /ai-sdlc/ ([5d5ba21](https://github.com/matiaspakua/notaire/commit/5d5ba21bf10b354b2e15c35c288ee3bdb3937a5b))
+* **pages:** raise isometric label contrast to the anatomy text color ([8e44ebe](https://github.com/matiaspakua/notaire/commit/8e44ebe4cada4927fe443fe1920d8bc7a3ecc277)), closes [#2086](https://github.com/matiaspakua/notaire/issues/2086)
+* **release:** add the v0.8 train for the 0.8.0 release ([55d876f](https://github.com/matiaspakua/notaire/commit/55d876f9216fc97b8b327367f8506371952e16b4)), closes [#2401](https://github.com/matiaspakua/notaire/issues/2401)
+* **release:** Pages release history shows 0.8.0 ([1ffd2cd](https://github.com/matiaspakua/notaire/commit/1ffd2cdf15c70fb558f06b2e6fe2e664fb8be6ce)), closes [#2401](https://github.com/matiaspakua/notaire/issues/2401)
+* **repolens:** count CLI queries in the usage report ([#2311](https://github.com/matiaspakua/notaire/issues/2311)) ([3f5c86c](https://github.com/matiaspakua/notaire/commit/3f5c86c5cb93c9f65eb74a6a4be5b0b56c3c1767)), closes [#2307](https://github.com/matiaspakua/notaire/issues/2307)
+* **repolens:** stop guessing ambiguous same-directory calls ([#2314](https://github.com/matiaspakua/notaire/issues/2314)) ([982ae08](https://github.com/matiaspakua/notaire/commit/982ae083d91d4e04c745a688ec2e41c3d48e1027)), closes [#2307](https://github.com/matiaspakua/notaire/issues/2307)
+* **sdlc:** ignore Cursor agent-hooks drift in RepoLens wiring test ([439e940](https://github.com/matiaspakua/notaire/commit/439e9400358a884705ab48813d1505169798c6ae))
+* **security:** prune Wave 9 accepted-breaking list and unblock the next cut ([#1968](https://github.com/matiaspakua/notaire/issues/1968)) ([9719856](https://github.com/matiaspakua/notaire/commit/97198564b458d395ce73daf3de7b884c2402f944))
+
 ## [0.8.0](https://github.com/matiaspakua/notaire/compare/v0.7.0...v0.8.0) (2026-11-21)
 
 
