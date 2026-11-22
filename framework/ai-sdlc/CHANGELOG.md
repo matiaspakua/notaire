@@ -8,6 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `harness report` refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`), but always accepts the kit's reference adapter `local-worker` without registration (#2385).
+
 ### Added
 
 - `aisdlc store sync|stats` and `aisdlc telemetry record|report`: persistent SQLite store (`.aisdlc/factory.db`, git-ignored) mirroring the evidence ledger with idempotent sync, redacted telemetry rows, and grouped reports (#2394).
@@ -31,7 +35,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- `harness report` refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`), but always accepts the kit's reference adapter `local-worker` without registration (#2385).
 - Serve token files are git-ignored through `.aisdlc/.gitignore`; before, `git add -A` in an adopter repository could commit a live token (#2384).
 
 ### Changed

@@ -1225,7 +1225,7 @@ components:
       required: [calls, total_ms, avg_ms, by_tool]
       properties:
         calls: { type: integer }
-        total_ms: { type: integer }
+        total_ms: { type: number }
         avg_ms: { type: number }
         by_tool:
           type: object
