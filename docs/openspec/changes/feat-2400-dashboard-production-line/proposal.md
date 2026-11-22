@@ -100,6 +100,7 @@ dashboard so operators can monitor the factory in real time without leaving the 
 ### Write set
 
 - `framework/ai-sdlc/factory-dashboard/**`
+- `framework/ai-sdlc/CHANGELOG.md`
 - `docs/openspec/changes/feat-2400-dashboard-production-line/**`
 - `docs/openspec/changes/archive/**feat-2400*/**`
 - `docs/openspec/specs/**`

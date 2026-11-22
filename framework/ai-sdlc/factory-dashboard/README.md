@@ -10,13 +10,14 @@ What you get per workspace:
 
 | View | Source | Notes |
 |------|--------|-------|
-| Production line | `/factory/runs`, `/factory/capabilities` | Stations by run status with their run ids; what the factory can do now |
+| Production line | `/factory/line`, `/factory/status`, `/factory/config`, `/factory/events` | Station timeline with gates; current run position; live sync via SSE with polling fallback |
 | Runs | `/factory/runs`, `/factory/runs/{id}/events`, `POST /factory/runs` | Steps and evidence per run; request a run with an approved workflow |
-| Metrics | `/factory/report` | KPI cards, stage duration bars, gates, autonomy and cost by model |
-| Configuration | `/factory/catalogs/{kind}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits |
-| Projects | `/factory/projects`, `POST …/repos` | Repositories per project, `dry_run` or `live` |
+| Metrics | `/factory/report`, `/factory/telemetry` | KPI cards, stage duration bars, gates, autonomy, cost by model; telemetry by intent, stage, agent, skill, tool |
+| Configuration | `/factory/catalogs/{kind}`, `DELETE /factory/catalogs/{kind}/{id}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits; delete with confirmation |
+| Projects | `/factory/projects`, `POST …/repos`, `/factory/config/files` | Repositories per project, `dry_run` or `live`; configuration-as-code file tree and viewer |
 | Knowledge | RepoLens `search`, `orphans`, `metrics` | Search hits keep their repository label |
 | Coach | `/factory/coach` (owner only) | Local harness habits and anti-patterns; never prompt text |
+| Intent bar | `/factory/intents`, `POST /factory/intents` | Always-visible bar with current intent; drawer with details; intake form |
 
 ## Run it in any project
 
@@ -80,6 +81,9 @@ Without a config file the dashboard serves one workspace, `local`, from `AISDLC_
   `HttpOnly; SameSite=Strict` cookie (`Secure` when `secureCookies` or `allowRemote` is set).
 - Writes need the `X-Dashboard-CSRF` header from `/api/session`. The server adds the kit's
   `X-AISDLC-CSRF` itself.
+- `DELETE` requests are proxied with CSRF validation and `If-Match` forwarded to the kit.
+- The server streams `/factory/events` using the kit's server-side token and `Last-Event-ID`;
+  the browser never sees the token.
 - Only `/factory/...` paths of the contract are proxied; dot segments and encoded separators are
   refused. RepoLens is read-only through the dashboard.
 - The server binds to loopback. Another address needs `"allowRemote": true` and TLS in front.
