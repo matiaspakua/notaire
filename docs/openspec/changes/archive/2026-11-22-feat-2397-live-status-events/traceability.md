@@ -48,53 +48,53 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| status with no runs returns empty shape | `test_status.py::TestStatusEmpty::test_empty_shape_has_no_runs` | passing |
-| status with queued run never shows a running step | `test_status.py::TestStatusQueued::test_queued_run_never_invents_running` | passing |
-| status with running run shows step in flight | `test_status.py::TestStatusInFlight::test_in_flight_step_shows_running` | passing |
-| finished steps show duration and usd | `test_status.py::TestStatusPrevious::test_previous_steps_with_duration` | passing |
-| finished step with skip status is not pass | `test_status.py::TestStatusSkip::test_skip_is_never_pass` | passing |
-| finished step with no store usd shows null not zero | `test_status.py::TestStatusPrevious::test_previous_step_usd_none_without_telemetry` | passing |
-| next steps from workflow then line | `test_status.py::TestStatusNext::test_next_from_workflow_and_line` | passing |
-| next excludes steps already in previous or current | `test_status.py::TestStatusNext::test_next_from_workflow_and_line` | passing |
-| GET /factory/status returns 401 without token | `test_serve_status_events.py::TestStatusEndpoint::test_status_401_without_token` | passing |
-| GET /factory/status returns 200 with valid read token | `test_serve_status_events.py::TestStatusEndpoint::test_status_200_with_token_empty_shape` | passing |
-| SSE framing produces correct id, event, and data | `test_events_stream.py::TestFormatEvent::test_format_event_produces_exact_bytes` | passing |
-| SSE event kind is sanitized | `test_events_stream.py::TestFormatEvent::test_format_event_sanitizes_kind` | passing |
-| stage-run rows default to kind stage-run | `test_events_stream.py::TestFormatEvent::test_format_event_stage_run_kind` | passing |
-| secrets are redacted in SSE data | `test_events_stream.py::TestFormatEvent::test_format_event_redacts_secrets` | passing |
-| Last-Event-ID replay returns only subsequent rows | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_from_header`, `test_serve_status_events.py::TestEventsEndpoint::test_events_replay_with_last_event_id` | passing |
-| ?after= query parameter replay | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_from_query`, `test_serve_status_events.py::TestEventsEndpoint::test_events_replay_with_query_after` | passing |
-| Last-Event-ID header takes precedence over ?after= | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_header_wins_over_query` | passing |
-| invalid Last-Event-ID returns 400 | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_invalid_raises`, `test_serve_status_events.py::TestEventsEndpoint::test_events_invalid_last_event_id_returns_400` | passing |
-| keep-alive comment emitted when idle | `test_events_stream.py::TestStream::test_stream_keepalive_when_no_rows` | passing |
-| live append to ledger is picked up by stream | `test_events_stream.py::TestStream::test_stream_emits_new_row_after_fake_sleep`, `test_serve_status_events.py::TestEventsEndpoint::test_events_live_append_arrives` | passing |
-| client disconnect ends the stream cleanly | `test_events_stream.py::TestStream::test_stream_broken_pipe_ends_cleanly` | passing |
-| aisdlc status --json prints full payload | `test_serve_status_events.py::TestStatusCLI::test_status_json_no_run` | passing |
-| aisdlc status plain text prints summary | `test_serve_status_events.py::TestStatusCLI::test_status_plain_text_with_in_flight_step` | passing |
-| status with in-flight step via HTTP | `test_serve_status_events.py::TestStatusHTTP::test_status_http_in_flight_step` | passing |
-| intent propagation from run request | `test_status.py::TestStatusIntent::test_intent_propagation_from_run_request` | passing |
-| usd summed across multiple telemetry rows | `test_status.py::TestStatusUSD::test_usd_summed_across_multiple_telemetry_rows` | passing |
-| usd not mixed with another run | `test_status.py::TestStatusUSD::test_usd_not_mixed_with_another_run` | passing |
-| run selection prefers not finished | `test_status.py::TestStatusRunSelection::test_run_selection_prefers_not_finished` | passing |
-| finished run step and stage are none | `test_status.py::TestStatusFinished::test_finished_run_step_and_stage_are_none` | passing |
-| blocked run step and stage are none | `test_status.py::TestStatusBlocked::test_blocked_run_step_and_stage_are_none` | passing |
-| stage from step ledger event | `test_status.py::TestStatusStage::test_stage_from_step_ledger_event` | passing |
-| status after run start shows queued | `test_status.py::TestStatusQueued::test_status_after_run_start_shows_queued` | passing |
-| previous step usd from telemetry store | `test_status.py::TestStatusPrevious::test_previous_step_usd_from_telemetry_store` | passing |
-| ledger rows returns all rows | `test_events_stream.py::TestLedgerRows::test_ledger_rows_returns_all_rows` | passing |
-| ledger rows after filter | `test_events_stream.py::TestLedgerRows::test_ledger_rows_after_filter` | passing |
-| ledger rows skips partial trailing line | `test_events_stream.py::TestLedgerRows::test_ledger_rows_skips_partial_trailing_line` | passing |
-| ledger rows picks up completed trailing line | `test_events_stream.py::TestLedgerRows::test_ledger_rows_picks_up_completed_trailing_line` | passing |
-| ledger rows skips blank lines | `test_events_stream.py::TestLedgerRows::test_ledger_rows_skips_blank_lines` | passing |
-| SSE default kind is ledger | `test_events_stream.py::TestFormatEvent::test_format_event_ledger_default_kind` | passing |
-| stream replays existing rows | `test_events_stream.py::TestStream::test_stream_replays_existing_rows` | passing |
-| events 401 without token | `test_serve_status_events.py::TestEventsEndpoint::test_events_401_without_token` | passing |
-| events 200 with token | `test_serve_status_events.py::TestEventsEndpoint::test_events_200_with_token` | passing |
-| SSE and status not blocked (threading) | `test_serve_status_events.py::TestEventsEndpoint::test_sse_and_status_not_blocked` | passing |
-| events close and reconnect | `test_serve_status_events.py::TestEventsEndpoint::test_events_close_and_reconnect` | passing |
-| status 200 with run | `test_serve_status_events.py::TestStatusEndpoint::test_status_200_with_run` | passing |
-| parse_last_event_id defaults to zero | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_defaults_to_zero` | passing |
-| parse_last_event_id negative raises | `test_events_stream.py::TestParseLastEventId::test_parse_last_event_id_negative_raises` | passing |
+| status with no runs returns empty shape | `test_status.py::StatusEmptyTest::test_empty_shape_has_no_runs` | passing |
+| status with queued run never shows a running step | `test_status.py::StatusWithRunTest::test_queued_run_never_invents_running` | passing |
+| status with running run shows step in flight | `test_status.py::StatusWithRunTest::test_in_flight_step_shows_running` | passing |
+| finished steps show duration and usd | `test_status.py::StatusWithRunTest::test_previous_steps_with_duration` | passing |
+| finished step with skip status is not pass | `test_status.py::StatusWithRunTest::test_skip_is_never_pass` | passing |
+| finished step with no store usd shows null not zero | `test_status.py::StatusWithRunTest::test_previous_step_usd_none_without_telemetry` | passing |
+| next steps from workflow then line | `test_status.py::StatusWithRunTest::test_next_from_workflow_and_line` | passing |
+| next excludes steps already in previous or current | `test_status.py::StatusWithRunTest::test_next_from_workflow_and_line` | passing |
+| GET /factory/status returns 401 without token | `test_serve_status_events.py::ServeStatusEventsTest::test_status_401_without_token` | passing |
+| GET /factory/status returns 200 with valid read token | `test_serve_status_events.py::ServeStatusEventsTest::test_status_200_with_token_empty_shape` | passing |
+| SSE framing produces correct id, event, and data | `test_events_stream.py::FormatEventTest::test_format_event_produces_exact_bytes` | passing |
+| SSE event kind is sanitized | `test_events_stream.py::FormatEventTest::test_format_event_sanitizes_kind` | passing |
+| stage-run rows default to kind stage-run | `test_events_stream.py::FormatEventTest::test_format_event_stage_run_kind` | passing |
+| secrets are redacted in SSE data | `test_events_stream.py::FormatEventTest::test_format_event_redacts_secrets` | passing |
+| Last-Event-ID replay returns only subsequent rows | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_from_header`, `test_serve_status_events.py::ServeStatusEventsTest::test_events_replay_with_last_event_id` | passing |
+| ?after= query parameter replay | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_from_query`, `test_serve_status_events.py::ServeStatusEventsTest::test_events_replay_with_query_after` | passing |
+| Last-Event-ID header takes precedence over ?after= | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_header_wins_over_query` | passing |
+| invalid Last-Event-ID returns 400 | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_invalid_raises`, `test_serve_status_events.py::ServeStatusEventsTest::test_events_invalid_last_event_id_returns_400` | passing |
+| keep-alive comment emitted when idle | `test_events_stream.py::StreamTest::test_stream_keepalive_when_no_rows` | passing |
+| live append to ledger is picked up by stream | `test_events_stream.py::StreamTest::test_stream_emits_new_row_after_fake_sleep`, `test_serve_status_events.py::ServeStatusEventsTest::test_events_live_append_arrives` | passing |
+| client disconnect ends the stream cleanly | `test_events_stream.py::StreamTest::test_stream_broken_pipe_ends_cleanly` | passing |
+| aisdlc status --json prints full payload | `test_serve_status_events.py::CliStatusTest::test_status_json_no_run` | passing |
+| aisdlc status plain text prints summary | `test_serve_status_events.py::CliStatusTest::test_status_plain_text_with_in_flight_step` | passing |
+| status with in-flight step via HTTP | `test_serve_status_events.py::ServeStatusInFlightTest::test_status_http_in_flight_step` | passing |
+| intent propagation from run request | `test_status.py::StatusWithRunTest::test_intent_propagation_from_run_request` | passing |
+| usd summed across multiple telemetry rows | `test_status.py::StatusWithRunTest::test_usd_summed_across_multiple_telemetry_rows` | passing |
+| usd not mixed with another run | `test_status.py::StatusWithRunTest::test_usd_not_mixed_with_another_run` | passing |
+| run selection prefers not finished | `test_status.py::StatusWithRunTest::test_run_selection_prefers_not_finished` | passing |
+| finished run step and stage are none | `test_status.py::StatusWithRunTest::test_finished_run_step_and_stage_are_none` | passing |
+| blocked run step and stage are none | `test_status.py::StatusWithRunTest::test_blocked_run_step_and_stage_are_none` | passing |
+| stage from step ledger event | `test_status.py::StatusWithRunTest::test_stage_from_step_ledger_event` | passing |
+| status after run start shows queued | `test_status.py::StatusWithRunTest::test_status_after_run_start_shows_queued` | passing |
+| previous step usd from telemetry store | `test_status.py::StatusWithRunTest::test_previous_step_usd_from_telemetry_store` | passing |
+| ledger rows returns all rows | `test_events_stream.py::LedgerRowsTest::test_ledger_rows_returns_all_rows` | passing |
+| ledger rows after filter | `test_events_stream.py::LedgerRowsTest::test_ledger_rows_after_filter` | passing |
+| ledger rows skips partial trailing line | `test_events_stream.py::LedgerRowsTest::test_ledger_rows_skips_partial_trailing_line` | passing |
+| ledger rows picks up completed trailing line | `test_events_stream.py::LedgerRowsTest::test_ledger_rows_picks_up_completed_trailing_line` | passing |
+| ledger rows skips blank lines | `test_events_stream.py::LedgerRowsTest::test_ledger_rows_skips_blank_lines` | passing |
+| SSE default kind is ledger | `test_events_stream.py::FormatEventTest::test_format_event_ledger_default_kind` | passing |
+| stream replays existing rows | `test_events_stream.py::StreamTest::test_stream_replays_existing_rows` | passing |
+| events 401 without token | `test_serve_status_events.py::ServeStatusEventsTest::test_events_401_without_token` | passing |
+| events 200 with token | `test_serve_status_events.py::ServeStatusEventsTest::test_events_200_with_token` | passing |
+| SSE and status not blocked (threading) | `test_serve_status_events.py::ServeStatusEventsTest::test_sse_and_status_not_blocked` | passing |
+| events close and reconnect | `test_serve_status_events.py::ServeStatusEventsTest::test_events_close_and_reconnect` | passing |
+| status 200 with run | `test_serve_status_events.py::ServeStatusEventsTest::test_status_200_with_run` | passing |
+| parse_last_event_id defaults to zero | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_defaults_to_zero` | passing |
+| parse_last_event_id negative raises | `test_events_stream.py::ParseLastEventIdTest::test_parse_last_event_id_negative_raises` | passing |
 
 ## Permanent documentation updated
 
