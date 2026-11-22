@@ -351,16 +351,18 @@ describe("events stream proxy", () => {
   });
 
   it("carries security headers on the SSE stream response", async () => {
+    let upstreamSignal: AbortSignal | undefined;
     const streamingFetch: typeof fetch = (async (input: string | URL | Request, init?: RequestInit) => {
       const url = String(input);
       if (url.includes("/factory/session")) {
         return json(200, { identity: "alice", scope: "write", actor: "ui:alice", write_enabled: true });
       }
       if (url.includes("/factory/events")) {
+        upstreamSignal = (init?.signal) ?? undefined;
         const body = new ReadableStream({
           start(controller) {
             controller.enqueue(new TextEncoder().encode('event: ready\ndata: {}\n\n'));
-            controller.close();
+            upstreamSignal?.addEventListener("abort", () => controller.close());
           },
         });
         return new Response(body, {
@@ -380,18 +382,30 @@ describe("events stream proxy", () => {
     });
     const setCookie = signInResp.headers.get("set-cookie")!;
     const cookie = setCookie.split(";")[0];
-    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+    const normalResp = await fetch(`http://127.0.0.1:${port}/api/session`, {
       headers: { cookie },
+    });
+    await normalResp.body!.cancel();
+    const clientAbort = new AbortController();
+    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+      headers: { cookie }, signal: clientAbort.signal,
     });
     expect(resp.status).toBe(200);
     expect(resp.headers.get("content-type")).toContain("text/event-stream");
-    expect(resp.headers.get("content-security-policy")).toContain("default-src 'self'");
-    expect(resp.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
+    expect(resp.headers.get("x-accel-buffering")).toBe("no");
+    const securityHeaders = ["content-security-policy", "x-content-type-options", "referrer-policy", "cache-control"];
+    for (const h of securityHeaders) {
+      const normal = normalResp.headers.get(h);
+      const sse = resp.headers.get(h);
+      expect(sse, `${h} should be non-null on SSE response`).not.toBeNull();
+      expect(sse, `${h} should match the normal response value`).toBe(normal);
+    }
     expect(resp.headers.get("x-content-type-options")).toBe("nosniff");
     expect(resp.headers.get("referrer-policy")).toBe("no-referrer");
     expect(resp.headers.get("cache-control")).toBe("no-store");
-    expect(resp.headers.get("x-accel-buffering")).toBe("no");
-    await resp.body!.cancel();
+    clientAbort.abort();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(upstreamSignal?.aborted).toBe(true);
     await testApp.close();
   });
 
