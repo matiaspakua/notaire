@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2389 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/fix-2389-e2e-rate-limit/` | proposed |
+| Specification | `docs/openspec/changes/fix-2389-e2e-rate-limit/` | implemented |
 | Branch | `fix/2389_e2e_rate_limit` | created |
-| Tasks | `tasks.md` | Gate 1 complete; implementation pending |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Tasks | `tasks.md` | Gates 1-3 complete; PR/CI pending |
+| Commits | 75bddf7c, 9a6d46c0, 26e3f75a, 6ce2758a, 1af11739, 8b1c884a | recorded |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| 429 logged with key type and path, no PII (user key) | `ApiRateLimitFilterTest` — user-key scenario | pending |
-| 429 logged with key type and path, no PII (ip key) | `ApiRateLimitFilterTest` — ip-key scenario | pending |
-| Concurrent first requests all counted | `JpaApiRateWindowStoreConcurrencyTest` | pending |
-| E2e stack rate limit is 20000, prod stays 2000 | `test_e2e_rate_limit_env.py` | pending |
+| 429 logged with key type and path, no PII (user key) | `ApiRateLimitFilterTest` — user-key scenario | passed |
+| 429 logged with key type and path, no PII (ip key) | `ApiRateLimitFilterTest` — ip-key scenario | passed |
+| Concurrent first requests all counted | `JpaApiRateWindowStoreConcurrencyTest` | passed |
+| E2e stack rate limit is 20000, prod stays 2000 | `test_e2e_rate_limit_env.py` | passed |
 
 ## Permanent documentation updated
 
@@ -47,17 +47,17 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `CHANGELOG.md` | yes (Fix entry) | pending |
+| `CHANGELOG.md` | yes (Fix entry) | 8b1c884a |
 
 ## Gate log
 
 | Gate | Condition | Passed | Evidence |
 |------|-----------|--------|----------|
-| 1 | Issue + Specification + Acceptance Criteria | pending | #2389, this change, CU76 |
-| 2 | Failing tests written, test cases designed | <!-- --> | <!-- --> |
-| 3 | Suite green, coverage held, docs updated | <!-- --> | <!-- --> |
-| 4 | CI green, review approved, no conflicts | <!-- --> | <!-- --> |
-| 5 | Deployed, smoke test passed, Issue closed | <!-- --> | <!-- --> |
+| 1 | Issue + Specification + Acceptance Criteria | yes | #2389, this change, CU76 |
+| 2 | Failing tests written, test cases designed | yes | 75bddf7c (red tests) |
+| 3 | Suite green, coverage held, docs updated | yes | mvn verify 2628 tests, JaCoCo gate met; CHANGELOG 8b1c884a |
+| 4 | CI green, review approved, no conflicts | pending | — |
+| 5 | Deployed, smoke test passed, Issue closed | pending | — |
 
 ## Exceptions
 

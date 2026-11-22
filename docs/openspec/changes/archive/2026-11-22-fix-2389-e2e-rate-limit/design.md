@@ -153,3 +153,16 @@ infrastructure configuration.
 ## Open Questions
 
 None.
+
+## Deviations from Plan
+
+1. **Native INSERT `ON CONFLICT DO NOTHING` without column target.** The design specified
+   `ON CONFLICT (bucket_key) DO NOTHING`, but H2 in PostgreSQL mode rejects the column
+   target form `(bucket_key)`. The implementation uses `ON CONFLICT DO NOTHING` (no
+   column target). On PostgreSQL this is equivalent when only the primary key can
+   conflict, which is the case here (PK = `bucket_key`). Commit: 9a6d46c0.
+
+2. **CI workflow `playwright-e2e.yml` and `docker-compose.prod.yml` deliberately not
+   touched.** The CI workflow runs the stack with its own environment variables;
+   `docker-compose.prod.yml` was excluded from the write set. Production defaults
+   remain 2000.
