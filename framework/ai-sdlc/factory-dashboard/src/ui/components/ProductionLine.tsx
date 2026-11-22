@@ -168,7 +168,7 @@ function Detail({ stage, kind, state, report }: { stage: LineStage; kind: Statio
           <dt className="section-label">{t("line.outputs")}</dt><dd data-testid="stage-outputs">{list(stage.outputs)}</dd>
           <dt className="section-label">{t("pl.grants")}</dt><dd className="mono">{list(stage.guardrails.map((g) => g.id))}</dd>
         </dl>
-        <div className="table-wrap">
+        <div className="table-wrap" role="region" tabIndex={0} aria-label={t("pl.gatesOf", { stage: stage.id })}>
           <table className="table pl-gates-table">
             <caption className="section-label">{t("pl.gatesOf", { stage: stage.id })}</caption>
             <thead>
