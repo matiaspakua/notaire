@@ -37,6 +37,7 @@ CODES = {
     "not_implemented": "capability not available (honest empty / 501)",
     "runner_unavailable": "no executable runner port proven",
     "unknown_adapter": "adapter id is not returned by harness list",
+    "invalid_group": "telemetry group is not one of intent|stage|agent|skill|tool",
 }
 
 

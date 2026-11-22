@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 import json
 import os
+import sys
+from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -25,13 +25,14 @@ from aisdlc import (
     intake,
     isolator,
     lifecycle,
+    line,
+    materialize,
     metrics,
     ratchet,
     repo,
     skills,
     stages,
 )
-from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -45,6 +46,7 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
+from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -82,9 +84,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("config", help="validate or print factory configuration")
     config_sub = p.add_subparsers(dest="action", required=True)
     show = config_sub.add_parser("show", help="print the resolved factory config")
+    show.add_argument("path", nargs="?", default=None, help="config file path to display")
     show.add_argument("--redacted", action="store_true", help="required: refuse a raw dump")
     show.add_argument("--json", action="store_true")
     show.add_argument("--max-open-prs", type=int, help="override the open pull-request cap for this print")
+    files_p = config_sub.add_parser("files", help="list config files in the factory tree")
+    files_p.add_argument("--json", action="store_true")
     config_sub.add_parser(
         "validate",
         help="check factory config, plugins, migration inventory, stage→catalog refs (#2182), and context memory packs (#2186)",
@@ -426,6 +431,28 @@ def build_parser() -> argparse.ArgumentParser:
     wrapped.add_argument("--issue")
     wrapped.add_argument("argv", nargs=argparse.REMAINDER, help="command after --")
 
+    # --- Intent entry point: submit / list / show (#2395) ---
+    intent_submit_p = intent_sub.add_parser("submit", help="submit a new intent (prompt|reference|spec)")
+    intent_submit_p.set_defaults(command="intent")
+    intent_submit_p.add_argument("--text", help="prompt text")
+    intent_submit_p.add_argument("--ref", help="reference in system:id format (e.g. github:#123)")
+    intent_submit_p.add_argument("--file", dest="spec_file", help="path to a Markdown spec file")
+    intent_submit_p.add_argument("--title", help="optional title override")
+    intent_submit_p.add_argument("--json", action="store_true")
+
+    intent_list_p = intent_sub.add_parser("list", help="list all intents")
+    intent_list_p.set_defaults(command="intent")
+    intent_list_p.add_argument("--json", action="store_true")
+
+    intent_show_p = intent_sub.add_parser("show", help="show an intent by id")
+    intent_show_p.set_defaults(command="intent")
+    intent_show_p.add_argument("id", help="intent id")
+    intent_show_p.add_argument("--json", action="store_true")
+
+    # --- MCP stdio server command (#2395) ---
+    p = sub.add_parser("mcp", help="run MCP stdio JSON-RPC server")
+    p.set_defaults(command="mcp")
+
     p = sub.add_parser("cost", help="record the token cost of an agent run")
     p.add_argument("--agent", required=True)
     p.add_argument("--model", required=True)
@@ -479,7 +506,14 @@ def build_parser() -> argparse.ArgumentParser:
         q = cat_sub.add_parser(action)
         q.add_argument("--kind", required=True, choices=list(catalogs.KINDS))
         q.add_argument("--id", required=True)
-        if action != "remove":
+        if action == "remove":
+            q.add_argument(
+                "--if-match",
+                type=int,
+                dest="if_match",
+                help="expected current version (If-Match); refuse on mismatch",
+            )
+        else:
             q.add_argument("--ref", help="path or logical reference")
             q.add_argument("--summary", help="short description")
             if action == "add":
@@ -491,6 +525,17 @@ def build_parser() -> argparse.ArgumentParser:
                     dest="if_match",
                     help="expected current version (If-Match); refuse on mismatch",
                 )
+
+    _imp = cat_sub.add_parser("import", help="import AI config from a harness layout into catalog entries")
+    _imp.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
+    _imp.add_argument("--from", dest="from_dir", required=True, help="source harness root directory", type=Path)
+    _imp.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+
+    _mat = cat_sub.add_parser("materialize", help="project catalog entries into a harness layout")
+    _mat.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
+    _mat.add_argument("--dest", required=True, help="destination directory", type=Path)
+    _mat.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+    _mat.add_argument("--check", action="store_true", help="verify disk without writing (exits 1 on drift)")
 
     p = sub.add_parser("project", help="Factory Project + repo binding (#2255)")
     proj_sub = p.add_subparsers(dest="action", required=True)
@@ -658,6 +703,12 @@ def build_parser() -> argparse.ArgumentParser:
     dseed.add_argument("--json", action="store_true")
 
     p = sub.add_parser(
+        "line",
+        help="Production line view: ordered stages, gates, I/O, and guardrails (#2396)",
+    )
+    p.add_argument("--json", action="store_true", help="emit JSON payload instead of human text")
+
+    p = sub.add_parser(
         "serve",
         help="Factory OpenAPI HTTP host (#2253/#2254); loopback + Bearer token",
     )
@@ -787,6 +838,30 @@ def build_parser() -> argparse.ArgumentParser:
         tool_parser.add_argument("--dry-run", action="store_true")
         tool_parser.add_argument("args", nargs="*", help="arguments forwarded to the knowledge CLI")
 
+    # store subcommand (#2394)
+    p = sub.add_parser("store", help="factory store operations (sync, stats)")
+    store_sub = p.add_subparsers(dest="action", required=True)
+    store_sub.add_parser("sync", help="sync evidence ledger, cost, and RepoLens into the store")
+    store_stats = store_sub.add_parser("stats", help="print store row counts")
+    store_stats.add_argument("--json", action="store_true")
+
+    # telemetry subcommand (#2394)
+    p = sub.add_parser("telemetry", help="telemetry record and report")
+    telemetry_sub = p.add_subparsers(dest="action", required=True)
+    rec = telemetry_sub.add_parser("record", help="insert a single telemetry row")
+    rec.add_argument("--stage")
+    rec.add_argument("--agent")
+    rec.add_argument("--metric", required=True)
+    rec.add_argument("--value", type=float, required=True)
+    rec.add_argument("--ok", action="store_true")
+    rpt = telemetry_sub.add_parser("report", help="aggregate telemetry report")
+    rpt.add_argument("--group", default="stage")
+    rpt.add_argument("--json", action="store_true")
+
+    # status subcommand (#2397)
+    p = sub.add_parser("status", help="show live factory status")
+    p.add_argument("--json", action="store_true", help="output as JSON")
+
     return parser
 
 
@@ -875,6 +950,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "backoffice": lambda: _backoffice(ctx, args),
         "runtime": lambda: _runtime(ctx, args),
         "demo": lambda: _demo(ctx, args),
+        "line": lambda: _line(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "serve-token": lambda: _serve_token(ctx, args),
         "coach": lambda: _coach(ctx, args),
@@ -901,8 +977,24 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "knowledge": lambda: _knowledge_cmd(ctx, args),
         "entity": lambda: _entity(ctx, args),
         "intent": lambda: _intent(ctx, args),
+        "store": lambda: _store_cmd(ctx, args),
+        "telemetry": lambda: _telemetry_cmd(ctx, args),
+        "mcp": lambda: _mcp(ctx),
+        "status": lambda: _status_cmd(ctx, args),
     }
     return simple[args.command]()
+
+
+def _line(ctx: Context, args: argparse.Namespace) -> int:
+    """Print the production line view (stages, gates, I/O, guardrails)."""
+    import json as _json
+
+    payload = line.build_line(ctx)
+    if getattr(args, "json", False):
+        print(_json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print(line.render_text(payload))
+    return 0
 
 
 def _foreman(ctx: Context, args: argparse.Namespace) -> int:
@@ -1014,7 +1106,23 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return 0
         if args.action in ("add", "update"):
             return _catalog_write(ctx, args)
-        return catalogs.remove(ctx, args.kind, args.id)
+        if args.action == "remove":
+            return _catalog_remove(ctx, args)
+        if args.action == "import":
+            return materialize.import_harness(
+                ctx,
+                args.harness,
+                Path(args.from_dir),
+                kind_filter=getattr(args, "kind", None),
+            )
+        if args.action == "materialize":
+            return materialize.materialize_harness(
+                ctx,
+                args.harness,
+                Path(args.dest),
+                kind_filter=getattr(args, "kind", None),
+                check=bool(getattr(args, "check", False)),
+            )
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
@@ -1046,6 +1154,25 @@ def _catalog_write(ctx: Context, args: argparse.Namespace) -> int:
         raise
     print(f"catalog {args.action}: {args.kind}/{args.id}@{written['version']}")
     return 0
+
+
+def _catalog_remove(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.actor import from_env
+
+    actor = from_env(channel="cli")
+    try:
+        result = catalogs.delete(
+            ctx, args.kind, args.id,
+            expected_version=getattr(args, "if_match", None),
+            actor=actor,
+        )
+        print(f"catalog remove: {args.kind}/{args.id}@v{result['version']}")
+        return 0
+    except KitError as exc:
+        if exc.code in ("not_found", "version_conflict"):
+            print(f"error: {exc.code}: {exc.detail}")
+            return 1
+        raise
 
 
 def _migrate(ctx: Context, args: argparse.Namespace) -> int:
@@ -1320,7 +1447,14 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+    from aisdlc.intents import (
+        compare,
+        export_csv,
+        finished_runs,
+        log_path,
+        read_events,
+        summary,
+    )
 
     events = read_events(log_path(ctx))
     action = args.intents_action
@@ -1345,6 +1479,72 @@ def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent(ctx: Context, args: argparse.Namespace) -> int:
+    # --- New intent entry point actions (#2395) ---
+    if args.action == "submit":
+        from aisdlc.intent_model import submit as submit_intent
+
+        # Validate exactly one of --text, --ref, --file
+        text_val = getattr(args, "text", None)
+        ref_val = getattr(args, "ref", None)
+        spec_file_val = getattr(args, "spec_file", None)
+        input_count = sum(1 for v in (text_val, ref_val, spec_file_val) if v is not None)
+        if input_count > 1:
+            print("error: provide exactly one of --text, --ref, --file", file=sys.stderr)
+            return 2
+
+        try:
+            spec_content = None
+            if spec_file_val:
+                spec_path = Path(spec_file_val)
+                if not spec_path.is_file():
+                    print(f"error: spec file not found: {spec_file_val}", file=sys.stderr)
+                    return 2
+                spec_content = spec_path.read_text(encoding="utf-8")
+            intent = submit_intent(
+                ctx,
+                text=text_val,
+                ref=ref_val,
+                spec=spec_content,
+                title=getattr(args, "title", None),
+                source_ref=spec_file_val,
+            )
+            if getattr(args, "json", False):
+                print(json.dumps(intent, indent=2, sort_keys=True))
+            else:
+                print(f"intent submitted: {intent['id']} ({intent['kind']})")
+            return 0
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
+            return 2
+
+    if args.action == "list":
+        from aisdlc.intent_model import list_intents
+
+        data = list_intents(ctx)
+        if getattr(args, "json", False):
+            print(json.dumps(data, indent=2, sort_keys=True))
+        else:
+            entries = data.get("entries", [])
+            print(f"[intents] {len(entries)}")
+            for entry in entries:
+                print(f"  - {entry['id']} · {entry.get('title', '')} ({entry.get('kind', '')})")
+        return 0
+
+    if args.action == "show":
+        from aisdlc.intent_model import show_intent
+
+        try:
+            intent = show_intent(ctx, args.id)
+            if getattr(args, "json", False):
+                print(json.dumps(intent, indent=2, sort_keys=True))
+            else:
+                print(f"intent {intent['id']}: {intent.get('title', '')} ({intent.get('kind', '')})")
+            return 0
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
+            return 2
+
+    # --- Legacy intent actions (start/end/tool/run) ---
     from aisdlc.intents import end_intent, record_tool, run_command, start_intent
 
     try:
@@ -1395,7 +1595,42 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
     return 0
 
 
+def _mcp(ctx: Context) -> int:
+    """Run the MCP stdio JSON-RPC server."""
+    from aisdlc import mcp_server
+
+    mcp_server.run(ctx)
+    return 0
+
+
 def _config(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "files":
+        from aisdlc import config_files as cf
+
+        rows = cf.list_config_files(ctx)
+        if args.json:
+            print(json.dumps(rows, indent=2, sort_keys=True))
+        else:
+            for row in rows:
+                print(f"  {row['path']}  ({row['kind']}, {row['size']}b)")
+        return 0
+    if args.action == "show":
+        path_arg = getattr(args, "path", None)
+        if path_arg:
+            from aisdlc import config_files as cf
+
+            result = cf.read_config_file(ctx, path_arg)
+            print(result["content"], end="")
+            return 0
+        if not args.redacted:
+            print("error: config show requires --redacted")
+            return 2
+        from aisdlc.flags import get_flags
+
+        limit = resolve_max_open_prs(ctx.profile, os.environ, args.max_open_prs, flag_provider=get_flags())
+        view = config_view(ctx.profile, limit=limit)
+        print(json.dumps(view, indent=2, sort_keys=True) if args.json else _plain(view))
+        return 0
     if args.action == "validate":
         from aisdlc.context_budget import validate_context_memory
 
@@ -1779,6 +2014,76 @@ def _run(ctx: Context, args: argparse.Namespace) -> int:
 
 def _plain(view: dict) -> str:
     return "\n".join(f"{key}={value}" for key, value in view.items())
+
+
+def _store_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle store sync and stats commands (#2394)."""
+    from aisdlc.telemetry_store import stats as store_stats, sync as store_sync
+
+    if args.action == "sync":
+        counts = store_sync(ctx)
+        print(json.dumps(counts, indent=2, sort_keys=True))
+        return 0
+    if args.action == "stats":
+        result = store_stats(ctx)
+        if getattr(args, "json", False):
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            for table, count in sorted(result.items()):
+                print(f"  {table}: {count}")
+        return 0
+    print(f"error: unknown store action {args.action!r}")
+    return 2
+
+
+def _telemetry_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle telemetry record and report commands (#2394)."""
+    from aisdlc.telemetry_store import record as telemetry_record, report as telemetry_report
+
+    if args.action == "record":
+        ok = getattr(args, "ok", True)
+        telemetry_record(
+            ctx,
+            stage=getattr(args, "stage", None),
+            agent=getattr(args, "agent", None),
+            metric=args.metric,
+            value=args.value,
+            ok=ok,
+        )
+        return 0
+    if args.action == "report":
+        group = getattr(args, "group", "stage") or "stage"
+        result = telemetry_report(ctx, group)
+        if getattr(args, "json", False):
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    print(f"error: unknown telemetry action {args.action!r}")
+    return 2
+
+
+def _status_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle status command (#2397)."""
+    from aisdlc.status import status as status_fn
+
+    result = status_fn(ctx)
+    if getattr(args, "json", False):
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        run = result.get("run") or "(none)"
+        intent = result.get("intent") or "(none)"
+        step = result.get("step") or "(none)"
+        stage = result.get("stage") or "(none)"
+        prev_count = len(result.get("previous", []))
+        next_list = ", ".join(n.get("step", "?") for n in result.get("next", []))
+        next_str = next_list if next_list else "(none)"
+        print(f"run: {run}")
+        print(f"intent: {intent}")
+        print(f"step: {step}  stage: {stage}")
+        print(f"previous: {prev_count} completed")
+        print(f"next: {next_str}")
+    return 0
 
 
 def parse_vars(pairs: list[str]) -> dict[str, str]:

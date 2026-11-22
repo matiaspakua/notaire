@@ -12,12 +12,15 @@ import json
 import os
 import re
 import secrets
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import config_files
+from aisdlc import intent_model as intent_model_mod
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -118,6 +121,15 @@ def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, di
     }
 
 
+def _handle_telemetry(ctx: Context, query: dict[str, list[str]]) -> dict:
+    """GET /factory/telemetry handler (#2394)."""
+    from aisdlc.telemetry_store import report as telemetry_report
+
+    group = (query.get("group") or ["stage"])[0]
+    # report() validates the group and raises KitError("invalid_group") itself
+    return telemetry_report(ctx, group)
+
+
 def _positive_int(raw: str | None) -> int | None:
     if raw is None or raw == "":
         return None
@@ -150,6 +162,10 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
         return harness.list_adapters(ctx.root, ctx.profile)
     if path == "/factory/report":
         return evidence.report_summary(ctx)
+    if path == "/factory/line":
+        from aisdlc import line as _line_mod
+
+        return _line_mod.build_line(ctx)
     if path == "/factory/coach":
         days = (query.get("days") or [None])[0]
         return coach.report(coach.default_home(), root=ctx.root, days=_positive_int(days))
@@ -182,6 +198,25 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     m = re.fullmatch(r"/factory/runs/([^/]+)", path)
     if m:
         return runs.show(ctx, _assert_id(m.group(1)))
+    # Telemetry endpoint (#2394)
+    if path == "/factory/telemetry":
+        return _handle_telemetry(ctx, query)
+    # --- Intent routes (#2395) ---
+    if path == "/factory/intents":
+        return intent_model_mod.list_intents(ctx)
+    m = re.fullmatch(r"/factory/intents/([^/]+)", path)
+    if m:
+        return intent_model_mod.show_intent(ctx, _assert_id(m.group(1)))
+    # --- Config-as-code routes (#2398) ---
+    if path == "/factory/config/files":
+        return config_files.list_config_files(ctx)
+    m = re.fullmatch(r"/factory/config/files/(.+)", path)
+    if m:
+        return config_files.read_config_file(ctx, m.group(1))
+    # Live status endpoint (#2397)
+    if path == "/factory/status":
+        from aisdlc.status import status
+        return status(ctx)
     raise KitError("not_found", f"unknown path {path}")
 
 
@@ -233,6 +268,20 @@ def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int,
     )
 
 
+def _dispatch_delete(ctx: Context, path: str, *, expected_version: int, actor: str) -> Any:
+    _guard_path(path)
+    m = re.fullmatch(r"/factory/catalogs/([^/]+)/([^/]+)", path)
+    if not m:
+        raise KitError("method_not_allowed", f"DELETE not implemented for {path}")
+    kind = m.group(1)
+    entry_id = _assert_id(m.group(2))
+    if kind not in catalogs.KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    return catalogs.delete(
+        ctx, kind, entry_id, expected_version=expected_version, actor=actor,
+    )
+
+
 def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
     _guard_path(path)
     if path == "/factory/projects":
@@ -243,6 +292,17 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             repos=list(body.get("repos") or []),
             actor=actor,
         )
+    # --- Intent routes (#2395) ---
+    if path == "/factory/intents":
+        intent = intent_model_mod.submit(
+            ctx,
+            text=body.get("text"),
+            ref=body.get("ref"),
+            spec=body.get("spec"),
+            title=body.get("title"),
+            actor=actor,
+        )
+        return intent
     m = re.fullmatch(r"/factory/catalogs/([^/]+)", path)
     if m:
         return _create_catalog_entry(ctx, m.group(1), body, actor=actor)
@@ -255,18 +315,32 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             actor=actor,
         )
     if path == "/factory/runs":
+        # --- Intent binding (#2395) ---
+        intent_id = body.get("intent")
+        if intent_id is not None:
+            try:
+                intent_model_mod.show_intent(ctx, str(intent_id))
+            except KitError as exc:
+                if exc.code == "not_found":
+                    raise KitError("not_found", f"intent not found: {intent_id}") from exc
+                raise
         workflow = body.get("workflow")
         if isinstance(workflow, dict):
             workflow_id = str(workflow.get("id") or "")
         else:
             workflow_id = str(workflow or "")
-        return runs.start(
+        run = runs.start(
             ctx,
             project_id=str(body.get("project") or ""),
             workflow_id=workflow_id,
             actor=actor,
             run_id=str(body["id"]) if body.get("id") else None,
+            intent=str(intent_id) if intent_id is not None else None,
         )
+        # Attach run to intent if present
+        if intent_id is not None:
+            intent_model_mod.attach_run(ctx, str(intent_id), run["id"])
+        return run
     m = re.fullmatch(r"/factory/runs/([^/]+)/cancel", path)
     if m:
         runs.cancel_unavailable(ctx, _assert_id(m.group(1)))
@@ -402,6 +476,47 @@ def start_server(
                 raise KitError("invalid_body", "request body must be a JSON object")
             return data
 
+        def _handle_events(
+            self, ctx: Context, method: str, parsed: Any,
+        ) -> None:
+            from aisdlc.events_stream import parse_last_event_id, stream
+
+            if method != "GET":
+                self._problem("method_not_allowed", f"{method} not allowed on events stream")
+                return
+
+            query = parse_qs(parsed.query, keep_blank_values=True)
+            after_raw = (query.get("after") or [None])[0]
+            try:
+                after = parse_last_event_id(
+                    self.headers.get("Last-Event-ID"), after_raw,
+                )
+            except KitError as exc:
+                self._problem(exc.code, exc.detail)
+                return
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
+            self.send_header("X-Accel-Buffering", "no")
+            self.end_headers()
+            self.close_connection = True
+
+            def write(data: bytes) -> None:
+                self.wfile.write(data)
+                self.wfile.flush()
+
+            stop_event = getattr(self.server, "stop_event", None)
+
+            def should_stop() -> bool:
+                return bool(stop_event and stop_event.is_set())
+
+            try:
+                stream(ctx, write, after, should_stop=should_stop)
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                pass
+
         def _handle(self, method: str) -> None:
             parsed = urlparse(self.path)
             path = parsed.path or "/"
@@ -412,6 +527,10 @@ def start_server(
                 return
             if method == "GET" and path == "/factory/session":
                 self._send_json(200, session_view(caller, enable_write=enable_write))
+                return
+            # SSE events stream (#2397) — before JSON dispatch
+            if path == "/factory/events":
+                self._handle_events(ctx, method, parsed)
                 return
             if method in MUTATING and not enable_write:
                 self._problem("method_not_allowed", f"{method} not allowed on read-only host")
@@ -449,13 +568,36 @@ def start_server(
                     body = self._read_json_body()
                     actor = from_token_identity(active.identity, active.scope)
                     data = _dispatch_post(ctx, path, body, actor=actor)
+                    # POST /factory/intents returns 201 (#2395)
+                    status_code = 201 if path == "/factory/intents" else 200
+                    self._send_json(status_code, data)
+                    return
+                if method == "DELETE":
+                    active = self._authenticate("write")
+                    _require_csrf(self.headers, active)
+                    expected = _parse_if_match(self.headers.get("If-Match"))
+                    actor = from_token_identity(active.identity, active.scope)
+                    data = _dispatch_delete(
+                        ctx, path, expected_version=expected, actor=actor,
+                    )
                     self._send_json(200, data)
                     return
                 self._problem("method_not_allowed", f"{method} not implemented")
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
 
-    return ThreadingHTTPServer((host, port), Handler)
+    class _FactoryServer(ThreadingHTTPServer):
+        daemon_threads = True
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.stop_event = threading.Event()
+
+        def shutdown(self, request_handler=None) -> None:
+            self.stop_event.set()
+            super().shutdown()
+
+    return _FactoryServer((host, port), Handler)
 
 
 def serve(

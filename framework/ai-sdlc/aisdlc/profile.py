@@ -168,6 +168,8 @@ class StageProfile:
     mcp: tuple[str, ...] = ()
     model: str | None = None
     effort: StageEffort = StageEffort()
+    inputs: tuple[str, ...] = ()
+    outputs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -749,6 +751,8 @@ def _stage_profiles(raw: list, gate_stages: set[str], errors: list[str]) -> tupl
                 mcp=_string_list(item.get("mcp"), f"{label} mcp", errors),
                 model=model.strip() if isinstance(model, str) else None,
                 effort=_effort(item.get("effort"), f"{label} effort", errors),
+                inputs=_string_list(item.get("inputs"), f"{label} inputs", errors),
+                outputs=_string_list(item.get("outputs"), f"{label} outputs", errors),
             )
         )
     return tuple(found)

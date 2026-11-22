@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.2.0
+  version: 1.3.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -23,6 +23,16 @@ info:
     1.2.0 (#2384) adds named tokens (`.aisdlc/serve.tokens`, one identity and scope per person,
     recorded as the actor) and the owner-only coach report (`/factory/coach`): local harness
     session counts and anti-patterns, never prompt or response text.
+    1.3.0 (#2394) adds the factory store (SQLite mirror of the evidence ledger) and the
+    read-only telemetry endpoint (`/factory/telemetry`): aggregated time, cost, and failure
+    counts grouped by intent, stage, agent, skill, or tool.
+    1.3.0 (#2395) adds Intent (submit, list, show), run-intent binding, and the MCP stdio
+    server (`aisdlc mcp`) with tools `intent_submit`, `intent_show`, `factory_status`.
+    1.3.0 (#2397) adds live factory status (`/factory/status`) derived from the evidence
+    ledger and the store, and a Server-Sent Events stream (`/factory/events`) of ledger
+    rows with Last-Event-ID replay and keep-alive.
+    1.3.0 (#2398) adds configuration-as-code: config file tree and read with redaction
+    and confinement, plus catalog DELETE with If-Match, CSRF, write scope, and evidence.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -37,6 +47,11 @@ tags:
   - name: projects
   - name: runs
   - name: coach
+  - name: telemetry
+  - name: intents
+  - name: line
+  - name: status
+  - name: events
 paths:
   /factory/capabilities:
     get:
@@ -70,6 +85,67 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FactoryConfig"
+  /factory/config/files:
+    get:
+      tags: [config]
+      operationId: listConfigFiles
+      summary: Config file tree — profile, policy, context, catalogs, projects, skills (#2398)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Array of ConfigFile rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConfigFile"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/config/files/{path}:
+    get:
+      tags: [config]
+      operationId: getConfigFile
+      summary: Read a config file with secret redaction; paths confined to config roots (#2398)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Relative path from the repository root
+      responses:
+        "200":
+          description: File content with redaction metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigFileContent"
+        "400":
+          description: Invalid path (traversal or encoded separator)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: File not found or outside config roots
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/plugins:
     get:
       tags: [plugins]
@@ -149,6 +225,128 @@ paths:
                 $ref: "#/components/schemas/CoachReport"
         "403":
           description: Token scope below owner
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/telemetry:
+    get:
+      tags: [telemetry]
+      operationId: getFactoryTelemetry
+      summary: Aggregated telemetry report from the factory store (CLI `telemetry report --json`)
+      description: |
+        Reads the SQLite store (`.aisdlc/factory.db`) and returns aggregated time, cost,
+        and failure counts grouped by the requested dimension. RepoLens query text and files
+        are never stored. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: group
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [intent, stage, agent, skill, tool]
+            default: stage
+      responses:
+        "200":
+          description: Telemetry report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TelemetryReport"
+        "400":
+          description: Invalid group parameter (`invalid_group`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/status:
+    get:
+      tags: [status]
+      operationId: getFactoryStatus
+      summary: Live factory status derived from the evidence ledger and the store
+      description: |
+        Returns the current intent, run, stage/step, previous steps (outcome, duration,
+        cost), and next steps from the workflow and profile line. Never invents a running
+        state — a step is "current" only when step.started has no matching step.finished
+        in a run whose derived status is running. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Factory status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryStatus"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/events:
+    get:
+      tags: [events]
+      operationId: streamFactoryEvents
+      summary: Server-Sent Events stream of ledger rows
+      description: |
+        Streams evidence ledger rows as SSE frames. Each frame:
+        `id: <n>\nevent: <kind>\ndata: <json>\n\n` where `id` is the 1-based ledger
+        line number, `kind` is the sanitized event kind, and `data` is compact JSON
+        with secrets redacted. Keep-alive comment `: keep-alive` every 15 seconds.
+        Ledger is polled every second. Supports replay via `Last-Event-ID` header
+        (wins) or `?after=` query parameter. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Skip ledger lines up to this number (overridden by Last-Event-ID header)
+        - name: Last-Event-ID
+          in: header
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Replay from this ledger line number (takes precedence over ?after=)
+      responses:
+        "200":
+          description: SSE stream (text/event-stream)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: |
+                id: 1
+                event: run.request
+                data: {"kind":"run.request","run_id":"abc123"}
+
+                id: 2
+                event: step.started
+                data: {"kind":"step.started","run_id":"abc123","step":"plan"}
+
+                : keep-alive
+
+        "400":
+          description: Invalid Last-Event-ID or after parameter (`invalid_body`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
           content:
             application/problem+json:
               schema:
@@ -277,6 +475,85 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "400":
           description: Literal secret in fields (`literal_secret`) or invalid body
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "428":
+          description: If-Match required
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+    delete:
+      tags: [catalogs]
+      operationId: deleteCatalogEntry
+      summary: Delete a catalog entry with optimistic concurrency, CSRF, and evidence (#2398)
+      security:
+        - bearerAuth: [write]
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: Expected current entity version; mismatch yields 409
+          schema:
+            type: string
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          description: Must equal the Bearer token value (double-submit CSRF)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted entry confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [id, kind, version]
+                properties:
+                  id: { type: string }
+                  kind:
+                    $ref: "#/components/schemas/CatalogKind"
+                  version: { type: integer, minimum: 1 }
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Insufficient scope or CSRF mismatch
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Entry not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "405":
+          description: Write not enabled on this host
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Version conflict (If-Match mismatch)
           content:
             application/problem+json:
               schema:
@@ -500,6 +777,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Run"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Token scope below write
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Intent not found (when `intent` is present but unknown)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "409":
           description: Workflow not approved
           content:
@@ -561,6 +856,97 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /factory/intents:
+    get:
+      tags: [intents]
+      operationId: listIntents
+      summary: List all factory intents
+      responses:
+        "200":
+          description: Intent list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentList"
+    post:
+      tags: [intents]
+      operationId: submitIntent
+      summary: Submit a new intent (prompt, reference, or spec)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntentSubmit"
+      responses:
+        "201":
+          description: Intent created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Intent"
+        "400":
+          description: Bad request (e.g. literal secret detected)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/line:
+    get:
+      tags: [line]
+      operationId: getProductionLine
+      summary: Production line model (CLI `aisdlc line --json`); ordered stages with gates, agents, skills, tools/MCP, guardrails
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Production line model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionLine"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Token scope below write
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/intents/{id}:
+    get:
+      tags: [intents]
+      operationId: getIntent
+      summary: Show an intent by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Intent details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Intent"
+        "404":
+          description: Intent not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 components:
   securitySchemes:
     bearerAuth:
@@ -578,6 +964,28 @@ components:
         status: { type: integer }
         detail: { type: string }
         code: { type: string }
+    ConfigFile:
+      type: object
+      additionalProperties: false
+      required: [path, kind, size, media_type]
+      properties:
+        path: { type: string, description: "Relative path from the repository root" }
+        kind:
+          type: string
+          enum: [profile, policy, context, catalog, project, skill]
+        size: { type: integer, minimum: 0 }
+        media_type: { type: string }
+        read_only: { type: boolean, default: false }
+    ConfigFileContent:
+      type: object
+      additionalProperties: false
+      required: [path, content, redacted, media_type, size]
+      properties:
+        path: { type: string }
+        content: { type: string, description: "File text with secrets redacted" }
+        redacted: { type: boolean, description: "True when at least one secret was replaced" }
+        media_type: { type: string }
+        size: { type: integer, minimum: 0, description: "Original byte size before redaction" }
     FactoryCapabilities:
       type: object
       additionalProperties: true
@@ -1084,6 +1492,9 @@ components:
         requested_by: { type: string }
         requested_at: { type: string, format: date-time }
         evidence_head: { type: string }
+        intent:
+          type: string
+          description: Optional intent id bound to this run (set when POST /factory/runs body includes `intent`)
         steps:
           type: array
           items:
@@ -1116,6 +1527,9 @@ components:
           oneOf:
             - type: string
             - $ref: "#/components/schemas/RunWorkflowRef"
+        intent:
+          type: string
+          description: Optional intent id to bind to this run; 404 if the intent does not exist
     RunList:
       type: object
       additionalProperties: true
@@ -1145,3 +1559,277 @@ components:
               run_id: { type: string }
               ts: { type: string, format: date-time }
               prev: { type: string }
+    TelemetryReport:
+      type: object
+      additionalProperties: true
+      required: [group, rows, total_runs, total_duration_s, total_usd, total_failures]
+      properties:
+        group:
+          type: string
+          enum: [intent, stage, agent, skill, tool]
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/TelemetryRow"
+        total_runs: { type: integer }
+        total_duration_s: { type: number }
+        total_usd: { type: number }
+        total_failures: { type: integer }
+        failures_by_integration:
+          type: object
+          additionalProperties: { type: integer }
+          description: Maps integration name (tool/adapter id) to failure count
+        repolens:
+          $ref: "#/components/schemas/TelemetryRepolens"
+    TelemetryRow:
+      type: object
+      additionalProperties: true
+      required: [key, runs, duration_s, usd, failures]
+      properties:
+        key: { type: string }
+        runs: { type: integer }
+        duration_s: { type: number }
+        usd: { type: number }
+        failures: { type: integer }
+    TelemetryRepolens:
+      type: object
+      additionalProperties: true
+      required: [calls, total_ms, avg_ms, by_tool]
+      properties:
+        calls: { type: integer }
+        total_ms: { type: number }
+        avg_ms: { type: number }
+        by_tool:
+          type: object
+          additionalProperties: { type: integer }
+          description: Maps tool name to call count
+    IntentSource:
+      type: object
+      additionalProperties: true
+      required: [system, ref]
+      properties:
+        system:
+          type: string
+          enum: [github, jira, url, file, ""]
+          description: >-
+            The external system the intent references. Empty string ("") for prompt
+            intents that have no external reference. Values: github, jira, url, file.
+        ref: { type: string }
+    IntentReference:
+      type: object
+      additionalProperties: true
+      required: [label, url, kind]
+      properties:
+        label: { type: string }
+        url: { type: string }
+        kind:
+          type: string
+          enum: [architecture, security, adr, standard, other]
+    Intent:
+      type: object
+      additionalProperties: true
+      required: [id, kind, title, text, source, acceptance, references, status, created_by, created_at, run_ids]
+      properties:
+        id: { type: string }
+        kind:
+          type: string
+          enum: [prompt, reference, spec]
+        title: { type: string }
+        text: { type: string }
+        source:
+          $ref: "#/components/schemas/IntentSource"
+        acceptance:
+          type: array
+          items: { type: string }
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/IntentReference"
+        status: { type: string }
+        created_by: { type: string }
+        created_at: { type: string, format: date-time }
+        run_ids:
+          type: array
+          items: { type: string }
+        version: { type: integer }
+    IntentSubmit:
+      type: object
+      additionalProperties: true
+      properties:
+        text: { type: string }
+        ref: { type: string }
+        spec: { type: string }
+        title: { type: string }
+    IntentList:
+      type: object
+      additionalProperties: true
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [intents]
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Intent"
+    LineGate:
+      type: object
+      additionalProperties: true
+      required: [id, name, command, required, mode, expect, paths]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        command: { type: string }
+        required: { type: boolean }
+        mode: { type: string, enum: [required, advisory] }
+        expect: { type: string, enum: [pass, fail] }
+        paths:
+          type: array
+          items: { type: string }
+    LineStage:
+      type: object
+      additionalProperties: true
+      required: [id, gates]
+      properties:
+        id: { type: string }
+        title: { type: [string, "null"] }
+        gates:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineGate"
+        agents:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+        mcp:
+          type: array
+          items: { type: string }
+        tools:
+          type: array
+          items: { type: string }
+        model: { type: [string, "null"] }
+        effort:
+          type: [object, "null"]
+          additionalProperties: true
+        inputs:
+          type: array
+          items: { type: string }
+        outputs:
+          type: array
+          items: { type: string }
+        io_source: { type: string }
+    LineGuardrails:
+      type: object
+      additionalProperties: true
+      required: [protected, hooks, rules, isolator]
+      properties:
+        protected:
+          type: object
+          additionalProperties: true
+          required: [owner, paths]
+          properties:
+            owner: { type: string }
+            paths:
+              type: array
+              items: { type: string }
+        hooks:
+          type: array
+          items: { type: string }
+        rules:
+          type: array
+          items: { type: string }
+        isolator:
+          type: object
+          additionalProperties: true
+          required: [status, sandbox, backend, enforces_committer]
+          properties:
+            status: { type: string }
+            sandbox: { type: boolean }
+            backend: { type: [string, "null"] }
+            enforces_committer: { type: boolean }
+            detail: { type: [string, "null"] }
+    ProductionLine:
+      type: object
+      additionalProperties: true
+      required: [schema_version, stages, guardrails]
+      properties:
+        schema_version: { type: integer }
+        stages:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineStage"
+        guardrails:
+          $ref: "#/components/schemas/LineGuardrails"
+    FactoryStatus:
+      type: object
+      additionalProperties: true
+      required: [intent, run, workflow, run_status, stage, step, previous, next, updated_at]
+      properties:
+        intent:
+          type: [string, "null"]
+          description: Current intent id, or null when no run
+        run:
+          type: [string, "null"]
+          description: Current run id, or null when no run
+        workflow:
+          type: [object, "null"]
+          description: Workflow reference (id, version, digest), or null when no run
+        run_status:
+          type: [string, "null"]
+          description: Derived run status (requested/queued/running/blocked/succeeded/failed/cancelled), or null
+        stage:
+          type: [string, "null"]
+          description: Stage of the step currently running, or null
+        step:
+          type: [string, "null"]
+          description: Step id currently running, or null
+        previous:
+          type: array
+          description: Completed steps in ledger order
+          items:
+            $ref: "#/components/schemas/FactoryStatusStep"
+        next:
+          type: array
+          description: Upcoming steps from the workflow and profile line
+          items:
+            $ref: "#/components/schemas/FactoryStatusNext"
+        updated_at:
+          type: [string, "null"]
+          description: ISO timestamp of the last ledger row used, or null when no run
+    FactoryStatusStep:
+      type: object
+      additionalProperties: true
+      required: [step, stage, status, started_at, finished_at, duration_s, usd]
+      properties:
+        step: { type: string }
+        stage:
+          type: [string, "null"]
+        status:
+          type: string
+          enum: [pass, fail, skip]
+        started_at:
+          type: [string, "null"]
+          description: ISO timestamp from step.started, or null
+        finished_at:
+          type: [string, "null"]
+          description: ISO timestamp from step.finished, or null
+        duration_s:
+          type: [number, "null"]
+          description: Duration in seconds, or null when timestamps unavailable
+        usd:
+          type: [number, "null"]
+          description: Cost in USD from store telemetry, or null when unknown
+    FactoryStatusNext:
+      type: object
+      additionalProperties: true
+      required: [step, stage, source]
+      properties:
+        step: { type: string }
+        stage:
+          type: [string, "null"]
+        source:
+          type: string
+          enum: [workflow, line]
+          description: 'Source of the next step: "workflow" from workflow body, "line" from profile stages'

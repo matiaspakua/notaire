@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from aisdlc.catalogs import KINDS, list_entries
 from aisdlc.context import Context
-from aisdlc.profile import Profile, ProfileError, StageProfile
+from aisdlc.profile import Profile, ProfileError
 
 
 def stage_dicts(profile: Profile) -> list[dict]:
@@ -32,6 +32,8 @@ def stage_dicts(profile: Profile) -> list[dict]:
                 "mcp": list(stage.mcp),
                 "model": stage.model,
                 "effort": effort,
+                "inputs": list(stage.inputs),
+                "outputs": list(stage.outputs),
             }
         )
     return rows

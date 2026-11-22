@@ -68,13 +68,9 @@ PRIVATE = ("serve.token", "serve.tokens", "serve.tmp")
 
 def _keep_out_of_git(root: Path) -> None:
     """Token files live inside the adopter's repository; a .gitignore next to them keeps them out of commits."""
-    ignore = root / TOKEN_REL.parent / ".gitignore"
-    text = ignore.read_text(encoding="utf-8") if ignore.is_file() else ""
-    missing = [name for name in PRIVATE if name not in text.splitlines()]
-    if missing:
-        ignore.parent.mkdir(parents=True, exist_ok=True)
-        prefix = "\n" if text and not text.endswith("\n") else ""
-        ignore.write_text(text + prefix + "".join(f"{name}\n" for name in missing), encoding="utf-8")
+    from aisdlc.store import keep_out_of_git as _store_keep
+
+    _store_keep(root, list(PRIVATE))
 
 
 def ensure_token(root: Path, *, scope: str = DEFAULT_SCOPE) -> ServeToken:

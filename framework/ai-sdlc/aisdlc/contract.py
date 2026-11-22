@@ -25,8 +25,14 @@ REQUIRED_PATHS = (
     "/factory/workflows",
     "/factory/projects",
     "/factory/runs",
+    "/factory/intents",
+    "/factory/intents/{id}",
     "/factory/coach",
     "/factory/session",
+    "/factory/telemetry",
+    "/factory/line",
+    "/factory/status",
+    "/factory/events",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -39,6 +45,12 @@ SCHEMA_MARKERS = (
     "RunRequest",
     "CoachReport",
     "SessionView",
+    "TelemetryReport",
+    "ProductionLine",
+    "LineStage",
+    "LineGate",
+    "LineGuardrails",
+    "FactoryStatus",
 )
 CONFIG_REQUIRED = (
     "schema",
