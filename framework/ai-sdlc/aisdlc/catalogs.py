@@ -303,7 +303,7 @@ def guard_files(files: object) -> dict:
         if not isinstance(value, str):
             raise KitError("invalid_body", f"files[{key!r}] value must be a string (not {type(value).__name__})")
         # Reject absolute paths and path-traversal
-        if key.startswith("/") or key.startswith("\\"):
+        if key.startswith(("/", "\\")):
             raise KitError("invalid_path", f"files[{key!r}]: absolute paths are not allowed")
         parts = key.replace("\\", "/").split("/")
         if ".." in parts:

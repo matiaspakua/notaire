@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 import json
 import os
+from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -31,7 +30,9 @@ from aisdlc import (
     skills,
     stages,
 )
-from aisdlc.telemetry import get_telemetry
+from aisdlc import (
+    materialize as _materialize_mod,
+)
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -45,6 +46,7 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
+from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -491,6 +493,23 @@ def build_parser() -> argparse.ArgumentParser:
                     dest="if_match",
                     help="expected current version (If-Match); refuse on mismatch",
                 )
+
+    _imp = cat_sub.add_parser("import", help="import AI config from a harness layout into catalog entries")
+    _imp.add_argument(
+        "--harness", required=True, choices=sorted(["claude-code", "cursor", "codex", "junie", "kiro", "agy"]),
+    )
+    _imp.add_argument("--from", dest="from_dir", required=True, help="source harness root directory", type=Path)
+    _imp.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+    _imp.add_argument("--json", action="store_true")
+
+    _mat = cat_sub.add_parser("materialize", help="project catalog entries into a harness layout")
+    _mat.add_argument(
+        "--harness", required=True, choices=sorted(["claude-code", "cursor", "codex", "junie", "kiro", "agy"]),
+    )
+    _mat.add_argument("--dest", required=True, help="destination directory", type=Path)
+    _mat.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+    _mat.add_argument("--check", action="store_true", help="verify disk without writing (exits 1 on drift)")
+    _mat.add_argument("--json", action="store_true")
 
     p = sub.add_parser("project", help="Factory Project + repo binding (#2255)")
     proj_sub = p.add_subparsers(dest="action", required=True)
@@ -1014,6 +1033,21 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return 0
         if args.action in ("add", "update"):
             return _catalog_write(ctx, args)
+        if args.action == "import":
+            return _materialize_mod.import_harness(
+                ctx,
+                args.harness,
+                Path(args.from_dir),
+                kind_filter=getattr(args, "kind", None),
+            )
+        if args.action == "materialize":
+            return _materialize_mod.materialize_harness(
+                ctx,
+                args.harness,
+                Path(args.dest),
+                kind_filter=getattr(args, "kind", None),
+                check=bool(getattr(args, "check", False)),
+            )
         return catalogs.remove(ctx, args.kind, args.id)
     except ProfileError as exc:
         print(f"error: {exc}")
@@ -1320,7 +1354,14 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+    from aisdlc.intents import (
+        compare,
+        export_csv,
+        finished_runs,
+        log_path,
+        read_events,
+        summary,
+    )
 
     events = read_events(log_path(ctx))
     action = args.intents_action

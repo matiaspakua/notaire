@@ -23,8 +23,21 @@ TAIL_LINES = 40
 @dataclass
 class Context:
     root: Path
-    profile: Profile
-    profile_path: Path | None
+    profile: Profile | None = None
+    profile_path: Path | None = None
+
+    def __post_init__(self) -> None:
+        if self.profile is None:
+            from aisdlc.profile import Profile, find_profile, load_profile
+            pp = find_profile(self.root)
+            if pp is not None:
+                try:
+                    self.profile = load_profile(pp)
+                    self.profile_path = pp
+                except (ValueError, KeyError, OSError):
+                    self.profile = Profile(name="auto")
+            else:
+                self.profile = Profile(name="auto")
 
     def path(self, rel: str) -> Path:
         return self.root / rel
