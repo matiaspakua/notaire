@@ -30,10 +30,15 @@ if it appears in `[[stages]]` **or** has at least one gate declared in `[[gates]
 
 #### Scenario: stage with no gates still listed
 
-- **GIVEN** a profile that declares a `[[stages]]` block for `pre-push` with
-  no corresponding `[[gates]]` entry
+- **GIVEN** a gate-only stage such as `green` that has a gate and no `[[stages]]`
+  block
 - **WHEN** `build_line(ctx)` is called
-- **THEN** `pre-push` appears in `stages` with `gates: []`
+- **THEN** `green` appears in `stages` with its declared gate
+
+The current profile loader rejects a `[[stages]]` id that has no corresponding
+`[[gates]]` entry. Therefore a directly declared gate-less `[[stages]]` stage is not
+loadable; the guard is preserved by the loader and the test uses the nearest
+observable case, a gate-only stage.
 
 ### Requirement: Gate shape
 

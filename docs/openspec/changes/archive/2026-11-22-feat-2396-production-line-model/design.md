@@ -99,8 +99,13 @@ block) to minimise merge conflicts with parallel workers (#2394 store, #2395 int
 
 `line.py` computes the union of `{sp.id for sp in profile.stage_profiles}` and
 `profile.stages()` (which already returns stages that have gates). The union is ordered
-by `profile.stages()` first, then alphabetically for any purely `[[stages]]`-only extras
-that have no gates.
+by `profile.stages()` first, then alphabetically for any extra stage ids.
+
+Implementation constraint: `_stage_profiles` rejects a `[[stages]]` id that is absent
+from the gate stage set, so a purely `[[stages]]`-only stage cannot be loaded by the
+current profile parser. The union therefore normally includes declared stage ids that
+also have gates; preserving the union still makes the composition rule explicit and
+allows gate-less declarations to become reachable if the loader is changed later.
 
 ## Riesgos / Trade-offs
 

@@ -46,7 +46,7 @@ it, the factory cannot explain itself or be supervised.
 | Rule | Source | New / Changed / Made explicit |
 |------|--------|-------------------------------|
 | The production line is derived from the profile; the profile is the single source of truth for stage order, gates, agents, skills, MCP and model routing | CU76, #2393 shared contract (C) | Made explicit |
-| A stage appears in the line if it is declared in `[[stages]]` or has at least one gate; stages with neither are omitted | CU76, #2393 (C) | New |
+| A stage appears in the line if it is declared in `[[stages]]` or has at least one gate; stages with neither are omitted | CU76, #2393 (C) | New, with loader guard: gate-less `[[stages]]` declarations are currently rejected |
 | Stage order follows `profile.stages()`: canonical lifecycle order first, then alphabetical for any extras | CU76 | New |
 | `inputs`/`outputs` on a stage are optional; when absent, the kit provides defaults for the seven known stage ids (plan, red, green, pre-push, pre-pr, merge, release); `io_source` distinguishes `"profile"` from `"default"` | CU76, #2393 (C) | New |
 | Guardrails expose protected paths (owner + path list), hook-paths (protected paths whose value contains `hook`), the rules catalog entries, and the isolator status — never secrets | CU76, #2393 (C) | New |
