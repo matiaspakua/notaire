@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.2.0
+  version: 1.3.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -23,6 +23,9 @@ info:
     1.2.0 (#2384) adds named tokens (`.aisdlc/serve.tokens`, one identity and scope per person,
     recorded as the actor) and the owner-only coach report (`/factory/coach`): local harness
     session counts and anti-patterns, never prompt or response text.
+    1.3.0 (#2394) adds the factory store (SQLite mirror of the evidence ledger) and the
+    read-only telemetry endpoint (`/factory/telemetry`): aggregated time, cost, and failure
+    counts grouped by intent, stage, agent, skill, or tool.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -37,6 +40,7 @@ tags:
   - name: projects
   - name: runs
   - name: coach
+  - name: telemetry
 paths:
   /factory/capabilities:
     get:
@@ -149,6 +153,44 @@ paths:
                 $ref: "#/components/schemas/CoachReport"
         "403":
           description: Token scope below owner
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/telemetry:
+    get:
+      tags: [telemetry]
+      operationId: getFactoryTelemetry
+      summary: Aggregated telemetry report from the factory store (CLI `telemetry report --json`)
+      description: |
+        Reads the SQLite store (`.aisdlc/factory.db`) and returns aggregated time, cost,
+        and failure counts grouped by the requested dimension. RepoLens query text and files
+        are never stored. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: group
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [intent, stage, agent, skill, tool]
+            default: stage
+      responses:
+        "200":
+          description: Telemetry report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TelemetryReport"
+        "400":
+          description: Invalid group parameter (`invalid_group`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
           content:
             application/problem+json:
               schema:
@@ -1145,3 +1187,47 @@ components:
               run_id: { type: string }
               ts: { type: string, format: date-time }
               prev: { type: string }
+    TelemetryReport:
+      type: object
+      additionalProperties: true
+      required: [group, rows, total_runs, total_duration_s, total_usd, total_failures]
+      properties:
+        group:
+          type: string
+          enum: [intent, stage, agent, skill, tool]
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/TelemetryRow"
+        total_runs: { type: integer }
+        total_duration_s: { type: number }
+        total_usd: { type: number }
+        total_failures: { type: integer }
+        failures_by_integration:
+          type: object
+          additionalProperties: { type: integer }
+          description: Maps integration name (tool/adapter id) to failure count
+        repolens:
+          $ref: "#/components/schemas/TelemetryRepolens"
+    TelemetryRow:
+      type: object
+      additionalProperties: true
+      required: [key, runs, duration_s, usd, failures]
+      properties:
+        key: { type: string }
+        runs: { type: integer }
+        duration_s: { type: number }
+        usd: { type: number }
+        failures: { type: integer }
+    TelemetryRepolens:
+      type: object
+      additionalProperties: true
+      required: [calls, total_ms, avg_ms, by_tool]
+      properties:
+        calls: { type: integer }
+        total_ms: { type: integer }
+        avg_ms: { type: number }
+        by_tool:
+          type: object
+          additionalProperties: { type: integer }
+          description: Maps tool name to call count
