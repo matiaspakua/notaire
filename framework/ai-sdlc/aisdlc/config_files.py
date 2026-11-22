@@ -42,16 +42,14 @@ def _redact_text(text: str, media_type: str) -> tuple[str, bool]:
     """
     was_redacted = False
 
-    # JSON: parse, redact keys, dump back.
     if "json" in media_type:
         try:
             obj = json.loads(text)
             redacted_obj = factory_redact("", obj)
-            # Detect if anything changed
-            was_redacted = _json_changed(text, redacted_obj)
+            was_redacted = redacted_obj != obj
             return json.dumps(redacted_obj, indent=2) + "\n", was_redacted
         except (json.JSONDecodeError, TypeError):
-            pass  # fall through to text-based redaction
+            pass
 
     lines = text.split("\n")
     out_lines: list[str] = []
@@ -66,42 +64,20 @@ def _redact_text(text: str, media_type: str) -> tuple[str, bool]:
     return "\n".join(out_lines), was_redacted
 
 
-def _json_changed(original: str, redacted_obj: Any) -> bool:
-    """Check if redaction changed anything in the JSON."""
-    redacted_str = json.dumps(redacted_obj, indent=2, sort_keys=True)
-    try:
-        original_obj = json.loads(original)
-        original_str = json.dumps(original_obj, indent=2, sort_keys=True)
-    except (json.JSONDecodeError, TypeError):
-        return True
-    return redacted_str != original_str
-
-
 def _redact_key_value_line(line: str) -> tuple[str, bool]:
-    """Redact a key = value or key: value line if the key matches SECRET_KEYS."""
-    # Match 'key = value' or 'key: value' patterns
-    m = re.match(r'^(\s*\w+)\s*[=:]\s*(.*)$', line)
-    if m:
-        key = m.group(1).strip()
-        value = m.group(2).strip()
-        # Strip quotes
-        if (value.startswith('"') and value.endswith('"')) or \
-           (value.startswith("'") and value.endswith("'")):
-            value_inner = value[1:-1]
-        else:
-            value_inner = value
-        # Skip env:NAME references
-        if value_inner.startswith("env:"):
-            return line, False
-        if SECRET_KEYS.search(key):
-            # Preserve the quote style
-            if value.startswith('"'):
-                return f'{m.group(1)} = "***"', True
-            elif value.startswith("'"):
-                return f"{m.group(1)} = '***'", True
-            else:
-                return f'{m.group(1)} = "***"', True
-    return line, False
+    m = re.match(r"^(\s*\w+)\s*[=:]\s*(.*)$", line)
+    if not m:
+        return line, False
+    key = m.group(1).strip()
+    value = m.group(2).strip()
+    quote = value[0] if value and value[0] in ('"', "'") else None
+    inner = value[1:-1] if quote and value.endswith(quote) else value
+    if inner.startswith("env:"):
+        return line, False
+    if not SECRET_KEYS.search(key):
+        return line, False
+    q = quote if quote else '"'
+    return f"{m.group(1)} = {q}***{q}", True
 
 
 def _guard_path(raw: str) -> str:
@@ -127,112 +103,41 @@ def _guard_path(raw: str) -> str:
     return raw
 
 
-def _config_entries(ctx: Context):
-    """Yield (path, kind, read_only) for every config-root file.
+def _inside_root(path: Path, root_resolved: Path) -> bool:
+    """Return True when *path* resolves inside *root_resolved*."""
+    resolved = path.resolve()
+    return resolved == root_resolved or root_resolved in resolved.parents
 
-    Single source of truth for both listing and read-confinement.
-    Uses the real profile fields directly (no getattr / dict fallbacks).
-    Every yielded file has its resolved path inside the repository root.
-    """
+
+def _config_entries(ctx: Context) -> list[tuple[Path, str, bool]]:
+    """Return every config-root file as (path, kind, read_only)."""
     root_resolved = ctx.root.resolve()
     profile = ctx.profile
 
-    def _yield_file(path: Path, kind: str, *, read_only: bool = False) -> None:
-        if not path.is_file():
-            return
-        resolved = path.resolve()
-        if root_resolved not in resolved.parents and resolved != root_resolved:
-            return  # resolved target outside repo root — skip
-        yield (path, kind, read_only)
-
-    # Profile file
-    if ctx.profile_path.is_file():
-        for entry in _yield_file(ctx.profile_path, "profile"):
-            yield entry
-
-    # Policy
+    table: list[tuple[Path | None, str, str, bool]] = []
+    table.append((ctx.profile_path, "", "profile", False))
     if profile.policy:
-        for entry in _yield_file(ctx.path(profile.policy), "policy"):
-            yield entry
-
-    # Context files (tuple of str)
+        table.append((ctx.path(profile.policy), "", "policy", False))
     for cf in profile.context_files:
-        for entry in _yield_file(ctx.path(cf), "context"):
-            yield entry
-
-    # Catalogs dir
+        table.append((ctx.path(cf), "", "context", False))
     if profile.catalogs_dir:
-        catalogs_root = ctx.path(profile.catalogs_dir)
-        if catalogs_root.is_dir():
-            for p in sorted(catalogs_root.rglob("*.json")):
-                for entry in _yield_file(p, "catalog"):
-                    yield entry
-
-    # Projects dir (.aisdlc/projects)
-    projects_dir = ctx.path(".aisdlc/projects")
-    if projects_dir.is_dir():
-        for p in sorted(projects_dir.rglob("*.json")):
-            for entry in _yield_file(p, "project"):
-                yield entry
-
-    # Skills dir — read_only rows
+        table.append((ctx.path(profile.catalogs_dir), "*.json", "catalog", False))
+    table.append((ctx.path(".aisdlc/projects"), "*.json", "project", False))
     if profile.skills_dir:
-        skills_root = ctx.path(profile.skills_dir)
-        if skills_root.is_dir():
-            for p in sorted(skills_root.rglob("SKILL.md")):
-                for entry in _yield_file(p, "skill", read_only=True):
-                    yield entry
+        table.append((ctx.path(profile.skills_dir), "SKILL.md", "skill", True))
 
-
-def _build_config_root_set(ctx: Context) -> set[Path]:
-    """Build the set of resolved config-root paths for containment checks,
-    derived from the same enumeration as _config_entries."""
-    roots: set[Path] = set()
-    root_resolved = ctx.root.resolve()
-    profile = ctx.profile
-
-    if ctx.profile_path.is_file():
-        resolved = ctx.profile_path.resolve()
-        if root_resolved in resolved.parents or resolved == root_resolved:
-            roots.add(resolved)
-
-    if profile.policy:
-        p = ctx.path(profile.policy)
-        if p.is_file():
-            resolved = p.resolve()
-            if root_resolved in resolved.parents or resolved == root_resolved:
-                roots.add(resolved)
-
-    for cf in profile.context_files:
-        p = ctx.path(cf)
-        if p.is_file():
-            resolved = p.resolve()
-            if root_resolved in resolved.parents or resolved == root_resolved:
-                roots.add(resolved)
-
-    if profile.catalogs_dir:
-        p = ctx.path(profile.catalogs_dir)
-        if p.is_dir():
-            roots.add(p.resolve())
-
-    projects_dir = ctx.path(".aisdlc/projects")
-    if projects_dir.is_dir():
-        roots.add(projects_dir.resolve())
-
-    if profile.skills_dir:
-        p = ctx.path(profile.skills_dir)
-        if p.is_dir():
-            roots.add(p.resolve())
-
-    return roots
-
-
-def _inside_config_roots(resolved: Path, roots: set[Path]) -> bool:
-    """Check if resolved path is inside one of the config roots."""
-    for root in roots:
-        if resolved == root or root in resolved.parents:
-            return True
-    return False
+    entries: list[tuple[Path, str, bool]] = []
+    for entry_path, glob_pat, kind, read_only in table:
+        if glob_pat:
+            if not entry_path.is_dir():
+                continue
+            for p in sorted(entry_path.rglob(glob_pat)):
+                if p.is_file() and _inside_root(p, root_resolved):
+                    entries.append((p, kind, read_only))
+        else:
+            if entry_path.is_file() and _inside_root(entry_path, root_resolved):
+                entries.append((entry_path, kind, read_only))
+    return entries
 
 
 def list_config_files(ctx: Context) -> list[dict[str, Any]]:
@@ -273,16 +178,11 @@ def read_config_file(ctx: Context, raw_path: str) -> dict[str, Any]:
     resolved = target.resolve()
 
     root_resolved = ctx.root.resolve()
-    # Symlink must stay inside repo root
-    if resolved != target and (root_resolved not in resolved.parents and resolved != root_resolved):
+    if root_resolved not in resolved.parents and resolved != root_resolved:
         raise KitError("invalid_id", f"symlink escapes project root: {rel}")
 
-    # Must be inside a config root
-    config_roots = _build_config_root_set(ctx)
-    if not _inside_config_roots(resolved, config_roots):
-        raise KitError("not_found", f"config file not found: {rel}")
-
-    if not resolved.is_file():
+    config_set = {p.resolve() for p, _kind, _ro in _config_entries(ctx)}
+    if resolved not in config_set:
         raise KitError("not_found", f"config file not found: {rel}")
 
     raw_bytes = resolved.read_bytes()
