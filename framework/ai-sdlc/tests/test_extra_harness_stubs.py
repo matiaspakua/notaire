@@ -2,12 +2,21 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
-from helpers import KIT, Repo, output
+from helpers import BIN, ENV, KIT, Repo, output
 
-STUB_IDS = ("claude-code", "openai-codex", "agent-client-protocol", "junie")
+STUB_IDS = (
+    "claude-code",
+    "openai-codex",
+    "agent-client-protocol",
+    "junie",
+    "agy",
+    "kiro",
+)
 
 PROFILE = """
 [project]
@@ -54,6 +63,20 @@ id = "junie"
 kind = "harness"
 version = "1.0.0"
 manifest = "plugins/junie/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "agy"
+kind = "harness"
+version = "1.0.0"
+manifest = "plugins/agy/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
+id = "kiro"
+kind = "harness"
+version = "1.0.0"
+manifest = "plugins/kiro/plugin.toml"
 trusted = false
 
 [[harness.adapters]]
@@ -105,7 +128,7 @@ backend:
 
 
 def _copy_stub_plugins(repo: Repo) -> None:
-    for name in ("openspec", "claude-code", "openai-codex", "acp", "junie"):
+    for name in ("openspec", "claude-code", "openai-codex", "acp", "junie", "agy", "kiro"):
         source = KIT / "plugins" / name
         if not source.is_dir():
             continue
@@ -129,6 +152,8 @@ class ExtraHarnessStubsTest(unittest.TestCase):
             ("openai-codex", "openai-codex", "openai-codex"),
             ("acp", "agent-client-protocol", "agent-client-protocol"),
             ("junie", "junie", "junie"),
+            ("agy", "agy", "agy"),
+            ("kiro", "kiro", "kiro"),
         ):
             text = (KIT / "plugins" / plugin_dir / "plugin.toml").read_text(encoding="utf-8")
             self.assertIn(f'id = "{plugin_id}"', text)
@@ -200,6 +225,23 @@ class ExtraHarnessStubsTest(unittest.TestCase):
         rows = {row["id"]: row for row in json.loads(listed.stdout)}
         self.assertIs(True, rows["claude-code"]["available"])
         self.assertIs(False, rows["claude-code"]["sandbox"])
+
+    def test_real_notaire_profile_includes_agy_and_kiro(self):
+        repo = KIT.parents[1]
+        profile_path = repo / ".aisdlc" / "aisdlc.toml"
+        if not profile_path.is_file():
+            self.skipTest("not running inside Notaire adopter checkout")
+        result = subprocess.run(
+            [sys.executable, str(BIN), "--profile", str(profile_path), "harness", "list", "--json"],
+            cwd=repo,
+            env=ENV,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, output(result))
+        rows = {row["id"]: row for row in json.loads(result.stdout)}
+        self.assertIn("agy", rows)
+        self.assertIn("kiro", rows)
 
 
 if __name__ == "__main__":
