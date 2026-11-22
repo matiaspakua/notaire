@@ -18,6 +18,7 @@ from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import intent_model as intent_model_mod
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -194,6 +195,12 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     # Telemetry endpoint (#2394)
     if path == "/factory/telemetry":
         return _handle_telemetry(ctx, query)
+    # --- Intent routes (#2395) ---
+    if path == "/factory/intents":
+        return intent_model_mod.list_intents(ctx)
+    m = re.fullmatch(r"/factory/intents/([^/]+)", path)
+    if m:
+        return intent_model_mod.show_intent(ctx, _assert_id(m.group(1)))
     raise KitError("not_found", f"unknown path {path}")
 
 
@@ -255,6 +262,17 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             repos=list(body.get("repos") or []),
             actor=actor,
         )
+    # --- Intent routes (#2395) ---
+    if path == "/factory/intents":
+        intent = intent_model_mod.submit(
+            ctx,
+            text=body.get("text"),
+            ref=body.get("ref"),
+            spec=body.get("spec"),
+            title=body.get("title"),
+            actor=actor,
+        )
+        return intent
     m = re.fullmatch(r"/factory/catalogs/([^/]+)", path)
     if m:
         return _create_catalog_entry(ctx, m.group(1), body, actor=actor)
@@ -267,18 +285,32 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             actor=actor,
         )
     if path == "/factory/runs":
+        # --- Intent binding (#2395) ---
+        intent_id = body.get("intent")
+        if intent_id is not None:
+            try:
+                intent_model_mod.show_intent(ctx, str(intent_id))
+            except KitError as exc:
+                if exc.code == "not_found":
+                    raise KitError("not_found", f"intent not found: {intent_id}") from exc
+                raise
         workflow = body.get("workflow")
         if isinstance(workflow, dict):
             workflow_id = str(workflow.get("id") or "")
         else:
             workflow_id = str(workflow or "")
-        return runs.start(
+        run = runs.start(
             ctx,
             project_id=str(body.get("project") or ""),
             workflow_id=workflow_id,
             actor=actor,
             run_id=str(body["id"]) if body.get("id") else None,
+            intent=str(intent_id) if intent_id is not None else None,
         )
+        # Attach run to intent if present
+        if intent_id is not None:
+            intent_model_mod.attach_run(ctx, str(intent_id), run["id"])
+        return run
     m = re.fullmatch(r"/factory/runs/([^/]+)/cancel", path)
     if m:
         runs.cancel_unavailable(ctx, _assert_id(m.group(1)))
@@ -461,7 +493,9 @@ def start_server(
                     body = self._read_json_body()
                     actor = from_token_identity(active.identity, active.scope)
                     data = _dispatch_post(ctx, path, body, actor=actor)
-                    self._send_json(200, data)
+                    # POST /factory/intents returns 201 (#2395)
+                    status_code = 201 if path == "/factory/intents" else 200
+                    self._send_json(status_code, data)
                     return
                 self._problem("method_not_allowed", f"{method} not implemented")
             except KitError as exc:

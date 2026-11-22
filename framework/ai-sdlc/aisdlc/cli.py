@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 import json
 import os
+import sys
+from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -31,7 +31,6 @@ from aisdlc import (
     skills,
     stages,
 )
-from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -45,6 +44,7 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
+from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -425,6 +425,28 @@ def build_parser() -> argparse.ArgumentParser:
     wrapped.add_argument("--type", required=True, dest="intent_type")
     wrapped.add_argument("--issue")
     wrapped.add_argument("argv", nargs=argparse.REMAINDER, help="command after --")
+
+    # --- Intent entry point: submit / list / show (#2395) ---
+    intent_submit_p = intent_sub.add_parser("submit", help="submit a new intent (prompt|reference|spec)")
+    intent_submit_p.set_defaults(command="intent")
+    intent_submit_p.add_argument("--text", help="prompt text")
+    intent_submit_p.add_argument("--ref", help="reference in system:id format (e.g. github:#123)")
+    intent_submit_p.add_argument("--file", dest="spec_file", help="path to a Markdown spec file")
+    intent_submit_p.add_argument("--title", help="optional title override")
+    intent_submit_p.add_argument("--json", action="store_true")
+
+    intent_list_p = intent_sub.add_parser("list", help="list all intents")
+    intent_list_p.set_defaults(command="intent")
+    intent_list_p.add_argument("--json", action="store_true")
+
+    intent_show_p = intent_sub.add_parser("show", help="show an intent by id")
+    intent_show_p.set_defaults(command="intent")
+    intent_show_p.add_argument("id", help="intent id")
+    intent_show_p.add_argument("--json", action="store_true")
+
+    # --- MCP stdio server command (#2395) ---
+    p = sub.add_parser("mcp", help="run MCP stdio JSON-RPC server")
+    p.set_defaults(command="mcp")
 
     p = sub.add_parser("cost", help="record the token cost of an agent run")
     p.add_argument("--agent", required=True)
@@ -923,6 +945,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "intent": lambda: _intent(ctx, args),
         "store": lambda: _store_cmd(ctx, args),
         "telemetry": lambda: _telemetry_cmd(ctx, args),
+        "mcp": lambda: _mcp(ctx),
     }
     return simple[args.command]()
 
@@ -1342,7 +1365,14 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+    from aisdlc.intents import (
+        compare,
+        export_csv,
+        finished_runs,
+        log_path,
+        read_events,
+        summary,
+    )
 
     events = read_events(log_path(ctx))
     action = args.intents_action
@@ -1367,6 +1397,72 @@ def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent(ctx: Context, args: argparse.Namespace) -> int:
+    # --- New intent entry point actions (#2395) ---
+    if args.action == "submit":
+        from aisdlc.intent_model import submit as submit_intent
+
+        # Validate exactly one of --text, --ref, --file
+        text_val = getattr(args, "text", None)
+        ref_val = getattr(args, "ref", None)
+        spec_file_val = getattr(args, "spec_file", None)
+        input_count = sum(1 for v in (text_val, ref_val, spec_file_val) if v is not None)
+        if input_count > 1:
+            print("error: provide exactly one of --text, --ref, --file", file=sys.stderr)
+            return 2
+
+        try:
+            spec_content = None
+            if spec_file_val:
+                spec_path = Path(spec_file_val)
+                if not spec_path.is_file():
+                    print(f"error: spec file not found: {spec_file_val}", file=sys.stderr)
+                    return 2
+                spec_content = spec_path.read_text(encoding="utf-8")
+            intent = submit_intent(
+                ctx,
+                text=text_val,
+                ref=ref_val,
+                spec=spec_content,
+                title=getattr(args, "title", None),
+                source_ref=spec_file_val,
+            )
+            if getattr(args, "json", False):
+                print(json.dumps(intent, indent=2, sort_keys=True))
+            else:
+                print(f"intent submitted: {intent['id']} ({intent['kind']})")
+            return 0
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
+            return 2
+
+    if args.action == "list":
+        from aisdlc.intent_model import list_intents
+
+        data = list_intents(ctx)
+        if getattr(args, "json", False):
+            print(json.dumps(data, indent=2, sort_keys=True))
+        else:
+            entries = data.get("entries", [])
+            print(f"[intents] {len(entries)}")
+            for entry in entries:
+                print(f"  - {entry['id']} · {entry.get('title', '')} ({entry.get('kind', '')})")
+        return 0
+
+    if args.action == "show":
+        from aisdlc.intent_model import show_intent
+
+        try:
+            intent = show_intent(ctx, args.id)
+            if getattr(args, "json", False):
+                print(json.dumps(intent, indent=2, sort_keys=True))
+            else:
+                print(f"intent {intent['id']}: {intent.get('title', '')} ({intent.get('kind', '')})")
+            return 0
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
+            return 2
+
+    # --- Legacy intent actions (start/end/tool/run) ---
     from aisdlc.intents import end_intent, record_tool, run_command, start_intent
 
     try:
@@ -1414,6 +1510,14 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
         print(json.dumps(data, indent=2, sort_keys=True))
     else:
         print(data.get("run_id", ""))
+    return 0
+
+
+def _mcp(ctx: Context) -> int:
+    """Run the MCP stdio JSON-RPC server."""
+    from aisdlc import mcp_server
+
+    mcp_server.run(ctx)
     return 0
 
 

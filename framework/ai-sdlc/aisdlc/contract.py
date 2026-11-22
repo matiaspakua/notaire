@@ -25,6 +25,8 @@ REQUIRED_PATHS = (
     "/factory/workflows",
     "/factory/projects",
     "/factory/runs",
+    "/factory/intents",
+    "/factory/intents/{id}",
     "/factory/coach",
     "/factory/session",
     "/factory/telemetry",

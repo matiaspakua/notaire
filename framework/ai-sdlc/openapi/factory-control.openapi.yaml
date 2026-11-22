@@ -26,6 +26,8 @@ info:
     1.3.0 (#2394) adds the factory store (SQLite mirror of the evidence ledger) and the
     read-only telemetry endpoint (`/factory/telemetry`): aggregated time, cost, and failure
     counts grouped by intent, stage, agent, skill, or tool.
+    1.3.0 (#2395) adds Intent (submit, list, show), run-intent binding, and the MCP stdio
+    server (`aisdlc mcp`) with tools `intent_submit`, `intent_show`, `factory_status`.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -542,6 +544,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Run"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Token scope below write
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Intent not found (when `intent` is present but unknown)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "409":
           description: Workflow not approved
           content:
@@ -599,6 +619,83 @@ paths:
       responses:
         "501":
           description: Runner port not proven — honest refuse
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/intents:
+    get:
+      tags: [intents]
+      operationId: listIntents
+      summary: List all factory intents
+      responses:
+        "200":
+          description: Intent list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentList"
+    post:
+      tags: [intents]
+      operationId: submitIntent
+      summary: Submit a new intent (prompt, reference, or spec)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntentSubmit"
+      responses:
+        "201":
+          description: Intent created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Intent"
+        "400":
+          description: Bad request (e.g. literal secret detected)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Token scope below write
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/intents/{id}:
+    get:
+      tags: [intents]
+      operationId: getIntent
+      summary: Show an intent by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Intent details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Intent"
+        "404":
+          description: Intent not found
           content:
             application/problem+json:
               schema:
@@ -1126,6 +1223,9 @@ components:
         requested_by: { type: string }
         requested_at: { type: string, format: date-time }
         evidence_head: { type: string }
+        intent:
+          type: string
+          description: Optional intent id bound to this run (set when POST /factory/runs body includes `intent`)
         steps:
           type: array
           items:
@@ -1158,6 +1258,9 @@ components:
           oneOf:
             - type: string
             - $ref: "#/components/schemas/RunWorkflowRef"
+        intent:
+          type: string
+          description: Optional intent id to bind to this run; 404 if the intent does not exist
     RunList:
       type: object
       additionalProperties: true
@@ -1231,3 +1334,72 @@ components:
           type: object
           additionalProperties: { type: integer }
           description: Maps tool name to call count
+    IntentSource:
+      type: object
+      additionalProperties: true
+      required: [system, ref]
+      properties:
+        system:
+          type: string
+          enum: [github, jira, url, file, ""]
+          description: >-
+            The external system the intent references. Empty string ("") for prompt
+            intents that have no external reference. Values: github, jira, url, file.
+        ref: { type: string }
+    IntentReference:
+      type: object
+      additionalProperties: true
+      required: [label, url, kind]
+      properties:
+        label: { type: string }
+        url: { type: string }
+        kind:
+          type: string
+          enum: [architecture, security, adr, standard, other]
+    Intent:
+      type: object
+      additionalProperties: true
+      required: [id, kind, title, text, source, acceptance, references, status, created_by, created_at, run_ids]
+      properties:
+        id: { type: string }
+        kind:
+          type: string
+          enum: [prompt, reference, spec]
+        title: { type: string }
+        text: { type: string }
+        source:
+          $ref: "#/components/schemas/IntentSource"
+        acceptance:
+          type: array
+          items: { type: string }
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/IntentReference"
+        status: { type: string }
+        created_by: { type: string }
+        created_at: { type: string, format: date-time }
+        run_ids:
+          type: array
+          items: { type: string }
+        version: { type: integer }
+    IntentSubmit:
+      type: object
+      additionalProperties: true
+      properties:
+        text: { type: string }
+        ref: { type: string }
+        spec: { type: string }
+        title: { type: string }
+    IntentList:
+      type: object
+      additionalProperties: true
+      required: [kind, entries]
+      properties:
+        kind:
+          type: string
+          enum: [intents]
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Intent"
