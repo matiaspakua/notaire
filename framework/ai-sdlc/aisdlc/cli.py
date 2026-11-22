@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 import json
 import os
+from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -31,7 +30,6 @@ from aisdlc import (
     skills,
     stages,
 )
-from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -45,6 +43,7 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
+from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -82,9 +81,12 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("config", help="validate or print factory configuration")
     config_sub = p.add_subparsers(dest="action", required=True)
     show = config_sub.add_parser("show", help="print the resolved factory config")
+    show.add_argument("path", nargs="?", default=None, help="config file path to display")
     show.add_argument("--redacted", action="store_true", help="required: refuse a raw dump")
     show.add_argument("--json", action="store_true")
     show.add_argument("--max-open-prs", type=int, help="override the open pull-request cap for this print")
+    files_p = config_sub.add_parser("files", help="list config files in the factory tree")
+    files_p.add_argument("--json", action="store_true")
     config_sub.add_parser(
         "validate",
         help="check factory config, plugins, migration inventory, stage→catalog refs (#2182), and context memory packs (#2186)",
@@ -479,7 +481,14 @@ def build_parser() -> argparse.ArgumentParser:
         q = cat_sub.add_parser(action)
         q.add_argument("--kind", required=True, choices=list(catalogs.KINDS))
         q.add_argument("--id", required=True)
-        if action != "remove":
+        if action == "remove":
+            q.add_argument(
+                "--if-match",
+                type=int,
+                dest="if_match",
+                help="expected current version (If-Match); refuse on mismatch",
+            )
+        else:
             q.add_argument("--ref", help="path or logical reference")
             q.add_argument("--summary", help="short description")
             if action == "add":
@@ -1014,6 +1023,8 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return 0
         if args.action in ("add", "update"):
             return _catalog_write(ctx, args)
+        if args.action == "remove":
+            return _catalog_remove(ctx, args)
         return catalogs.remove(ctx, args.kind, args.id)
     except ProfileError as exc:
         print(f"error: {exc}")
@@ -1046,6 +1057,25 @@ def _catalog_write(ctx: Context, args: argparse.Namespace) -> int:
         raise
     print(f"catalog {args.action}: {args.kind}/{args.id}@{written['version']}")
     return 0
+
+
+def _catalog_remove(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc.actor import from_env
+
+    actor = from_env(channel="cli")
+    try:
+        result = catalogs.delete(
+            ctx, args.kind, args.id,
+            expected_version=getattr(args, "if_match", None),
+            actor=actor,
+        )
+        print(f"catalog remove: {args.kind}/{args.id}@v{result['version']}")
+        return 0
+    except KitError as exc:
+        if exc.code in ("not_found", "version_conflict"):
+            print(f"error: {exc.code}: {exc.detail}")
+            return 1
+        raise
 
 
 def _migrate(ctx: Context, args: argparse.Namespace) -> int:
@@ -1320,7 +1350,14 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+    from aisdlc.intents import (
+        compare,
+        export_csv,
+        finished_runs,
+        log_path,
+        read_events,
+        summary,
+    )
 
     events = read_events(log_path(ctx))
     action = args.intents_action
@@ -1396,6 +1433,33 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _config(ctx: Context, args: argparse.Namespace) -> int:
+    if args.action == "files":
+        from aisdlc import config_files as cf
+
+        rows = cf.list_config_files(ctx)
+        if args.json:
+            print(json.dumps(rows, indent=2, sort_keys=True))
+        else:
+            for row in rows:
+                print(f"  {row['path']}  ({row['kind']}, {row['size']}b)")
+        return 0
+    if args.action == "show":
+        path_arg = getattr(args, "path", None)
+        if path_arg:
+            from aisdlc import config_files as cf
+
+            result = cf.read_config_file(ctx, path_arg)
+            print(result["content"], end="")
+            return 0
+        if not args.redacted:
+            print("error: config show requires --redacted")
+            return 2
+        from aisdlc.flags import get_flags
+
+        limit = resolve_max_open_prs(ctx.profile, os.environ, args.max_open_prs, flag_provider=get_flags())
+        view = config_view(ctx.profile, limit=limit)
+        print(json.dumps(view, indent=2, sort_keys=True) if args.json else _plain(view))
+        return 0
     if args.action == "validate":
         from aisdlc.context_budget import validate_context_memory
 

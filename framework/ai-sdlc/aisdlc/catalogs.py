@@ -440,6 +440,52 @@ def remove(ctx: Context, kind: str, entry_id: str) -> int:
     return 0
 
 
+def delete(
+    ctx: Context,
+    kind: str,
+    entry_id: str,
+    *,
+    expected_version: int | None = None,
+    actor: str | None = None,
+) -> dict:
+    """Delete a catalog entry with optimistic concurrency and evidence."""
+    if kind not in KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    _assert_id(entry_id)
+    try:
+        data = load_entry(ctx, kind, entry_id)
+    except KitError:
+        raise KitError("not_found", f"catalog entry {kind}/{entry_id} not found")
+    current_version = int(data.get("version") or 1)
+    if expected_version is not None and int(expected_version) != current_version:
+        raise KitError(
+            "version_conflict",
+            f"version conflict for {kind}/{entry_id}: expected {expected_version}, current {current_version}",
+        )
+    legacy = _legacy_path(ctx, kind, entry_id)
+    entity = _entity_dir(ctx, kind, entry_id)
+    if legacy.is_file():
+        legacy.unlink()
+    if entity.is_dir():
+        import shutil
+
+        shutil.rmtree(entity)
+    from aisdlc import evidence as ev
+    from aisdlc.actor import from_env
+
+    ev.append_record(
+        ctx,
+        {
+            "kind": "catalog.delete",
+            "id": entry_id,
+            "catalog_kind": kind,
+            "version": current_version,
+            "actor": actor or from_env(channel="cli"),
+        },
+    )
+    return {"id": entry_id, "kind": kind, "version": current_version}
+
+
 def validate(ctx: Context, kind: str | None = None) -> int:
     """Read-only integrity: digests match; skills refs exist when kind=skills. Never executes."""
     try:
