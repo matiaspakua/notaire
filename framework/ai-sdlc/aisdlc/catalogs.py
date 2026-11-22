@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 from pathlib import Path
 
 from aisdlc.actor import from_env
@@ -423,23 +424,6 @@ def load_revision(ctx: Context, kind: str, entry_id: str, version: int) -> dict:
     raise KitError("not_found", f"catalog revision {kind}/{entry_id}@{version} not found")
 
 
-def remove(ctx: Context, kind: str, entry_id: str) -> int:
-    current = _current_path(ctx, kind, entry_id)
-    legacy = _legacy_path(ctx, kind, entry_id)
-    entity = _entity_dir(ctx, kind, entry_id)
-    if not current.is_file() and not legacy.is_file() and not entity.is_dir():
-        print(f"error: catalog entry {kind}/{entry_id} not found")
-        return 1
-    if legacy.is_file():
-        legacy.unlink()
-    if entity.is_dir():
-        import shutil
-
-        shutil.rmtree(entity)
-    print(f"catalog remove: {kind}/{entry_id}")
-    return 0
-
-
 def delete(
     ctx: Context,
     kind: str,
@@ -449,6 +433,8 @@ def delete(
     actor: str | None = None,
 ) -> dict:
     """Delete a catalog entry with optimistic concurrency and evidence."""
+    from aisdlc import evidence as ev
+
     if kind not in KINDS:
         raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
     _assert_id(entry_id)
@@ -462,17 +448,13 @@ def delete(
             "version_conflict",
             f"version conflict for {kind}/{entry_id}: expected {expected_version}, current {current_version}",
         )
+    entry_digest = data.get("digest")
     legacy = _legacy_path(ctx, kind, entry_id)
     entity = _entity_dir(ctx, kind, entry_id)
     if legacy.is_file():
         legacy.unlink()
     if entity.is_dir():
-        import shutil
-
         shutil.rmtree(entity)
-    from aisdlc import evidence as ev
-    from aisdlc.actor import from_env
-
     ev.append_record(
         ctx,
         {
@@ -480,6 +462,7 @@ def delete(
             "id": entry_id,
             "catalog_kind": kind,
             "version": current_version,
+            "digest": entry_digest,
             "actor": actor or from_env(channel="cli"),
         },
     )

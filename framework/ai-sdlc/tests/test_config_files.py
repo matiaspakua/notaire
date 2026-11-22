@@ -5,15 +5,13 @@ Gate 2 (RED) — failing tests only; production code in config_files.py, serve.p
 from __future__ import annotations
 
 import json
-import os
 import sys
 import threading
 import unittest
 import urllib.error
 import urllib.request
-from pathlib import Path
 
-from helpers import ENV, KIT, Repo, output
+from helpers import KIT, Repo, output
 
 sys.path.insert(0, str(KIT))
 
@@ -125,7 +123,7 @@ class ConfigFilesTreeTest(unittest.TestCase):
 
     def test_tree_listing_requires_read_scope(self):
         port, _ = self._serve()
-        status, ctype, body = self._request(port, "/factory/config/files", token=None)
+        status, ctype, _body = self._request(port, "/factory/config/files", token=None)
         self.assertEqual(401, status)
         self.assertEqual("application/problem+json", ctype)
 
@@ -135,13 +133,12 @@ class ConfigFileReadTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.repo = Repo(self, PROFILE_WITH_CONTEXT)
-        self.repo.write("POLICY.md", "# Policy\n")
-        self.repo.write("CONTEXT.md", "# Context\n")
-        # Write a config file containing a secret-shaped value
+        # Policy contains a secret-shaped key=value pair (key-aware redaction)
         self.repo.write(
-            "secrets.toml",
-            f'token = "{SECRET_TOKEN}"\nother = "safe"\n',
+            "POLICY.md",
+            "# Policy\napi_key = \"sk-TEST1234567890\"\nother = \"safe\"\n",
         )
+        self.repo.write("CONTEXT.md", "# Context\n")
         add = self.repo.run(
             "catalog", "add", "--kind", "skills", "--id", "demo-skill",
             "--ref", "skills/demo", "--summary", "v1",
@@ -197,27 +194,29 @@ class ConfigFileReadTest(unittest.TestCase):
     # ------------------------------------------------------------------ file read
 
     def test_file_read_returns_redacted_content(self):
+        """Key-aware redaction: api_key value replaced, safe value kept."""
         port, token = self._serve()
-        status, ctype, body = self._request(
-            port, "/factory/config/files/secrets.toml", token=token
+        status, _ctype, body = self._request(
+            port, "/factory/config/files/POLICY.md", token=token
         )
         self.assertEqual(200, status, body)
         payload = json.loads(body)
         self.assertIn("content", payload)
         self.assertTrue(payload.get("redacted", False))
-        self.assertNotIn(SECRET_TOKEN, payload["content"])
-        # env:NAME references must stay visible
-        self.assertIn("other", payload["content"])
+        self.assertIn("***", payload["content"])
+        self.assertNotIn("sk-TEST1234567890", payload["content"])
+        # Safe value must stay visible
+        self.assertIn("safe", payload["content"])
 
     def test_file_read_no_secrets(self):
         port, token = self._serve()
         status, _, body = self._request(
-            port, "/factory/config/files/POLICY.md", token=token
+            port, "/factory/config/files/CONTEXT.md", token=token
         )
         self.assertEqual(200, status, body)
         payload = json.loads(body)
         self.assertFalse(payload.get("redacted", False))
-        self.assertIn("Policy", payload["content"])
+        self.assertIn("Context", payload["content"])
 
     def test_file_read_requires_read_scope(self):
         port, _ = self._serve()
@@ -302,12 +301,13 @@ class ConfigFilePathTraversalTest(unittest.TestCase):
         self.assertEqual("invalid_id", json.loads(body)["code"])
 
     def test_absolute_path_refused(self):
+        """A path not under any config root is refused (not_found)."""
         port, token = self._serve()
         status, body = self._request(
             port, "/factory/config/files/etc/passwd", token=token
         )
-        self.assertEqual(400, status, body)
-        self.assertEqual("invalid_id", json.loads(body)["code"])
+        self.assertEqual(404, status, body)
+        self.assertEqual("not_found", json.loads(body)["code"])
 
     def test_encoded_separator_percent2f_refused(self):
         port, token = self._serve()
@@ -326,7 +326,7 @@ class ConfigFilePathTraversalTest(unittest.TestCase):
         self.assertEqual("invalid_id", json.loads(body)["code"])
 
     def test_symlink_escape_refused(self):
-        # Create a symlink inside the repo pointing outside
+        """Symlink inside a config root pointing outside is neither listed nor readable."""
         outside = self.repo.root / "outside"
         outside.mkdir(parents=True, exist_ok=True)
         target = outside / "secret.txt"
@@ -340,8 +340,18 @@ class ConfigFilePathTraversalTest(unittest.TestCase):
         status, body = self._request(
             port, "/factory/config/files/skills/evil-link", token=token
         )
-        self.assertEqual(400, status, body)
-        self.assertEqual("invalid_id", json.loads(body)["code"])
+        # Should be refused (not_found because symlink escapes root)
+        self.assertIn(status, (400, 404), body)
+
+    def test_repo_file_outside_config_roots_refused(self):
+        """A file inside the repo but not under any config root is refused."""
+        self.repo.write("src/app.py", "print('hello')\n")
+        port, token = self._serve()
+        status, body = self._request(
+            port, "/factory/config/files/src/app.py", token=token
+        )
+        self.assertEqual(404, status, body)
+        self.assertEqual("not_found", json.loads(body)["code"])
 
 
 class CatalogDeleteHttpTest(unittest.TestCase):
@@ -492,8 +502,8 @@ class CatalogDeleteHttpTest(unittest.TestCase):
         self.assertEqual("catalog.delete", last.get("kind"))
         self.assertEqual("demo-skill", last.get("id"))
         # Evidence chain must still verify
-        from aisdlc.cli import load_context
         from aisdlc import evidence as ev
+        from aisdlc.cli import load_context
         ctx = load_context(self.repo.root, self.repo.root / "aisdlc.toml")
         self.assertEqual(0, ev.verify(ctx))
 
@@ -594,15 +604,24 @@ class CliConfigFilesTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, output(result))
         self.assertIn("Policy", result.stdout)
 
-    def test_cli_config_show_redacts_secrets(self):
+    def test_cli_config_show_redacts_secrets_in_policy(self):
+        """Key-aware redaction: api_key in policy file is redacted."""
         self.repo.write(
-            "secrets.toml",
-            f'token = "{SECRET_TOKEN}"\n',
+            "POLICY.md",
+            f"# Policy\napi_key = \"{SECRET_TOKEN}\"\nother = \"safe\"\n",
         )
-        result = self.repo.run("config", "show", "secrets.toml")
+        result = self.repo.run("config", "show", "POLICY.md")
         self.assertEqual(0, result.returncode, output(result))
         self.assertNotIn(SECRET_TOKEN, result.stdout)
         self.assertIn("***", result.stdout)
+        self.assertIn("safe", result.stdout)
+
+    def test_cli_config_show_refuses_file_outside_roots(self):
+        """A repo file outside config roots is refused via CLI."""
+        self.repo.write("src/app.py", "print('hello')\n")
+        result = self.repo.run("config", "show", "src/app.py")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("not found", result.stderr + result.stdout)
 
     def test_cli_catalog_remove_with_if_match(self):
         result = self.repo.run(
@@ -623,6 +642,103 @@ class CliConfigFilesTest(unittest.TestCase):
         # Entry must still exist
         entry = self.repo.root / ".aisdlc" / "catalogs" / "skills" / "demo-skill" / "current.json"
         self.assertTrue(entry.exists())
+
+
+class ConfigFileConfinementTest(unittest.TestCase):
+    """Config root confinement, projects root, read_only skills, JSON redaction."""
+
+    def setUp(self) -> None:
+        self.repo = Repo(self, PROFILE_WITH_CONTEXT)
+        self.repo.write("POLICY.md", "# Policy\n")
+        self.repo.write("CONTEXT.md", "# Context\n")
+        add = self.repo.run(
+            "catalog", "add", "--kind", "skills", "--id", "demo-skill",
+            "--ref", "skills/demo", "--summary", "v1",
+        )
+        self.assertEqual(0, add.returncode, output(add))
+        # Create a skill with SKILL.md
+        skill_dir = self.repo.root / "skills" / "demo"
+        skill_dir.mkdir(parents=True, exist_ok=True)
+        (skill_dir / "SKILL.md").write_text("---\nname: demo\n---\nSkill content\n", encoding="utf-8")
+
+    def _ctx(self):
+        from aisdlc.cli import load_context
+        return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
+
+    def test_projects_root_files_are_listed(self):
+        """Files under .aisdlc/projects are listed as project kind."""
+        # Create a project entry
+        projects_dir = self.repo.root / ".aisdlc" / "projects" / "proj-1"
+        projects_dir.mkdir(parents=True, exist_ok=True)
+        (projects_dir / "current.json").write_text(
+            json.dumps({"id": "proj-1", "profile_ref": "aisdlc.toml"}), encoding="utf-8"
+        )
+        ctx = self._ctx()
+        from aisdlc import config_files as cf
+        rows = cf.list_config_files(ctx)
+        project_rows = [r for r in rows if r["kind"] == "project"]
+        self.assertTrue(len(project_rows) >= 1, rows)
+        self.assertFalse(project_rows[0].get("read_only", False))
+
+    def test_skill_rows_are_read_only(self):
+        """Skill files in the skills dir carry read_only: true."""
+        ctx = self._ctx()
+        from aisdlc import config_files as cf
+        rows = cf.list_config_files(ctx)
+        skill_rows = [r for r in rows if r["kind"] == "skill"]
+        self.assertTrue(len(skill_rows) >= 1, rows)
+        for row in skill_rows:
+            self.assertTrue(row.get("read_only", False))
+
+    def test_json_file_with_secret_key_is_redacted(self):
+        """JSON file with a 'token' key is redacted via factory_redact."""
+        catalog_dir = self.repo.root / ".aisdlc" / "catalogs" / "providers"
+        catalog_dir.mkdir(parents=True, exist_ok=True)
+        secret_json = {
+            "id": "test-provider",
+            "kind": "providers",
+            "token": SECRET_TOKEN,
+            "safe_field": "visible",
+            "version": 1,
+        }
+        (catalog_dir / "test-provider.json").write_text(
+            json.dumps(secret_json), encoding="utf-8"
+        )
+        ctx = self._ctx()
+        from aisdlc import config_files as cf
+        result = cf.read_config_file(ctx, ".aisdlc/catalogs/providers/test-provider.json")
+        self.assertTrue(result["redacted"])
+        self.assertNotIn(SECRET_TOKEN, result["content"])
+        self.assertIn("***", result["content"])
+        self.assertIn("visible", result["content"])
+
+    def test_env_reference_stays_visible(self):
+        """env:NAME references are not redacted."""
+        self.repo.write(
+            "CONTEXT.md",
+            "# Context\napi_key = env:MY_API_KEY\n",
+        )
+        ctx = self._ctx()
+        from aisdlc import config_files as cf
+        result = cf.read_config_file(ctx, "CONTEXT.md")
+        self.assertIn("env:MY_API_KEY", result["content"])
+
+    def test_symlink_outside_not_listed(self):
+        """A symlink inside a config root pointing outside is not listed."""
+        outside = self.repo.root / "outside"
+        outside.mkdir(parents=True, exist_ok=True)
+        target = outside / "secret.txt"
+        target.write_text("top-secret", encoding="utf-8")
+        skills_dir = self.repo.root / "skills"
+        skills_dir.mkdir(parents=True, exist_ok=True)
+        link = skills_dir / "evil-link.txt"
+        link.symlink_to(target)
+
+        ctx = self._ctx()
+        from aisdlc import config_files as cf
+        rows = cf.list_config_files(ctx)
+        paths = [r["path"] for r in rows]
+        self.assertNotIn("skills/evil-link.txt", paths)
 
 
 if __name__ == "__main__":

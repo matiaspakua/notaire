@@ -1,77 +1,201 @@
 """Config-as-code: tree listing and file read with redaction (#2398).
 
-Lists files from configured config roots (profile, policy, context files,
-catalogs dir, skills dir, evidence dir) and serves individual file content
-with secret redaction. Path traversal and symlink escapes are refused.
+Lists files from the profile's config roots (profile file, policy, context
+files, catalogs dir, projects dir, skills dir) and serves individual file
+content with secret redaction.  Paths are confined to those roots — a file
+inside the repository but outside every config root is refused.
+Symlinks whose resolved target leaves the repository root are skipped.
 """
 from __future__ import annotations
 
-import mimetypes
+import json
 import re
 from pathlib import Path
 from typing import Any
 
 from aisdlc.context import Context
 from aisdlc.errors import KitError
-from aisdlc.factory import SECRET_VALUES
+from aisdlc.factory import SECRET_KEYS, SECRET_VALUES
+from aisdlc.factory import redact as factory_redact
 
-ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+# Explicit extension → media type table (no stdlib mimetypes dependency).
+_MEDIA: dict[str, str] = {
+    ".toml": "text/toml; charset=utf-8",
+    ".json": "application/json",
+    ".yaml": "text/yaml; charset=utf-8",
+    ".yml": "text/yaml; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+}
 
 
 def _media_type(path: Path) -> str:
-    ct, _ = mimetypes.guess_type(str(path))
-    if ct:
-        return ct
-    suffix = path.suffix.lower()
-    table = {
-        ".md": "text/markdown; charset=utf-8",
-        ".toml": "text/toml; charset=utf-8",
-        ".json": "application/json",
-        ".yml": "text/yaml; charset=utf-8",
-        ".yaml": "text/yaml; charset=utf-8",
-        ".txt": "text/plain; charset=utf-8",
-        ".py": "text/x-python; charset=utf-8",
-        ".sh": "text/x-shellscript; charset=utf-8",
-    }
-    return table.get(suffix, "text/plain; charset=utf-8")
+    return _MEDIA.get(path.suffix.lower(), "text/plain; charset=utf-8")
 
 
-def _redact_text(text: str) -> tuple[str, bool]:
-    """Return text with secrets replaced by *** and whether any were redacted."""
-    redacted = False
+def _redact_text(text: str, media_type: str) -> tuple[str, bool]:
+    """Return text with secrets replaced by *** and whether any were redacted.
 
-    def _replace(m: re.Match) -> str:
-        nonlocal redacted
-        redacted = True
-        return "***"
+    For JSON content, parse and apply factory_redact (key-aware).
+    For TOML/YAML/INI-like lines, redact key = value / key: value pairs
+    whose key matches SECRET_KEYS.  Always substitute SECRET_VALUES tokens.
+    """
+    was_redacted = False
 
-    out = SECRET_VALUES.sub(_replace, text)
-    return out, redacted
+    # JSON: parse, redact keys, dump back.
+    if "json" in media_type:
+        try:
+            obj = json.loads(text)
+            redacted_obj = factory_redact("", obj)
+            # Detect if anything changed
+            was_redacted = _json_changed(text, redacted_obj)
+            return json.dumps(redacted_obj, indent=2) + "\n", was_redacted
+        except (json.JSONDecodeError, TypeError):
+            pass  # fall through to text-based redaction
+
+    lines = text.split("\n")
+    out_lines: list[str] = []
+    for line in lines:
+        new_line, changed = _redact_key_value_line(line)
+        if changed:
+            was_redacted = True
+        new_line = SECRET_VALUES.sub("***", new_line)
+        if new_line != line and not changed:
+            was_redacted = True
+        out_lines.append(new_line)
+    return "\n".join(out_lines), was_redacted
 
 
-def _assert_config_path(raw: str) -> str:
-    """Validate a config file path — refuse traversal, absolute, encoded separators."""
+def _json_changed(original: str, redacted_obj: Any) -> bool:
+    """Check if redaction changed anything in the JSON."""
+    redacted_str = json.dumps(redacted_obj, indent=2, sort_keys=True)
+    try:
+        original_obj = json.loads(original)
+        original_str = json.dumps(original_obj, indent=2, sort_keys=True)
+    except (json.JSONDecodeError, TypeError):
+        return True
+    return redacted_str != original_str
+
+
+def _redact_key_value_line(line: str) -> tuple[str, bool]:
+    """Redact a key = value or key: value line if the key matches SECRET_KEYS."""
+    # Match 'key = value' or 'key: value' patterns
+    m = re.match(r'^(\s*\w+)\s*[=:]\s*(.*)$', line)
+    if m:
+        key = m.group(1).strip()
+        value = m.group(2).strip()
+        # Strip quotes
+        if (value.startswith('"') and value.endswith('"')) or \
+           (value.startswith("'") and value.endswith("'")):
+            value_inner = value[1:-1]
+        else:
+            value_inner = value
+        # Skip env:NAME references
+        if value_inner.startswith("env:"):
+            return line, False
+        if SECRET_KEYS.search(key):
+            # Preserve the quote style
+            if value.startswith('"'):
+                return f'{m.group(1)} = "***"', True
+            elif value.startswith("'"):
+                return f"{m.group(1)} = '***'", True
+            else:
+                return f'{m.group(1)} = "***"', True
+    return line, False
+
+
+def _guard_path(raw: str) -> str:
+    """Reuse serve._guard_path semantics: reject traversal and encoded separators.
+
+    Allows ``.aisdlc`` as a segment since it is the standard config root prefix.
+    """
     if not raw:
         raise KitError("invalid_id", "empty path")
+    if "%2f" in raw.casefold() or "%5c" in raw.casefold():
+        raise KitError("invalid_id", "encoded path separator refused")
     if raw.startswith(("/", "..")):
         raise KitError("invalid_id", f"invalid path {raw!r}")
-    if "/" in raw:
-        for segment in raw.split("/"):
-            if not segment or segment == ".." or segment.startswith("."):
-                raise KitError("invalid_id", f"invalid path segment {segment!r}")
-    elif not ID_RE.fullmatch(raw):
-        raise KitError("invalid_id", f"invalid id {raw!r}")
     if "\\" in raw:
         raise KitError("invalid_id", f"invalid path {raw!r}")
+    for part in raw.split("/"):
+        if not part:
+            continue
+        if part == "..":
+            raise KitError("invalid_id", f"invalid path segment {part!r}")
+        if part.startswith(".") and part != ".aisdlc":
+            raise KitError("invalid_id", f"invalid path segment {part!r}")
     return raw
+
+
+def _config_roots(ctx: Context) -> set[Path]:
+    """Return the set of resolved config-root paths for containment checks."""
+    roots: set[Path] = set()
+    profile = ctx.profile
+
+    # Profile file's parent
+    if ctx.profile_path.is_file():
+        roots.add(ctx.profile_path.resolve())
+
+    # Policy
+    if getattr(profile, "policy", None):
+        p = ctx.path(str(profile.policy))
+        if p.is_file():
+            roots.add(p.resolve())
+
+    # Context files
+    context_files = getattr(profile, "context_files", None) or getattr(profile, "context", None)
+    if isinstance(context_files, (list, tuple)):
+        for cf in context_files:
+            p = ctx.path(str(cf))
+            if p.is_file():
+                roots.add(p.resolve())
+    elif isinstance(context_files, dict):
+        for cf in context_files.get("files", []):
+            p = ctx.path(str(cf))
+            if p.is_file():
+                roots.add(p.resolve())
+
+    # Catalogs dir
+    catalogs_dir = getattr(profile, "catalogs_dir", None)
+    if catalogs_dir:
+        p = ctx.path(str(catalogs_dir))
+        if p.is_dir():
+            roots.add(p.resolve())
+
+    # Projects dir (.aisdlc/projects)
+    projects_dir = ctx.path(".aisdlc/projects")
+    if projects_dir.is_dir():
+        roots.add(projects_dir.resolve())
+
+    # Skills dir
+    skills_dir = getattr(profile, "skills_dir", None)
+    if skills_dir:
+        p = ctx.path(str(skills_dir))
+        if p.is_dir():
+            roots.add(p.resolve())
+
+    return roots
+
+
+def _inside_config_roots(resolved: Path, roots: set[Path]) -> bool:
+    """Check if resolved path is inside one of the config roots."""
+    for root in roots:
+        if resolved == root or root in resolved.parents:
+            return True
+    return False
 
 
 def list_config_files(ctx: Context) -> list[dict[str, Any]]:
     """Return a tree of config-root files with metadata."""
     rows: list[dict[str, Any]] = []
     seen: set[str] = set()
+    root_resolved = ctx.root.resolve()
 
-    def _add(path: Path, kind: str) -> None:
+    def _add(path: Path, kind: str, *, read_only: bool = False) -> None:
+        if path.is_symlink():
+            real = path.resolve()
+            if root_resolved not in real.parents and real != root_resolved:
+                return  # symlink escapes root — skip
         if not path.is_file():
             return
         real = path.resolve()
@@ -84,12 +208,15 @@ def list_config_files(ctx: Context) -> list[dict[str, Any]]:
         except OSError:
             return
         rel = str(path.relative_to(ctx.root)) if path.is_relative_to(ctx.root) else str(path.name)
-        rows.append({
+        row: dict[str, Any] = {
             "path": rel,
             "kind": kind,
             "size": size,
             "media_type": _media_type(path),
-        })
+        }
+        if read_only:
+            row["read_only"] = True
+        rows.append(row)
 
     profile = ctx.profile
     if profile.name:
@@ -97,7 +224,7 @@ def list_config_files(ctx: Context) -> list[dict[str, Any]]:
     if getattr(profile, "policy", None):
         _add(ctx.path(str(profile.policy)), "policy")
     context_files = getattr(profile, "context_files", None) or getattr(profile, "context", None)
-    if isinstance(context_files, list):
+    if isinstance(context_files, (list, tuple)):
         for cf in context_files:
             _add(ctx.path(str(cf)), "context")
     elif isinstance(context_files, dict):
@@ -108,52 +235,44 @@ def list_config_files(ctx: Context) -> list[dict[str, Any]]:
         root = ctx.path(str(catalogs_dir))
         if root.is_dir():
             for p in sorted(root.rglob("*.json")):
-                if p.is_file():
-                    _add(p, "catalog")
+                _add(p, "catalog")
+    # Projects dir
+    projects_dir = ctx.path(".aisdlc/projects")
+    if projects_dir.is_dir():
+        for p in sorted(projects_dir.rglob("*.json")):
+            _add(p, "project")
+    # Skills dir — READ-ONLY rows
     skills_dir = getattr(profile, "skills_dir", None)
     if skills_dir:
         root = ctx.path(str(skills_dir))
         if root.is_dir():
             for p in sorted(root.rglob("SKILL.md")):
-                if p.is_file():
-                    _add(p, "skill")
-    evidence_dir = getattr(profile, "evidence_dir", None)
-    if evidence_dir:
-        root = ctx.path(str(evidence_dir))
-        if root.is_dir():
-            for p in sorted(root.rglob("*.jsonl")):
-                if p.is_file():
-                    _add(p, "evidence")
+                _add(p, "skill", read_only=True)
 
     rows.sort(key=lambda r: r["path"])
     return rows
 
 
 def read_config_file(ctx: Context, raw_path: str) -> dict[str, Any]:
-    """Read a config file with path confinement, symlink check, and redaction."""
-    rel = _assert_config_path(raw_path)
+    """Read a config file confined to config roots, with symlink and redaction checks."""
+    rel = _guard_path(raw_path)
     target = ctx.root / rel
 
-    parts = rel.split("/")
-    if len(parts) > 1:
-        first_dir = ctx.root / parts[0]
-        if not first_dir.is_dir():
-            raise KitError("invalid_id", f"invalid path {rel!r}")
-
+    # Resolve once
     if target.is_symlink():
-        raise KitError("invalid_id", f"symlink not allowed: {rel}")
+        resolved = target.resolve()
+    else:
+        resolved = target.resolve()
 
-    resolved = target.resolve()
     root_resolved = ctx.root.resolve()
-    if root_resolved not in resolved.parents and resolved != root_resolved:
-        raise KitError("invalid_id", f"path escapes project root: {rel}")
+    # Symlink must stay inside repo root
+    if resolved != target and (root_resolved not in resolved.parents and resolved != root_resolved):
+        raise KitError("invalid_id", f"symlink escapes project root: {rel}")
 
-    for part in parts[:-1]:
-        segment = ctx.root / "/".join(parts[:parts.index(part) + 1]) if part else ctx.root
-        if segment.is_symlink():
-            link_target = segment.resolve()
-            if root_resolved not in link_target.parents and link_target != root_resolved:
-                raise KitError("invalid_id", f"symlink escapes project root: {rel}")
+    # Must be inside a config root
+    config_roots = _config_roots(ctx)
+    if not _inside_config_roots(resolved, config_roots):
+        raise KitError("not_found", f"config file not found: {rel}")
 
     if not resolved.is_file():
         raise KitError("not_found", f"config file not found: {rel}")
@@ -164,12 +283,13 @@ def read_config_file(ctx: Context, raw_path: str) -> dict[str, Any]:
     except UnicodeDecodeError:
         raise KitError("invalid_id", f"non-utf-8 file: {rel}")
 
-    redacted_text, was_redacted = _redact_text(text)
+    media = _media_type(resolved)
+    redacted_text, was_redacted = _redact_text(text, media)
 
     return {
         "path": rel,
         "content": redacted_text,
         "redacted": was_redacted,
-        "media_type": _media_type(resolved),
+        "media_type": media,
         "size": len(raw_bytes),
     }

@@ -1026,7 +1026,6 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return _catalog_write(ctx, args)
         if args.action == "remove":
             return _catalog_remove(ctx, args)
-        return catalogs.remove(ctx, args.kind, args.id)
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2
