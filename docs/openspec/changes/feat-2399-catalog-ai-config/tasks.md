@@ -99,3 +99,7 @@
 - [ ] Permanent documentation updated (`README.md`, `CHANGELOG.md`, `specs/catalogs/spec.md`)
 - [ ] No secrets or unredacted credentials stored or committed
 - [ ] PR passes all CI quality gates and OpenSpec archived
+
+## Deviations
+
+- Mechanical: `--json` removed from `catalog import` and `catalog materialize` — never implemented, issue #2399 acceptance criteria do not list it.

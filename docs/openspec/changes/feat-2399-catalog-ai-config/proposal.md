@@ -18,8 +18,8 @@ Centralize AI configuration (skills, agents, rules, prompts, hooks) inside versi
 
 - Introduce `framework/ai-sdlc/aisdlc/materialize.py` with `LAYOUTS` defining directory-unit and file-unit mapping per harness (`claude-code`, `cursor`, `codex`, `junie`, `kiro`, `agy`).
 - Extend catalog revisions with a `files` dictionary `{relative_path: utf-8_text}` and add `catalogs.guard_files(files)` to block literal secrets matching `factory.SECRET_VALUES`.
-- Add `aisdlc catalog import --harness <h> --from <dir> [--kind K] [--json]` to read harness layouts strictly as UTF-8 bytes and store or update catalog revisions idempotently.
-- Add `aisdlc catalog materialize --harness <h> --dest <dir> [--kind K] [--check] [--json]` to project catalog entries to disk with a `.aisdlc-materialized.json` SHA-256 manifest. Support `--check` for drift detection exiting 1 on differences.
+- Add `aisdlc catalog import --harness <h> --from <dir> [--kind K]` to read harness layouts strictly as UTF-8 bytes and store or update catalog revisions idempotently.
+- Add `aisdlc catalog materialize --harness <h> --dest <dir> [--kind K] [--check]` to project catalog entries to disk with a `.aisdlc-materialized.json` SHA-256 manifest. Support `--check` for drift detection exiting 1 on differences.
 - Emit evidence (`catalog.import` / `catalog.materialize`) and telemetry records (counts only) on import and non-check materialize.
 - Add harness stub plugins for `agy` and `kiro` under `framework/ai-sdlc/plugins/agy` and `framework/ai-sdlc/plugins/kiro`, registering them in `.aisdlc/aisdlc.toml`.
 - Expose `import` and `materialize` subcommands in `framework/ai-sdlc/aisdlc/cli.py`.

@@ -496,14 +496,12 @@ def build_parser() -> argparse.ArgumentParser:
     _imp.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
     _imp.add_argument("--from", dest="from_dir", required=True, help="source harness root directory", type=Path)
     _imp.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
-    _imp.add_argument("--json", action="store_true")
 
     _mat = cat_sub.add_parser("materialize", help="project catalog entries into a harness layout")
     _mat.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
     _mat.add_argument("--dest", required=True, help="destination directory", type=Path)
     _mat.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
     _mat.add_argument("--check", action="store_true", help="verify disk without writing (exits 1 on drift)")
-    _mat.add_argument("--json", action="store_true")
 
     p = sub.add_parser("project", help="Factory Project + repo binding (#2255)")
     proj_sub = p.add_subparsers(dest="action", required=True)

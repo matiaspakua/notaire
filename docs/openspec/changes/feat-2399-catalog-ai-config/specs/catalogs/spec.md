@@ -8,7 +8,7 @@
 
 ### Requirement: Catalog import for harness AI configuration
 
-The kit SHALL provide `aisdlc catalog import --harness <h> --from <dir> [--kind K] [--json]`
+The kit SHALL provide `aisdlc catalog import --harness <h> --from <dir> [--kind K]`
 to import AI configuration assets (skills, agents, rules) from harness-specific layouts
 into catalog entries. Files SHALL be read as raw bytes and decoded strictly as UTF-8,
 preserving exact byte content and newline conventions (CRLF/LF). Non-UTF-8 files SHALL
@@ -40,7 +40,7 @@ exit with code 1 after completing remaining imports.
 
 ### Requirement: Catalog materialization and drift checking
 
-The kit SHALL provide `aisdlc catalog materialize --harness <h> --dest <dir> [--kind K] [--check] [--json]`
+The kit SHALL provide `aisdlc catalog materialize --harness <h> --dest <dir> [--kind K] [--check]`
 to project catalog entries into target harness directory structures. For every active catalog
 entry supported by the harness layout containing a `files` payload, the kit SHALL write the
 files under `--dest` matching the exact stored bytes without newline alteration.
