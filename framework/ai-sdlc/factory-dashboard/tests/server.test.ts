@@ -350,6 +350,51 @@ describe("events stream proxy", () => {
     expect(eventsCall?.headers["Last-Event-ID"]).toBe("5");
   });
 
+  it("carries security headers on the SSE stream response", async () => {
+    const streamingFetch: typeof fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes("/factory/session")) {
+        return json(200, { identity: "alice", scope: "write", actor: "ui:alice", write_enabled: true });
+      }
+      if (url.includes("/factory/events")) {
+        const body = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('event: ready\ndata: {}\n\n'));
+            controller.close();
+          },
+        });
+        return new Response(body, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
+        });
+      }
+      return json(200, { ok: true });
+    }) as typeof fetch;
+    const config = { ...CONFIG, secureCookies: false };
+    const testApp = buildApp({ config, fetcher: streamingFetch });
+    await testApp.listen({ port: 0, host: "127.0.0.1" });
+    const port = (testApp.server.address() as import("net").AddressInfo).port;
+    const signInResp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/session`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "tok-alice" }),
+    });
+    const setCookie = signInResp.headers.get("set-cookie")!;
+    const cookie = setCookie.split(";")[0];
+    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+      headers: { cookie },
+    });
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("content-type")).toContain("text/event-stream");
+    expect(resp.headers.get("content-security-policy")).toContain("default-src 'self'");
+    expect(resp.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
+    expect(resp.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(resp.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(resp.headers.get("cache-control")).toBe("no-store");
+    expect(resp.headers.get("x-accel-buffering")).toBe("no");
+    await resp.body!.cancel();
+    await testApp.close();
+  });
+
   it("never leaks the server-side token to the client response", async () => {
     await start();
     const cookie = await signIn("alpha", "tok-alice");
