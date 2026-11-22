@@ -18,6 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `GET /factory/telemetry?group=…` (read scope) on `aisdlc serve`: aggregated time, cost, and failure counts from the store (#2394).
 - Contract `factory-control` 1.3.0 (additive — new `TelemetryReport` schema and path).
 - Intent model (submit/list/show), spec parser, reference intents, MCP stdio server, and API endpoints for intent lifecycle (#2395).
+- `aisdlc line [--json]` and `GET /factory/line`: the production line model (ordered stages with gates, agents, skills, tools/MCP, model, effort, inputs/outputs, guardrails); optional `inputs`/`outputs` on `[[stages]]` with kit defaults; contract `factory-control` 1.3.0 (#2396).
 - Junie harness adapter stub registered in the Notaire profile (`framework/ai-sdlc/plugins/junie/`) (#2385).
 - `aisdlc serve-token add|list|revoke`: named serve tokens, one per person, each with its scope; the identity is the actor of every write (#2384).
 - `GET /factory/session` names the caller; `POST /factory/catalogs/{kind}` (declared in the contract but not served before) creates entries; `PUT` accepts `fields`. A credential field takes only `env:NAME`; a literal secret is refused with `literal_secret` (#2384).

@@ -160,6 +160,10 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
         return harness.list_adapters(ctx.root, ctx.profile)
     if path == "/factory/report":
         return evidence.report_summary(ctx)
+    if path == "/factory/line":
+        from aisdlc import line as _line_mod
+
+        return _line_mod.build_line(ctx)
     if path == "/factory/coach":
         days = (query.get("days") or [None])[0]
         return coach.report(coach.default_home(), root=ctx.root, days=_positive_int(days))

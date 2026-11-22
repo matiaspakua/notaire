@@ -135,6 +135,8 @@ placeholder = true               # replace with your full suite command, then de
 # resolve against [catalogs] (+ skills-dir overlay for skills). Unknown id →
 # config validate / doctor error. Omit = no-op. List/show never execute.
 # Effort units: tokens (prompt+completion), time_seconds, questions, review_lines.
+# inputs/outputs: human-readable labels for what the stage consumes and produces
+# (used by `aisdlc line`; kit defaults apply when omitted).
 # [[stages]]
 # id = "plan"
 # agents = ["planner"]
@@ -142,6 +144,8 @@ placeholder = true               # replace with your full suite command, then de
 # mcp = ["repolens"]         # RepoLens is the default code-knowledge server
 # model = "your-model-id"
 # effort = { tokens = 200000, time_seconds = 3600, questions = 20, review_lines = 400 }
+# inputs = ["GitHub issue", "use case"]
+# outputs = ["OpenSpec change"]
 
 # Code knowledge. Default command is the installed `repolens` console script.
 # [knowledge]

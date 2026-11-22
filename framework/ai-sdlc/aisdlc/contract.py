@@ -30,6 +30,7 @@ REQUIRED_PATHS = (
     "/factory/coach",
     "/factory/session",
     "/factory/telemetry",
+    "/factory/line",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -43,6 +44,10 @@ SCHEMA_MARKERS = (
     "CoachReport",
     "SessionView",
     "TelemetryReport",
+    "ProductionLine",
+    "LineStage",
+    "LineGate",
+    "LineGuardrails",
 )
 CONFIG_REQUIRED = (
     "schema",

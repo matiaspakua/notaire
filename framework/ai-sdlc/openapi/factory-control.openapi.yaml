@@ -43,6 +43,8 @@ tags:
   - name: runs
   - name: coach
   - name: telemetry
+  - name: intents
+  - name: line
 paths:
   /factory/capabilities:
     get:
@@ -665,6 +667,20 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /factory/line:
+    get:
+      tags: [line]
+      operationId: getProductionLine
+      summary: Production line model (CLI `aisdlc line --json`); ordered stages with gates, agents, skills, tools/MCP, guardrails
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Production line model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionLine"
         "401":
           description: Missing or invalid bearer token
           content:
@@ -1403,3 +1419,93 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Intent"
+    LineGate:
+      type: object
+      additionalProperties: true
+      required: [id, name, command, required, mode, expect, paths]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        command: { type: string }
+        required: { type: boolean }
+        mode: { type: string, enum: [required, advisory] }
+        expect: { type: string, enum: [pass, fail] }
+        paths:
+          type: array
+          items: { type: string }
+    LineStage:
+      type: object
+      additionalProperties: true
+      required: [id, gates]
+      properties:
+        id: { type: string }
+        title: { type: [string, "null"] }
+        gates:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineGate"
+        agents:
+          type: array
+          items: { type: string }
+        skills:
+          type: array
+          items: { type: string }
+        mcp:
+          type: array
+          items: { type: string }
+        tools:
+          type: array
+          items: { type: string }
+        model: { type: [string, "null"] }
+        effort:
+          type: [object, "null"]
+          additionalProperties: true
+        inputs:
+          type: array
+          items: { type: string }
+        outputs:
+          type: array
+          items: { type: string }
+        io_source: { type: string }
+    LineGuardrails:
+      type: object
+      additionalProperties: true
+      required: [protected, hooks, rules, isolator]
+      properties:
+        protected:
+          type: object
+          additionalProperties: true
+          required: [owner, paths]
+          properties:
+            owner: { type: string }
+            paths:
+              type: array
+              items: { type: string }
+        hooks:
+          type: array
+          items: { type: string }
+        rules:
+          type: array
+          items: { type: string }
+        isolator:
+          type: object
+          additionalProperties: true
+          required: [status, sandbox, backend, enforces_committer]
+          properties:
+            status: { type: string }
+            sandbox: { type: boolean }
+            backend: { type: [string, "null"] }
+            enforces_committer: { type: boolean }
+            detail: { type: [string, "null"] }
+    ProductionLine:
+      type: object
+      additionalProperties: true
+      required: [schema_version, stages, guardrails]
+      properties:
+        schema_version: { type: integer }
+        stages:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineStage"
+        guardrails:
+          $ref: "#/components/schemas/LineGuardrails"
