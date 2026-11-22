@@ -138,12 +138,29 @@ export interface LineGate {
   paths?: string[];
 }
 
+export interface LineStageGuardrail {
+  kind: "grant";
+  id: string;
+  stage: string;
+  worktree?: string;
+  write_set?: string[];
+  required_checks?: string[];
+  budget?: Record<string, unknown>;
+}
+
 export interface LineStage {
   id: string;
   gates: LineGate[];
   inputs: string[];
   outputs: string[];
   io_source?: string;
+  agents: string[];
+  skills: string[];
+  mcp: string[];
+  tools: string[];
+  model?: string | null;
+  effort: Record<string, number>;
+  guardrails: LineStageGuardrail[];
 }
 
 export interface LineGuardrails {
@@ -159,20 +176,6 @@ export interface LinePayload {
   guardrails: LineGuardrails;
 }
 
-export interface ConfigStage {
-  id: string;
-  agents: string[];
-  skills: string[];
-  mcp: string[];
-  model?: string | null;
-  effort: Record<string, number>;
-  inputs: string[];
-  outputs: string[];
-}
-
-export interface ConfigPayload {
-  stages: ConfigStage[];
-}
 
 export interface StatusPrevious {
   step: string;
@@ -223,35 +226,6 @@ export interface Intent {
   version?: number;
 }
 
-export interface MergedStation {
-  id: string;
-  gates: LineGate[];
-  inputs: string[];
-  outputs: string[];
-  agents: string[];
-  skills: string[];
-  mcp: string[];
-  model?: string | null;
-  effort: Record<string, number>;
-  guardrails: LineGuardrails;
-  state: "done" | "current" | "upcoming";
-}
-
-export function mergeLineConfig(line: LinePayload, config: ConfigPayload | undefined): LineStage[] {
-  const configMap = new Map<string, ConfigStage>();
-  config?.stages.forEach((s) => configMap.set(s.id, s));
-  return line.stages.map((stage) => {
-    const cfg = configMap.get(stage.id);
-    return {
-      ...stage,
-      agents: cfg?.agents ?? [],
-      skills: cfg?.skills ?? [],
-      mcp: cfg?.mcp ?? [],
-      model: cfg?.model ?? null,
-      effort: cfg?.effort ?? {},
-    } as LineStage & { agents: string[]; skills: string[]; mcp: string[]; model?: string | null; effort: Record<string, number> };
-  });
-}
 
 export function stationState(stationId: string, status: FactoryStatus | undefined): "done" | "current" | "upcoming" {
   if (!status || !status.run_status) return "upcoming";

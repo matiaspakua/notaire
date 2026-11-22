@@ -7,7 +7,7 @@ import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { type Key, useT } from "../i18n.ts";
 import type { Capabilities, FactoryStatus, LinePayload, Run } from "../model.ts";
-import { mergeLineConfig, stationState, type ConfigPayload, type LineStage } from "../model.ts";
+import { stationState } from "../model.ts";
 
 function GatePill({ gate }: { gate: { name: string; mode: string } }) {
   const t = useT();
@@ -24,6 +24,7 @@ function StationCard({
   station,
   index,
   guardrails,
+  stageGuardrails,
 }: {
   station: {
     id: string;
@@ -44,6 +45,7 @@ function StationCard({
     rules: unknown[];
     isolator: { status?: string; sandbox: boolean; enforces_committer: boolean };
   };
+  stageGuardrails: Array<{ kind: string; id: string; write_set?: string[] }>;
 }) {
   const t = useT();
   const [expanded, setExpanded] = useState(false);
@@ -135,6 +137,14 @@ function StationCard({
                 committer: guardrails.isolator.enforces_committer ? t("cap.on") : t("cap.off"),
               })}
             </span>
+            {stageGuardrails.length > 0 && (
+              <span className="small muted">
+                {t("line.stageGrants", { n: stageGuardrails.length })}
+                {stageGuardrails.length > 0 && (
+                  <span className="faint">: {stageGuardrails.map((g) => g.id).join(", ")}</span>
+                )}
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -146,7 +156,6 @@ function ProductionLineTimeline() {
   const t = useT();
   const { workspace } = useWorkspace();
   const lineRes = useResource<LinePayload>(factory(workspace.id, "/line"));
-  const configRes = useResource<ConfigPayload>(factory(workspace.id, "/config"));
   const statusRes = useResource<FactoryStatus>(factory(workspace.id, "/status"), 5_000);
 
   if (!lineRes.data) {
@@ -154,30 +163,29 @@ function ProductionLineTimeline() {
     return <Loaded resource={lineRes} rows={4}>{() => <></>}</Loaded>;
   }
 
-  const merged = mergeLineConfig(lineRes.data, configRes.data);
   const status = statusRes.data;
 
   return (
     <div className="production-line">
       <div className="stack" style={{ gap: "var(--space-4)" }}>
-        {merged.map((stage, i) => {
+        {lineRes.data.stages.map((stage, i) => {
           const state = stationState(stage.id, status);
-          const cfgStage = stage as LineStage & { agents: string[]; skills: string[]; mcp: string[]; model?: string | null; effort: Record<string, number> };
           return (
             <StationCard
               key={stage.id}
               index={i}
               guardrails={lineRes.data!.guardrails}
+              stageGuardrails={stage.guardrails}
               station={{
-                id: cfgStage.id,
-                gates: cfgStage.gates,
-                inputs: cfgStage.inputs,
-                outputs: cfgStage.outputs,
-                agents: cfgStage.agents,
-                skills: cfgStage.skills,
-                mcp: cfgStage.mcp,
-                model: cfgStage.model,
-                effort: cfgStage.effort,
+                id: stage.id,
+                gates: stage.gates,
+                inputs: stage.inputs,
+                outputs: stage.outputs,
+                agents: stage.agents,
+                skills: stage.skills,
+                mcp: stage.mcp,
+                model: stage.model,
+                effort: stage.effort,
                 state,
               }}
             />
