@@ -787,6 +787,26 @@ def build_parser() -> argparse.ArgumentParser:
         tool_parser.add_argument("--dry-run", action="store_true")
         tool_parser.add_argument("args", nargs="*", help="arguments forwarded to the knowledge CLI")
 
+    # store subcommand (#2394)
+    p = sub.add_parser("store", help="factory store operations (sync, stats)")
+    store_sub = p.add_subparsers(dest="action", required=True)
+    store_sub.add_parser("sync", help="sync evidence ledger, cost, and RepoLens into the store")
+    store_stats = store_sub.add_parser("stats", help="print store row counts")
+    store_stats.add_argument("--json", action="store_true")
+
+    # telemetry subcommand (#2394)
+    p = sub.add_parser("telemetry", help="telemetry record and report")
+    telemetry_sub = p.add_subparsers(dest="action", required=True)
+    rec = telemetry_sub.add_parser("record", help="insert a single telemetry row")
+    rec.add_argument("--stage")
+    rec.add_argument("--agent")
+    rec.add_argument("--metric", required=True)
+    rec.add_argument("--value", type=float, required=True)
+    rec.add_argument("--ok", action="store_true")
+    rpt = telemetry_sub.add_parser("report", help="aggregate telemetry report")
+    rpt.add_argument("--group", default="stage")
+    rpt.add_argument("--json", action="store_true")
+
     return parser
 
 
@@ -901,6 +921,8 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "knowledge": lambda: _knowledge_cmd(ctx, args),
         "entity": lambda: _entity(ctx, args),
         "intent": lambda: _intent(ctx, args),
+        "store": lambda: _store_cmd(ctx, args),
+        "telemetry": lambda: _telemetry_cmd(ctx, args),
     }
     return simple[args.command]()
 
@@ -1779,6 +1801,53 @@ def _run(ctx: Context, args: argparse.Namespace) -> int:
 
 def _plain(view: dict) -> str:
     return "\n".join(f"{key}={value}" for key, value in view.items())
+
+
+def _store_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle store sync and stats commands (#2394)."""
+    from aisdlc.telemetry_store import stats as store_stats, sync as store_sync
+
+    if args.action == "sync":
+        counts = store_sync(ctx)
+        print(json.dumps(counts, indent=2, sort_keys=True))
+        return 0
+    if args.action == "stats":
+        result = store_stats(ctx)
+        if getattr(args, "json", False):
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            for table, count in sorted(result.items()):
+                print(f"  {table}: {count}")
+        return 0
+    print(f"error: unknown store action {args.action!r}")
+    return 2
+
+
+def _telemetry_cmd(ctx: Context, args: argparse.Namespace) -> int:
+    """Handle telemetry record and report commands (#2394)."""
+    from aisdlc.telemetry_store import record as telemetry_record, report as telemetry_report
+
+    if args.action == "record":
+        ok = getattr(args, "ok", True)
+        telemetry_record(
+            ctx,
+            stage=getattr(args, "stage", None),
+            agent=getattr(args, "agent", None),
+            metric=args.metric,
+            value=args.value,
+            ok=ok,
+        )
+        return 0
+    if args.action == "report":
+        group = getattr(args, "group", "stage") or "stage"
+        result = telemetry_report(ctx, group)
+        if getattr(args, "json", False):
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    print(f"error: unknown telemetry action {args.action!r}")
+    return 2
 
 
 def parse_vars(pairs: list[str]) -> dict[str, str]:
