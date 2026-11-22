@@ -159,6 +159,61 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
     return reply.code(204).send();
   });
 
+  app.get("/api/workspaces/:ws/factory/events", async (request, reply) => {
+    const ws = workspaceOf(request, reply);
+    if (!ws) {
+      return reply;
+    }
+    const token = tokenFor(request, reply, ws);
+    if (!token) {
+      return reply;
+    }
+    const { query } = split(request.raw.url ?? "", `/api/workspaces/${ws.id}/factory/events`);
+    const upstreamUrl = `${ws.kit}/factory/events${query ? `?${query}` : ""}`;
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token}`,
+      Accept: "text/event-stream",
+    };
+    const lastEventId = request.headers["last-event-id"];
+    if (typeof lastEventId === "string") {
+      headers["Last-Event-ID"] = lastEventId;
+    }
+    const abort = new AbortController();
+    request.raw.on("close", () => abort.abort());
+    let upstream: Response;
+    try {
+      upstream = await fetcher(upstreamUrl, {
+        method: "GET",
+        headers,
+        signal: abort.signal,
+        redirect: "error",
+      });
+    } catch {
+      return send(reply, problem(502, "kit_unreachable", "aisdlc serve did not answer"));
+    }
+    if (!upstream.ok) {
+      const text = await upstream.text();
+      let body: unknown = null;
+      if (text) {
+        try { body = JSON.parse(text); } catch { body = { detail: text.slice(0, 500) }; }
+      }
+      const pb = (body ?? {}) as { code?: string; detail?: string };
+      return send(reply, problem(upstream.status, pb.code ?? `http_${upstream.status}`, pb.detail ?? "upstream error"));
+    }
+    reply.hijack();
+    const { Readable } = await import("node:stream");
+    const stream = Readable.fromWeb(upstream.body as import("node:stream/web").ReadableStream);
+    reply.raw.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-store",
+      "X-Accel-Buffering": "no",
+    });
+    stream.pipe(reply.raw);
+    reply.raw.on("close", () => { abort.abort(); stream.destroy(); });
+    stream.on("end", () => reply.raw.end());
+    stream.on("error", () => reply.raw.end());
+  });
+
   const proxy = async (request: FastifyRequest, reply: FastifyReply) => {
     const ws = workspaceOf(request, reply);
     if (!ws) {
@@ -168,7 +223,7 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
     if (!FACTORY_PATH.test(path)) {
       return send(reply, problem(400, "invalid_path", "only /factory paths of the kit contract are proxied"));
     }
-    const method = request.method as "GET" | "POST" | "PUT";
+    const method = request.method as "GET" | "POST" | "PUT" | "DELETE";
     if (method !== "GET" && !csrfOk(request, reply)) {
       return reply;
     }
@@ -184,7 +239,7 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
       }),
     );
   };
-  app.route({ method: ["GET", "POST", "PUT"], url: "/api/workspaces/:ws/factory/*", handler: proxy });
+  app.route({ method: ["GET", "POST", "PUT", "DELETE"], url: "/api/workspaces/:ws/factory/*", handler: proxy });
 
   app.get("/api/workspaces/:ws/knowledge/:endpoint", async (request, reply) => {
     const ws = workspaceOf(request, reply);

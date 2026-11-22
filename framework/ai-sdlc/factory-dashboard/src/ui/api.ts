@@ -82,3 +82,13 @@ export async function api<T>(path: string, { method = "GET", body, ifMatch }: Op
 export const factory = (ws: string, path: string) => `/api/workspaces/${encodeURIComponent(ws)}/factory${path}`;
 export const knowledge = (ws: string, endpoint: string, query = "") =>
   `/api/workspaces/${encodeURIComponent(ws)}/knowledge/${endpoint}${query ? `?${query}` : ""}`;
+
+export const eventsUrl = (ws: string) => `/api/workspaces/${encodeURIComponent(ws)}/factory/events`;
+
+export async function factoryDelete<T>(ws: string, path: string, ifMatch?: string): Promise<T> {
+  return api<T>(factory(ws, path), { method: "DELETE", ifMatch });
+}
+
+export async function submitIntent<T>(ws: string, body: { text?: string; ref?: string; spec?: string; title?: string }): Promise<T> {
+  return api<T>(factory(ws, "/intents"), { method: "POST", body });
+}

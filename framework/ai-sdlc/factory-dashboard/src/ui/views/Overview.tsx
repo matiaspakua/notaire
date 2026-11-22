@@ -1,79 +1,219 @@
+import { useState } from "react";
+
 import { factory } from "../api.ts";
 import { Icon } from "../components/Icon.tsx";
-import { Kpi, Loaded } from "../components/State.tsx";
+import { EmptyState, Kpi, Loaded, StatusBadge } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { type Key, useT } from "../i18n.ts";
-import type { Capabilities, Run } from "../model.ts";
+import type { Capabilities, FactoryStatus, LinePayload, Run } from "../model.ts";
+import { mergeLineConfig, stationState, type ConfigPayload, type LineStage } from "../model.ts";
 
-const GROUPS: { id: string; label: Key; phase: string; statuses: string[] }[] = [
-  { id: "flow", label: "line.flow", phase: "", statuses: ["requested", "queued", "running"] },
-  { id: "outcome", label: "line.outcome", phase: "prove", statuses: ["succeeded", "failed", "blocked", "cancelled"] },
-];
-/** A station with runs takes the tone of what those runs need: queued ones wait for a runner adapter. */
-const BUSY: Record<string, string> = {
-  requested: "waiting", queued: "waiting", running: "running", succeeded: "done", failed: "error", blocked: "waiting",
-  cancelled: "idle",
-};
-const ORDER = GROUPS.flatMap((group) => group.statuses);
-
-function Station({ status, runs }: { status: string; runs: Run[] }) {
+function GatePill({ gate }: { gate: { name: string; mode: string } }) {
   const t = useT();
-  const { workspace, go } = useWorkspace();
-  const count = runs.length;
-  const label = t(`status.${status}` as Key);
-  const tone = count ? BUSY[status] ?? "idle" : "idle";
   return (
-    <li>
-      <button
-        type="button"
-        className="station-card"
-        data-status={tone}
-        aria-label={t("line.station", { status: label, n: count })}
-        onClick={() => go(`${workspace.id}/runs?status=${status}`)}
-      >
-        <span className="station-header">
-          <span className="station-number">{ORDER.indexOf(status) + 1}</span>
-          <span className={`status-pill ${tone}`}>{t(`station.${tone}` as Key)}</span>
-        </span>
-        <span className="station-title">{label}</span>
-        <span className="station-count">{count}</span>
-        <span className="station-agent">
-          <Icon name="runs" size={14} />
-          {t(`station.about.${status}` as Key)}
-        </span>
-        {count > 0 && (
-          <span className="station-tags">
-            {runs.slice(0, 3).map((run) => <span key={run.id} className="tag">{run.id}</span>)}
-            {count > 3 && <span className="tag">+{count - 3}</span>}
-          </span>
-        )}
-      </button>
-    </li>
+    <span className="tag gate" data-testid="gate" title={`${gate.mode}: ${gate.name}`}>
+      <span>{gate.mode === "required" ? t("gate.required") : t("gate.advisory")}</span>
+      <span className="faint">·</span>
+      <span>{gate.name}</span>
+    </span>
   );
 }
 
-function ProductionLine({ runs }: { runs: Run[] }) {
+function StationCard({
+  station,
+  index,
+  guardrails,
+}: {
+  station: {
+    id: string;
+    gates: { id: string; name: string; required: boolean; mode: string }[];
+    inputs: string[];
+    outputs: string[];
+    agents: string[];
+    skills: string[];
+    mcp: string[];
+    model?: string | null;
+    effort: Record<string, number>;
+    state: "done" | "current" | "upcoming";
+  };
+  index: number;
+  guardrails: {
+    protected: { paths: string[] };
+    hooks: string[];
+    rules: unknown[];
+    isolator: { status?: string; sandbox: boolean; enforces_committer: boolean };
+  };
+}) {
   const t = useT();
+  const [expanded, setExpanded] = useState(false);
+  const tone = station.state === "current" ? "running" : station.state === "done" ? "done" : "idle";
+  return (
+    <div>
+      <button
+        type="button"
+        className="station-card"
+        data-testid="station"
+        data-status={tone}
+        aria-expanded={expanded}
+        aria-current={station.state === "current" ? "step" : undefined}
+        onClick={() => setExpanded((v) => !v)}
+      >
+        <span className="station-header">
+          <span className="station-number">{index + 1}</span>
+          <span className="station-title">{station.id}</span>
+          {station.state === "current" && (
+            <span className="status-pill running">{t("station.current")}</span>
+          )}
+          {station.state !== "current" && (
+            <span className={`status-pill ${tone}`}>{t(`station.${tone}` as Key)}</span>
+          )}
+        </span>
+        {station.gates.length > 0 && (
+          <span className="station-tags">
+            {station.gates.map((g) => (
+              <GatePill key={g.id} gate={g} />
+            ))}
+          </span>
+        )}
+        {station.agents.length > 0 && (
+          <span className="station-agent">
+            <Icon name="agent" size={14} />
+            {station.agents.join(", ")}
+          </span>
+        )}
+        {station.model && <span className="tag">{station.model}</span>}
+      </button>
+      {expanded && (
+        <div className="card" data-testid="station-details" style={{ marginTop: "var(--space-2)" }}>
+          <dl className="facts">
+            <dt className="section-label">{t("line.agents")}</dt>
+            <dd>{station.agents.length ? station.agents.join(", ") : t("line.none")}</dd>
+            <dt className="section-label">{t("line.skills")}</dt>
+            <dd>{station.skills.length ? station.skills.join(", ") : t("line.none")}</dd>
+            <dt className="section-label">{t("line.mcp")}</dt>
+            <dd>{station.mcp.length ? station.mcp.join(", ") : t("line.none")}</dd>
+            <dt className="section-label">{t("line.model")}</dt>
+            <dd>{station.model ?? t("line.none")}</dd>
+            {Object.keys(station.effort).length > 0 && (
+              <>
+                <dt className="section-label">{t("line.effort")}</dt>
+                <dd>
+                  {Object.entries(station.effort).map(([k, v]) => (
+                    <span key={k} className="tag">{k}: {v}</span>
+                  ))}
+                </dd>
+              </>
+            )}
+            <dt className="section-label">{t("line.inputs")}</dt>
+            <dd data-testid="stage-inputs">
+              {station.inputs.length ? station.inputs.map((i) => <span key={i} className="tag">{i}</span>) : t("line.none")}
+            </dd>
+            <dt className="section-label">{t("line.outputs")}</dt>
+            <dd data-testid="stage-outputs">
+              {station.outputs.length ? station.outputs.map((o) => <span key={o} className="tag">{o}</span>) : t("line.none")}
+            </dd>
+          </dl>
+          <div className="section-label">{t("line.guardrails")}</div>
+          <div className="stack-tight">
+            <span className="small muted">
+              {t("line.protected", { n: guardrails.protected.paths.length })}
+              {guardrails.protected.paths.length > 0 && (
+                <span className="faint">: {guardrails.protected.paths.join(", ")}</span>
+              )}
+            </span>
+            <span className="small muted">
+              {t("line.hooks", { n: guardrails.hooks.length })}
+            </span>
+            <span className="small muted">
+              {t("line.rules", { n: guardrails.rules.length })}
+            </span>
+            <span className="small muted">
+              {t("line.isolator", {
+                status: guardrails.isolator.status ?? t("line.none"),
+                sandbox: guardrails.isolator.sandbox ? t("cap.on") : t("cap.off"),
+                committer: guardrails.isolator.enforces_committer ? t("cap.on") : t("cap.off"),
+              })}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProductionLineTimeline() {
+  const t = useT();
+  const { workspace } = useWorkspace();
+  const lineRes = useResource<LinePayload>(factory(workspace.id, "/line"));
+  const configRes = useResource<ConfigPayload>(factory(workspace.id, "/config"));
+  const statusRes = useResource<FactoryStatus>(factory(workspace.id, "/status"), 5_000);
+
+  if (!lineRes.data) {
+    if (lineRes.error) return <EmptyState icon="alert" title={t("state.empty")} />;
+    return <Loaded resource={lineRes} rows={4}>{() => <></>}</Loaded>;
+  }
+
+  const merged = mergeLineConfig(lineRes.data, configRes.data);
+  const status = statusRes.data;
+
   return (
     <div className="production-line">
-      {GROUPS.map((group) => {
-        const total = runs.filter((run) => group.statuses.includes(run.status)).length;
-        return (
-          <section key={group.id} className="phase-group" aria-labelledby={`phase-${group.id}`}>
-            <header className="phase-header">
-              <span className={`phase-indicator ${group.phase}`} aria-hidden="true" />
-              <h2 className="phase-name" id={`phase-${group.id}`}>{t(group.label)}</h2>
-              <span className="phase-meta">{total}/{runs.length}</span>
-            </header>
-            <ol className="stations">
-              {group.statuses.map((status) => (
-                <Station key={status} status={status} runs={runs.filter((run) => run.status === status)} />
-              ))}
-            </ol>
-          </section>
-        );
-      })}
+      <div className="stack" style={{ gap: "var(--space-4)" }}>
+        {merged.map((stage, i) => {
+          const state = stationState(stage.id, status);
+          const cfgStage = stage as LineStage & { agents: string[]; skills: string[]; mcp: string[]; model?: string | null; effort: Record<string, number> };
+          return (
+            <StationCard
+              key={stage.id}
+              index={i}
+              guardrails={lineRes.data!.guardrails}
+              station={{
+                id: cfgStage.id,
+                gates: cfgStage.gates,
+                inputs: cfgStage.inputs,
+                outputs: cfgStage.outputs,
+                agents: cfgStage.agents,
+                skills: cfgStage.skills,
+                mcp: cfgStage.mcp,
+                model: cfgStage.model,
+                effort: cfgStage.effort,
+                state,
+              }}
+            />
+          );
+        })}
+      </div>
+      {status?.previous.length && (
+        <div className="stack-tight">
+          <div className="section-label">{t("line.previous")}</div>
+          <ul className="timeline">
+            {status.previous.map((p) => (
+              <li key={p.step}>
+                <StatusBadge status={p.status} />
+                <span className="mono">{p.step}</span>
+                {p.stage && <span className="tag">{p.stage}</span>}
+                {p.duration_s != null && <span className="small muted">{p.duration_s.toFixed(1)}s</span>}
+                {p.usd != null && <span className="small muted">${p.usd.toFixed(4)}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {status?.next.length && (
+        <div className="stack-tight">
+          <div className="section-label">{t("line.next")}</div>
+          <ul className="timeline">
+            {status.next.map((n) => (
+              <li key={n.step}>
+                <span className="mono">{n.step}</span>
+                {n.stage && <span className="tag">{n.stage}</span>}
+                {n.source && <span className="small muted">{n.source}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -102,10 +242,9 @@ export function Overview() {
   const t = useT();
   const { workspace } = useWorkspace();
   const caps = useResource<Capabilities>(factory(workspace.id, "/capabilities"), 30_000);
-  const runs = useRuns();
   return (
     <div className="stack">
-      <Loaded resource={runs} rows={4}>{(data) => <ProductionLine runs={data.entries} />}</Loaded>
+      <ProductionLineTimeline />
       <section className="phase-group" aria-labelledby="phase-caps">
         <header className="phase-header">
           <span className="phase-indicator plan" aria-hidden="true" />

@@ -1,9 +1,11 @@
+import { useState } from "react";
+
 import { factory } from "../api.ts";
 import { Empty, Kpi, Loaded, Section, StatusBadge, time } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { useLang, useT } from "../i18n.ts";
-import type { Report } from "../model.ts";
+import { formatDuration, type Report, type TelemetryResponse } from "../model.ts";
 
 function seconds(value: number, lang: string): string {
   if (value >= 90) {
@@ -127,6 +129,143 @@ function CostByModel({ report }: { report: Report }) {
   );
 }
 
+const TELEMETRY_GROUPS = [
+  { key: "stage", labelKey: "telemetry.tab.stage" },
+  { key: "intent", labelKey: "telemetry.tab.intent" },
+  { key: "agent", labelKey: "telemetry.tab.agent" },
+  { key: "skill", labelKey: "telemetry.tab.skill" },
+  { key: "tool", labelKey: "telemetry.tab.tool" },
+] as const;
+
+function TelemetryPanel({ workspaceId }: { workspaceId: string }) {
+  const t = useT();
+  const lang = useLang();
+  const [activeTab, setActiveTab] = useState("stage");
+  const data = useResource<TelemetryResponse>(factory(workspaceId, `/telemetry?group=${activeTab}`));
+  const tabId = (g: string) => `telemetry-tab-${g}`;
+  const handleTabKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveTab(TELEMETRY_GROUPS[(index + 1) % TELEMETRY_GROUPS.length].key);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveTab(TELEMETRY_GROUPS[(index - 1 + TELEMETRY_GROUPS.length) % TELEMETRY_GROUPS.length].key);
+    }
+  };
+  return (
+    <div data-testid="telemetry-panel" className="telemetry-panel">
+      <h3 className="section-label">{t("telemetry.panel")}</h3>
+      <Loaded resource={data}>
+        {(resp) => {
+          const rows = resp.rows;
+          const totalDur = resp.total_duration_s;
+          const totalCost = resp.total_usd;
+          const totalFail = resp.total_failures;
+          const totalRuns = resp.total_runs;
+          const failuresByIntegration = resp.failures_by_integration;
+          const repolens = resp.repolens;
+          return (
+            <div className="stack">
+              <div className="kpi-row">
+                <Kpi label={t("telemetry.totalDuration")} value={formatDuration(totalDur, lang)} tone="intake" />
+                <Kpi label={t("telemetry.totalCost")} value={totalCost.toLocaleString(lang, { style: "currency", currency: "USD" })} tone="ship" />
+                <Kpi label={t("telemetry.totalFailures")} value={totalFail.toLocaleString(lang)} tone={totalFail > 0 ? "error" : "prove"} />
+                <Kpi label={t("telemetry.totalRuns")} value={totalRuns.toLocaleString(lang)} tone="plan" />
+              </div>
+              <div className="tabs" role="tablist" aria-label={t("telemetry.panel")}>
+                {TELEMETRY_GROUPS.map((g, i) => (
+                  <button
+                    key={g.key}
+                    type="button"
+                    id={tabId(g.key)}
+                    data-testid={`telemetry-tab-${g.key}`}
+                    role="tab"
+                    aria-selected={activeTab === g.key}
+                    tabIndex={activeTab === g.key ? 0 : -1}
+                    className={activeTab === g.key ? "active" : ""}
+                    onClick={() => setActiveTab(g.key)}
+                    onKeyDown={(e) => handleTabKeyDown(e, i)}
+                  >
+                    {t(g.labelKey as any)}
+                  </button>
+                ))}
+              </div>
+              <div className="table-wrap">
+                <table>
+                  <caption className="sr-only">{t("telemetry.panel")}: {t(`telemetry.tab.${activeTab}` as any)}</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">{t("telemetry.key")}</th>
+                      <th scope="col" className="num">{t("telemetry.runs")}</th>
+                      <th scope="col" className="num">{t("telemetry.duration")}</th>
+                      <th scope="col" className="num">{t("telemetry.cost")}</th>
+                      <th scope="col" className="num">{t("telemetry.failures")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.length === 0 ? (
+                      <tr data-testid="telemetry-row"><td colSpan={5}><Empty>{t("telemetry.noData")}</Empty></td></tr>
+                    ) : (
+                      rows.map((row) => (
+                        <tr key={row.key} data-testid="telemetry-row">
+                          <th scope="row">{row.key}</th>
+                          <td className="num">{row.runs}</td>
+                          <td className="num">{formatDuration(row.duration_s, lang)}</td>
+                          <td className="num">{row.usd.toLocaleString(lang, { style: "currency", currency: "USD" })}</td>
+                          <td className="num">
+                            {row.failures}
+                            {row.failures > 0 && (
+                              <span className="failure-marker" role="img" aria-label={t("telemetry.failureMarker")}> ⚠</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              {(Object.keys(failuresByIntegration).length > 0 || (repolens.calls ?? 0) > 0) && (
+                <div className="charts-grid">
+                  {Object.keys(failuresByIntegration).length > 0 && (
+                    <Section title={t("telemetry.failuresByIntegration")}>
+                      <ul className="facts-list">
+                        {Object.entries(failuresByIntegration).map(([name, count]) => (
+                          <li key={name} className="fact-row">
+                            <span className="mono">{name}</span>
+                            <span className="num">{count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Section>
+                  )}
+                  {(repolens.calls ?? 0) > 0 && (
+                    <Section title={t("telemetry.repolens")}>
+                      <dl className="facts">
+                        <dt>{t("telemetry.repolensCalls")}</dt>
+                        <dd className="num">{repolens.calls}</dd>
+                        <dt>{t("telemetry.repolensAvg")}</dt>
+                        <dd className="num">{repolens.avg_ms?.toFixed(1) ?? "—"}</dd>
+                        <dt>{t("telemetry.repolensTotal")}</dt>
+                        <dd className="num">{repolens.total_ms ?? "—"}</dd>
+                        {repolens.by_tool && Object.entries(repolens.by_tool).map(([tool, info]) => (
+                          <div key={tool} className="fact">
+                            <dt className="mono small">{tool}</dt>
+                            <dd>{info.calls} calls · {info.avg_ms.toFixed(1)}ms avg</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </Section>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        }}
+      </Loaded>
+    </div>
+  );
+}
+
 export function Metrics() {
   const t = useT();
   const { workspace } = useWorkspace();
@@ -141,6 +280,7 @@ export function Metrics() {
             <Section title={t("cost.byModel")}><CostByModel report={data} /></Section>
           </div>
           <Section title={t("gates.title")}><Gates report={data} /></Section>
+          <TelemetryPanel workspaceId={workspace.id} />
         </div>
       )}
     </Loaded>
