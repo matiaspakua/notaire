@@ -393,10 +393,11 @@ class ServeStatusEventsTest(unittest.TestCase):
 
 
 class CliStatusTest(unittest.TestCase):
-    """CLI black-box test: aisdlc status --json."""
+    """CLI black-box test: aisdlc status --json and plain text."""
 
     def setUp(self) -> None:
         self.repo = Repo(self, PROFILE)
+        self.repo.write("POLICY.md", "# Policy\n")
         for kind, cid in (("agents", "implementer"), ("skills", "java")):
             self.repo.run(
                 "catalog", "add", "--kind", kind, "--id", cid,
@@ -411,6 +412,184 @@ class CliStatusTest(unittest.TestCase):
         self.assertIsNone(data["run"])
         self.assertEqual([], data["previous"])
         self.assertEqual([], data["next"])
+
+    def test_status_plain_text_with_in_flight_step(self) -> None:
+        """Plain text 'aisdlc status' mentions run id and current step."""
+        from aisdlc import evidence
+
+        self.repo.run(
+            "project", "create", "--id", "alpha",
+            "--profile-ref", "aisdlc.toml",
+            "--repo-id", "notaire",
+            "--forge", "github",
+            "--url", "https://github.com/example/notaire",
+            "--default-branch", "main",
+            "--json",
+        )
+        self.repo.run(
+            "workflow", "create", "--id", "feature-delivery",
+            "--summary", "Feature delivery",
+            "--agent", "implementer", "--skill", "java",
+            "--json",
+        )
+        for action, extra in (
+            ("define", []),
+            ("request_validation", ["--waive-reason", "unit"]),
+            ("approve", ["--owner-override", "--reason", "unit"]),
+        ):
+            result = self.repo.run(
+                "workflow", "transition", "--id", "feature-delivery",
+                "--action", action, *extra, "--json",
+            )
+            self.assertEqual(0, result.returncode, output(result))
+
+        started = self.repo.run(
+            "run", "start", "--project", "alpha",
+            "--workflow", "feature-delivery", "--json",
+        )
+        self.assertEqual(0, started.returncode, output(started))
+        run_id = json.loads(started.stdout)["id"]
+
+        ctx_path = self.repo.root / "aisdlc.toml"
+        from aisdlc.cli import load_context
+        ctx = load_context(self.repo.root, ctx_path)
+        evidence.append_record(ctx, {
+            "kind": "run.started",
+            "run_id": run_id,
+            "ts": "2026-11-22T10:00:00+00:00",
+        })
+        evidence.append_record(ctx, {
+            "kind": "step.started",
+            "run_id": run_id,
+            "step": "implement",
+            "ts": "2026-11-22T10:01:00+00:00",
+        })
+
+        result = self.repo.run("status")
+        self.assertEqual(0, result.returncode, output(result))
+        text = result.stdout
+        self.assertIn(run_id, text)
+        self.assertIn("implement", text)
+
+
+class ServeStatusInFlightTest(unittest.TestCase):
+    """HTTP test: GET /factory/status with an in-flight step."""
+
+    def setUp(self) -> None:
+        self.repo = Repo(self, PROFILE)
+        self.repo.write("POLICY.md", "# Policy\n")
+        for kind, cid in (("agents", "implementer"), ("skills", "java")):
+            self.repo.run(
+                "catalog", "add", "--kind", kind, "--id", cid,
+                "--ref", f".aisdlc/{kind}/{cid}", "--summary", cid,
+            )
+        self.repo.run(
+            "project", "create", "--id", "alpha",
+            "--profile-ref", "aisdlc.toml",
+            "--repo-id", "notaire",
+            "--forge", "github",
+            "--url", "https://github.com/example/notaire",
+            "--default-branch", "main",
+            "--json",
+        )
+        self.repo.run(
+            "workflow", "create", "--id", "feature-delivery",
+            "--summary", "Feature delivery",
+            "--agent", "implementer", "--skill", "java",
+            "--json",
+        )
+        for action, extra in (
+            ("define", []),
+            ("request_validation", ["--waive-reason", "unit"]),
+            ("approve", ["--owner-override", "--reason", "unit"]),
+        ):
+            result = self.repo.run(
+                "workflow", "transition", "--id", "feature-delivery",
+                "--action", action, *extra, "--json",
+            )
+            self.assertEqual(0, result.returncode, output(result))
+
+        started = self.repo.run(
+            "run", "start", "--project", "alpha",
+            "--workflow", "feature-delivery", "--json",
+        )
+        self.assertEqual(0, started.returncode, output(started))
+        self.run_id = json.loads(started.stdout)["id"]
+
+    def _ctx(self):
+        from aisdlc.cli import load_context
+
+        return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
+
+    def _serve(self, *, enable_write: bool = False, scope: str = "read"):
+        from aisdlc import serve as serve_mod
+        from aisdlc.serve_token import ensure_token
+
+        ctx = self._ctx()
+        path = self.repo.root / ".aisdlc" / "serve.token"
+        if path.is_file():
+            path.unlink()
+        ensure_token(self.repo.root, scope=scope)
+        server = serve_mod.start_server(
+            ctx, host="127.0.0.1", port=0, allow_remote=False,
+            enable_write=enable_write,
+        )
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.shutdown)
+        self.addCleanup(server.server_close)
+        token = serve_mod.load_token_value(self.repo.root)
+        return server.server_address[1], token
+
+    def _request(
+        self,
+        port: int,
+        path: str,
+        *,
+        method: str,
+        token: str | None,
+        headers: dict | None = None,
+    ):
+        hdrs = dict(headers or {})
+        if token is not None:
+            hdrs["Authorization"] = f"Bearer {token}"
+        req = urllib.request.Request(
+            f"http://127.0.0.1:{port}{path}",
+            method=method,
+            headers=hdrs,
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                return resp.status, dict(resp.headers), resp.read().decode("utf-8")
+        except urllib.error.HTTPError as exc:
+            return exc.code, dict(exc.headers), exc.read().decode("utf-8")
+
+    def test_status_http_in_flight_step(self) -> None:
+        """GET /factory/status returns step=='implement' for in-flight run."""
+        from aisdlc import evidence
+
+        ctx = self._ctx()
+        evidence.append_record(ctx, {
+            "kind": "run.started",
+            "run_id": self.run_id,
+            "ts": "2026-11-22T10:00:00+00:00",
+        })
+        evidence.append_record(ctx, {
+            "kind": "step.started",
+            "run_id": self.run_id,
+            "step": "implement",
+            "ts": "2026-11-22T10:01:00+00:00",
+        })
+
+        port, token = self._serve()
+        status, _, body = self._request(
+            port, "/factory/status", method="GET", token=token,
+        )
+        self.assertEqual(200, status)
+        data = json.loads(body)
+        self.assertEqual(self.run_id, data["run"])
+        self.assertEqual("implement", data["step"])
+        self.assertEqual("running", data["run_status"])
 
 
 if __name__ == "__main__":
