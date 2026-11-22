@@ -28,6 +28,8 @@ info:
     counts grouped by intent, stage, agent, skill, or tool.
     1.3.0 (#2395) adds Intent (submit, list, show), run-intent binding, and the MCP stdio
     server (`aisdlc mcp`) with tools `intent_submit`, `intent_show`, `factory_status`.
+    1.3.0 (#2398) adds configuration-as-code: config file tree and read with redaction
+    and confinement, plus catalog DELETE with If-Match, CSRF, write scope, and evidence.
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -78,6 +80,67 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FactoryConfig"
+  /factory/config/files:
+    get:
+      tags: [config]
+      operationId: listConfigFiles
+      summary: Config file tree — profile, policy, context, catalogs, projects, skills (#2398)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Array of ConfigFile rows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConfigFile"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/config/files/{path}:
+    get:
+      tags: [config]
+      operationId: getConfigFile
+      summary: Read a config file with secret redaction; paths confined to config roots (#2398)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Relative path from the repository root
+      responses:
+        "200":
+          description: File content with redaction metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigFileContent"
+        "400":
+          description: Invalid path (traversal or encoded separator)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: File not found or outside config roots
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/plugins:
     get:
       tags: [plugins]
@@ -323,6 +386,85 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "400":
           description: Literal secret in fields (`literal_secret`) or invalid body
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "428":
+          description: If-Match required
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+    delete:
+      tags: [catalogs]
+      operationId: deleteCatalogEntry
+      summary: Delete a catalog entry with optimistic concurrency, CSRF, and evidence (#2398)
+      security:
+        - bearerAuth: [write]
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogKind"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: Expected current entity version; mismatch yields 409
+          schema:
+            type: string
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          description: Must equal the Bearer token value (double-submit CSRF)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted entry confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [id, kind, version]
+                properties:
+                  id: { type: string }
+                  kind:
+                    $ref: "#/components/schemas/CatalogKind"
+                  version: { type: integer, minimum: 1 }
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "403":
+          description: Insufficient scope or CSRF mismatch
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: Entry not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "405":
+          description: Write not enabled on this host
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Version conflict (If-Match mismatch)
           content:
             application/problem+json:
               schema:
@@ -733,6 +875,28 @@ components:
         status: { type: integer }
         detail: { type: string }
         code: { type: string }
+    ConfigFile:
+      type: object
+      additionalProperties: false
+      required: [path, kind, size, media_type]
+      properties:
+        path: { type: string, description: "Relative path from the repository root" }
+        kind:
+          type: string
+          enum: [profile, policy, context, catalog, project, skill]
+        size: { type: integer, minimum: 0 }
+        media_type: { type: string }
+        read_only: { type: boolean, default: false }
+    ConfigFileContent:
+      type: object
+      additionalProperties: false
+      required: [path, content, redacted, media_type, size]
+      properties:
+        path: { type: string }
+        content: { type: string, description: "File text with secrets redacted" }
+        redacted: { type: boolean, description: "True when at least one secret was replaced" }
+        media_type: { type: string }
+        size: { type: integer, minimum: 0, description: "Original byte size before redaction" }
     FactoryCapabilities:
       type: object
       additionalProperties: true
