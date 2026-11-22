@@ -15,6 +15,7 @@ import datetime as dt
 import hashlib
 import json
 import statistics
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -37,8 +38,23 @@ def _append(ctx: Context, name: str, record: dict) -> Path:
     path = folder / name
     record = {**record, "prev": _digest(_last_line(path))}
     with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, sort_keys=True) + "\n")
+        line = json.dumps(record, sort_keys=True) + "\n"
+        handle.write(line)
+    # Dual-write mirror to the store (fail-open, single choke point)
+    _mirror(ctx, name, line.rstrip("\n"))
     return path
+
+
+def _mirror(ctx: Context, name: str, raw_line: str) -> None:
+    """Mirror a freshly written ledger/cost line to the SQLite store (fail-open)."""
+    try:
+        from aisdlc.telemetry_store import mirror_line
+
+        source = "ledger" if name == LEDGER else ("cost" if name == COSTS else None)
+        if source:
+            mirror_line(ctx, source, raw_line)
+    except Exception as exc:  # noqa: BLE001 – fail-open by design
+        print(f"aisdlc: store mirror failed: {exc}", file=sys.stderr)
 
 
 def _digest(line: str | None) -> str:

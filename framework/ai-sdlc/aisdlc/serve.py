@@ -118,6 +118,15 @@ def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, di
     }
 
 
+def _handle_telemetry(ctx: Context, query: dict[str, list[str]]) -> dict:
+    """GET /factory/telemetry handler (#2394)."""
+    from aisdlc.telemetry_store import report as telemetry_report
+
+    group = (query.get("group") or ["stage"])[0]
+    # report() validates the group and raises KitError("invalid_group") itself
+    return telemetry_report(ctx, group)
+
+
 def _positive_int(raw: str | None) -> int | None:
     if raw is None or raw == "":
         return None
@@ -182,6 +191,9 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     m = re.fullmatch(r"/factory/runs/([^/]+)", path)
     if m:
         return runs.show(ctx, _assert_id(m.group(1)))
+    # Telemetry endpoint (#2394)
+    if path == "/factory/telemetry":
+        return _handle_telemetry(ctx, query)
     raise KitError("not_found", f"unknown path {path}")
 
 
