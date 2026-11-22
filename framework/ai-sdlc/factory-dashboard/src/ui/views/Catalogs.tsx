@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { api, factory } from "../api.ts";
+import { api, factory, factoryDelete } from "../api.ts";
 import { ActionForm, Field } from "../components/Form.tsx";
 import { Icon } from "../components/Icon.tsx";
 import { Empty, Loaded, Section, time } from "../components/State.tsx";
@@ -152,6 +152,53 @@ function EntryForm({ kind, entry, onDone, onCancel }: {
   );
 }
 
+function DeleteConfirm({ kind, entry, onDeleted, onListRefresh }: {
+  kind: string;
+  entry: Entry;
+  onDeleted: () => void;
+  onListRefresh: () => void;
+}) {
+  const t = useT();
+  const { workspace } = useWorkspace();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    cancelRef.current?.focus();
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onDeleted();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onDeleted]);
+  const handleDelete = async () => {
+    try {
+      await factoryDelete(workspace.id, `/catalogs/${kind}/${encodeURIComponent(entry.id)}`, String(entry.version));
+      onListRefresh();
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      }
+    }
+  };
+  return (
+    <div data-testid="delete-confirmation" role="group" className="delete-confirm">
+      <p className="delete-confirm-text">{t("catalogs.deleteText")}</p>
+      <div className="row row-tight">
+        <button type="button" className="btn btn-destructive" onClick={handleDelete}>
+          {t("catalogs.delete")}
+        </button>
+        <button ref={cancelRef} type="button" className="btn btn-quiet" onClick={onDeleted}>
+          {t("catalogs.cancel")}
+        </button>
+      </div>
+      {error && <div className="note note-error" role="alert"><Icon name="alert" /><span>{error}</span></div>}
+    </div>
+  );
+}
+
 function EntryDetail({ kind, entry, onSaved }: { kind: string; entry: Entry; onSaved: () => void }) {
   const t = useT();
   const lang = useLang();
@@ -220,6 +267,7 @@ export function Catalogs({ kind }: { kind: string }) {
   const [selected, setSelected] = useState<string>();
   const [creating, setCreating] = useState(false);
   const [filter, setFilter] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const current = list.data?.entries.find((entry) => entry.id === selected);
   const detail = useResource<Entry>(current ? factory(workspace.id, `/catalogs/${kind}/${encodeURIComponent(current.id)}`) : null);
   return (
@@ -257,13 +305,28 @@ export function Catalogs({ kind }: { kind: string }) {
                   </div>
                 <ul className="entries">
                   {shown.map((entry) => (
-                    <li key={entry.id}>
+                    <li key={entry.id} data-testid={`catalog-entry-${entry.id}`}>
                       <button type="button" className="entry" aria-current={entry.id === selected ? "true" : undefined}
-                        onClick={() => { setSelected(entry.id); setCreating(false); }}>
+                        onClick={() => { setSelected(entry.id); setCreating(false); setDeletingId(null); }}>
                         <span className="entry-id">{entry.id}</span>
                         <span className="entry-summary">{entry.summary}</span>
                         <span className="tag">v{entry.version}</span>
                       </button>
+                      {writable && deletingId === entry.id ? (
+                        <DeleteConfirm kind={kind} entry={entry}
+                          onDeleted={() => setDeletingId(null)}
+                          onListRefresh={() => { setDeletingId(null); setSelected(undefined); list.reload(); }} />
+                      ) : writable ? (
+                        <button
+                          type="button"
+                          className="btn btn-icon btn-destructive"
+                          data-testid="delete-button"
+                          aria-label={t("catalogs.deleteButton", { id: entry.id })}
+                          onClick={() => setDeletingId(entry.id)}
+                        >
+                          <Icon name="cross" size={16} />
+                        </button>
+                      ) : null}
                     </li>
                   ))}
                 </ul>
