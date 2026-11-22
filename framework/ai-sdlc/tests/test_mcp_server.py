@@ -212,6 +212,164 @@ class MCPServerTest(unittest.TestCase):
         # Should return an error (isError) for invalid id
         self.assertTrue(resp["result"].get("isError", False))
 
+    # --- Fix 1: JSON line that is valid JSON but not an object → -32600, keep serving ---
+    def test_mcp_non_object_json_array(self):
+        proc = self._spawn_mcp()
+        # Send a JSON array (valid JSON, not an object)
+        proc.stdin.write("[1, 2, 3]\n")
+        proc.stdin.flush()
+        response_line = proc.stdout.readline()
+        self.assertTrue(response_line)
+        resp = json.loads(response_line)
+        self.assertIn("error", resp)
+        self.assertEqual(-32600, resp["error"]["code"])
+        # Server should still be alive — send a valid request
+        resp2 = self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self.assertIn("result", resp2)
+
+    def test_mcp_non_object_json_number(self):
+        proc = self._spawn_mcp()
+        proc.stdin.write("42\n")
+        proc.stdin.flush()
+        response_line = proc.stdout.readline()
+        self.assertTrue(response_line)
+        resp = json.loads(response_line)
+        self.assertIn("error", resp)
+        self.assertEqual(-32600, resp["error"]["code"])
+
+    def test_mcp_non_object_json_null(self):
+        proc = self._spawn_mcp()
+        proc.stdin.write("null\n")
+        proc.stdin.flush()
+        response_line = proc.stdout.readline()
+        self.assertTrue(response_line)
+        resp = json.loads(response_line)
+        self.assertIn("error", resp)
+        self.assertEqual(-32600, resp["error"]["code"])
+
+    # --- Fix 1: params not an object → -32602 ---
+    def test_mcp_params_not_object(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        # Send tools/call with params as a string instead of object
+        req = {"jsonrpc": "2.0", "method": "tools/call", "params": "not-an-object", "id": self._next_id()}
+        line = json.dumps(req) + "\n"
+        proc.stdin.write(line)
+        proc.stdin.flush()
+        response_line = proc.stdout.readline()
+        self.assertTrue(response_line)
+        resp = json.loads(response_line)
+        self.assertIn("error", resp)
+        self.assertEqual(-32602, resp["error"]["code"])
+
+    # --- Fix 1: arguments not an object → -32602 ---
+    def test_mcp_arguments_not_object(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        req = {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "intent_submit", "arguments": [1, 2]}, "id": self._next_id()}
+        line = json.dumps(req) + "\n"
+        proc.stdin.write(line)
+        proc.stdin.flush()
+        response_line = proc.stdout.readline()
+        self.assertTrue(response_line)
+        resp = json.loads(response_line)
+        self.assertIn("error", resp)
+        self.assertEqual(-32602, resp["error"]["code"])
+
+    # --- Fix 1: intent_submit with no text|ref|spec → error ---
+    def test_mcp_intent_submit_no_input(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        resp = self._send(proc, "tools/call", {
+            "name": "intent_submit",
+            "arguments": {},
+        })
+        # Should return an error result (isError)
+        self.assertIn("result", resp)
+        self.assertTrue(resp["result"].get("isError", False))
+
+    # --- Fix 1: intent_submit with more than one of text|ref|spec → error ---
+    def test_mcp_intent_submit_multiple_inputs(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        resp = self._send(proc, "tools/call", {
+            "name": "intent_submit",
+            "arguments": {"text": "hello", "ref": "github:#1"},
+        })
+        self.assertIn("result", resp)
+        self.assertTrue(resp["result"].get("isError", False))
+
+    # --- Fix 1: notification (no id) → no response ---
+    def test_mcp_notification_no_response(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+
+        # Send a request without an id — should get no response
+        req = {"jsonrpc": "2.0", "method": "tools/list"}  # no id
+        line = json.dumps(req) + "\n"
+        proc.stdin.write(line)
+        proc.stdin.flush()
+
+        # Now send a real request — the first response should be for this one
+        resp = self._send(proc, "tools/list")
+        self.assertIn("result", resp)
+
+    # --- Fix 2: factory_status returns compact object ---
+    def test_mcp_factory_status_compact(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        # Submit an intent first
+        submit_resp = self._send(proc, "tools/call", {
+            "name": "intent_submit",
+            "arguments": {"text": "Compact status test"},
+        })
+        self.assertIn("result", submit_resp)
+
+        # Now check factory_status
+        resp = self._send(proc, "tools/call", {
+            "name": "factory_status",
+            "arguments": {},
+        })
+        self.assertIn("result", resp)
+        content = resp["result"].get("content", [])
+        self.assertGreater(len(content), 0)
+        status = json.loads(content[0]["text"])
+        # Should have intents count
+        self.assertIn("intents", status)
+        self.assertGreaterEqual(status["intents"], 1)
+        # Should have runs count
+        self.assertIn("runs", status)
+        # Should have latest_run (null or object with id and status)
+        self.assertIn("latest_run", status)
+        # Should NOT contain full intent entries (no "entries" key)
+        self.assertNotIn("entries", status)
+
+    # --- Fix 3: intent_submit MCP sets actor to 'mcp' ---
+    def test_mcp_intent_submit_actor(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        resp = self._send(proc, "tools/call", {
+            "name": "intent_submit",
+            "arguments": {"text": "Actor test"},
+        })
+        self.assertIn("result", resp)
+        content = resp["result"].get("content", [])
+        intent = json.loads(content[0]["text"])
+        # Actor should contain 'mcp'
+        self.assertIn("mcp", intent.get("created_by", ""))
+
 
 if __name__ == "__main__":
     unittest.main()
