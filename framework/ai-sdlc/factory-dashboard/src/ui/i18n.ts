@@ -230,16 +230,12 @@ const en = {
   "severity.low": "Low",
   "refresh": "Refresh",
   "updated": "Updated {time}",
-  // Live sync
   "live.connected": "Live",
   "live.connecting": "Connecting",
   "live.polling": "Polling",
-  // Gates
   "gate.required": "required",
   "gate.advisory": "advisory",
-  // Station states
   "station.current": "Current",
-  // Production line
   "line.agents": "Agents",
   "line.skills": "Skills",
   "line.mcp": "MCP",
@@ -255,7 +251,6 @@ const en = {
   "line.previous": "Previous steps",
   "line.next": "Next steps",
   "line.none": "—",
-  // Intents
   "intent.drawer": "Intent",
   "intent.acceptance": "Acceptance criteria",
   "intent.references": "References",
@@ -540,16 +535,12 @@ const es: Record<Key, string> = {
   "severity.low": "Baja",
   "refresh": "Actualizar",
   "updated": "Actualizado {time}",
-  // Live sync
   "live.connected": "En vivo",
   "live.connecting": "Conectando",
   "live.polling": "Encuestando",
-  // Gates
   "gate.required": "requerida",
   "gate.advisory": "consultiva",
-  // Station states
   "station.current": "Actual",
-  // Production line
   "line.agents": "Agentes",
   "line.skills": "Skills",
   "line.mcp": "MCP",
@@ -565,7 +556,6 @@ const es: Record<Key, string> = {
   "line.previous": "Pasos anteriores",
   "line.next": "Próximos pasos",
   "line.none": "—",
-  // Intents
   "intent.drawer": "Intención",
   "intent.acceptance": "Criterios de aceptación",
   "intent.references": "Referencias",

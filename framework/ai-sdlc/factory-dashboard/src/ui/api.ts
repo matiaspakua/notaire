@@ -83,15 +83,12 @@ export const factory = (ws: string, path: string) => `/api/workspaces/${encodeUR
 export const knowledge = (ws: string, endpoint: string, query = "") =>
   `/api/workspaces/${encodeURIComponent(ws)}/knowledge/${endpoint}${query ? `?${query}` : ""}`;
 
-/** SSE events stream URL for a workspace. */
 export const eventsUrl = (ws: string) => `/api/workspaces/${encodeURIComponent(ws)}/factory/events`;
 
-/** DELETE a factory resource with CSRF + If-Match. */
 export async function factoryDelete<T>(ws: string, path: string, ifMatch?: string): Promise<T> {
   return api<T>(factory(ws, path), { method: "DELETE", ifMatch });
 }
 
-/** Submit an intent to POST /factory/intents. */
 export async function submitIntent<T>(ws: string, body: { text?: string; ref?: string; spec?: string; title?: string }): Promise<T> {
   return api<T>(factory(ws, "/intents"), { method: "POST", body });
 }

@@ -237,7 +237,6 @@ export interface MergedStation {
   state: "done" | "current" | "upcoming";
 }
 
-/** Merge line stages with config stage details by id. Tolerates missing keys. */
 export function mergeLineConfig(line: LinePayload, config: ConfigPayload | undefined): LineStage[] {
   const configMap = new Map<string, ConfigStage>();
   config?.stages.forEach((s) => configMap.set(s.id, s));
@@ -364,7 +363,6 @@ export function encodeConfigPath(path: string): string {
   return path.split("/").map(encodeURIComponent).join("/");
 }
 
-/** Return only http/https URLs as safe links; everything else becomes plain text. */
 export function isSafeLink(url: string): boolean {
   try {
     const u = new URL(url);
