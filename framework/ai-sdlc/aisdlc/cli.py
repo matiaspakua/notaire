@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
+
 import json
 import os
-from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -30,6 +31,7 @@ from aisdlc import (
     skills,
     stages,
 )
+from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -43,7 +45,6 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
-from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1350,14 +1351,7 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import (
-        compare,
-        export_csv,
-        finished_runs,
-        log_path,
-        read_events,
-        summary,
-    )
+    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
 
     events = read_events(log_path(ctx))
     action = args.intents_action

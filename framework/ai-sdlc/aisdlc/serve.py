@@ -17,30 +17,14 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from aisdlc import (
-    approval,
-    catalogs,
-    coach,
-    config_files,
-    evidence,
-    harness,
-    isolator,
-    projects,
-    runs,
-    workflows,
-)
+from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import config_files
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import config_view, list_plugins, redact, resolve_max_open_prs
 from aisdlc.kitroot import kit_root
-from aisdlc.serve_token import (
-    ServeToken,
-    authenticate,
-    ensure_token,
-    load_token,
-    load_tokens,
-)
+from aisdlc.serve_token import ServeToken, authenticate, ensure_token, load_token, load_tokens
 
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 LOOPBACK = {"127.0.0.1", "::1", "localhost"}
@@ -365,7 +349,7 @@ def start_server(
     ui.mkdir(parents=True, exist_ok=True)
 
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, format: str, *args) -> None:
+        def log_message(self, format: str, *args) -> None:  # noqa: A003
             return
 
         def _authenticate(self, need: str) -> ServeToken:
@@ -410,19 +394,19 @@ def start_server(
             ctype = "text/css" if target.suffix == ".css" else "text/plain; charset=utf-8"
             self._send(200, target.read_bytes(), ctype)
 
-        def do_GET(self) -> None:
+        def do_GET(self) -> None:  # noqa: N802
             self._handle("GET")
 
-        def do_POST(self) -> None:
+        def do_POST(self) -> None:  # noqa: N802
             self._handle("POST")
 
-        def do_PUT(self) -> None:
+        def do_PUT(self) -> None:  # noqa: N802
             self._handle("PUT")
 
-        def do_PATCH(self) -> None:
+        def do_PATCH(self) -> None:  # noqa: N802
             self._handle("PATCH")
 
-        def do_DELETE(self) -> None:
+        def do_DELETE(self) -> None:  # noqa: N802
             self._handle("DELETE")
 
         def _read_json_body(self) -> dict:
