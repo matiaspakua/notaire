@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { isSafeLink, stationState } from "../src/ui/model.ts";
-import type { FactoryStatus, LinePayload } from "../src/ui/model.ts";
+import { isSafeLink } from "../src/ui/model.ts";
+import type { LinePayload } from "../src/ui/model.ts";
 
 const sampleLine: LinePayload = {
   schema_version: 1,
@@ -92,51 +92,6 @@ describe("LineStage carries metadata directly from /factory/line", () => {
   it("mergeLineConfig no longer exists", async () => {
     const model = await import("../src/ui/model.ts");
     expect("mergeLineConfig" in model).toBe(false);
-  });
-});
-
-describe("stationState", () => {
-  it("returns 'current' when status stage matches and run is running", () => {
-    const status: FactoryStatus = {
-      intent: null, run: "r1", workflow: null, run_status: "running",
-      stage: "green", step: "impl", previous: [], next: [], updated_at: null,
-    };
-    expect(stationState("green", status)).toBe("current");
-    expect(stationState("plan", status)).toBe("upcoming");
-  });
-
-  it("returns 'done' when the stage appears in previous", () => {
-    const status: FactoryStatus = {
-      intent: null, run: "r1", workflow: null, run_status: "running",
-      stage: "green", step: "impl",
-      previous: [{ step: "s1", stage: "plan", status: "pass" }],
-      next: [], updated_at: null,
-    };
-    expect(stationState("plan", status)).toBe("done");
-    expect(stationState("green", status)).toBe("current");
-  });
-
-  it("returns 'upcoming' when no status", () => {
-    expect(stationState("plan", undefined)).toBe("upcoming");
-    expect(stationState("plan", null as any)).toBe("upcoming");
-  });
-
-  it("returns 'upcoming' when run_status is null", () => {
-    const status: FactoryStatus = {
-      intent: null, run: null, workflow: null, run_status: null,
-      stage: null, step: null, previous: [], next: [], updated_at: null,
-    };
-    expect(stationState("plan", status)).toBe("upcoming");
-  });
-
-  it("prefers current over done when stage matches", () => {
-    const status: FactoryStatus = {
-      intent: null, run: "r1", workflow: null, run_status: "running",
-      stage: "plan", step: "spec",
-      previous: [{ step: "s1", stage: "plan", status: "pass" }],
-      next: [], updated_at: null,
-    };
-    expect(stationState("plan", status)).toBe("current");
   });
 });
 
