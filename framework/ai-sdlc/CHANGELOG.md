@@ -14,6 +14,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `aisdlc catalog import --harness H --from DIR [--kind K]` reads harness layouts (`claude-code`, `cursor`, `codex`, `junie`, `kiro`, `agy`) as UTF-8 bytes, preserves CRLF, stores content in the `files` revision field, rejects literal secrets (exits 1), idempotent when unchanged (#2399).
+- `aisdlc catalog materialize --harness H --dest DIR [--kind K] [--check]` projects catalog entries into a harness layout, writes `.aisdlc-materialized.json` manifest with SHA-256 digests; `--check` verifies disk without writing and exits 1 on drift; stale files never deleted (#2399).
+- Catalog revision `files` field with literal-secret guard — entries containing secret-shaped values are rejected before storage (#2399).
+- `agy` and `kiro` harness adapter stubs registered in the Notaire profile (`framework/ai-sdlc/plugins/agy/`, `framework/ai-sdlc/plugins/kiro/`) (#2399).
 - Junie harness adapter stub registered in the Notaire profile (`framework/ai-sdlc/plugins/junie/`) (#2385).
 - `aisdlc serve-token add|list|revoke`: named serve tokens, one per person, each with its scope; the identity is the actor of every write (#2384).
 - `GET /factory/session` names the caller; `POST /factory/catalogs/{kind}` (declared in the contract but not served before) creates entries; `PUT` accepts `fields`. A credential field takes only `env:NAME`; a literal secret is refused with `literal_secret` (#2384).
