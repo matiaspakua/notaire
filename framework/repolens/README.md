@@ -163,7 +163,7 @@ pipx install /path/to/repolens            # or: pip install "/path/to/repolens[a
 cd ~/src/my-service && repolens setup
 ```
 
-`setup` registers the MCP server with every agent harness it knows (Claude Code, Codex, OpenCode, Cursor),
+`setup` registers the MCP server with every agent harness it knows (Claude Code, Codex, OpenCode, Cursor, Junie),
 adds the usage hook and the git hooks, and ignores `.repolens/`; `--install` creates the shared environment,
 `--index` builds the first index in the background, `--only <target>` and `--dry-run` narrow it. `repolens
 doctor` checks the result. The core needs `numpy`, `scipy`, `tree-sitter`, `tree-sitter-language-pack` and
@@ -248,7 +248,7 @@ anchors = 7                        # code anchors that seed the walk
 | Command | Purpose |
 |---|---|
 | `repolens init <folders...>` | write a `repolens.toml` |
-| `repolens setup [--install] [--index] [--only claude\|codex\|opencode\|cursor\|git\|gitignore] [--dry-run]` | wire repolens into the repository's harnesses (idempotent) |
+| `repolens setup [--install] [--index] [--only claude\|codex\|opencode\|cursor\|junie\|git\|gitignore] [--dry-run]` | wire repolens into the repository's harnesses (idempotent) |
 | `repolens doctor` | check dependencies, config, store freshness, harness wiring, telemetry |
 | `repolens index [folders...] [--full] [--no-embed] [--no-wait] [--quiet]` | create or update the graph (incremental; `--no-wait` steps aside when another run holds the store) |
 | `repolens report [--since 7d] [--json] [--md f] [--gate]` | usage efficiency report |
@@ -385,7 +385,7 @@ several harnesses and models, each in its own worktree and branch, opening pull 
 
 | Concern | What repolens does |
 |---|---|
-| Every harness gets it | `repolens setup` writes the native registration of each: `.mcp.json` + `.claude/settings.json` (Claude Code), `.codex/config.toml` (Codex), `opencode.json` (OpenCode), `.cursor/mcp.json` (Cursor). The command resolves the launcher with `git rev-parse --show-toplevel`, so every worktree serves its own checkout. |
+| Every harness gets it | `repolens setup` writes the native registration of each: `.mcp.json` + `.claude/settings.json` (Claude Code), `.codex/config.toml` (Codex), `opencode.json` (OpenCode), `.cursor/mcp.json` (Cursor), `.junie/mcp/mcp.json` (Junie). The command resolves the launcher with `git rev-parse --show-toplevel`, so every worktree serves its own checkout. |
 | One index per worktree | The store lives in `<worktree>/.repolens/`: an index never mixes branches. |
 | Branches and worktrees are cheap | Vectors are content-addressed and shared machine-wide (`~/.cache/repolens/vectors`, with the PCA basis): a new worktree, a branch switch or a rebased branch embeds only text no store has embedded before. Measured on Notaire: a new worktree indexed in 11 s, 82,379 of its 83,241 vectors from the cache (862 texts that differ were embedded), against ~4 min cold. |
 | Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query that still sees a stale index starts `refresh` in the background and answers at once. `git pull` and `git merge` run the `post-merge` hook, which starts that refresh before the next query. |

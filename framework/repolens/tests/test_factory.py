@@ -221,6 +221,12 @@ def test_setup_registers_every_harness_once_and_keeps_existing_entries(tmp_path,
     assert codex.startswith('model = "m"') and codex.count("[mcp_servers.repolens]") == 1
     assert json.loads((repo / "tools" / "opencode.json").read_text())["mcp"]["repolens"]["enabled"] is True
     assert "refresh --background" in (repo / ".git" / "hooks" / "post-checkout").read_text()
+    # Junie: same launcher command and args as Cursor
+    junie = json.loads((repo / ".junie" / "mcp" / "mcp.json").read_text())["mcpServers"]["repolens"]
+    cursor = json.loads((repo / ".cursor" / "mcp.json").read_text())["mcpServers"]["repolens"]
+    assert junie == cursor
+    assert junie["command"] == "bash"
+    assert "git rev-parse --show-toplevel)/framework/repolens/bin/repolens" in junie["args"][1]
     assert all(setup_mod._wiring(repo).values())
 
 
