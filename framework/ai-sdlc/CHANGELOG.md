@@ -11,11 +11,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - `harness report` refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`), but always accepts the kit's reference adapter `local-worker` without registration (#2385).
-- Serve token files are git-ignored through `.aisdlc/.gitignore`; before, `git add -A` in an adopter repository could commit a live token (#2384).
 
 ### Added
 
-- Intent entry point: CLI `aisdlc intent submit|list|show`, API `POST/GET /factory/intents` and run binding (`POST /factory/runs` accepts `intent`), MCP stdio server `aisdlc mcp` with tools `intent_submit`, `intent_show`, `factory_status`; contract `factory-control` 1.3.0 (#2395).
+- Intent model (submit/list/show), spec parser, reference intents, MCP stdio server, and API endpoints for intent lifecycle (#2395).
 - Junie harness adapter stub registered in the Notaire profile (`framework/ai-sdlc/plugins/junie/`) (#2385).
 - `aisdlc serve-token add|list|revoke`: named serve tokens, one per person, each with its scope; the identity is the actor of every write (#2384).
 - `GET /factory/session` names the caller; `POST /factory/catalogs/{kind}` (declared in the contract but not served before) creates entries; `PUT` accepts `fields`. A credential field takes only `env:NAME`; a literal secret is refused with `literal_secret` (#2384).
@@ -31,6 +30,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `aisdlc foreman claim`: claim-protocol refuse when intake fails under `[intake] required` (#2257).
 - `aisdlc intake board`: clean-board report over `[tracker] list` / `--file`; raise-only evidence before flipping enforcement (#2257).
 - Profile `[intake] required` (default false / advisory) and `[tracker] list` (#2257).
+
+### Fixed
+
+- Serve token files are git-ignored through `.aisdlc/.gitignore`; before, `git add -A` in an adopter repository could commit a live token (#2384).
 
 ### Changed
 
