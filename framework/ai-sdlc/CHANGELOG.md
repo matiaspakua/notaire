@@ -16,6 +16,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - `aisdlc store sync|stats` and `aisdlc telemetry record|report`: persistent SQLite store (`.aisdlc/factory.db`, git-ignored) mirroring the evidence ledger with idempotent sync, redacted telemetry rows, and grouped reports (#2394).
 - `GET /factory/telemetry?group=…` (read scope) on `aisdlc serve`: aggregated time, cost, and failure counts from the store (#2394).
+- `aisdlc status [--json]`: live factory status derived from the evidence ledger and the store — current intent/run/step, previous steps with duration and cost, next steps; never invents a running state (#2397).
+- `GET /factory/status` (read scope) on `aisdlc serve`: same live status payload as the CLI (#2397).
+- `GET /factory/events` (read scope) on `aisdlc serve`: Server-Sent Events stream of ledger rows with Last-Event-ID replay and keep-alive (#2397).
+- Contract `factory-control` 1.4.0 (additive — new `FactoryStatus` schema and two paths).
 - Contract `factory-control` 1.3.0 (additive — new `TelemetryReport` schema and path).
 - Intent model (submit/list/show), spec parser, reference intents, MCP stdio server, and API endpoints for intent lifecycle (#2395).
 - `aisdlc line [--json]` and `GET /factory/line`: the production line model (ordered stages with gates, agents, skills, tools/MCP, model, effort, inputs/outputs, guardrails); optional `inputs`/`outputs` on `[[stages]]` with kit defaults; contract `factory-control` 1.3.0 (#2396).

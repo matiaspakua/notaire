@@ -28,6 +28,9 @@ info:
     counts grouped by intent, stage, agent, skill, or tool.
     1.3.0 (#2395) adds Intent (submit, list, show), run-intent binding, and the MCP stdio
     server (`aisdlc mcp`) with tools `intent_submit`, `intent_show`, `factory_status`.
+    1.3.0 (#2397) adds live factory status (`/factory/status`) derived from the evidence
+    ledger and the store, and a Server-Sent Events stream (`/factory/events`) of ledger
+    rows with Last-Event-ID replay and keep-alive.
     1.3.0 (#2398) adds configuration-as-code: config file tree and read with redaction
     and confinement, plus catalog DELETE with If-Match, CSRF, write scope, and evidence.
 servers:
@@ -47,6 +50,8 @@ tags:
   - name: telemetry
   - name: intents
   - name: line
+  - name: status
+  - name: events
 paths:
   /factory/capabilities:
     get:
@@ -252,6 +257,90 @@ paths:
                 $ref: "#/components/schemas/TelemetryReport"
         "400":
           description: Invalid group parameter (`invalid_group`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/status:
+    get:
+      tags: [status]
+      operationId: getFactoryStatus
+      summary: Live factory status derived from the evidence ledger and the store
+      description: |
+        Returns the current intent, run, stage/step, previous steps (outcome, duration,
+        cost), and next steps from the workflow and profile line. Never invents a running
+        state — a step is "current" only when step.started has no matching step.finished
+        in a run whose derived status is running. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Factory status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryStatus"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /factory/events:
+    get:
+      tags: [events]
+      operationId: streamFactoryEvents
+      summary: Server-Sent Events stream of ledger rows
+      description: |
+        Streams evidence ledger rows as SSE frames. Each frame:
+        `id: <n>\nevent: <kind>\ndata: <json>\n\n` where `id` is the 1-based ledger
+        line number, `kind` is the sanitized event kind, and `data` is compact JSON
+        with secrets redacted. Keep-alive comment `: keep-alive` every 15 seconds.
+        Ledger is polled every second. Supports replay via `Last-Event-ID` header
+        (wins) or `?after=` query parameter. Requires the `read` scope.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Skip ledger lines up to this number (overridden by Last-Event-ID header)
+        - name: Last-Event-ID
+          in: header
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Replay from this ledger line number (takes precedence over ?after=)
+      responses:
+        "200":
+          description: SSE stream (text/event-stream)
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: |
+                id: 1
+                event: run.request
+                data: {"kind":"run.request","run_id":"abc123"}
+
+                id: 2
+                event: step.started
+                data: {"kind":"step.started","run_id":"abc123","step":"plan"}
+
+                : keep-alive
+
+        "400":
+          description: Invalid Last-Event-ID or after parameter (`invalid_body`)
           content:
             application/problem+json:
               schema:
@@ -1673,3 +1762,74 @@ components:
             $ref: "#/components/schemas/LineStage"
         guardrails:
           $ref: "#/components/schemas/LineGuardrails"
+    FactoryStatus:
+      type: object
+      additionalProperties: true
+      required: [intent, run, workflow, run_status, stage, step, previous, next, updated_at]
+      properties:
+        intent:
+          type: [string, "null"]
+          description: Current intent id, or null when no run
+        run:
+          type: [string, "null"]
+          description: Current run id, or null when no run
+        workflow:
+          type: [object, "null"]
+          description: Workflow reference (id, version, digest), or null when no run
+        run_status:
+          type: [string, "null"]
+          description: Derived run status (requested/queued/running/blocked/succeeded/failed/cancelled), or null
+        stage:
+          type: [string, "null"]
+          description: Stage of the step currently running, or null
+        step:
+          type: [string, "null"]
+          description: Step id currently running, or null
+        previous:
+          type: array
+          description: Completed steps in ledger order
+          items:
+            $ref: "#/components/schemas/FactoryStatusStep"
+        next:
+          type: array
+          description: Upcoming steps from the workflow and profile line
+          items:
+            $ref: "#/components/schemas/FactoryStatusNext"
+        updated_at:
+          type: [string, "null"]
+          description: ISO timestamp of the last ledger row used, or null when no run
+    FactoryStatusStep:
+      type: object
+      additionalProperties: true
+      required: [step, stage, status, started_at, finished_at, duration_s, usd]
+      properties:
+        step: { type: string }
+        stage:
+          type: [string, "null"]
+        status:
+          type: string
+          enum: [pass, fail, skip]
+        started_at:
+          type: [string, "null"]
+          description: ISO timestamp from step.started, or null
+        finished_at:
+          type: [string, "null"]
+          description: ISO timestamp from step.finished, or null
+        duration_s:
+          type: [number, "null"]
+          description: Duration in seconds, or null when timestamps unavailable
+        usd:
+          type: [number, "null"]
+          description: Cost in USD from store telemetry, or null when unknown
+    FactoryStatusNext:
+      type: object
+      additionalProperties: true
+      required: [step, stage, source]
+      properties:
+        step: { type: string }
+        stage:
+          type: [string, "null"]
+        source:
+          type: string
+          enum: [workflow, line]
+          description: 'Source of the next step: "workflow" from workflow body, "line" from profile stages'

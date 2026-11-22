@@ -12,6 +12,7 @@ import json
 import os
 import re
 import secrets
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
@@ -212,6 +213,10 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     m = re.fullmatch(r"/factory/config/files/(.+)", path)
     if m:
         return config_files.read_config_file(ctx, m.group(1))
+    # Live status endpoint (#2397)
+    if path == "/factory/status":
+        from aisdlc.status import status
+        return status(ctx)
     raise KitError("not_found", f"unknown path {path}")
 
 
@@ -471,6 +476,47 @@ def start_server(
                 raise KitError("invalid_body", "request body must be a JSON object")
             return data
 
+        def _handle_events(
+            self, ctx: Context, method: str, parsed: Any,
+        ) -> None:
+            from aisdlc.events_stream import parse_last_event_id, stream
+
+            if method != "GET":
+                self._problem("method_not_allowed", f"{method} not allowed on events stream")
+                return
+
+            query = parse_qs(parsed.query, keep_blank_values=True)
+            after_raw = (query.get("after") or [None])[0]
+            try:
+                after = parse_last_event_id(
+                    self.headers.get("Last-Event-ID"), after_raw,
+                )
+            except KitError as exc:
+                self._problem(exc.code, exc.detail)
+                return
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Connection", "close")
+            self.send_header("X-Accel-Buffering", "no")
+            self.end_headers()
+            self.close_connection = True
+
+            def write(data: bytes) -> None:
+                self.wfile.write(data)
+                self.wfile.flush()
+
+            stop_event = getattr(self.server, "stop_event", None)
+
+            def should_stop() -> bool:
+                return bool(stop_event and stop_event.is_set())
+
+            try:
+                stream(ctx, write, after, should_stop=should_stop)
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                pass
+
         def _handle(self, method: str) -> None:
             parsed = urlparse(self.path)
             path = parsed.path or "/"
@@ -481,6 +527,10 @@ def start_server(
                 return
             if method == "GET" and path == "/factory/session":
                 self._send_json(200, session_view(caller, enable_write=enable_write))
+                return
+            # SSE events stream (#2397) — before JSON dispatch
+            if path == "/factory/events":
+                self._handle_events(ctx, method, parsed)
                 return
             if method in MUTATING and not enable_write:
                 self._problem("method_not_allowed", f"{method} not allowed on read-only host")
@@ -536,7 +586,18 @@ def start_server(
             except KitError as exc:
                 self._problem(exc.code, exc.detail)
 
-    return ThreadingHTTPServer((host, port), Handler)
+    class _FactoryServer(ThreadingHTTPServer):
+        daemon_threads = True
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.stop_event = threading.Event()
+
+        def shutdown(self, request_handler=None) -> None:
+            self.stop_event.set()
+            super().shutdown()
+
+    return _FactoryServer((host, port), Handler)
 
 
 def serve(

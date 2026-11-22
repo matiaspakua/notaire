@@ -31,6 +31,8 @@ REQUIRED_PATHS = (
     "/factory/session",
     "/factory/telemetry",
     "/factory/line",
+    "/factory/status",
+    "/factory/events",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -48,6 +50,7 @@ SCHEMA_MARKERS = (
     "LineStage",
     "LineGate",
     "LineGuardrails",
+    "FactoryStatus",
 )
 CONFIG_REQUIRED = (
     "schema",
