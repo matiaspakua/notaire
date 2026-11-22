@@ -33,6 +33,7 @@
 - [x] 4.5 Update `framework/ai-sdlc/openapi/factory-control.openapi.yaml`: expand `LineStage.required` to all keys, add `guardrails` array property, bump `info.version` to 1.4.0
 - [x] 4.6 Update `framework/ai-sdlc/README.md` `aisdlc line` section
 - [x] 4.7 Update `framework/ai-sdlc/CHANGELOG.md` with `[Unreleased]` entry
+- [x] 4.8 Dashboard: remove config-merge workaround — delete `mergeLineConfig`, update `LineStage` type, simplify `Overview.tsx`, add per-stage guardrails display (dashboard part done after #2400 merged; no scope change)
 
 ## 5. Actualizar tests existentes
 

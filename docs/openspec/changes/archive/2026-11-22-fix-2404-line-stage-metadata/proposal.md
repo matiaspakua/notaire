@@ -74,6 +74,8 @@ None.
 - `framework/ai-sdlc/openapi/factory-control.openapi.yaml`
 - `framework/ai-sdlc/README.md`
 - `framework/ai-sdlc/CHANGELOG.md`
+- `framework/ai-sdlc/factory-dashboard/src/**`
+- `framework/ai-sdlc/factory-dashboard/tests/**`
 - `docs/openspec/changes/**`
 - `docs/openspec/specs/**`
 
@@ -90,6 +92,6 @@ The change follows the existing composition pattern: `line.py` calls `stage_dict
 
 ## Out of Scope
 
-- The dashboard (#2400) config-merge workaround removal — that is a follow-up in the dashboard branch, not this write set.
+- The dashboard (#2400) config-merge workaround removal — completed as part of this change after #2400 merged; no scope change.
 - Writing or mutating the production line — tracked in future issues under #2393.
 - Any change to the top-level `guardrails` block shape — it stays as-is.
