@@ -35,7 +35,7 @@ async function readBody(response: Response): Promise<unknown> {
 }
 
 export interface KitCall {
-  method: "GET" | "POST" | "PUT";
+  method: "GET" | "POST" | "PUT" | "DELETE";
   path: string;
   query?: string;
   token: string;
@@ -48,6 +48,8 @@ export async function callKit(fetcher: Fetch, base: string, call: KitCall): Prom
   const headers: Record<string, string> = { Authorization: `Bearer ${call.token}`, Accept: "application/json" };
   if (call.method !== "GET") {
     headers[CSRF_HEADER] = call.token;
+  }
+  if (call.method === "POST" || call.method === "PUT") {
     headers["Content-Type"] = "application/json";
   }
   if (call.ifMatch) {
@@ -58,7 +60,7 @@ export async function callKit(fetcher: Fetch, base: string, call: KitCall): Prom
     const response = await fetcher(url, {
       method: call.method,
       headers,
-      body: call.method === "GET" ? undefined : JSON.stringify(call.body ?? {}),
+      body: call.method === "GET" || call.method === "DELETE" ? undefined : JSON.stringify(call.body ?? {}),
       signal: AbortSignal.timeout(TIMEOUT_MS),
       redirect: "error",
     });

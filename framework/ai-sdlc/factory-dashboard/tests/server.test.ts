@@ -39,7 +39,6 @@ function fakeUpstream(seen: Seen[], { down = false } = {}): typeof fetch {
     if (url.endsWith("/factory/session")) {
       return json(200, { ...who, actor: `ui:${who.identity}`, write_enabled: who.scope !== "read" });
     }
-    // SSE events stream — return text/event-stream body
     if (url.includes("/factory/events")) {
       const lastId = headers["Last-Event-ID"] ?? "";
       const body = `event: step.finished\ndata: {"kind":"step.finished","ts":"2025-01-01T00:00:00Z"}\n\n`;
@@ -48,7 +47,6 @@ function fakeUpstream(seen: Seen[], { down = false } = {}): typeof fetch {
         headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", "X-Last-Event-ID": lastId },
       });
     }
-    // DELETE catalog entries — return 200 with the deleted entry info
     if (init?.method === "DELETE") {
       return json(200, { ok: true, path: new URL(url).pathname, deleted: true });
     }
@@ -254,8 +252,6 @@ describe("delete proxy", () => {
     const cookie = await signIn("alpha", "tok-alice");
     const url = "/api/workspaces/alpha/factory/catalogs/agents/my-agent";
     const reply = await app.inject({ method: "DELETE", url, headers: { cookie } });
-    // Currently fails with 404 because the DELETE route does not exist yet.
-    // Once implemented, it must return 403 csrf_required and never call the kit.
     expect(reply.statusCode).toBe(403);
     expect(reply.json().code).toBe("csrf_required");
     expect(seen.filter((s) => s.method === "DELETE")).toEqual([]);
@@ -269,8 +265,6 @@ describe("delete proxy", () => {
     const reply = await app.inject({
       method: "DELETE", url, headers: { cookie, "x-dashboard-csrf": csrf, "if-match": '"3"' },
     });
-    // Currently fails with 404 because the DELETE route does not exist yet.
-    // Once implemented, it must forward as DELETE with Authorization, X-AISDLC-CSRF and If-Match.
     expect(reply.statusCode).toBe(200);
     const last = seen.at(-1)!;
     expect(last.method).toBe("DELETE");
@@ -285,7 +279,6 @@ describe("events stream proxy", () => {
   it("requires sign-in and returns 401 without a session", async () => {
     await start();
     const cookie = await signIn("alpha", "tok-alice");
-    // beta has no grant — events requires sign-in
     const reply = await app.inject({
       method: "GET", url: "/api/workspaces/beta/factory/events", headers: { cookie },
     });
@@ -294,15 +287,54 @@ describe("events stream proxy", () => {
   });
 
   it("streams the kit's text/event-stream body through with a signed-in session", async () => {
-    await start();
-    const cookie = await signIn("alpha", "tok-alice");
-    const reply = await app.inject({
-      method: "GET", url: "/api/workspaces/alpha/factory/events", headers: { cookie },
+    let upstreamSignal: AbortSignal | undefined;
+    const streamingFetch: typeof fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes("/factory/session")) {
+        return json(200, { identity: "alice", scope: "write", actor: "ui:alice", write_enabled: true });
+      }
+      if (url.includes("/factory/events")) {
+        upstreamSignal = (init?.signal) ?? undefined;
+        const body = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('event: step.finished\ndata: {"kind":"step.finished"}\n\n'));
+            upstreamSignal?.addEventListener("abort", () => controller.close());
+          },
+        });
+        return new Response(body, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
+        });
+      }
+      if (url.includes("/factory/capabilities")) {
+        return json(200, {});
+      }
+      return json(200, { ok: true });
+    }) as typeof fetch;
+    const config = { ...CONFIG, secureCookies: false };
+    const testApp = buildApp({ config, fetcher: streamingFetch });
+    await testApp.listen({ port: 0, host: "127.0.0.1" });
+    const port = (testApp.server.address() as import("net").AddressInfo).port;
+    const signInResp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/session`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "tok-alice" }),
     });
-    // Currently the proxy returns application/json. Once the SSE relay is implemented,
-    // it must return text/event-stream and relay the kit's SSE frames verbatim.
-    expect(reply.statusCode).toBe(200);
-    expect(reply.headers["content-type"]).toContain("text/event-stream");
+    const setCookie = signInResp.headers.get("set-cookie")!;
+    const cookie = setCookie.split(";")[0];
+    const clientAbort = new AbortController();
+    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+      headers: { cookie: cookie }, signal: clientAbort.signal,
+    });
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("content-type")).toContain("text/event-stream");
+    const reader = resp.body!.getReader();
+    const chunk = await reader.read();
+    const text = new TextDecoder().decode(chunk.value);
+    expect(text).toContain("step.finished");
+    clientAbort.abort();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(upstreamSignal?.aborted).toBe(true);
+    await testApp.close();
   });
 
   it("forwards Last-Event-ID to the kit", async () => {
@@ -313,7 +345,6 @@ describe("events stream proxy", () => {
       headers: { cookie, "last-event-id": "5" },
     });
     expect(reply.statusCode).toBe(200);
-    // The upstream call must include Last-Event-ID so the kit can replay from that point.
     const eventsCall = seen.find((s) => s.url.includes("/factory/events"));
     expect(eventsCall).toBeDefined();
     expect(eventsCall?.headers["Last-Event-ID"]).toBe("5");
@@ -326,7 +357,6 @@ describe("events stream proxy", () => {
       method: "GET", url: "/api/workspaces/alpha/factory/events", headers: { cookie },
     });
     expect(reply.statusCode).toBe(200);
-    // The bearer token must never appear in the client-facing response body.
     expect(reply.body).not.toContain("tok-alice");
   });
 });
