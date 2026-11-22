@@ -25,7 +25,7 @@ class AffectedGroupsTest(unittest.TestCase):
 
     def test_a_factory_only_branch_skips_the_product_suites(self):
         groups = self.mod.groups(["framework/ai-sdlc/factory-dashboard/src/ui/App.tsx"])
-        self.assertEqual(set(), groups & {"backend", "frontend", "pages", "stack", "testing"})
+        self.assertEqual({"kit", "boundaries"}, groups)
 
     def test_a_backend_branch_runs_backend_and_the_server_backed_suites(self):
         groups = self.mod.groups(["backend-api/src/main/java/Foo.java"])
@@ -37,6 +37,19 @@ class AffectedGroupsTest(unittest.TestCase):
     def test_a_frontend_branch_runs_frontend_and_the_server_backed_suites(self):
         groups = self.mod.groups(["frontend/src/app/page.tsx"])
         self.assertEqual({"frontend", "stack"}, groups)
+
+    def test_a_kit_branch_runs_the_kit_self_tests_only(self):
+        self.assertEqual({"kit", "boundaries"}, self.mod.groups(["framework/ai-sdlc/aisdlc/line.py"]))
+        self.assertEqual({"kit"}, self.mod.groups(["local-ai/sdlc/foreman.py"]))
+        self.assertEqual({"kit"}, self.mod.groups([".aisdlc/aisdlc.toml"]))
+
+    def test_the_extraction_boundaries_run_when_a_framework_changes(self):
+        self.assertIn("boundaries", self.mod.groups(["framework/repolens/repolens/cli.py"]))
+        self.assertIn("boundaries", self.mod.groups(["framework/ai-sdlc/aisdlc/line.py"]))
+        self.assertNotIn("boundaries", self.mod.groups(["docs/README.md"]))
+
+    def test_rules_and_agents_touch_no_suite_group(self):
+        self.assertEqual(set(), self.mod.groups([".claude/rules/ui-ux-design.md", ".claude/agents/openspec.md"]))
 
     def test_a_docs_branch_runs_pages(self):
         groups = self.mod.groups(["docs/README.md"])
