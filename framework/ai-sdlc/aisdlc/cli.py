@@ -25,6 +25,7 @@ from aisdlc import (
     intake,
     isolator,
     lifecycle,
+    line,
     metrics,
     ratchet,
     repo,
@@ -658,6 +659,12 @@ def build_parser() -> argparse.ArgumentParser:
     dseed.add_argument("--json", action="store_true")
 
     p = sub.add_parser(
+        "line",
+        help="Production line view: ordered stages, gates, I/O, and guardrails (#2396)",
+    )
+    p.add_argument("--json", action="store_true", help="emit JSON payload instead of human text")
+
+    p = sub.add_parser(
         "serve",
         help="Factory OpenAPI HTTP host (#2253/#2254); loopback + Bearer token",
     )
@@ -875,6 +882,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "backoffice": lambda: _backoffice(ctx, args),
         "runtime": lambda: _runtime(ctx, args),
         "demo": lambda: _demo(ctx, args),
+        "line": lambda: _line(ctx, args),
         "serve": lambda: _serve(ctx, args),
         "serve-token": lambda: _serve_token(ctx, args),
         "coach": lambda: _coach(ctx, args),
@@ -903,6 +911,18 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "intent": lambda: _intent(ctx, args),
     }
     return simple[args.command]()
+
+
+def _line(ctx: Context, args: argparse.Namespace) -> int:
+    """Print the production line view (stages, gates, I/O, guardrails)."""
+    import json as _json
+
+    payload = line.build_line(ctx)
+    if getattr(args, "json", False):
+        print(_json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print(line.render_text(payload))
+    return 0
 
 
 def _foreman(ctx: Context, args: argparse.Namespace) -> int:
