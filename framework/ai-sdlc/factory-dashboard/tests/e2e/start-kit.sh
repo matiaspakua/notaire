@@ -30,21 +30,26 @@ inputs = ["OpenSpec change"]
 outputs = ["failing tests"]
 
 [[stages]]
-id = "green"
-agents = ["implementer"]
-inputs = ["failing tests"]
-outputs = ["passing tests"]
+id = "signal"
+agents = ["reviewer"]
+inputs = ["passing tests"]
+outputs = ["evidence"]
 
 [[gates]]
-name = "tests pass"
-stage = "green"
+name = "plan check"
+stage = "plan"
 run = "echo ok"
 
 [[gates]]
 name = "lint check"
-stage = "green"
+stage = "red"
 run = "echo lint"
 required = false
+
+[[gates]]
+name = "signal check"
+stage = "signal"
+run = "echo ok"
 TOML
 echo "# Policy" > POLICY.md
 git add -A && git commit -qm seed
