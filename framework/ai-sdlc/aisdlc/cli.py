@@ -26,6 +26,7 @@ from aisdlc import (
     isolator,
     lifecycle,
     line,
+    materialize,
     metrics,
     ratchet,
     repo,
@@ -524,6 +525,17 @@ def build_parser() -> argparse.ArgumentParser:
                     dest="if_match",
                     help="expected current version (If-Match); refuse on mismatch",
                 )
+
+    _imp = cat_sub.add_parser("import", help="import AI config from a harness layout into catalog entries")
+    _imp.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
+    _imp.add_argument("--from", dest="from_dir", required=True, help="source harness root directory", type=Path)
+    _imp.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+
+    _mat = cat_sub.add_parser("materialize", help="project catalog entries into a harness layout")
+    _mat.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
+    _mat.add_argument("--dest", required=True, help="destination directory", type=Path)
+    _mat.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
+    _mat.add_argument("--check", action="store_true", help="verify disk without writing (exits 1 on drift)")
 
     p = sub.add_parser("project", help="Factory Project + repo binding (#2255)")
     proj_sub = p.add_subparsers(dest="action", required=True)
@@ -1091,6 +1103,21 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
             return _catalog_write(ctx, args)
         if args.action == "remove":
             return _catalog_remove(ctx, args)
+        if args.action == "import":
+            return materialize.import_harness(
+                ctx,
+                args.harness,
+                Path(args.from_dir),
+                kind_filter=getattr(args, "kind", None),
+            )
+        if args.action == "materialize":
+            return materialize.materialize_harness(
+                ctx,
+                args.harness,
+                Path(args.dest),
+                kind_filter=getattr(args, "kind", None),
+                check=bool(getattr(args, "check", False)),
+            )
     except ProfileError as exc:
         print(f"error: {exc}")
         return 2

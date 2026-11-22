@@ -173,6 +173,15 @@ def _exists(ctx: Context, kind: str, entry_id: str) -> bool:
     return _current_path(ctx, kind, entry_id).is_file() or _legacy_path(ctx, kind, entry_id).is_file()
 
 
+def has_entry(ctx: Context, kind: str, entry_id: str) -> bool:
+    """Return True when a current revision for *kind*/*entry_id* exists."""
+    try:
+        load_entry(ctx, kind, entry_id)
+        return True
+    except KitError:
+        return False
+
+
 def load_entry(ctx: Context, kind: str, entry_id: str) -> dict:
     """Load the current revision (directory layout or legacy flat file)."""
     if kind not in KINDS:
@@ -289,6 +298,33 @@ def history(ctx: Context, kind: str, entry_id: str) -> dict:
     return {"id": entry_id, "kind": kind, "versions": versions}
 
 
+def guard_files(files: object) -> dict:
+    """Validate a files mapping: relative paths only (no '..', no absolute), str keys and str values.
+
+    Scans every value against factory.SECRET_VALUES and raises KitError(code='literal_secret')
+    naming the path but never the secret. Compatible with guard_fields error style.
+    """
+    if not isinstance(files, dict):
+        raise KitError("invalid_body", "files must be an object (dict)")
+    result: dict[str, str] = {}
+    for key, value in files.items():
+        if not isinstance(key, str):
+            raise KitError("invalid_body", f"files key {key!r} must be a string")
+        if not isinstance(value, str):
+            raise KitError("invalid_body", f"files[{key!r}] value must be a string (not {type(value).__name__})")
+        # Reject absolute paths and path-traversal
+        if key.startswith(("/", "\\")):
+            raise KitError("invalid_path", f"files[{key!r}]: absolute paths are not allowed")
+        parts = key.replace("\\", "/").split("/")
+        if ".." in parts:
+            raise KitError("invalid_path", f"files[{key!r}]: path traversal ('..') is not allowed")
+        # Secret scan
+        if SECRET_VALUES.search(value):
+            raise KitError("literal_secret", f"files[{key!r}] contains a literal secret; remove it before importing")
+        result[key] = value
+    return result
+
+
 def guard_fields(fields: object) -> dict:
     """Catalog fields may name a credential only as env:NAME; a literal secret never reaches the store."""
     if fields is None:
@@ -329,6 +365,7 @@ def add(
     extra: dict | None = None,
     actor: str | None = None,
     schema_version: int | None = None,
+    files: dict | None = None,
 ) -> dict:
     if _exists(ctx, kind, entry_id):
         raise KitError("already_exists", f"catalog entry {kind}/{entry_id} already exists (use update)")
@@ -342,6 +379,8 @@ def add(
     for key, value in (extra or {}).items():
         if key not in RESERVED:
             payload[key] = value
+    if files is not None:
+        payload["files"] = guard_files(files)
     payload = _stamp_envelope(payload, actor=actor, schema_version=schema_version)
     return _commit_revision(ctx, kind, entry_id, payload)
 
@@ -386,6 +425,7 @@ def write_new_revision(
     expected_version: int | None = None,
     actor: str | None = None,
     schema_version: int | None = None,
+    files: dict | None = None,
 ) -> dict:
     """Library helper: persist payload as the next immutable revision."""
     data = load_entry(ctx, kind, entry_id)
@@ -407,6 +447,8 @@ def write_new_revision(
     body["kind"] = kind
     body["version"] = next_version
     body.pop("digest", None)
+    if files is not None:
+        body["files"] = guard_files(files)
     if schema_version is None and body.get("schema_version") is None:
         schema_version = int(data.get("schema_version") or DEFAULT_SCHEMA_VERSION)
     body = _stamp_envelope(body, actor=actor, schema_version=schema_version)
@@ -504,6 +546,12 @@ def validate(ctx: Context, kind: str | None = None) -> int:
                 ref_path = ctx.path(str(data["ref"]))
                 if not (ref_path / "SKILL.md").is_file() and not ref_path.is_file():
                     errors.append(f"{k}/{entry['id']}: ref {data['ref']} not found")
+            # Validate files field if present
+            if "files" in data:
+                try:
+                    guard_files(data["files"])
+                except KitError as exc:
+                    errors.append(f"{k}/{entry['id']}: invalid files — {exc.detail}")
             # Version files must remain byte-stable vs their own digest.
             versions_dir = _entity_dir(ctx, k, entry["id"]) / "versions"
             if versions_dir.is_dir():

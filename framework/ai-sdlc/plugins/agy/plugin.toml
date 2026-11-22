@@ -1,0 +1,11 @@
+id = "agy"
+kind = "harness"
+version = "1.0.0"
+status = "stub"
+runtime = "agy"
+adapter = "adapter.yml"
+capabilities = ["describe"]
+command = ["aisdlc-harness-describe", "agy"]
+summary = "Inventory stub for Agy (Antigravity) CLI. Dry plan prints describe argv only. Never launches a session. sandbox=false forever until a real Isolator."
+sandbox = false
+auto_trust_hooks = false
