@@ -98,6 +98,7 @@ making the factory observable across sessions.
 - `framework/ai-sdlc/aisdlc/evidence.py`
 - `framework/ai-sdlc/aisdlc/contract.py`
 - `framework/ai-sdlc/aisdlc/serve_token.py`
+- `framework/ai-sdlc/aisdlc/errors.py`
 - `framework/ai-sdlc/tests/`
 - `framework/ai-sdlc/openapi/factory-control.openapi.yaml`
 - `framework/ai-sdlc/README.md`

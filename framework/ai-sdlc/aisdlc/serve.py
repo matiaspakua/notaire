@@ -120,14 +120,10 @@ def _problem(code: str, detail: str, status: int | None = None) -> tuple[int, di
 
 def _handle_telemetry(ctx: Context, query: dict[str, list[str]]) -> dict:
     """GET /factory/telemetry handler (#2394)."""
-    from aisdlc.telemetry_store import VALID_GROUPS, report as telemetry_report
+    from aisdlc.telemetry_store import report as telemetry_report
 
     group = (query.get("group") or ["stage"])[0]
-    if group not in VALID_GROUPS:
-        raise KitError(
-            "invalid_body",
-            f"invalid group {group!r}; must be one of {', '.join(VALID_GROUPS)}",
-        )
+    # report() validates the group and raises KitError("invalid_group") itself
     return telemetry_report(ctx, group)
 
 
