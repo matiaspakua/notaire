@@ -899,3 +899,164 @@ input:user-invalid { border-color: var(--status-error); }
 .project .detail-head { margin-bottom: var(--space-2); }
 .phase-header .chips { margin-left: auto; }
 .paths.card { gap: 2px; padding: var(--space-4); font-family: var(--font-mono); font-size: var(--text-xs); }
+
+/* ── Config as code ── */
+.config-as-code {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: var(--space-4);
+  min-height: 200px;
+}
+.config-tree-panel {
+  border-right: 1px solid var(--linehair);
+  padding-right: var(--space-4);
+}
+.config-viewer-panel {
+  min-width: 0;
+}
+.file-tree-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.file-tree-list > li { padding: 0; }
+.file-tree-details { padding: 0; }
+.file-tree-details > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+.file-tree-details > summary::-webkit-details-marker { display: none; }
+.file-tree-details > summary:hover { background: var(--bg-overlay); }
+.file-entry-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 32px;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--text);
+  text-align: left;
+}
+.file-entry-btn:hover { background: var(--bg-overlay); }
+.file-entry-btn[aria-current="true"] {
+  background: var(--phase-intake-surface);
+  color: var(--phase-intake);
+  font-weight: 600;
+}
+.file-entry-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-viewer-scroll {
+  max-height: 500px;
+  overflow: auto;
+  border: 1px solid var(--linehair);
+  border-radius: var(--radius-sm);
+}
+.file-viewer-pre {
+  margin: 0;
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre;
+  overflow-x: auto;
+}
+.file-viewer-line {
+  display: flex;
+  gap: var(--space-3);
+}
+.file-viewer-ln {
+  flex: 0 0 2.5em;
+  text-align: right;
+  user-select: none;
+  color: var(--text-faint);
+}
+.file-viewer-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--phase-ship-surface);
+  color: var(--phase-ship);
+  font-size: var(--text-xs);
+  border-bottom: 1px solid var(--linehair);
+}
+
+/* ── Delete confirmation ── */
+.delete-confirm {
+  padding: var(--space-3);
+  margin: var(--space-2) 0;
+  border: 1px solid var(--status-error);
+  border-radius: var(--radius-sm);
+  background: var(--status-error-surface);
+}
+.delete-confirm-text {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--status-error-ink);
+}
+
+/* ── Telemetry panel ── */
+.telemetry-panel { padding: var(--space-4); }
+.telemetry-panel .tabs { margin-bottom: var(--space-3); }
+.failure-marker {
+  margin-left: var(--space-1);
+  font-style: normal;
+}
+.facts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.fact-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--linehair);
+  font-size: var(--text-sm);
+}
+.fact-row:last-child { border-bottom: none; }
+
+/* ── Entry delete button ── */
+.entries .entry { position: relative; }
+.entries li { position: relative; }
+.entries li .btn-destructive {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.entries li:hover .btn-destructive,
+.entries li .btn-destructive:focus { opacity: 1; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .config-as-code {
+    grid-template-columns: 1fr;
+  }
+  .config-tree-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--linehair);
+    padding-right: 0;
+    padding-bottom: var(--space-3);
+  }
+}

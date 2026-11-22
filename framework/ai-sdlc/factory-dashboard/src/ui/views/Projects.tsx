@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { api, factory } from "../api.ts";
 import { ActionForm, Field } from "../components/Form.tsx";
+import { Icon } from "../components/Icon.tsx";
 import { Empty, Loaded, Section } from "../components/State.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { useT } from "../i18n.ts";
-import type { Project } from "../model.ts";
+import { buildConfigTree, encodeConfigPath, type ConfigFileEntry, type ConfigFileContent, type ConfigTreeNode, type Project } from "../model.ts";
 
 function AddRepo({ project, onDone }: { project: string; onDone: () => void }) {
   const t = useT();
@@ -81,6 +82,124 @@ function NewProject({ onDone }: { onDone: () => void }) {
   );
 }
 
+function FileTreeItem({ node, selected, onSelect }: { node: ConfigTreeNode; selected: string | null; onSelect: (path: string) => void }) {
+  const isFile = Boolean(node.path);
+  const isSelected = node.path === selected;
+  if (isFile) {
+    return (
+      <li role="treeitem">
+        <button
+          type="button"
+          className="file-entry-btn"
+          data-testid="file-entry"
+          aria-current={isSelected ? "true" : undefined}
+          onClick={() => onSelect(node.path!)}
+        >
+          <Icon name="projects" size={14} />
+          <span className="file-entry-name">{node.name}</span>
+        </button>
+      </li>
+    );
+  }
+  return (
+    <li role="treeitem">
+      <details className="file-tree-details">
+        <summary>
+          <Icon name="config" size={14} />
+          <span className="file-entry-name">{node.name}</span>
+        </summary>
+        <ul className="file-tree-list" role="group">
+          {node.children.map((child) => (
+            <FileTreeItem key={child.name} node={child} selected={selected} onSelect={onSelect} />
+          ))}
+        </ul>
+      </details>
+    </li>
+  );
+}
+
+function FileViewer({ path, workspaceId }: { path: string; workspaceId: string }) {
+  const t = useT();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const content = useResource<ConfigFileContent>(
+    factory(workspaceId, `/config/files/${encodeConfigPath(path)}`),
+  );
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0);
+  }, [path]);
+  if (content.data === undefined) {
+    return (
+      <div className="skeleton" role="status" aria-busy="true" aria-label={t("projects.configLoading")}>
+        {Array.from({ length: 6 }, (_, i) => (
+          <span key={i} className="skeleton-row" />
+        ))}
+      </div>
+    );
+  }
+  if (content.error) {
+    return <div className="note note-error" role="alert"><Icon name="alert" /><span>{content.error.detail}</span></div>;
+  }
+  const lines = content.data.content.split("\n");
+  return (
+    <div
+      ref={scrollRef}
+      className="file-viewer-scroll"
+      data-testid="file-viewer"
+      tabIndex={0}
+      aria-label={path}
+    >
+      {content.data.redacted && (
+        <div className="file-viewer-note" role="status">
+          <Icon name="key" size={14} />
+          <span>{t("projects.configRedacted")}</span>
+        </div>
+      )}
+      <pre className="file-viewer-pre"><code>{lines.map((line, i) => (
+        <span key={i} className="file-viewer-line">
+          <span className="file-viewer-ln" data-testid={i === 0 ? "line-number" : undefined} aria-hidden="true">{i + 1}</span>
+          {line || " "}
+        </span>
+      ))}</code></pre>
+    </div>
+  );
+}
+
+function ConfigAsCode({ workspaceId }: { workspaceId: string }) {
+  const t = useT();
+  const files = useResource<ConfigFileEntry[]>(factory(workspaceId, "/config/files"));
+  const [selected, setSelected] = useState<string | null>(null);
+  const tree = files.data ? buildConfigTree(files.data) : [];
+  return (
+    <div className="config-as-code">
+      <div className="config-tree-panel">
+        <h3 className="section-label">{t("projects.configAsCode")}</h3>
+        <div data-testid="file-tree" role="tree" aria-label={t("projects.configAsCode")}>
+          <Loaded resource={files}>
+            {(data) =>
+              data.length === 0 ? (
+                <Empty>{t("projects.configEmpty")}</Empty>
+              ) : (
+                <ul className="file-tree-list" role="group">
+                  {tree.map((node) => (
+                    <FileTreeItem key={node.name} node={node} selected={selected} onSelect={setSelected} />
+                  ))}
+                </ul>
+              )
+            }
+          </Loaded>
+        </div>
+      </div>
+      <div className="config-viewer-panel">
+        {selected ? (
+          <FileViewer path={selected} workspaceId={workspaceId} />
+        ) : (
+          <Empty>{t("projects.configSelect")}</Empty>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Projects() {
   const t = useT();
   const { workspace } = useWorkspace();
@@ -137,6 +256,7 @@ export function Projects() {
           }
         </Loaded>
       </Section>
+      <ConfigAsCode workspaceId={workspace.id} />
       <NewProject onDone={projects.reload} />
     </div>
   );

@@ -262,6 +262,108 @@ export function stationState(stationId: string, status: FactoryStatus | undefine
   return "upcoming";
 }
 
+export interface ConfigFileEntry {
+  path: string;
+  kind: string;
+  size: number;
+  media_type: string;
+  read_only: boolean;
+}
+
+export interface ConfigFileContent {
+  path: string;
+  content: string;
+  redacted: boolean;
+  media_type: string;
+  size: number;
+}
+
+export interface TelemetryRow {
+  key: string;
+  runs: number;
+  duration_s: number;
+  usd: number;
+  failures: number;
+}
+
+export interface TelemetryResponse {
+  group: string;
+  rows: TelemetryRow[];
+  total_duration_s: number;
+  total_usd: number;
+  total_failures: number;
+  total_runs: number;
+  failures_by_integration: Record<string, number>;
+  repolens: {
+    calls?: number;
+    avg_ms?: number;
+    total_ms?: number;
+    by_tool?: Record<string, { calls: number; avg_ms: number; total_ms: number }>;
+  };
+}
+
+export interface ConfigTreeNode {
+  name: string;
+  path?: string;
+  kind?: string;
+  children: ConfigTreeNode[];
+}
+
+export function buildConfigTree(entries: ConfigFileEntry[]): ConfigTreeNode[] {
+  const root: ConfigTreeNode = { name: "", children: [] };
+  for (const entry of entries) {
+    const parts = entry.path.split("/");
+    let node = root;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (i === parts.length - 1) {
+        const existing = node.children.find((c) => c.name === part && c.path);
+        if (!existing) {
+          node.children.push({ name: part, path: entry.path, kind: entry.kind, children: [] });
+        }
+      } else {
+        let dir = node.children.find((c) => c.name === part && !c.path);
+        if (!dir) {
+          dir = { name: part, children: [] };
+          node.children.push(dir);
+        }
+        node = dir;
+      }
+    }
+  }
+  const sortChildren = (nodes: ConfigTreeNode[]) => {
+    nodes.sort((a, b) => {
+      const aIsFile = Boolean(a.path);
+      const bIsFile = Boolean(b.path);
+      if (aIsFile !== bIsFile) return aIsFile ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+    for (const node of nodes) {
+      if (node.children.length) sortChildren(node.children);
+    }
+  };
+  sortChildren(root.children);
+  return root.children;
+}
+
+export function formatDuration(seconds: number, lang: string): string {
+  if (seconds >= 3600) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return s > 0 ? `${m}m ${s}s` : `${m}m`;
+  }
+  return `${seconds.toLocaleString(lang, { maximumFractionDigits: seconds < 1 ? 2 : 1 })}s`;
+}
+
+export function encodeConfigPath(path: string): string {
+  return path.split("/").map(encodeURIComponent).join("/");
+}
+
 /** Return only http/https URLs as safe links; everything else becomes plain text. */
 export function isSafeLink(url: string): boolean {
   try {
