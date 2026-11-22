@@ -1390,4 +1390,4 @@ components:
         source:
           type: string
           enum: [workflow, line]
-          description: Source of the next step: "workflow" from workflow body, "line" from profile stages
+          description: 'Source of the next step: "workflow" from workflow body, "line" from profile stages'
