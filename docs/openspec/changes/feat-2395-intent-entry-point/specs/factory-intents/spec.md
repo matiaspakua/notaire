@@ -1,5 +1,3 @@
-<!-- Governed by CONSTITUTION.md. CU76, issue #2395. -->
-
 ## Purpose
 
 The AI SDLC factory needs a single Intent entity and entry point so that CLI operators, HTTP clients, MCP tools and the future dashboard all create, list and inspect intents through one service layer.
@@ -9,9 +7,10 @@ The AI SDLC factory needs a single Intent entity and entry point so that CLI ope
 ### Requirement: Intent model and versioned persistence
 
 The kit SHALL persist Intent entities with fields `id`, `kind` (`prompt|reference|spec`),
-`title`, `text`, `source` (`{system: github|jira|url|file, ref}`), `acceptance[]`,
+`title`, `text`, `source` (`{system: github|jira|url|file|"", ref}`), `acceptance[]`,
 `references[{label,url,kind}]` (with reference `kind` in `architecture|security|adr|standard|other`),
-`status`, `created_by`, `created_at`, and `run_ids[]`. Intents SHALL be stored under
+`status`, `created_by`, `created_at`, and `run_ids[]`. For prompt intents, `source` SHALL be
+`{"system": "", "ref": ""}`. Intents SHALL be stored under
 `.aisdlc/intents/<id>/current.json` with immutable version records under
 `.aisdlc/intents/<id>/versions/{version}.json`. On submission, the kit SHALL append an
 evidence ledger event recording `id`, `kind`, `source`, and `actor` without logging
@@ -140,8 +139,8 @@ serverInfo, and tools capability), `notifications/initialized`, `tools/list`, an
 The server SHALL expose tools `intent_submit` (`text`, `ref`, or `spec`, optional `title`),
 `intent_show` (`id`), and `factory_status` (reporting compact intent and run counts and latest
 run status). Tool outputs SHALL be returned as MCP content `[{type: "text", text: <json>}]`,
-and tool errors SHALL be marked with `isError: true`. Standard JSON-RPC errors -32601,
--32602, and -32700 SHALL be returned for invalid requests.
+and tool errors SHALL be marked with `isError: true`. Standard JSON-RPC errors -32600,
+-32601, -32602, and -32700 SHALL be returned for invalid requests.
 
 #### Scenario: stdio MCP initialize and list tools
 

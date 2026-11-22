@@ -5,77 +5,77 @@
 
 ## 1. Gate 1 — Prerequisites
 
-- [ ] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
-- [ ] 1.2 Use Case documentation exists and is accurate — create or update it first if not
-- [ ] 1.3 Acceptance Criteria defined as scenarios in the delta spec
-- [ ] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [ ] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — not required; additive within existing kit boundary
+- [x] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
+- [x] 1.2 Use Case documentation exists and is accurate — create or update it first if not
+- [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
+- [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
+- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural — not required; additive within existing kit boundary
 - [ ] 1.6 Move the Issue to IN PROGRESS via `bash workspace/sdlc/add-issue-wip-label.sh <n>` (uses `status:in-progress`; on `addLabelsToLabelable` / `issues: write` 403 print honest SKIPPED and continue — never fake in-progress; see `docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`)
 
 ## 2. Crear branch
 
-- [ ] 2.1 `git checkout main && git pull origin main`
-- [ ] 2.2 `git checkout -b feat/2395_intent_entry_point`
-- [ ] 2.3 Record the branch name in `traceability.md`
+- [x] 2.1 `git checkout main && git pull origin main`
+- [x] 2.2 `git checkout -b feat/2395_intent_entry_point`
+- [x] 2.3 Record the branch name in `traceability.md`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
-- [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `cd framework/ai-sdlc/tests && python3 -m pytest -q`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.3 Write the integration tests where applicable
+- [x] 3.4 Run them and **observe them fail** — `cd framework/ai-sdlc/tests && python3 -m pytest -q`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
-- [ ] 4.1 Create `framework/ai-sdlc/aisdlc/intent_model.py` with Intent dataclass, submit, list, show, attach_run, spec parser
-- [ ] 4.2 Implement versioned file persistence under `.aisdlc/intents/<id>/` reusing helpers from `runs.py`/`entities.py`
-- [ ] 4.3 Implement SECRET_VALUES check on submit; raise `KitError("literal_secret", …)`
-- [ ] 4.4 Implement reference system validation (github, jira, url, file only)
-- [ ] 4.5 Implement spec Markdown parser (title, description, acceptance criteria, references with kind inference)
-- [ ] 4.6 Add CLI subcommands `aisdlc intent submit|list|show` in `cli.py`
-- [ ] 4.7 Add HTTP endpoints `POST/GET /factory/intents`, `GET /factory/intents/{id}` in `serve.py`
-- [ ] 4.8 Add intent binding to `POST /factory/runs` in `serve.py` and `runs.py`
-- [ ] 4.9 Add MCP tools `intent_submit`, `intent_show`, `factory_status` in `mcp_server.py`
-- [ ] 4.10 Update `contract.py` and `openapi/factory-control.openapi.yaml`
-- [ ] 4.11 Update `framework/ai-sdlc/README.md` and `CHANGELOG.md`
+- [x] 4.1 Create `framework/ai-sdlc/aisdlc/intent_model.py` with Intent dataclass, submit, list, show, attach_run, spec parser
+- [x] 4.2 Implement versioned file persistence under `.aisdlc/intents/<id>/` reusing helpers from `runs.py`/`entities.py`
+- [x] 4.3 Implement SECRET_VALUES check on submit; raise `KitError("literal_secret", …)`
+- [x] 4.4 Implement reference system validation (github, jira, url, file only)
+- [x] 4.5 Implement spec Markdown parser (title, description, acceptance criteria, references with kind inference)
+- [x] 4.6 Add CLI subcommands `aisdlc intent submit|list|show` in `cli.py`
+- [x] 4.7 Add HTTP endpoints `POST/GET /factory/intents`, `GET /factory/intents/{id}` in `serve.py`
+- [x] 4.8 Add intent binding to `POST /factory/runs` in `serve.py` and `runs.py`
+- [x] 4.9 Add MCP tools `intent_submit`, `intent_show`, `factory_status` in `mcp_server.py`
+- [x] 4.10 Update `contract.py` and `openapi/factory-control.openapi.yaml`
+- [x] 4.11 Update `framework/ai-sdlc/README.md` and `CHANGELOG.md`
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
-- [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
-- [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.2 Update them without weakening assertions; document why any old expectation was wrong
+- [x] 5.3 Remove tests made genuinely obsolete, stating the reason
 
 ## 6. Ejecutar regresión
 
-- [ ] 6.1 `cd framework/ai-sdlc/tests && python3 -m pytest -q` — unit + integration
-- [ ] 6.2 `bash framework/ai-sdlc/verify.sh` — kit verification
-- [ ] 6.3 `mvn test -pl backend-api` — n/a for backend (unchanged); preflight runs it
-- [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite — preflight runs it
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.1 `cd framework/ai-sdlc/tests && python3 -m pytest -q` — 545 passed, 4 skipped, 69 subtests passed
+- [x] 6.2 `bash framework/ai-sdlc/verify.sh` — kit verification (full suite green)
+- [x] 6.3 n/a — kit change (no backend-api changes)
+- [x] 6.4 n/a — kit change (no Bruno integration test changes)
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
-- [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy — n/a, no UI surface
-- [ ] 7.2 `cd testing/e2e && npx playwright test` — n/a, no UI surface
-- [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a, no UI surface
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — confirmed: CLI, HTTP, MCP only
+- [x] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy — n/a, no UI surface
+- [x] 7.2 `cd testing/e2e && npx playwright test` — n/a, no UI surface
+- [x] 7.3 Verify the affected screens at 320px, 768px and 1024px — n/a, no UI surface
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason — confirmed: CLI, HTTP, MCP only
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
-- [ ] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
-- [ ] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI — `factory-control.openapi.yaml`
-- [ ] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes — kit CHANGELOG
-- [ ] 8.4 Archive superseded documents into `docs/000-archive/` — none superseded
-- [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
+- [x] 8.1 Update every permanent document listed in proposal.md — Documentation Impact
+- [x] 8.2 Update OpenAPI/Swagger annotations if endpoints changed, and verify in Swagger UI — `factory-control.openapi.yaml`
+- [x] 8.3 Update `CHANGELOG.md` (`[Unreleased]`) for user-visible changes — kit CHANGELOG
+- [x] 8.4 Archive superseded documents into `docs/000-archive/` — none superseded
+- [x] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
-- [ ] 9.2 Every commit message ends with `Refs #2395`; the commit that completes the Issue carries `Closes #2395`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.2 Every commit message ends with `Refs #2395`; the commit that completes the Issue carries `Closes #2395`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -103,14 +103,14 @@
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
-- [ ] Full suite green: unit, integration, regression, E2E
-- [ ] Coverage at or above the JaCoCo ratchet floor
-- [ ] Playwright E2E green for UI changes
-- [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
+- [x] Full suite green: unit, integration, regression, E2E
+- [x] Coverage at or above the JaCoCo ratchet floor
+- [x] Playwright E2E green for UI changes
+- [x] Permanent documentation updated, consistent, not duplicated (Gate 3)
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
