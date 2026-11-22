@@ -6,9 +6,8 @@ the production module exists.
 """
 from __future__ import annotations
 
-import os
-import sqlite3
 import shutil
+import sqlite3
 import sys
 import tempfile
 import unittest
@@ -33,7 +32,7 @@ class StoreSchemaTest(unittest.TestCase):
         """First migration creates all five data tables and schema_migrations."""
         from aisdlc.store import open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         db_path = store_path(self.root)
         self.assertTrue(db_path.is_file(), "factory.db should be created")
 
@@ -44,7 +43,7 @@ class StoreSchemaTest(unittest.TestCase):
         ).fetchall()]
         expected = sorted([
             "events", "intents", "telemetry", "benchmarks",
-            "config_snapshots", "schema_migrations",
+            "config_snapshots", "schema_migrations", "sync_keys",
         ])
         self.assertEqual(expected, sorted(tables))
         conn.close()
@@ -53,7 +52,7 @@ class StoreSchemaTest(unittest.TestCase):
         """events table has the columns defined in #2393."""
         from aisdlc.store import open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         conn = sqlite3.connect(str(store_path(self.root)))
         conn.row_factory = sqlite3.Row
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(events)").fetchall()]
@@ -65,7 +64,7 @@ class StoreSchemaTest(unittest.TestCase):
         """telemetry table has the columns defined in #2393."""
         from aisdlc.store import open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         conn = sqlite3.connect(str(store_path(self.root)))
         conn.row_factory = sqlite3.Row
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(telemetry)").fetchall()]
@@ -77,7 +76,7 @@ class StoreSchemaTest(unittest.TestCase):
     def test_benchmarks_table_columns(self) -> None:
         from aisdlc.store import open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         conn = sqlite3.connect(str(store_path(self.root)))
         conn.row_factory = sqlite3.Row
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(benchmarks)").fetchall()]
@@ -88,7 +87,7 @@ class StoreSchemaTest(unittest.TestCase):
     def test_config_snapshots_table_columns(self) -> None:
         from aisdlc.store import open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         conn = sqlite3.connect(str(store_path(self.root)))
         conn.row_factory = sqlite3.Row
         cols = [r["name"] for r in conn.execute("PRAGMA table_info(config_snapshots)").fetchall()]
@@ -97,9 +96,9 @@ class StoreSchemaTest(unittest.TestCase):
         conn.close()
 
     def test_schema_migrations_table(self) -> None:
-        from aisdlc.store import open_store, store_path, SCHEMA_VERSION
+        from aisdlc.store import SCHEMA_VERSION, open_store, store_path
 
-        db = open_store(self.root)
+        open_store(self.root)
         conn = sqlite3.connect(str(store_path(self.root)))
         conn.row_factory = sqlite3.Row
         rows = conn.execute("SELECT version FROM schema_migrations").fetchall()
@@ -112,7 +111,7 @@ class StoreSchemaTest(unittest.TestCase):
     # ------------------------------------------------------------------
     def test_migration_idempotent(self) -> None:
         """Calling migrate() twice produces no error and the same schema."""
-        from aisdlc.store import open_store, store_path, migrate, SCHEMA_VERSION
+        from aisdlc.store import SCHEMA_VERSION, migrate, open_store, store_path
 
         open_store(self.root)
         db_path = store_path(self.root)

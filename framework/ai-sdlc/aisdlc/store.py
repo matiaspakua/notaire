@@ -18,15 +18,25 @@ def store_path(root: Path) -> Path:
     return root / STORE_REL
 
 
-def _keep_out_of_git(root: Path) -> None:
-    """Generalized gitignore helper — keeps factory.db out of commits."""
+def keep_out_of_git(root: Path, names: list[str]) -> None:
+    """Generalized gitignore helper — keeps *names* out of commits.
+
+    Used by ``store.open_store`` (factory.db) and ``serve_token.ensure_token``
+    (serve.token, serve.tokens).
+    """
     ignore = root / ".aisdlc" / ".gitignore"
     text = ignore.read_text(encoding="utf-8") if ignore.is_file() else ""
-    lines = text.splitlines()
-    if "factory.db" not in lines:
+    existing = set(text.splitlines())
+    missing = [n for n in names if n not in existing]
+    if missing:
         ignore.parent.mkdir(parents=True, exist_ok=True)
         prefix = "\n" if text and not text.endswith("\n") else ""
-        ignore.write_text(text + prefix + "factory.db\n", encoding="utf-8")
+        ignore.write_text(text + prefix + "".join(f"{n}\n" for n in missing), encoding="utf-8")
+
+
+def _keep_out_of_git(root: Path) -> None:
+    """Thin wrapper kept for backward compatibility."""
+    keep_out_of_git(root, ["factory.db"])
 
 
 def migrate(conn: sqlite3.Connection) -> None:
@@ -53,6 +63,8 @@ def migrate(conn: sqlite3.Connection) -> None:
                  "ts TEXT, digest TEXT, files TEXT)")
     conn.execute("CREATE TABLE IF NOT EXISTS intents ("
                  "id TEXT PRIMARY KEY, ts TEXT, data TEXT)")
+    conn.execute("CREATE TABLE IF NOT EXISTS sync_keys ("
+                 "source TEXT, hash TEXT, PRIMARY KEY(source, hash))")
     conn.execute("INSERT OR IGNORE INTO schema_migrations VALUES (?)",
                  (SCHEMA_VERSION,))
     conn.commit()
