@@ -16,6 +16,7 @@ FRONTEND = "v0.4 · Product completeness (2026-12)"
 QUALITY = "v0.5 · Quality & traceability (2027-01)"
 PLATFORM = "v0.6 · Platform & operability (2027-02)"
 AI_FACTORY = "v0.7 · AI Factory & repo knowledge (2027-03)"
+OBSERVABLE_FACTORY = "v0.8 · Observable self-managing factory (2027-03)"
 GA = "v1.0 · GA: legacy-free (2027-04)"
 BACKLOG = "Backlog · Unscheduled"
 CATALOG = "Catalog · Requirements & use cases"
@@ -37,7 +38,7 @@ HISTORY_Q2 = "H · 2026 Q2 cohort: foundations & API"
 HISTORY_Q3 = "H · 2026 Q3 cohort: product build & UI/UX"
 HISTORY_Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
 
-SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, GA)
+SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, OBSERVABLE_FACTORY, GA)
 CONTINUOUS = (BACKLOG, CATALOG)
 SHIPPED = (V01, V02)
 HISTORY_STAGES = (H0, H1, H2, H3, H4, H5, H6, H7, H8)
@@ -174,6 +175,7 @@ MILESTONE_WINDOW = {
     QUALITY: ("2027-01-01", "2027-01-31"),
     PLATFORM: ("2027-02-01", "2027-02-28"),
     AI_FACTORY: ("2027-03-01", "2027-03-31"),
+    OBSERVABLE_FACTORY: ("2027-03-01", "2027-03-31"),
     GA: ("2027-04-01", "2027-04-30"),
 }
 ROADMAP_WINDOW = {title: MILESTONE_WINDOW[title] for title in SCHEDULED}
@@ -200,7 +202,10 @@ MILESTONE_DESCRIPTION = {
                         "Checkstyle, SpotBugs and Trivy fail the build", AI_FACTORY),
     AI_FACTORY: _describe("AI SDLC framework, RepoLens and agent skill catalog", "v0.7.z cuts, 2027-03-01 → 2027-03-31",
                           "RepoLens benches, Cursor agent fallback, entity toolset, agent skill lint",
-                          "AI Factory production-ready", GA),
+                          "AI Factory production-ready", OBSERVABLE_FACTORY),
+    OBSERVABLE_FACTORY: _describe("observable self-managing factory: production line, intents, live state, store, config as code", "v0.8.z cuts, 2027-03-01 → 2027-03-31",
+                                  "production line visibility, intent tracking, live factory state, config-as-code pipeline",
+                                  "factory self-manages and reports its own state", GA),
     GA: _describe("general availability with no legacy code", "v1.0.z cuts, 2027-04-01 → 2027-04-30",
                   "#899 Phase 6 deprecation, legacy packages removed, Owner GA decision",
                   "Owner tags v1.0.0", "next minor train"),
