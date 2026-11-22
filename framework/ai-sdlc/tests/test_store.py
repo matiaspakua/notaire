@@ -9,9 +9,14 @@ from __future__ import annotations
 import os
 import sqlite3
 import shutil
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+from helpers import KIT
+
+sys.path.insert(0, str(KIT))
 
 
 class StoreSchemaTest(unittest.TestCase):

@@ -23,6 +23,8 @@ from pathlib import Path
 
 from helpers import ENV, KIT, Repo, output, git
 
+sys.path.insert(0, str(KIT))
+
 PROFILE = """
 [project]
 name = "demo"
@@ -107,6 +109,42 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         self.assertIn("cost", result)
         self.assertGreaterEqual(result["cost"], 3)
 
+    def test_sync_cost_maps_to_telemetry_rows(self) -> None:
+        """Cost sync maps cost.jsonl rows to telemetry rows with usd, tokens_in, tokens_out."""
+        from aisdlc import evidence
+        from aisdlc.telemetry_store import sync
+        from aisdlc.store import store_path
+        from aisdlc.context import Context
+        from aisdlc.profile import find_profile, load_profile
+
+        ctx = Context(
+            root=self.repo.root,
+            profile=load_profile(find_profile(self.repo.root)),
+            profile_path=find_profile(self.repo.root),
+        )
+
+        evidence.add_cost(ctx, "junie", "gpt-4", 100, 50, 0.01, "1")
+        evidence.add_cost(ctx, "cursor", "claude-3", 200, 100, 0.02, "2")
+
+        sync(ctx)
+
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        rows = conn.execute(
+            "SELECT agent, model, metric, value FROM telemetry ORDER BY metric"
+        ).fetchall()
+        conn.close()
+
+        # Should have usd, tokens_in, tokens_out metrics.
+        metrics = [r[2] for r in rows]
+        self.assertIn("usd", metrics)
+        self.assertIn("tokens_in", metrics)
+        self.assertIn("tokens_out", metrics)
+        # Agents and models should be populated.
+        agents = [r[0] for r in rows]
+        self.assertTrue(any(a == "junie" for a in agents))
+        self.assertTrue(any(a == "cursor" for a in agents))
+
     # ------------------------------------------------------------------
     # RepoLens sync
     # ------------------------------------------------------------------
@@ -150,7 +188,7 @@ class TelemetryStoreSyncTest(unittest.TestCase):
     # Idempotency
     # ------------------------------------------------------------------
     def test_sync_idempotent(self) -> None:
-        """Second sync inserts 0 rows; row counts remain equal."""
+        """Second sync inserts 0 rows; third sync after new ledger line inserts exactly 1."""
         from aisdlc import evidence
         from aisdlc.telemetry_store import sync, stats
         from aisdlc.context import Context
@@ -172,6 +210,47 @@ class TelemetryStoreSyncTest(unittest.TestCase):
 
         stats_after_second = stats(ctx)
         self.assertEqual(stats_after_first["events"], stats_after_second["events"])
+
+        # Append one new ledger line and sync again — should insert exactly 1.
+        evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-merge", "ok": True, "ts": "2026-01-01T00:02:00+00:00"})
+        third = sync(ctx)
+        self.assertEqual(1, third["ledger"], "third sync should insert exactly 1 ledger row")
+        self.assertEqual(stats_after_second["events"] + 1, stats(ctx)["events"])
+
+    def test_sync_repolens_malformed_and_missing_keys(self) -> None:
+        """Sync does not raise on malformed JSON or missing optional keys; counts valid ones."""
+        from aisdlc.telemetry_store import sync
+        from aisdlc.context import Context
+        from aisdlc.profile import find_profile, load_profile
+
+        ctx = Context(
+            root=self.repo.root,
+            profile=load_profile(find_profile(self.repo.root)),
+            profile_path=find_profile(self.repo.root),
+        )
+
+        repolens_dir = self.repo.root / ".repolens"
+        repolens_dir.mkdir(parents=True, exist_ok=True)
+        lines = [
+            # Valid line
+            json.dumps({"ts": 1794941929.0, "src": "server", "client": "mcp",
+                        "tool": "search", "ms": 100.0}),
+            # Malformed JSON line
+            "this is not json at all {{{",
+            # Line missing optional keys (tokens, results)
+            json.dumps({"ts": 1794941930.0, "src": "server", "client": "mcp",
+                        "tool": "node", "ms": 50.0}),
+            # Another valid line
+            json.dumps({"ts": 1794941931.0, "src": "server", "client": "mcp",
+                        "tool": "outline", "ms": 30.0, "tokens": 10}),
+        ]
+        (repolens_dir / "usage.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+        # Should not raise.
+        result = sync(ctx)
+        self.assertIn("repolens", result)
+        # 3 valid lines should be counted.
+        self.assertEqual(3, result["repolens"])
 
     # ------------------------------------------------------------------
     # RepoLens input and files never stored
@@ -202,7 +281,7 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         # Scan every table cell in the store.
         db_path = store_path(self.repo.root)
         conn = sqlite3.connect(str(db_path))
-        tables = [r["name"] for r in conn.execute(
+        tables = [r[0] for r in conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
         ).fetchall()]
         for table in tables:
@@ -244,7 +323,7 @@ class TelemetryStoreSyncTest(unittest.TestCase):
 
         db_path = store_path(self.repo.root)
         conn = sqlite3.connect(str(db_path))
-        tables = [r["name"] for r in conn.execute(
+        tables = [r[0] for r in conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
         ).fetchall()]
         banned_values = ["sk-1234567890abcdef", "Bearer abc"]
@@ -257,6 +336,9 @@ class TelemetryStoreSyncTest(unittest.TestCase):
                     for bv in banned_values:
                         self.assertNotIn(bv, cell_str,
                                          f"secret value '{bv}' found in {table}")
+                    for bk in banned_keys:
+                        self.assertNotIn(bk, cell_str,
+                                         f"banned key '{bk}' found in {table}")
         conn.close()
 
 
@@ -350,71 +432,161 @@ class TelemetryStoreReportTest(unittest.TestCase):
         self.assertEqual(1, result["total_failures"])
 
     def test_report_failures_by_integration(self) -> None:
-        """Report includes failures_by_integration from harness events."""
-        from aisdlc.telemetry_store import report
-        from aisdlc.store import open_store, store_path
+        """Report includes failures_by_integration from real harness events."""
+        from aisdlc import runs, harness
+        from aisdlc.cli import load_context
+        from aisdlc.telemetry_store import sync, report
+        from aisdlc.store import open_store
 
         ctx = self._ctx()
         open_store(self.repo.root)
 
-        db_path = store_path(self.repo.root)
-        conn = sqlite3.connect(str(db_path))
-        # Insert harness events with ok=0 from different adapters.
-        conn.execute(
-            "INSERT INTO events (ts, kind, run_id, actor, data) VALUES (?, ?, ?, ?, ?)",
-            ("2026-01-01T00:00:00+00:00", "step.finished", "r1", "junie",
-             json.dumps({"ok": False, "adapter": "junie"})),
-        )
-        conn.execute(
-            "INSERT INTO events (ts, kind, run_id, actor, data) VALUES (?, ?, ?, ?, ?)",
-            ("2026-01-01T00:00:01+00:00", "step.finished", "r1", "junie",
-             json.dumps({"ok": False, "adapter": "junie"})),
-        )
-        conn.execute(
-            "INSERT INTO events (ts, kind, run_id, actor, data) VALUES (?, ?, ?, ?, ?)",
-            ("2026-01-01T00:00:02+00:00", "step.finished", "r1", "repolens",
-             json.dumps({"ok": False, "adapter": "repolens"})),
-        )
-        conn.commit()
-        conn.close()
+        # Create a run and report failures via harness.
+        from helpers import Repo as _Repo
+        inner_repo = _Repo(self, PROFILE)
+        for kind, cid in (("agents", "implementer"), ("skills", "java"), ("mcp", "github")):
+            inner_repo.run(
+                "catalog", "add", "--kind", kind, "--id", cid,
+                "--ref", f".aisdlc/{kind}/{cid}", "--summary", cid,
+            )
+        inner_repo.run("project", "create", "--id", "alpha",
+                       "--profile-ref", "aisdlc.toml", "--json")
+        inner_repo.run("workflow", "create", "--id", "w1",
+                       "--summary", "w1", "--agent", "implementer",
+                       "--skill", "java", "--mcp", "github", "--json")
+        for action, extra in (
+            ("define", []),
+            ("request_validation", ["--waive-reason", "unit"]),
+            ("approve", ["--owner-override", "--reason", "unit"]),
+        ):
+            inner_repo.run("workflow", "transition", "--id", "w1",
+                           "--action", action, *extra, "--json")
 
-        result = report(ctx, "stage")
+        inner_ctx = load_context(inner_repo.root, inner_repo.root / "aisdlc.toml")
+        run = runs.start(inner_ctx, project_id="alpha", workflow_id="w1")
+        run_id = run["id"]
+
+        # Report 2 failures from local-worker.
+        harness.report_event(inner_ctx, run_id=run_id, event="run.started",
+                             adapter="local-worker")
+        harness.report_event(inner_ctx, run_id=run_id, event="step.finished",
+                             adapter="local-worker", step="s1", step_status="fail")
+        harness.report_event(inner_ctx, run_id=run_id, event="step.finished",
+                             adapter="local-worker", step="s2", step_status="fail")
+        harness.report_event(inner_ctx, run_id=run_id, event="run.finished",
+                             adapter="local-worker", ok=False)
+
+        sync(inner_ctx)
+        result = report(inner_ctx, "stage")
         fbi = result.get("failures_by_integration", {})
-        self.assertEqual(2, fbi.get("junie"))
-        self.assertEqual(1, fbi.get("repolens"))
+        self.assertEqual(2, fbi.get("local-worker"))
 
     def test_report_repolens_summary(self) -> None:
-        """Report includes repolens summary with calls, total_ms, avg_ms, by_tool."""
-        from aisdlc.telemetry_store import report
-        from aisdlc.store import open_store, store_path
+        """Report includes repolens summary from real sync of usage.jsonl."""
+        from aisdlc.telemetry_store import sync, report
 
         ctx = self._ctx()
-        open_store(self.repo.root)
 
-        db_path = store_path(self.repo.root)
-        conn = sqlite3.connect(str(db_path))
-        # Insert RepoLens telemetry rows.
-        for tool, ms in [("search", 40.0), ("search", 40.0), ("search", 40.0)]:
-            conn.execute(
-                "INSERT INTO telemetry (ts, tool, metric, value) VALUES (?, ?, ?, ?)",
-                ("2026-01-01T00:00:00+00:00", tool, "repolens_ms", ms),
-            )
-        for tool, ms in [("node", 40.0), ("node", 40.0)]:
-            conn.execute(
-                "INSERT INTO telemetry (ts, tool, metric, value) VALUES (?, ?, ?, ?)",
-                ("2026-01-01T00:00:00+00:00", tool, "repolens_ms", ms),
-            )
-        conn.commit()
-        conn.close()
+        # Write realistic .repolens/usage.jsonl.
+        repolens_dir = self.repo.root / ".repolens"
+        repolens_dir.mkdir(parents=True, exist_ok=True)
+        lines = [
+            json.dumps({"ts": 1794941929.723, "src": "server", "client": "mcp",
+                        "tool": "search", "ms": 40.0, "tokens": 100, "results": 5}),
+            json.dumps({"ts": 1794941930.0, "src": "server", "client": "mcp",
+                        "tool": "search", "ms": 80.0, "tokens": 200, "results": 10}),
+            json.dumps({"ts": 1794941931.0, "src": "server", "client": "mcp",
+                        "tool": "search", "ms": 100.0, "tokens": 150, "results": 8}),
+            json.dumps({"ts": 1794941932.0, "src": "server", "client": "mcp",
+                        "tool": "node", "ms": 50.0, "tokens": 50, "results": 2}),
+            json.dumps({"ts": 1794941933.0, "src": "server", "client": "mcp",
+                        "tool": "node", "ms": 30.0, "tokens": 40, "results": 1}),
+        ]
+        (repolens_dir / "usage.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
+        sync(ctx)
         result = report(ctx, "stage")
         rp = result.get("repolens", {})
         self.assertEqual(5, rp.get("calls"))
-        self.assertAlmostEqual(200.0, rp.get("total_ms", 0), places=1)
-        self.assertAlmostEqual(40.0, rp.get("avg_ms", 0), places=1)
+        self.assertAlmostEqual(300.0, rp.get("total_ms", 0), places=1)
+        self.assertAlmostEqual(60.0, rp.get("avg_ms", 0), places=1)
         by_tool = rp.get("by_tool", {})
         self.assertEqual(3, by_tool.get("search"))
         self.assertEqual(2, by_tool.get("node"))
+
+    def test_report_group_intent(self) -> None:
+        """Report groups by intent with correct aggregation."""
+        from aisdlc.telemetry_store import record, report
+
+        ctx = self._ctx()
+        record(ctx, intent_id="i1", stage="s1", agent="junie", metric="duration_s", value=2.0, ok=True)
+        record(ctx, intent_id="i1", stage="s1", agent="junie", metric="usd", value=0.01, ok=True)
+        record(ctx, intent_id="i2", stage="s2", agent="cursor", metric="duration_s", value=3.0, ok=False)
+        record(ctx, intent_id="i2", stage="s2", agent="cursor", metric="usd", value=0.02, ok=True)
+
+        result = report(ctx, "intent")
+        self.assertEqual("intent", result["group"])
+        rows = {r["key"]: r for r in result["rows"]}
+        self.assertIn("i1", rows)
+        self.assertIn("i2", rows)
+        self.assertAlmostEqual(2.0, rows["i1"]["duration_s"], places=2)
+        self.assertEqual(1, rows["i2"]["failures"])
+
+    def test_report_group_agent(self) -> None:
+        """Report groups by agent with correct failure counts."""
+        from aisdlc.telemetry_store import record, report
+
+        ctx = self._ctx()
+        record(ctx, stage="s1", agent="junie", metric="duration_s", value=2.0, ok=True)
+        record(ctx, stage="s1", agent="junie", metric="duration_s", value=1.0, ok=False)
+        record(ctx, stage="s1", agent="junie", metric="duration_s", value=3.0, ok=False)
+        record(ctx, stage="s2", agent="cursor", metric="duration_s", value=1.0, ok=True)
+
+        result = report(ctx, "agent")
+        self.assertEqual("agent", result["group"])
+        rows = {r["key"]: r for r in result["rows"]}
+        self.assertIn("junie", rows)
+        self.assertIn("cursor", rows)
+        self.assertEqual(2, rows["junie"]["failures"])
+        self.assertEqual(0, rows["cursor"]["failures"])
+
+    def test_report_group_skill(self) -> None:
+        """Report groups by skill with correct aggregation."""
+        from aisdlc.telemetry_store import record, report
+
+        ctx = self._ctx()
+        record(ctx, stage="s1", agent="junie", skill="java", metric="duration_s", value=2.0, ok=True)
+        record(ctx, stage="s1", agent="junie", skill="python", metric="duration_s", value=3.0, ok=False)
+
+        result = report(ctx, "skill")
+        self.assertEqual("skill", result["group"])
+        rows = {r["key"]: r for r in result["rows"]}
+        self.assertIn("java", rows)
+        self.assertIn("python", rows)
+
+    def test_report_group_tool(self) -> None:
+        """Report groups by tool with correct aggregation."""
+        from aisdlc.telemetry_store import record, report
+
+        ctx = self._ctx()
+        record(ctx, stage="s1", agent="junie", tool="repolens", metric="duration_s", value=0.5, ok=True)
+        record(ctx, stage="s1", agent="junie", tool="worker", metric="duration_s", value=1.5, ok=True)
+
+        result = report(ctx, "tool")
+        self.assertEqual("tool", result["group"])
+        rows = {r["key"]: r for r in result["rows"]}
+        self.assertIn("repolens", rows)
+        self.assertIn("worker", rows)
+
+    def test_report_invalid_group_raises(self) -> None:
+        """Report with invalid group raises KitError with code invalid_group."""
+        from aisdlc.telemetry_store import report
+        from aisdlc.errors import KitError
+
+        ctx = self._ctx()
+        with self.assertRaises(KitError) as cm:
+            report(ctx, "invalid_group")
+        self.assertEqual("invalid_group", cm.exception.code)
 
     def test_absent_store_empty_report(self) -> None:
         """Report with no store file returns empty results and does not create the file."""
@@ -528,31 +700,125 @@ class DualWriteFailOpenTest(unittest.TestCase):
             )
             self.assertEqual(0, result.returncode, output(result))
 
+    def _ctx(self):
+        from aisdlc.cli import load_context
+        return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
+
     def test_dual_write_fail_open(self) -> None:
-        """Patch store to raise; run start and harness report still succeed."""
+        """Patch dual_write_event to raise RuntimeError; runs.start still succeeds."""
         from unittest import mock
+        from aisdlc import runs
+        from aisdlc.telemetry_store import dual_write_event
 
-        # Make the store module raise on any import/call.
-        with mock.patch.dict("sys.modules", {"aisdlc.store": mock.MagicMock()}):
-            with mock.patch.dict("sys.modules", {"aisdlc.telemetry_store": mock.MagicMock()}):
-                started = self.repo.run(
-                    "run", "start", "--project", "alpha",
-                    "--workflow", "feature-delivery", "--json",
-                )
-                self.assertEqual(0, started.returncode, output(started))
-                run_id = json.loads(started.stdout)["id"]
+        with mock.patch.object(
+            runs, "dual_write_event",
+            side_effect=RuntimeError("store locked"),
+        ):
+            # runs.start should not raise — fail-open.
+            result = runs.start(
+                self._ctx(),
+                project_id="alpha",
+                workflow_id="feature-delivery",
+            )
+            self.assertIn("id", result)
 
-                report = self.repo.run(
-                    "harness", "report",
-                    "--run", run_id,
-                    "--event", "run.started",
-                    "--adapter", "local-worker",
-                    "--json",
-                )
-                self.assertEqual(0, report.returncode, output(report))
+    def test_dual_write_event_fail_open_harness(self) -> None:
+        """Patch dual_write_event to raise; harness.report_event still succeeds."""
+        from unittest import mock
+        from aisdlc import runs, harness
 
-                shown = self.repo.run("run", "show", "--id", run_id, "--json")
-                self.assertEqual("running", json.loads(shown.stdout)["status"])
+        ctx = self._ctx()
+        run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
+        run_id = run["id"]
+
+        with mock.patch.object(
+            runs, "dual_write_event",
+            side_effect=RuntimeError("store locked"),
+        ):
+            result = harness.report_event(
+                ctx,
+                run_id=run_id,
+                event="run.started",
+                adapter="local-worker",
+            )
+            self.assertIn("id", result)
+
+    def test_dual_write_event_hook_exists(self) -> None:
+        """dual_write_event is a callable on aisdlc.telemetry_store."""
+        from aisdlc.telemetry_store import dual_write_event
+        self.assertTrue(callable(dual_write_event))
+
+    def test_dual_write_creates_store_rows(self) -> None:
+        """After runs.start and harness events, store events table has rows."""
+        from aisdlc import runs, harness
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
+
+        ctx = self._ctx()
+        run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
+        run_id = run["id"]
+
+        harness.report_event(ctx, run_id=run_id, event="run.started", adapter="local-worker")
+        harness.report_event(ctx, run_id=run_id, event="step.started", adapter="local-worker",
+                             step="s1")
+        harness.report_event(ctx, run_id=run_id, event="step.finished", adapter="local-worker",
+                             step="s1", step_status="pass")
+        harness.report_event(ctx, run_id=run_id, event="run.finished", adapter="local-worker",
+                             ok=True)
+
+        # Sync ledger to store, then check events table.
+        sync(ctx)
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        rows = conn.execute("SELECT kind, run_id, actor FROM events").fetchall()
+        conn.close()
+
+        kinds = [r[0] for r in rows]
+        run_ids = [r[1] for r in rows]
+        actors = [r[2] for r in rows]
+
+        self.assertIn("run.request", kinds)
+        self.assertIn("run.started", kinds)
+        self.assertIn("step.started", kinds)
+        self.assertIn("step.finished", kinds)
+        self.assertIn("run.finished", kinds)
+        self.assertTrue(all(rid == run_id for rid in run_ids if rid))
+        # At least some events should have an actor populated.
+        self.assertTrue(any(a for a in actors))
+
+    def test_dual_write_fail_event_in_store(self) -> None:
+        """A harness event with step_status=fail is stored with ok=0."""
+        from aisdlc import runs, harness
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
+
+        ctx = self._ctx()
+        run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
+        run_id = run["id"]
+
+        harness.report_event(ctx, run_id=run_id, event="run.started", adapter="local-worker")
+        harness.report_event(ctx, run_id=run_id, event="step.finished", adapter="local-worker",
+                             step="s1", step_status="fail")
+        harness.report_event(ctx, run_id=run_id, event="run.finished", adapter="local-worker",
+                             ok=False)
+
+        sync(ctx)
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        rows = conn.execute(
+            "SELECT kind, data FROM events WHERE kind='step.finished'"
+        ).fetchall()
+        conn.close()
+
+        self.assertTrue(len(rows) >= 1)
+        # The step.finished event should have ok=false in data.
+        found_fail = False
+        for row in rows:
+            data = json.loads(row[1]) if row[1] else {}
+            if not data.get("ok", True):
+                found_fail = True
+                break
+        self.assertTrue(found_fail, "expected at least one step.finished with ok=false")
 
 
 class StoreCLITest(unittest.TestCase):
