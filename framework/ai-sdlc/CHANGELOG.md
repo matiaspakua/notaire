@@ -17,7 +17,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Junie harness adapter stub registered in the Notaire profile (`framework/ai-sdlc/plugins/junie/`) (#2385).
 - `aisdlc serve-token add|list|revoke`: named serve tokens, one per person, each with its scope; the identity is the actor of every write (#2384).
 - `GET /factory/session` names the caller; `POST /factory/catalogs/{kind}` (declared in the contract but not served before) creates entries; `PUT` accepts `fields`. A credential field takes only `env:NAME`; a literal secret is refused with `literal_secret` (#2384).
-- `aisdlc coach` and owner-only `GET /factory/coach`: local harness session counts and the audit anti-patterns, never prompt text (#2384).
+- `aisdlc coach` and owner-only `GET /factory/coach`: local harness session counts and the audit anti-patterns, never prompt text (#2384). Junie CLI added as a supported harness (#2387).
 - Factory dashboard v2 (`factory-dashboard/`, optional, Node): a client of the serve contract for many workspaces and users, with RepoLens search and the coach (#2384, ADR-006).
 - Contract `factory-control` 1.2.0 (additive).
 

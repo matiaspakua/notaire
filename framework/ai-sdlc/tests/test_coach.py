@@ -91,6 +91,123 @@ def agy_history(home: Path, cwd: Path) -> None:
     _jsonl(home / ".gemini" / "antigravity-cli" / "history.jsonl", rows)
 
 
+JUNIE_SENTINEL_PROMPT = "junie-sentinel-do-not-emit-this-prompt-text"
+JUNIE_SENTINEL_SECRET = "SECRET_ENV_VALUE_DO_NOT_READ"
+
+
+def junie_session(home: Path, cwd: Path, *, session_id: str = "junie-s1", days_ago: int = 0,
+                  tool_step_ids: list[str] | None = None, model: str = "qwen-3-27b",
+                  prompt_text: str | None = "implement the coach reader") -> None:
+    """Create a synthetic Junie store: index.jsonl, events.jsonl, and history.jsonl.
+
+    *model* is the model name string; the fixture emits the real list shape used by
+    Junie's LlmResponseMetadataEvent (one item per call).
+    Pass *prompt_text=None* to skip creating a history entry for this session.
+    """
+    ts_ms = int((NOW - timedelta(days=days_ago)).timestamp() * 1000)
+    iso = (NOW - timedelta(days=days_ago)).isoformat()
+
+    # Session index (append if file already exists)
+    index_path = home / ".junie" / "sessions" / "index.jsonl"
+    index_path.parent.mkdir(parents=True, exist_ok=True)
+    new_index_row = {
+        "sessionId": session_id,
+        "projectDir": str(cwd),
+        "taskName": "coach reader task",
+        "createdAt": iso,
+        "lastPromptAt": iso,
+        "updatedAt": iso,
+    }
+    if index_path.is_file():
+        with index_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(new_index_row) + "\n")
+    else:
+        _jsonl(index_path, [new_index_row])
+
+    # Events for the session
+    events: list[dict] = [
+        {"kind": "TaskStartedEvent", "timestampMs": ts_ms},
+    ]
+    # Add an EnvironmentVariablesUpdatedEvent with a sentinel secret (must NEVER be read)
+    events.append({
+        "kind": "SessionA2uxEvent",
+        "timestampMs": ts_ms + 1,
+        "event": {
+            "agentEvent": {
+                "kind": "EnvironmentVariablesUpdatedEvent",
+                "env": {"SECRET_KEY": JUNIE_SENTINEL_SECRET},
+            }
+        },
+    })
+    # Tool block events (one per stepId)
+    if tool_step_ids:
+        for step_id in tool_step_ids:
+            events.append({
+                "kind": "SessionA2uxEvent",
+                "timestampMs": ts_ms + 2,
+                "event": {
+                    "agentEvent": {
+                        "kind": "ToolBlockUpdatedEvent",
+                        "toolType": "file_edit",
+                        "status": "completed",
+                        "stepId": step_id,
+                        "text": "",
+                        "details": {},
+                    }
+                },
+            })
+    # Terminal block event
+    events.append({
+        "kind": "SessionA2uxEvent",
+        "timestampMs": ts_ms + 3,
+        "event": {
+            "agentEvent": {
+                "kind": "TerminalBlockUpdatedEvent",
+                "status": "completed",
+                "stepId": "term-1",
+                "text": "echo hello",
+            }
+        },
+    })
+    # Model usage event — real Junie shape: list of usage objects
+    events.append({
+        "kind": "SessionA2uxEvent",
+        "timestampMs": ts_ms + 4,
+        "event": {
+            "agentEvent": {
+                "kind": "LlmResponseMetadataEvent",
+                "modelUsage": [
+                    {
+                        "model": model,
+                        "cost": 0.001,
+                        "inputTokens": 1200,
+                        "cacheInputTokens": 0,
+                        "cacheCreateTokens": 0,
+                        "outputTokens": 340,
+                        "time": ts_ms + 4,
+                    }
+                ],
+            }
+        },
+    })
+    events_path = home / ".junie" / "sessions" / session_id / "events.jsonl"
+    _jsonl(events_path, events)
+
+    # History (prompts) — skip when prompt_text is None
+    if prompt_text is not None:
+        history_path = home / ".junie" / "history.jsonl"
+        history_row = {
+            "projectPath": str(cwd),
+            "text": prompt_text,
+            "timestamp": iso,
+        }
+        if history_path.is_file():
+            with history_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(history_row) + "\n")
+        else:
+            _jsonl(history_path, [history_row])
+
+
 class CoachTest(unittest.TestCase):
     def setUp(self) -> None:
         self.repo = Repo(self, '[project]\nname = "demo"\npolicy = "POLICY.md"\n')
@@ -107,12 +224,16 @@ class CoachTest(unittest.TestCase):
         codex_session(self.home, self.repo.root, ["fix the flaky test", "fix the flaky test"], tools=2)
         opencode_db(self.home, self.repo.root)
         agy_history(self.home, self.repo.root)
+        junie_session(self.home, self.repo.root, prompt_text=JUNIE_SENTINEL_PROMPT,
+                      tool_step_ids=["step-1", "step-2"])
 
     def _coach(self, *args: str) -> dict:
         result = self.repo.run("coach", "--home", str(self.home), "--json", *args)
         self.assertEqual(0, result.returncode, output(result))
         self.assertNotIn(SENTINEL, result.stdout)
         self.assertNotIn("must-never-be-read", result.stdout)
+        self.assertNotIn(JUNIE_SENTINEL_PROMPT, result.stdout)
+        self.assertNotIn(JUNIE_SENTINEL_SECRET, result.stdout)
         return json.loads(result.stdout)
 
     @staticmethod
@@ -130,10 +251,17 @@ class CoachTest(unittest.TestCase):
         self.assertEqual(1, self._harness(report, "codex")["sessions"])
         self.assertEqual(1, self._harness(report, "opencode")["sessions"])
         self.assertEqual(1, self._harness(report, "agy")["sessions"])
+        self.assertEqual(1, self._harness(report, "junie")["sessions"])
         self.assertEqual({"claude-opus-5-5": 48}, self._harness(report, "claude-code")["models"])
         self.assertEqual({"shell": 2}, self._harness(report, "codex")["tools"])
         self.assertIsNone(self._harness(report, "agy")["tool_calls"])
-        self.assertEqual(sum(report["hours"]), report["totals"]["user_turns"])
+        # Junie adds a createdAt stamp per session, so hours = user_turns + junie sessions
+        self.assertEqual(sum(report["hours"]), report["totals"]["user_turns"] + self._harness(report, "junie")["sessions"])
+        # Junie specifics
+        junie_row = self._harness(report, "junie")
+        self.assertEqual(1, junie_row["user_turns"])
+        self.assertEqual(3, junie_row["tool_calls"])  # step-1, step-2, term-1
+        self.assertEqual({"qwen-3-27b": 1}, junie_row["models"])
 
     def test_all_projects_and_days_widen_or_narrow_the_window(self):
         self.assertEqual(4, self._harness(self._coach("--all-projects"), "claude-code")["sessions"])
@@ -155,9 +283,124 @@ class CoachTest(unittest.TestCase):
 
     def test_a_planned_session_is_healthy(self):
         report = self._coach()
-        self.assertEqual(6, report["totals"]["sessions"])
+        self.assertEqual(7, report["totals"]["sessions"])
         self.assertGreater(report["totals"]["healthy_sessions"], 0)
         self.assertLess(report["totals"]["healthy_sessions"], report["totals"]["sessions"])
+
+    def test_junie_session_does_not_leak_secrets_or_prompt_text(self):
+        report = self._coach()
+        junie_row = self._harness(report, "junie")
+        self.assertEqual(1, junie_row["sessions"])
+        # Prompt text must not appear (already checked in _coach, but verify structure)
+        self.assertEqual(1, junie_row["user_turns"])
+        # Tool calls: 2 tool blocks (step-1, step-2) + 1 terminal block (term-1) = 3 unique stepIds
+        self.assertEqual(3, junie_row["tool_calls"])
+        # Model from LlmResponseMetadataEvent
+        self.assertEqual({"qwen-3-27b": 1}, junie_row["models"])
+
+    def test_junie_days_filter_excludes_old_sessions(self):
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-days"
+        home.mkdir()
+        junie_session(home, self.repo.root, session_id="recent", days_ago=0)
+        junie_session(home, self.repo.root, session_id="old", days_ago=60)
+        result = self.repo.run("coach", "--home", str(home), "--days", "7", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        self.assertEqual(1, self._harness(report, "junie")["sessions"])
+
+    def test_junie_project_filter_excludes_other_projects(self):
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-proj"
+        home.mkdir()
+        other_project = home / "other-project"
+        other_project.mkdir()
+        junie_session(home, self.repo.root, session_id="in-project")
+        junie_session(home, other_project, session_id="out-project")
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        self.assertEqual(1, self._harness(report, "junie")["sessions"])
+
+    def test_junie_missing_store_returns_empty_report(self):
+        empty = self.repo.root.parent / f"{self.repo.root.name}-no-junie"
+        empty.mkdir()
+        result = self.repo.run("coach", "--home", str(empty), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        self.assertEqual(0, junie_row["sessions"])
+
+    def test_junie_models_are_model_names_without_cost_or_tokens(self):
+        """Blocker 1: modelUsage is a list of objects; report must show model name strings only."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-model"
+        home.mkdir()
+        junie_session(home, self.repo.root, session_id="model-s1", model="qwen-3-27b")
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        models = junie_row["models"]
+        # Models should be simple name → count mapping
+        self.assertEqual({"qwen-3-27b": 1}, models)
+        # No cost, token, or list-string leakage in model keys
+        for key in models:
+            self.assertNotIn("cost", key)
+            self.assertNotIn("inputTokens", key)
+            self.assertNotIn("[", key)  # would appear if we stringified the list
+
+    def test_junie_task_mode_session_counts_task_starts_as_user_turns(self):
+        """Blocker 3: task-mode sessions (junie --task) write nothing to history.jsonl.
+        Each TaskStartedEvent must count as one user turn so the coach does not drop them."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-task"
+        home.mkdir()
+        ts_ms = int(NOW.timestamp() * 1000)
+        iso = NOW.isoformat()
+
+        # Create a session index entry with NO lastPromptAt (task-mode signature)
+        index_path = home / ".junie" / "sessions" / "index.jsonl"
+        index_path.parent.mkdir(parents=True, exist_ok=True)
+        _jsonl(index_path, [{
+            "sessionId": "task-s1",
+            "projectDir": str(self.repo.root),
+            "taskName": "refactor the ledger",
+            "createdAt": iso,
+            "updatedAt": iso,
+        }])
+
+        # Events: two TaskStartedEvents (no SessionA2uxEvent tool/model events needed)
+        events_path = home / ".junie" / "sessions" / "task-s1" / "events.jsonl"
+        _jsonl(events_path, [
+            {"kind": "TaskStartedEvent", "taskId": "t1", "timestampMs": ts_ms},
+            {"kind": "TaskStartedEvent", "taskId": "t2", "timestampMs": ts_ms + 1000},
+        ])
+
+        # No history.jsonl — task-mode sessions never write prompts
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        # One session visible, two TaskStartedEvents → two user turns
+        self.assertEqual(1, junie_row["sessions"])
+        self.assertEqual(2, junie_row["user_turns"])
+        # No prompt text leaked (empty strings only)
+        self.assertNotIn("refactor", result.stdout)
+
+    def test_junie_two_sessions_one_prompt_counts_prompt_once(self):
+        """Blocker 2: one prompt must not be assigned to every session of the same project."""
+        home = self.repo.root.parent / f"{self.repo.root.name}-junie-dup"
+        home.mkdir()
+        # Two sessions for the same project, one shared prompt (dup-s2 has no history entry)
+        junie_session(home, self.repo.root, session_id="dup-s1", days_ago=0,
+                      prompt_text="shared prompt")
+        junie_session(home, self.repo.root, session_id="dup-s2", days_ago=0,
+                      prompt_text=None)
+        result = self.repo.run("coach", "--home", str(home), "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        report = json.loads(result.stdout)
+        junie_row = self._harness(report, "junie")
+        # dup-s1 gets 1 user turn from history; dup-s2 gets 1 from its TaskStartedEvent
+        self.assertEqual(2, junie_row["user_turns"])
+        # The prompt text itself was assigned to exactly one session (dup-s1), not doubled
+        self.assertEqual(2, report["totals"]["user_turns"])
 
     def test_harness_injected_messages_are_not_counted_as_prompts(self):
         home = self.repo.root.parent / f"{self.repo.root.name}-injected"

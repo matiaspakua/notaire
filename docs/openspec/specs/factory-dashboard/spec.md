@@ -56,10 +56,11 @@ it to the browser.
 
 ### Requirement: The coach analyses local agent harnesses
 
-`aisdlc coach` MUST report, per local harness (Claude Code, OpenCode, Codex, Gemini/AGY), the sessions, user turns,
-models and tool calls, and MUST flag anti-patterns (mega-sessions, repeated prompts, prompt bloat, runaway tool
-loops, unguarded autonomy, no planning turn). The report MUST NOT contain prompt or response text. It MUST be
-available from the CLI and, to the owner, from `GET /factory/coach`.
+`aisdlc coach` MUST report, per local harness (Claude Code, OpenCode, Codex, Gemini/AGY, Junie CLI), the sessions,
+user turns, models and tool calls, and MUST flag anti-patterns (mega-sessions, repeated prompts, prompt bloat,
+runaway tool loops, unguarded autonomy, no planning turn). The report MUST NOT contain prompt or response text.
+The Junie reader MUST NOT read `EnvironmentVariablesUpdatedEvent` (contains secrets). It MUST be available from
+the CLI and, to the owner, from `GET /factory/coach`.
 
 #### Scenario: a Claude Code session
 

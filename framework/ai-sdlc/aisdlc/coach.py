@@ -1,9 +1,10 @@
 """Coach: how this machine's agent sessions are run, measured locally and never the words (#2384).
 
 Reads the session stores that coding harnesses keep under the user's home (Claude Code, Codex, OpenCode,
-Antigravity) read-only, and turns them into counts and the anti-patterns of the AI engineering audit. Prompt
-and response text stays in memory while a session is scored; the report carries counts, model and tool names
-only. OpenCode's database also holds credentials, so only its session, message and part tables are queried.
+Antigravity, Junie CLI) read-only, and turns them into counts and the anti-patterns of the AI engineering
+audit. Prompt and response text stays in memory while a session is scored; the report carries counts, model
+and tool names only. OpenCode's database also holds credentials, so only its session, message and part tables
+are queried. Junie's EnvironmentVariablesUpdatedEvent carries secrets and is never read.
 """
 from __future__ import annotations
 
@@ -18,7 +19,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 SCHEMA = "aisdlc.coach/v1"
-HARNESSES = ("claude-code", "codex", "opencode", "agy")
+HARNESSES = ("claude-code", "codex", "opencode", "agy", "junie")
 # Harnesses write their own messages into the user role: task notifications, command echoes, tool stdout.
 INJECTED = re.compile(r"^\s*<[a-z][a-z0-9_-]*>")
 SEVERITY_ORDER = ("high", "medium", "low")
@@ -224,6 +225,149 @@ def _json(raw: object) -> dict:
     return value if isinstance(value, dict) else {}
 
 
+def junie(home: Path) -> Iterator[Session]:
+    """Read Junie CLI sessions: index.jsonl → events.jsonl → history.jsonl.
+
+    Never reads EnvironmentVariablesUpdatedEvent (secrets). Counts one tool call
+    per unique stepId across ToolBlockUpdatedEvent and TerminalBlockUpdatedEvent.
+    """
+    index_path = home / ".junie" / "sessions" / "index.jsonl"
+    if not index_path.is_file():
+        return
+
+    # Build a map of sessionId → session metadata
+    sessions: dict[str, Session] = {}
+    for row in _rows(index_path):
+        session_id = str(row.get("sessionId") or "")
+        if not session_id:
+            continue
+        session = Session("junie", cwd=row.get("projectDir"), tool_calls=None)
+        created = _when(row.get("createdAt"))
+        if created is not None:
+            session.stamps.append(created)
+        sessions[session_id] = session
+
+    if not sessions:
+        return
+
+    # Read events for each session
+    sessions_dir = home / ".junie" / "sessions"
+    task_start_counts: dict[str, int] = {}
+    task_start_times: dict[str, list[datetime]] = {}
+    for session_id, session in sessions.items():
+        events_path = sessions_dir / session_id / "events.jsonl"
+        if not events_path.is_file():
+            continue
+        step_ids: set[str] = set()
+        task_start_counts[session_id] = 0
+        task_start_times[session_id] = []
+        for row in _rows(events_path):
+            kind = row.get("kind")
+            # Count TaskStartedEvent for task-mode sessions (junie --task)
+            if kind == "TaskStartedEvent":
+                task_start_counts[session_id] = task_start_counts.get(session_id, 0) + 1
+                ts = _when(row.get("timestampMs"))
+                if ts is not None:
+                    task_start_times.setdefault(session_id, []).append(ts)
+            if kind == "SessionA2uxEvent":
+                event = row.get("event") if isinstance(row.get("event"), dict) else {}
+                agent_event = event.get("agentEvent") if isinstance(event.get("agentEvent"), dict) else {}
+                agent_kind = agent_event.get("kind")
+                # Skip EnvironmentVariablesUpdatedEvent — contains secrets
+                if agent_kind == "EnvironmentVariablesUpdatedEvent":
+                    continue
+                # Count tool calls by unique stepId
+                if agent_kind in ("ToolBlockUpdatedEvent", "TerminalBlockUpdatedEvent"):
+                    step_id = agent_event.get("stepId")
+                    if step_id:
+                        step_ids.add(str(step_id))
+                # Model from LlmResponseMetadataEvent — real shape is a list of
+                # {"model": str, "cost": float, "inputTokens": int, ...}
+                if agent_kind == "LlmResponseMetadataEvent":
+                    model_usage = agent_event.get("modelUsage")
+                    if isinstance(model_usage, list):
+                        for item in model_usage:
+                            if isinstance(item, dict):
+                                model_name = item.get("model")
+                                if isinstance(model_name, str) and model_name:
+                                    session.models[model_name] += 1
+                    elif isinstance(model_usage, str) and model_usage:
+                        session.models[model_usage] += 1
+        session.tool_calls = len(step_ids)
+
+    # Match prompts from history.jsonl by project path and time window.
+    # Each prompt is assigned to exactly one session: the one whose time window
+    # is closest (prefer createdAt <= prompt <= updatedAt; else nearest createdAt
+    # within 1 day).
+    history_path = home / ".junie" / "history.jsonl"
+    if history_path.is_file():
+        # Re-read index to get createdAt/updatedAt per session for window matching
+        session_windows: dict[str, tuple[datetime | None, datetime | None]] = {}
+        for row in _rows(index_path):
+            sid = str(row.get("sessionId") or "")
+            if sid in sessions:
+                created = _when(row.get("createdAt"))
+                updated = _when(row.get("updatedAt"))
+                session_windows[sid] = (created, updated)
+
+        for row in _rows(history_path):
+            project_path = row.get("projectPath")
+            if not project_path:
+                continue
+            prompt_text = row.get("text")
+            if not isinstance(prompt_text, str):
+                continue
+            prompt_when = _when(row.get("timestamp"))
+
+            # Find the best matching session for this prompt
+            best_sid: str | None = None
+            best_score = float("inf")
+            for sid, session in sessions.items():
+                if session.cwd != str(project_path):
+                    continue
+                created, updated = session_windows.get(sid, (None, None))
+                if prompt_when is None:
+                    # Without a timestamp, pick the session with closest createdAt
+                    if created is not None:
+                        score = abs((prompt_when or created) - created).total_seconds()
+                    else:
+                        score = float("inf")
+                else:
+                    if created is not None and updated is not None:
+                        if created <= prompt_when <= updated:
+                            # Prompt falls within this session's window — best match
+                            score = 0
+                        else:
+                            # Distance to nearest window edge
+                            score = min(abs((prompt_when - created).total_seconds()),
+                                        abs((prompt_when - updated).total_seconds()))
+                    elif created is not None:
+                        score = abs((prompt_when - created).total_seconds())
+                    else:
+                        score = float("inf")
+                # Only consider sessions within 1 day
+                if score > 86400:
+                    continue
+                if score < best_score:
+                    best_score = score
+                    best_sid = sid
+
+            if best_sid is not None:
+                sessions[best_sid].prompt(prompt_text, prompt_when)
+
+    # For task-mode sessions (junie --task) with no history prompts, count each
+    # TaskStartedEvent as one user turn using an empty prompt string.
+    for session_id, session in sessions.items():
+        count = task_start_counts.get(session_id, 0)
+        if count and not session.prompts:
+            times = task_start_times.get(session_id, [])
+            for i in range(count):
+                ts = times[i] if i < len(times) else None
+                session.prompt("", ts)
+
+    yield from (s for s in sessions.values() if s.prompts)
+
+
 def agy(home: Path) -> Iterator[Session]:
     sessions: dict[str, Session] = {}
     for row in _rows(home / ".gemini" / "antigravity-cli" / "history.jsonl"):
@@ -240,7 +384,7 @@ def default_home() -> Path:
     return Path(os.environ.get("AISDLC_COACH_HOME") or Path.home())
 
 
-READERS = {"claude-code": claude_code, "codex": codex, "opencode": opencode, "agy": agy}
+READERS = {"claude-code": claude_code, "codex": codex, "opencode": opencode, "agy": agy, "junie": junie}
 
 
 def _within(cwd: str | None, root: Path) -> bool:

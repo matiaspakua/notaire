@@ -749,7 +749,7 @@ components:
             type: object
             required: [harness, sessions, user_turns, tool_calls, models, tools, first, last]
             properties:
-              harness: { type: string, enum: [claude-code, codex, opencode, agy] }
+              harness: { type: string, enum: [claude-code, codex, opencode, agy, junie] }
               sessions: { type: integer }
               user_turns: { type: integer }
               tool_calls: { type: [integer, "null"], description: null when the harness store does not record tool calls }
