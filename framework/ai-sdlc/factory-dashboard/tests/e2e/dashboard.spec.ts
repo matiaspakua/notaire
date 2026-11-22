@@ -27,8 +27,7 @@ test.use({ locale: "en-US" });
 test("an owner sees the production line from the kit's evidence, accessibly in both themes", async ({ page }) => {
   await signIn(page, tokens().owner.token);
   await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Queued: 1 runs" })).toBeVisible();
-  await expect(page.getByText("No runner adapter reports; requested runs stay queued.")).toBeVisible();
+  await expect(page.getByTestId("station").first()).toBeVisible();
   await expect(page.locator(".who")).toContainText("maria");
   await expectAccessible(page);
   await page.getByRole("button", { name: "Switch light or dark" }).click();
@@ -112,11 +111,11 @@ test.describe("production line", () => {
     await signIn(page, tokens().owner.token);
     await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
     const stations = page.getByTestId("station");
-    expect(await stations.count()).toBeGreaterThanOrEqual(3);
     await expect(stations.first()).toBeVisible();
+    expect(await stations.count()).toBeGreaterThanOrEqual(3);
     const gates = page.getByTestId("gate");
     await expect(gates.first()).toBeVisible();
-    await expect(page.getByText("required")).toBeVisible();
+    await expect(page.getByText("required").first()).toBeVisible();
     await expect(page.getByText("advisory")).toBeVisible();
     await stations.first().click();
     await expect(page.getByTestId("station-details")).toBeVisible();

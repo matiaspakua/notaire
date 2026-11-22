@@ -3,9 +3,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, ApiError, type Grant, rememberCsrf, type SessionInfo, type WorkspaceInfo } from "./api.ts";
 import { ActionForm, Field } from "./components/Form.tsx";
 import { Icon, type IconName } from "./components/Icon.tsx";
+import { IntentBar } from "./components/IntentBar.tsx";
 import { ErrorNote, Section, Skeleton } from "./components/State.tsx";
 import { Current, type WorkspaceContext } from "./context.ts";
-import { useHashRoute } from "./hooks.ts";
+import { useHashRoute, useLiveSync } from "./hooks.ts";
 import { I18n, initialLang, type Key, type Lang, translator, useT } from "./i18n.ts";
 import { Catalogs, KINDS } from "./views/Catalogs.tsx";
 import { Coach } from "./views/Coach.tsx";
@@ -93,16 +94,19 @@ function SignIn({ workspace, onSignedIn }: { workspace: WorkspaceInfo; onSignedI
   );
 }
 
-function Sidebar({ current, view, grant, theme, lang, onTheme, onLang }: {
+function Sidebar({ current, view, grant, theme, lang, liveState, onTheme, onLang }: {
   current: WorkspaceInfo;
   view: string;
   grant: Grant | undefined;
   theme: Theme;
   lang: Lang;
+  liveState: string;
   onTheme: () => void;
   onLang: () => void;
 }) {
   const t = useT();
+  const liveLabel = liveState === "live" ? t("live.connected") : liveState === "polling" ? t("live.polling") : t("live.connecting");
+  const liveDot = liveState === "live" ? "connected" : liveState === "polling" ? "down" : "";
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -141,9 +145,9 @@ function Sidebar({ current, view, grant, theme, lang, onTheme, onLang }: {
           <Icon name="globe" />
           <span className="toggle-text">{t("lang.toggle")}</span>
         </button>
-        <p className="sidebar-status" role="status">
-          <span className={`status-dot ${current.reachable ? "connected" : "down"}`} aria-hidden="true" />
-          <span className="toggle-text">{current.reachable ? t("ws.connected", { ws: current.label }) : t("ws.unreachable")}</span>
+        <p className="sidebar-status" role="status" data-testid="live-indicator">
+          <span className={`status-dot ${liveDot}`} aria-hidden="true" />
+          <span className="toggle-text">{liveLabel}</span>
         </p>
       </div>
     </aside>
@@ -165,10 +169,13 @@ function Shell({ workspaces, session, current, view, sub, lang, theme, onLang, o
 }) {
   const t = useT();
   const grant = session.workspaces[current.id];
+  const [version, setVersion] = useState(0);
+  const bumpVersion = useCallback(() => setVersion((v) => v + 1), []);
+  const liveState = useLiveSync(current.id, Boolean(grant), bumpVersion);
   const [signOutError, setSignOutError] = useState<ApiError>();
   const context = useMemo<WorkspaceContext | null>(
-    () => (grant ? { workspace: current, grant, writable: grant.write_enabled, go, expire: onSession } : null),
-    [current, grant, go, onSession],
+    () => (grant ? { workspace: current, grant, writable: grant.write_enabled, go, expire: onSession, version, bumpVersion } : null),
+    [current, grant, go, onSession, version, bumpVersion],
   );
   const signOut = async () => {
     try {
@@ -182,7 +189,7 @@ function Shell({ workspaces, session, current, view, sub, lang, theme, onLang, o
   return (
     <div className="app-shell">
       <a className="skip" href="#main">{t("skip")}</a>
-      <Sidebar current={current} view={active.id} grant={grant} theme={theme} lang={lang} onTheme={onTheme} onLang={onLang} />
+      <Sidebar current={current} view={active.id} grant={grant} theme={theme} lang={lang} liveState={liveState} onTheme={onTheme} onLang={onLang} />
       <div className="main-content">
         <header className="top-bar">
           <span className="source-badge">aisdlc</span>
@@ -217,6 +224,7 @@ function Shell({ workspaces, session, current, view, sub, lang, theme, onLang, o
             <SignIn workspace={current} onSignedIn={onSession} />
           ) : (
             <Current.Provider value={context}>
+              <IntentBar />
               <header className="view-header">
                 <div>
                   <h1 className="view-title">{t(active.label)}</h1>

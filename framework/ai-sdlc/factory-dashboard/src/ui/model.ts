@@ -127,3 +127,147 @@ export interface KnowledgeMetrics {
 export const ENVELOPE = new Set(["id", "kind", "ref", "summary", "version", "digest", "created_by", "created_at",
   "schema_version", "governance", "source"]);
 export const SECRET_FIELD = /(token|secret|password|passwd|api_key|authorization|credential)/i;
+
+export interface LineGate {
+  id: string;
+  name: string;
+  command?: string;
+  required: boolean;
+  mode: "required" | "advisory";
+  expect?: string;
+  paths?: string[];
+}
+
+export interface LineStage {
+  id: string;
+  gates: LineGate[];
+  inputs: string[];
+  outputs: string[];
+  io_source?: string;
+}
+
+export interface LineGuardrails {
+  protected: { owner?: string; paths: string[] };
+  hooks: string[];
+  rules: unknown[];
+  isolator: { status?: string; sandbox: boolean; backend?: string | null; enforces_committer: boolean };
+}
+
+export interface LinePayload {
+  schema_version?: number;
+  stages: LineStage[];
+  guardrails: LineGuardrails;
+}
+
+export interface ConfigStage {
+  id: string;
+  agents: string[];
+  skills: string[];
+  mcp: string[];
+  model?: string | null;
+  effort: Record<string, number>;
+  inputs: string[];
+  outputs: string[];
+}
+
+export interface ConfigPayload {
+  stages: ConfigStage[];
+}
+
+export interface StatusPrevious {
+  step: string;
+  stage?: string | null;
+  status: string;
+  started_at?: string | null;
+  finished_at?: string | null;
+  duration_s?: number | null;
+  usd?: number | null;
+}
+
+export interface StatusNext {
+  step: string;
+  stage?: string | null;
+  source?: string;
+}
+
+export interface FactoryStatus {
+  intent: string | null;
+  run: string | null;
+  workflow?: { id: string; version?: number; digest?: string } | string | null;
+  run_status: string | null;
+  stage: string | null;
+  step: string | null;
+  previous: StatusPrevious[];
+  next: StatusNext[];
+  updated_at: string | null;
+}
+
+export interface IntentRef {
+  label: string;
+  url: string;
+  kind?: string;
+}
+
+export interface Intent {
+  id: string;
+  kind: "prompt" | "reference" | "spec";
+  title: string;
+  text: string;
+  source: { system: string; ref: string };
+  acceptance: string[];
+  references: IntentRef[];
+  status: string;
+  created_by?: string;
+  created_at?: string;
+  run_ids?: string[];
+  version?: number;
+}
+
+export interface MergedStation {
+  id: string;
+  gates: LineGate[];
+  inputs: string[];
+  outputs: string[];
+  agents: string[];
+  skills: string[];
+  mcp: string[];
+  model?: string | null;
+  effort: Record<string, number>;
+  guardrails: LineGuardrails;
+  state: "done" | "current" | "upcoming";
+}
+
+/** Merge line stages with config stage details by id. Tolerates missing keys. */
+export function mergeLineConfig(line: LinePayload, config: ConfigPayload | undefined): LineStage[] {
+  const configMap = new Map<string, ConfigStage>();
+  config?.stages.forEach((s) => configMap.set(s.id, s));
+  return line.stages.map((stage) => {
+    const cfg = configMap.get(stage.id);
+    return {
+      ...stage,
+      agents: cfg?.agents ?? [],
+      skills: cfg?.skills ?? [],
+      mcp: cfg?.mcp ?? [],
+      model: cfg?.model ?? null,
+      effort: cfg?.effort ?? {},
+    } as LineStage & { agents: string[]; skills: string[]; mcp: string[]; model?: string | null; effort: Record<string, number> };
+  });
+}
+
+export function stationState(stationId: string, status: FactoryStatus | undefined): "done" | "current" | "upcoming" {
+  if (!status || !status.run_status) return "upcoming";
+  if (status.stage === stationId && status.run_status === "running") return "current";
+  const prevDone = status.previous.some((p) => p.stage === stationId);
+  if (prevDone) return "done";
+  return "upcoming";
+}
+
+/** Return only http/https URLs as safe links; everything else becomes plain text. */
+export function isSafeLink(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
