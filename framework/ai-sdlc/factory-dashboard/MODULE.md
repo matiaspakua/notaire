@@ -10,8 +10,8 @@ of the kit, outside its stdlib-only core: it speaks only the `aisdlc serve` cont
 ## Contract (what other modules may rely on)
 
 - `dashboard.json` workspaces: `id`, `label`, `kit` URL, optional `knowledge` URL (README)
-- Browser API under `/api/`: workspaces, per-workspace session, `/factory/*` proxy, read-only knowledge
-- Never holds a token in the browser; writes need `X-Dashboard-CSRF`
+- Browser API under `/api/`: workspaces, per-workspace session, `/factory/*` proxy (GET, POST, PUT, DELETE), SSE stream for `/factory/events`, read-only knowledge
+- Never holds a token in the browser; writes need `X-Dashboard-CSRF`; DELETE forwards `If-Match`
 
 ## Seams (what this module reads from outside)
 

@@ -39,6 +39,17 @@ function fakeUpstream(seen: Seen[], { down = false } = {}): typeof fetch {
     if (url.endsWith("/factory/session")) {
       return json(200, { ...who, actor: `ui:${who.identity}`, write_enabled: who.scope !== "read" });
     }
+    if (url.includes("/factory/events")) {
+      const lastId = headers["Last-Event-ID"] ?? "";
+      const body = `event: step.finished\ndata: {"kind":"step.finished","ts":"2025-01-01T00:00:00Z"}\n\n`;
+      return new Response(body, {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", "X-Last-Event-ID": lastId },
+      });
+    }
+    if (init?.method === "DELETE") {
+      return json(200, { ok: true, path: new URL(url).pathname, deleted: true });
+    }
     return json(200, { ok: true, path: new URL(url).pathname });
   }) as typeof fetch;
 }
@@ -232,6 +243,121 @@ describe("knowledge", () => {
     const missing = await app.inject({ method: "GET", url: "/api/workspaces/beta/knowledge/stats", headers: { cookie: beta } });
     expect(missing.statusCode).toBe(404);
     expect(missing.json().code).toBe("knowledge_not_configured");
+  });
+});
+
+describe("delete proxy", () => {
+  it("returns 403 csrf_required when the x-dashboard-csrf header is missing and never reaches the kit", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const url = "/api/workspaces/alpha/factory/catalogs/agents/my-agent";
+    const reply = await app.inject({ method: "DELETE", url, headers: { cookie } });
+    expect(reply.statusCode).toBe(403);
+    expect(reply.json().code).toBe("csrf_required");
+    expect(seen.filter((s) => s.method === "DELETE")).toEqual([]);
+  });
+
+  it("forwards DELETE with the session token and If-Match header when CSRF is present", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const csrf = await csrfOf(cookie);
+    const url = "/api/workspaces/alpha/factory/catalogs/agents/my-agent";
+    const reply = await app.inject({
+      method: "DELETE", url, headers: { cookie, "x-dashboard-csrf": csrf, "if-match": '"3"' },
+    });
+    expect(reply.statusCode).toBe(200);
+    const last = seen.at(-1)!;
+    expect(last.method).toBe("DELETE");
+    expect(last.url).toBe("http://kit-a:8765/factory/catalogs/agents/my-agent");
+    expect(last.headers.Authorization).toBe("Bearer tok-alice");
+    expect(last.headers["X-AISDLC-CSRF"]).toBe("tok-alice");
+    expect(last.headers["If-Match"]).toBe('"3"');
+  });
+});
+
+describe("events stream proxy", () => {
+  it("requires sign-in and returns 401 without a session", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/beta/factory/events", headers: { cookie },
+    });
+    expect(reply.statusCode).toBe(401);
+    expect(reply.json().code).toBe("sign_in_required");
+  });
+
+  it("streams the kit's text/event-stream body through with a signed-in session", async () => {
+    let upstreamSignal: AbortSignal | undefined;
+    const streamingFetch: typeof fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes("/factory/session")) {
+        return json(200, { identity: "alice", scope: "write", actor: "ui:alice", write_enabled: true });
+      }
+      if (url.includes("/factory/events")) {
+        upstreamSignal = (init?.signal) ?? undefined;
+        const body = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('event: step.finished\ndata: {"kind":"step.finished"}\n\n'));
+            upstreamSignal?.addEventListener("abort", () => controller.close());
+          },
+        });
+        return new Response(body, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
+        });
+      }
+      if (url.includes("/factory/capabilities")) {
+        return json(200, {});
+      }
+      return json(200, { ok: true });
+    }) as typeof fetch;
+    const config = { ...CONFIG, secureCookies: false };
+    const testApp = buildApp({ config, fetcher: streamingFetch });
+    await testApp.listen({ port: 0, host: "127.0.0.1" });
+    const port = (testApp.server.address() as import("net").AddressInfo).port;
+    const signInResp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/session`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "tok-alice" }),
+    });
+    const setCookie = signInResp.headers.get("set-cookie")!;
+    const cookie = setCookie.split(";")[0];
+    const clientAbort = new AbortController();
+    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+      headers: { cookie: cookie }, signal: clientAbort.signal,
+    });
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("content-type")).toContain("text/event-stream");
+    const reader = resp.body!.getReader();
+    const chunk = await reader.read();
+    const text = new TextDecoder().decode(chunk.value);
+    expect(text).toContain("step.finished");
+    clientAbort.abort();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(upstreamSignal?.aborted).toBe(true);
+    await testApp.close();
+  });
+
+  it("forwards Last-Event-ID to the kit", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/alpha/factory/events",
+      headers: { cookie, "last-event-id": "5" },
+    });
+    expect(reply.statusCode).toBe(200);
+    const eventsCall = seen.find((s) => s.url.includes("/factory/events"));
+    expect(eventsCall).toBeDefined();
+    expect(eventsCall?.headers["Last-Event-ID"]).toBe("5");
+  });
+
+  it("never leaks the server-side token to the client response", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/alpha/factory/events", headers: { cookie },
+    });
+    expect(reply.statusCode).toBe(200);
+    expect(reply.body).not.toContain("tok-alice");
   });
 });
 

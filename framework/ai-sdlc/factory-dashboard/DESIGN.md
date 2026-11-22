@@ -50,6 +50,10 @@ system until the person picks one in the sidebar footer.
 `StatusBadge` (pill), station cards on the production line, `Loaded` (the state machine for one
 resource), `ErrorNote`, `Empty`, `ActionForm`, `Field`, and the icon set in `Icon.tsx`.
 
+New in v2: station timeline with gate pills (required/advisory), intent bar and drawer with intake
+form, live indicator dot in the sidebar, file tree and read-only viewer for configuration as code,
+telemetry panel with grouped tables.
+
 ## Charts
 
 Stage durations are horizontal bars in phase colors with mono values, like the first dashboard.

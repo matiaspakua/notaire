@@ -127,3 +127,247 @@ export interface KnowledgeMetrics {
 export const ENVELOPE = new Set(["id", "kind", "ref", "summary", "version", "digest", "created_by", "created_at",
   "schema_version", "governance", "source"]);
 export const SECRET_FIELD = /(token|secret|password|passwd|api_key|authorization|credential)/i;
+
+export interface LineGate {
+  id: string;
+  name: string;
+  command?: string;
+  required: boolean;
+  mode: "required" | "advisory";
+  expect?: string;
+  paths?: string[];
+}
+
+export interface LineStage {
+  id: string;
+  gates: LineGate[];
+  inputs: string[];
+  outputs: string[];
+  io_source?: string;
+}
+
+export interface LineGuardrails {
+  protected: { owner?: string; paths: string[] };
+  hooks: string[];
+  rules: unknown[];
+  isolator: { status?: string; sandbox: boolean; backend?: string | null; enforces_committer: boolean };
+}
+
+export interface LinePayload {
+  schema_version?: number;
+  stages: LineStage[];
+  guardrails: LineGuardrails;
+}
+
+export interface ConfigStage {
+  id: string;
+  agents: string[];
+  skills: string[];
+  mcp: string[];
+  model?: string | null;
+  effort: Record<string, number>;
+  inputs: string[];
+  outputs: string[];
+}
+
+export interface ConfigPayload {
+  stages: ConfigStage[];
+}
+
+export interface StatusPrevious {
+  step: string;
+  stage?: string | null;
+  status: string;
+  started_at?: string | null;
+  finished_at?: string | null;
+  duration_s?: number | null;
+  usd?: number | null;
+}
+
+export interface StatusNext {
+  step: string;
+  stage?: string | null;
+  source?: string;
+}
+
+export interface FactoryStatus {
+  intent: string | null;
+  run: string | null;
+  workflow?: { id: string; version?: number; digest?: string } | string | null;
+  run_status: string | null;
+  stage: string | null;
+  step: string | null;
+  previous: StatusPrevious[];
+  next: StatusNext[];
+  updated_at: string | null;
+}
+
+export interface IntentRef {
+  label: string;
+  url: string;
+  kind?: string;
+}
+
+export interface Intent {
+  id: string;
+  kind: "prompt" | "reference" | "spec";
+  title: string;
+  text: string;
+  source: { system: string; ref: string };
+  acceptance: string[];
+  references: IntentRef[];
+  status: string;
+  created_by?: string;
+  created_at?: string;
+  run_ids?: string[];
+  version?: number;
+}
+
+export interface MergedStation {
+  id: string;
+  gates: LineGate[];
+  inputs: string[];
+  outputs: string[];
+  agents: string[];
+  skills: string[];
+  mcp: string[];
+  model?: string | null;
+  effort: Record<string, number>;
+  guardrails: LineGuardrails;
+  state: "done" | "current" | "upcoming";
+}
+
+export function mergeLineConfig(line: LinePayload, config: ConfigPayload | undefined): LineStage[] {
+  const configMap = new Map<string, ConfigStage>();
+  config?.stages.forEach((s) => configMap.set(s.id, s));
+  return line.stages.map((stage) => {
+    const cfg = configMap.get(stage.id);
+    return {
+      ...stage,
+      agents: cfg?.agents ?? [],
+      skills: cfg?.skills ?? [],
+      mcp: cfg?.mcp ?? [],
+      model: cfg?.model ?? null,
+      effort: cfg?.effort ?? {},
+    } as LineStage & { agents: string[]; skills: string[]; mcp: string[]; model?: string | null; effort: Record<string, number> };
+  });
+}
+
+export function stationState(stationId: string, status: FactoryStatus | undefined): "done" | "current" | "upcoming" {
+  if (!status || !status.run_status) return "upcoming";
+  if (status.stage === stationId && status.run_status === "running") return "current";
+  const prevDone = status.previous.some((p) => p.stage === stationId);
+  if (prevDone) return "done";
+  return "upcoming";
+}
+
+export interface ConfigFileEntry {
+  path: string;
+  kind: string;
+  size: number;
+  media_type: string;
+  read_only: boolean;
+}
+
+export interface ConfigFileContent {
+  path: string;
+  content: string;
+  redacted: boolean;
+  media_type: string;
+  size: number;
+}
+
+export interface TelemetryRow {
+  key: string;
+  runs: number;
+  duration_s: number;
+  usd: number;
+  failures: number;
+}
+
+export interface TelemetryResponse {
+  group: string;
+  rows: TelemetryRow[];
+  total_duration_s: number;
+  total_usd: number;
+  total_failures: number;
+  total_runs: number;
+  failures_by_integration: Record<string, number>;
+  repolens: {
+    calls?: number;
+    avg_ms?: number;
+    total_ms?: number;
+    by_tool?: Record<string, { calls: number; avg_ms: number; total_ms: number }>;
+  };
+}
+
+export interface ConfigTreeNode {
+  name: string;
+  path?: string;
+  kind?: string;
+  children: ConfigTreeNode[];
+}
+
+export function buildConfigTree(entries: ConfigFileEntry[]): ConfigTreeNode[] {
+  const root: ConfigTreeNode = { name: "", children: [] };
+  for (const entry of entries) {
+    const parts = entry.path.split("/");
+    let node = root;
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      if (i === parts.length - 1) {
+        const existing = node.children.find((c) => c.name === part && c.path);
+        if (!existing) {
+          node.children.push({ name: part, path: entry.path, kind: entry.kind, children: [] });
+        }
+      } else {
+        let dir = node.children.find((c) => c.name === part && !c.path);
+        if (!dir) {
+          dir = { name: part, children: [] };
+          node.children.push(dir);
+        }
+        node = dir;
+      }
+    }
+  }
+  const sortChildren = (nodes: ConfigTreeNode[]) => {
+    nodes.sort((a, b) => {
+      const aIsFile = Boolean(a.path);
+      const bIsFile = Boolean(b.path);
+      if (aIsFile !== bIsFile) return aIsFile ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+    for (const node of nodes) {
+      if (node.children.length) sortChildren(node.children);
+    }
+  };
+  sortChildren(root.children);
+  return root.children;
+}
+
+export function formatDuration(seconds: number, lang: string): string {
+  if (seconds >= 3600) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return s > 0 ? `${m}m ${s}s` : `${m}m`;
+  }
+  return `${seconds.toLocaleString(lang, { maximumFractionDigits: seconds < 1 ? 2 : 1 })}s`;
+}
+
+export function encodeConfigPath(path: string): string {
+  return path.split("/").map(encodeURIComponent).join("/");
+}
+
+export function isSafeLink(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}

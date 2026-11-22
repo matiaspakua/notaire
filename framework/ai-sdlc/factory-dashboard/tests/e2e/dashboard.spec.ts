@@ -27,8 +27,7 @@ test.use({ locale: "en-US" });
 test("an owner sees the production line from the kit's evidence, accessibly in both themes", async ({ page }) => {
   await signIn(page, tokens().owner.token);
   await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Queued: 1 runs" })).toBeVisible();
-  await expect(page.getByText("No runner adapter reports; requested runs stay queued.")).toBeVisible();
+  await expect(page.getByTestId("station").first()).toBeVisible();
   await expect(page.locator(".who")).toContainText("maria");
   await expectAccessible(page);
   await page.getByRole("button", { name: "Switch light or dark" }).click();
@@ -103,6 +102,83 @@ test.describe("phone width", () => {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, view).toBeLessThanOrEqual(0);
     }
+    await expectAccessible(page);
+  });
+});
+
+test.describe("production line", () => {
+  test("shows stations and gates between them, expanding reveals inputs and outputs", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
+    const stations = page.getByTestId("station");
+    await expect(stations.first()).toBeVisible();
+    expect(await stations.count()).toBeGreaterThanOrEqual(3);
+    const gates = page.getByTestId("gate");
+    await expect(gates.first()).toBeVisible();
+    await expect(page.getByText("required").first()).toBeVisible();
+    await expect(page.getByText("advisory")).toBeVisible();
+    await stations.first().click();
+    await expect(page.getByTestId("station-details")).toBeVisible();
+    await expect(page.getByTestId("stage-inputs")).toBeVisible();
+    await expect(page.getByTestId("stage-outputs")).toBeVisible();
+    await expectAccessible(page);
+  });
+
+  test("intent bar shows the intent title and drawer shows acceptance criteria and references", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    const intentBar = page.getByTestId("intent-bar");
+    await expect(intentBar).toBeVisible();
+    await expect(page.getByText("Dashboard Production Line")).toBeVisible();
+    await intentBar.click();
+    await expect(page.getByTestId("intent-drawer")).toBeVisible();
+    await expect(page.getByTestId("acceptance-criteria")).toBeVisible();
+    await expect(page.getByText("Timeline shows stations from /factory/line with gates between them")).toBeVisible();
+    await expect(page.getByTestId("intent-references")).toBeVisible();
+    const refLink = page.getByRole("link", { name: "Issue #2400" });
+    await expect(refLink).toBeVisible();
+    await expect(refLink).toHaveAttribute("href", "https://github.com/example/repo/issues/2400");
+    await expectAccessible(page);
+  });
+
+  test("Projects view shows file tree and read-only viewer with selected file content", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.goto("/#/e2e/projects");
+    await expect(page.getByTestId("file-tree")).toBeVisible();
+    await page.getByTestId("file-entry").first().click();
+    await expect(page.getByTestId("file-viewer")).toBeVisible();
+    await expect(page.getByTestId("line-number")).toBeVisible();
+    await expect(page.locator("textarea, [contenteditable=true]")).toHaveCount(0);
+    await expectAccessible(page);
+  });
+
+  test("Configuration delete asks for inline confirmation and removes the item", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.goto("/#/e2e/catalogs/prompts");
+    const entry = page.getByTestId("catalog-entry-throwaway-e2e");
+    await expect(entry).toBeVisible();
+    await entry.getByTestId("delete-button").click();
+    const confirmDialog = page.getByTestId("delete-confirmation");
+    await expect(confirmDialog).toBeVisible();
+    await confirmDialog.getByRole("button", { name: "Delete" }).click();
+    await expect(entry).not.toBeVisible();
+    await expectAccessible(page);
+  });
+
+  test("Metrics view renders a telemetry panel", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.goto("/#/e2e/metrics");
+    await expect(page.getByTestId("telemetry-panel")).toBeVisible();
+    await expect(page.getByTestId("telemetry-tab-stage")).toBeVisible();
+    const rows = page.getByTestId("telemetry-row");
+    expect(await rows.count()).toBeGreaterThanOrEqual(1);
+    await expect(rows.first()).toBeVisible();
+    await expect(page.getByText("plan")).toBeVisible();
+    await expectAccessible(page);
+  });
+
+  test("live indicator is present in the sidebar", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await expect(page.getByTestId("live-indicator")).toBeVisible();
     await expectAccessible(page);
   });
 });
