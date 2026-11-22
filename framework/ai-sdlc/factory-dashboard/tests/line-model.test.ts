@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   gateState,
   intentProgress,
+  normalizeStage,
   stageOfStep,
   stationKind,
   stationStates,
@@ -65,6 +66,17 @@ describe("stationKind", () => {
   });
 });
 
+describe("normalizeStage", () => {
+  it("fills the fields an older kit omits with empty values", () => {
+    const old = normalizeStage({ id: "plan", gates: [], inputs: ["issue"], outputs: [] });
+    expect(old.agents).toEqual([]);
+    expect(old.guardrails).toEqual([]);
+    expect(old.effort).toEqual({});
+    expect(old.model).toBeNull();
+    expect(stationKind(old)).toBe("deterministic");
+  });
+});
+
 describe("stageOfStep", () => {
   it("maps a workflow step to its stage", () => {
     expect(stageOfStep("green", WORKFLOW_STEPS, LINE)).toBe("pre-push");
@@ -97,6 +109,22 @@ describe("stationStates", () => {
     const states = stationStates(LINE, status({ stage: null, step: "green" }), WORKFLOW_STEPS);
     expect(states.red).toBe("done");
     expect(states["pre-push"]).toBe("running");
+  });
+
+  it("marks done what previous steps reached when the current step maps to no stage", () => {
+    const running = status({
+      stage: null,
+      step: "implement",
+      previous: [
+        { step: "spec", stage: null, status: "pass" },
+        { step: "red", stage: "red", status: "pass" },
+      ],
+    });
+    const states = stationStates(LINE, running, WORKFLOW_STEPS);
+    expect(states.plan).toBe("done");
+    expect(states.red).toBe("done");
+    expect(states["pre-push"]).toBe("next");
+    expect(Object.values(states)).not.toContain("running");
   });
 
   it("marks the station of a failed run as failed", () => {
@@ -154,6 +182,11 @@ describe("stationThroughput", () => {
     });
   });
 
+  it("treats rows with zero runs as no runs", () => {
+    const empty: TelemetryRow[] = [{ key: "signal", runs: 0, duration_s: 0, usd: 0, failures: 0 }];
+    expect(stationThroughput("signal", empty, WORKFLOW_STEPS, LINE)).toBeNull();
+  });
+
   it("returns null when no row maps to the station", () => {
     expect(stationThroughput("release", rows, WORKFLOW_STEPS, LINE)).toBeNull();
   });
@@ -177,6 +210,18 @@ describe("intentProgress", () => {
     expect(progress.currentStageId).toBe("pre-push");
     expect(progress.elapsedSeconds).toBe(600);
     expect(progress.usd).toBeCloseTo(0.62);
+  });
+
+  it("stops the clock at the last finished step of a finished run", () => {
+    const finished = status({
+      run_status: "succeeded",
+      previous: [
+        { step: "spec", stage: "plan", status: "pass", started_at: "2026-11-22T20:00:00+00:00", finished_at: "2026-11-22T20:03:00+00:00" },
+        { step: "red", stage: "red", status: "pass", started_at: "2026-11-22T20:03:00+00:00", finished_at: "2026-11-22T20:05:00+00:00" },
+      ],
+    });
+    const progress = intentProgress(LINE, stationStates(LINE, finished, WORKFLOW_STEPS), finished, now);
+    expect(progress.elapsedSeconds).toBe(300);
   });
 
   it("reports unknown cost as null, not zero", () => {
