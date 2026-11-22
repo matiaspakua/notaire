@@ -63,6 +63,7 @@ RELEASE_TRAINS = (
     "v0.5 · Quality & traceability (2027-01)",
     "v0.6 · Platform & operability (2027-02)",
     "v0.7 · AI Factory & repo knowledge (2027-03)",
+    "v0.8 · Observable self-managing factory (2027-03)",
     "v1.0 · GA: legacy-free (2027-04)",
 )
 

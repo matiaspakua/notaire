@@ -72,6 +72,7 @@ Backlog, Catalog and the cohorts use a one-line purpose instead.
 | `v0.5 · Quality & traceability (2027-01)` | 2027-01 | tests, docs, traceability |
 | `v0.6 · Platform & operability (2027-02)` | 2027-02 | CI and observability gates |
 | `v0.7 · AI Factory & repo knowledge (2027-03)` | 2027-03 | AI SDLC framework, RepoLens, agent skills |
+| `v0.8 · Observable self-managing factory (2027-03)` | 2027-03 | observable factory: production line, intents, live state, store, config as code |
 | `v1.0 · GA: legacy-free (2027-04)` | 2027-04 | Phase 6, Owner GA decision |
 | `Backlog · Unscheduled` | – | unscheduled work |
 | `Catalog · Requirements & use cases` | – | requirement anchors |
