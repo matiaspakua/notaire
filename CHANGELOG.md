@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0](https://github.com/matiaspakua/notaire/compare/v0.7.0...v0.8.0) (2026-11-21)
 
+
 ### Features
 
 * **repolens:** add CLI comparison experiment for AGY and kiro-cli ([#2381](https://github.com/matiaspakua/notaire/issues/2381)) ([0d9dc61](https://github.com/matiaspakua/notaire/commit/0d9dc613dc73c00c74cd2497e394ece74dca62f8)), closes [#2380](https://github.com/matiaspakua/notaire/issues/2380)
+
 
 ### Bug Fixes
 
@@ -17,11 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0](https://github.com/matiaspakua/notaire/compare/v0.6.0...v0.7.0) (2026-11-20)
 
+
 ### Features
 
 * **aisdlc:** record intent runs for RepoLens vs no-knowledge comparison ([#2375](https://github.com/matiaspakua/notaire/issues/2375)) ([c837165](https://github.com/matiaspakua/notaire/commit/c8371657cdaa5b972bc7b40238f97062045cbaa4))
 
 ## [0.6.0](https://github.com/matiaspakua/notaire/compare/v0.5.1...v0.6.0) (2026-11-20)
+
 
 ### Features
 
@@ -29,15 +33,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1](https://github.com/matiaspakua/notaire/compare/v0.5.0...v0.5.1) (2026-11-19)
 
+
 ### Bug Fixes
 
 * **api:** page the testimony movement list ([#2339](https://github.com/matiaspakua/notaire/issues/2339)) ([373a9b9](https://github.com/matiaspakua/notaire/commit/373a9b901e7a6b23c192fb4c70771e581d7d9a8e)), closes [#596](https://github.com/matiaspakua/notaire/issues/596)
 
 ## [0.5.0](https://github.com/matiaspakua/notaire/compare/v0.4.2...v0.5.0) (2026-11-18)
 
+
 ### Features
 
 * **pages:** showcase RepoLens benches on the AI Factory ([aee9b53](https://github.com/matiaspakua/notaire/commit/aee9b53d95c147949d5e16c49f9a1f1961b70e45))
+
 
 ### Bug Fixes
 
@@ -45,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **sdlc:** ignore Cursor agent-hooks drift in RepoLens wiring test ([439e940](https://github.com/matiaspakua/notaire/commit/439e9400358a884705ab48813d1505169798c6ae))
 
 ## [0.4.2](https://github.com/matiaspakua/notaire/compare/v0.4.1...v0.4.2) (2026-11-18)
+
 
 ### Bug Fixes
 
@@ -63,20 +71,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * **sdlc:** RepoLens harness drift test ignores Cursor `agent-hooks` path remaps so Cloud Agent preflight is not blocked by a host-only hooks mirror (Refs #2315)
+* **e2e:** raise API rate limit to 20 000 for the e2e/preflight stack so the full Playwright suite no longer hits silent 429s (#2389)
 
 ### Fixed
 
-* **api:** e2e stack runs with a higher API rate limit (20 000) so a full Playwright run never hits 429; production default stays 2000. 429 rejections are logged at WARN with key type and path, without personal data. The rate-window insert no longer collides on concurrent first requests (Refs #2389)
 * **pages:** Security Identity and AT-1 describe TOTP MFA as shipped (OPTIONAL by default; ENFORCE for ADMIN and NOTARY). The committed release snapshot and local `preflight` pages build refresh to the current product version (Refs #2270)
 * **stack:** `start.sh` generates a local `NOTAIRE_MFA_ENCRYPTION_KEY` when `.env` leaves it empty so OPTIONAL MFA enrolment and TS-0046 work after stack start (Refs #2270)
 
 ## [0.4.1](https://github.com/matiaspakua/notaire/compare/v0.4.0...v0.4.1) (2026-11-11)
+
 
 ### Bug Fixes
 
 * **frontend:** table empty states teach the next action ([#2229](https://github.com/matiaspakua/notaire/issues/2229)) ([1836431](https://github.com/matiaspakua/notaire/commit/183643150c64a9203dfcefa231dcedabfe049de4)), closes [#2071](https://github.com/matiaspakua/notaire/issues/2071)
 
 ## [0.4.0](https://github.com/matiaspakua/notaire/compare/v0.3.0...v0.4.0) (2026-11-10)
+
 
 ### Features
 
@@ -92,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **aisdlc:** Wilson L0 from signal ledger gates ([679bc0d](https://github.com/matiaspakua/notaire/commit/679bc0d30d2c9aeaab738f7aa4768baefa5b73d1)), closes [#2163](https://github.com/matiaspakua/notaire/issues/2163)
 * **aisdlc:** Wilson L1 no-evaluable until ≥2 stages have min_n ([#2172](https://github.com/matiaspakua/notaire/issues/2172)) ([1136b4c](https://github.com/matiaspakua/notaire/commit/1136b4cb62358e9aa3d72f97d00902b835dd226a)), closes [#2171](https://github.com/matiaspakua/notaire/issues/2171)
 
+
 ### Bug Fixes
 
 * **aisdlc:** degrade optional OTel verify bootstrap without ensurepip ([#2181](https://github.com/matiaspakua/notaire/issues/2181)) ([a9057e1](https://github.com/matiaspakua/notaire/commit/a9057e152de1447951ffce97eb77a99a56cba7de)), closes [#2180](https://github.com/matiaspakua/notaire/issues/2180)
@@ -100,9 +111,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0](https://github.com/matiaspakua/notaire/compare/v0.2.7...v0.3.0) (2026-11-08)
 
+
 ### Features
 
 * **pages:** anatomy figures for the system, the engineering loop and the AI SDLC ([b9d9bc5](https://github.com/matiaspakua/notaire/commit/b9d9bc5d845509b32f9b4ad13165ff8c40d6281b)), closes [#2089](https://github.com/matiaspakua/notaire/issues/2089)
+
 
 ### Bug Fixes
 
@@ -174,6 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **api:** WorkflowValidation validate returns typed WorkflowValidationResponse (Refs #577)
 * **api:** Concept create/update/delete return typed DTO/Void via ConceptExceptionHandler (Refs #577)
 
+
 ### Changed
 
 * **quality:** JaCoCo ratchet floor raised to 85% line / 70% branch; Owner coverage target documented as >90% with raise-only floors (Refs #2046)
@@ -181,12 +195,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.7](https://github.com/matiaspakua/notaire/compare/v0.2.6...v0.2.7) (2026-11-06)
 
+
 ### Bug Fixes
 
 * **pages:** `frontendTestClasses` counts Vitest files; add `e2eSpecFiles` for Playwright; refresh committed metrics and Coverage labels ([#1982](https://github.com/matiaspakua/notaire/issues/1982))
 * **api:** history ServerError returns ErrorResponse via GEH ([#2030](https://github.com/matiaspakua/notaire/issues/2030)) ([2febdc9](https://github.com/matiaspakua/notaire/commit/2febdc92aa845c82f34697f2633c14a011a12797)), closes [#579](https://github.com/matiaspakua/notaire/issues/579)
 
 ## [0.2.6](https://github.com/matiaspakua/notaire/compare/v0.2.5...v0.2.6) (2026-11-06)
+
 
 ### Bug Fixes
 
