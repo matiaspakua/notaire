@@ -153,6 +153,7 @@ def start(
     workflow_id: str,
     actor: str | None = None,
     run_id: str | None = None,
+    intent: str | None = None,
 ) -> dict:
     """Create a RunRequest evidence event for an approved workflow. Never sets running."""
     projects.show(ctx, project_id)  # ensure project exists
@@ -207,6 +208,8 @@ def start(
         "evidence_head": _ledger_head(ctx),
         "steps": seed_steps,
     }
+    if intent is not None:
+        payload["intent"] = intent
     # Re-derive so status never claims running from the request alone.
     payload = _refresh(ctx, payload)
     if payload["status"] == "running":

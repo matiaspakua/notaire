@@ -264,6 +264,41 @@ class IntentServeTest(unittest.TestCase):
         self.assertEqual(404, status)
         self.assertEqual("not_found", problem["code"])
 
+    # --- Scenario: POST /factory/runs with intent — GET /factory/runs/{id} returns intent ---
+    def test_post_runs_with_intent_persists(self):
+        """After POST /factory/runs with intent, GET /factory/runs/<id> returns the intent id."""
+        port = self._serve(enable_write=True)
+        # Create a project first
+        self._request(
+            port, "/factory/projects", method="POST",
+            token=self.write_token.value, csrf=self.write_token.value,
+            body={"id": "alpha", "profile_ref": "aisdlc.toml", "repos": []},
+        )
+        # Create an intent
+        status, intent = self._request(
+            port, "/factory/intents", method="POST",
+            token=self.write_token.value, csrf=self.write_token.value,
+            body={"text": "Run intent persist"},
+        )
+        self.assertEqual(201, status)
+        intent_id = intent["id"]
+
+        # Start a run with the intent
+        status, run = self._request(
+            port, "/factory/runs", method="POST",
+            token=self.write_token.value, csrf=self.write_token.value,
+            body={"project": "alpha", "workflow": "feature-delivery", "intent": intent_id},
+        )
+        self.assertEqual(200, status, json.dumps(run, default=str))
+        run_id = run["id"]
+
+        # Fetch the run by id — it should carry the intent
+        status, fetched_run = self._request(
+            port, f"/factory/runs/{run_id}", method="GET", token=self.read_token.value,
+        )
+        self.assertEqual(200, status)
+        self.assertEqual(intent_id, fetched_run.get("intent"))
+
 
 if __name__ == "__main__":
     unittest.main()

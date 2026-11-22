@@ -293,11 +293,11 @@ def _dispatch_post(ctx: Context, path: str, body: dict, *, actor: str) -> Any:
             workflow_id=workflow_id,
             actor=actor,
             run_id=str(body["id"]) if body.get("id") else None,
+            intent=str(intent_id) if intent_id is not None else None,
         )
         # Attach run to intent if present
         if intent_id is not None:
             intent_model_mod.attach_run(ctx, str(intent_id), run["id"])
-            run["intent"] = str(intent_id)
         return run
     m = re.fullmatch(r"/factory/runs/([^/]+)/cancel", path)
     if m:
