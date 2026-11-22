@@ -39,6 +39,19 @@ function fakeUpstream(seen: Seen[], { down = false } = {}): typeof fetch {
     if (url.endsWith("/factory/session")) {
       return json(200, { ...who, actor: `ui:${who.identity}`, write_enabled: who.scope !== "read" });
     }
+    // SSE events stream — return text/event-stream body
+    if (url.includes("/factory/events")) {
+      const lastId = headers["Last-Event-ID"] ?? "";
+      const body = `event: step.finished\ndata: {"kind":"step.finished","ts":"2025-01-01T00:00:00Z"}\n\n`;
+      return new Response(body, {
+        status: 200,
+        headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", "X-Last-Event-ID": lastId },
+      });
+    }
+    // DELETE catalog entries — return 200 with the deleted entry info
+    if (init?.method === "DELETE") {
+      return json(200, { ok: true, path: new URL(url).pathname, deleted: true });
+    }
     return json(200, { ok: true, path: new URL(url).pathname });
   }) as typeof fetch;
 }
@@ -232,6 +245,89 @@ describe("knowledge", () => {
     const missing = await app.inject({ method: "GET", url: "/api/workspaces/beta/knowledge/stats", headers: { cookie: beta } });
     expect(missing.statusCode).toBe(404);
     expect(missing.json().code).toBe("knowledge_not_configured");
+  });
+});
+
+describe("delete proxy", () => {
+  it("returns 403 csrf_required when the x-dashboard-csrf header is missing and never reaches the kit", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const url = "/api/workspaces/alpha/factory/catalogs/agents/my-agent";
+    const reply = await app.inject({ method: "DELETE", url, headers: { cookie } });
+    // Currently fails with 404 because the DELETE route does not exist yet.
+    // Once implemented, it must return 403 csrf_required and never call the kit.
+    expect(reply.statusCode).toBe(403);
+    expect(reply.json().code).toBe("csrf_required");
+    expect(seen.filter((s) => s.method === "DELETE")).toEqual([]);
+  });
+
+  it("forwards DELETE with the session token and If-Match header when CSRF is present", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const csrf = await csrfOf(cookie);
+    const url = "/api/workspaces/alpha/factory/catalogs/agents/my-agent";
+    const reply = await app.inject({
+      method: "DELETE", url, headers: { cookie, "x-dashboard-csrf": csrf, "if-match": '"3"' },
+    });
+    // Currently fails with 404 because the DELETE route does not exist yet.
+    // Once implemented, it must forward as DELETE with Authorization, X-AISDLC-CSRF and If-Match.
+    expect(reply.statusCode).toBe(200);
+    const last = seen.at(-1)!;
+    expect(last.method).toBe("DELETE");
+    expect(last.url).toBe("http://kit-a:8765/factory/catalogs/agents/my-agent");
+    expect(last.headers.Authorization).toBe("Bearer tok-alice");
+    expect(last.headers["X-AISDLC-CSRF"]).toBe("tok-alice");
+    expect(last.headers["If-Match"]).toBe('"3"');
+  });
+});
+
+describe("events stream proxy", () => {
+  it("requires sign-in and returns 401 without a session", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    // beta has no grant — events requires sign-in
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/beta/factory/events", headers: { cookie },
+    });
+    expect(reply.statusCode).toBe(401);
+    expect(reply.json().code).toBe("sign_in_required");
+  });
+
+  it("streams the kit's text/event-stream body through with a signed-in session", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/alpha/factory/events", headers: { cookie },
+    });
+    // Currently the proxy returns application/json. Once the SSE relay is implemented,
+    // it must return text/event-stream and relay the kit's SSE frames verbatim.
+    expect(reply.statusCode).toBe(200);
+    expect(reply.headers["content-type"]).toContain("text/event-stream");
+  });
+
+  it("forwards Last-Event-ID to the kit", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/alpha/factory/events",
+      headers: { cookie, "last-event-id": "5" },
+    });
+    expect(reply.statusCode).toBe(200);
+    // The upstream call must include Last-Event-ID so the kit can replay from that point.
+    const eventsCall = seen.find((s) => s.url.includes("/factory/events"));
+    expect(eventsCall).toBeDefined();
+    expect(eventsCall?.headers["Last-Event-ID"]).toBe("5");
+  });
+
+  it("never leaks the server-side token to the client response", async () => {
+    await start();
+    const cookie = await signIn("alpha", "tok-alice");
+    const reply = await app.inject({
+      method: "GET", url: "/api/workspaces/alpha/factory/events", headers: { cookie },
+    });
+    expect(reply.statusCode).toBe(200);
+    // The bearer token must never appear in the client-facing response body.
+    expect(reply.body).not.toContain("tok-alice");
   });
 });
 
