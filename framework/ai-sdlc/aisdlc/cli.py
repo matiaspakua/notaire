@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-
 import json
 import os
+import sys
+from pathlib import Path
 
 from aisdlc import (
     __version__,
@@ -31,7 +31,6 @@ from aisdlc import (
     skills,
     stages,
 )
-from aisdlc.telemetry import get_telemetry
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import (
@@ -45,6 +44,7 @@ from aisdlc.factory import (
 from aisdlc.harness import HarnessError
 from aisdlc.lifecycle import DEFAULT_PATH
 from aisdlc.profile import ProfileError, find_profile, load_profile
+from aisdlc.telemetry import get_telemetry
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1343,7 +1343,14 @@ def _metrics(ctx: Context, args: argparse.Namespace) -> int:
 
 
 def _intent_metrics(ctx: Context, args: argparse.Namespace) -> int:
-    from aisdlc.intents import compare, export_csv, finished_runs, log_path, read_events, summary
+    from aisdlc.intents import (
+        compare,
+        export_csv,
+        finished_runs,
+        log_path,
+        read_events,
+        summary,
+    )
 
     events = read_events(log_path(ctx))
     action = args.intents_action
@@ -1372,22 +1379,30 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "submit":
         from aisdlc.intent_model import submit as submit_intent
 
+        # Validate exactly one of --text, --ref, --file
+        text_val = getattr(args, "text", None)
+        ref_val = getattr(args, "ref", None)
+        spec_file_val = getattr(args, "spec_file", None)
+        input_count = sum(1 for v in (text_val, ref_val, spec_file_val) if v is not None)
+        if input_count > 1:
+            print("error: provide exactly one of --text, --ref, --file", file=sys.stderr)
+            return 2
+
         try:
             spec_content = None
-            if getattr(args, "spec_file", None):
-                spec_path = Path(args.spec_file)
-                if spec_path.is_file():
-                    spec_content = spec_path.read_text(encoding="utf-8")
-                else:
-                    print(f"error: spec file not found: {args.spec_file}")
+            if spec_file_val:
+                spec_path = Path(spec_file_val)
+                if not spec_path.is_file():
+                    print(f"error: spec file not found: {spec_file_val}", file=sys.stderr)
                     return 2
+                spec_content = spec_path.read_text(encoding="utf-8")
             intent = submit_intent(
                 ctx,
-                text=getattr(args, "text", None),
-                ref=getattr(args, "ref", None),
+                text=text_val,
+                ref=ref_val,
                 spec=spec_content,
                 title=getattr(args, "title", None),
-                source_ref=getattr(args, "spec_file", None),
+                source_ref=spec_file_val,
             )
             if getattr(args, "json", False):
                 print(json.dumps(intent, indent=2, sort_keys=True))
@@ -1395,7 +1410,7 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
                 print(f"intent submitted: {intent['id']} ({intent['kind']})")
             return 0
         except KitError as exc:
-            print(f"error: {exc.code}: {exc.detail}")
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
             return 2
 
     if args.action == "list":
@@ -1422,7 +1437,7 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
                 print(f"intent {intent['id']}: {intent.get('title', '')} ({intent.get('kind', '')})")
             return 0
         except KitError as exc:
-            print(f"error: {exc.code}: {exc.detail}")
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
             return 2
 
     # --- Legacy intent actions (start/end/tool/run) ---

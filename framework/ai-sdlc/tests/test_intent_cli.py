@@ -110,6 +110,65 @@ class IntentCLITest(unittest.TestCase):
         body = json.loads(ended.stdout)
         self.assertEqual("success", body["outcome"])
 
+    # --- Fix 4: CLI errors go to stderr, not stdout ---
+    def test_cli_submit_error_goes_to_stderr(self):
+        # Submit with no input should error
+        result = self.repo.run("intent", "submit", "--json")
+        self.assertEqual(2, result.returncode)
+        # Stdout should be empty (no error text on stdout)
+        self.assertEqual("", result.stdout.strip())
+        # Stderr should contain the error
+        self.assertIn("error", result.stderr.lower())
+
+    def test_cli_show_not_found_error_to_stderr(self):
+        result = self.repo.run("intent", "show", "nonexistent-id", "--json")
+        self.assertEqual(2, result.returncode)
+        self.assertEqual("", result.stdout.strip())
+        self.assertIn("error", result.stderr.lower())
+
+    # --- Fix 4: reject more than one of --text/--ref/--file ---
+    def test_cli_submit_text_and_ref_rejected(self):
+        result = self.repo.run("intent", "submit", "--text", "hello", "--ref", "github:#1")
+        self.assertEqual(2, result.returncode)
+        self.assertIn("error", result.stderr.lower())
+
+    def test_cli_submit_text_and_file_rejected(self):
+        spec_path = self.repo.root / "spec.md"
+        spec_path.write_text("# Test\n", encoding="utf-8")
+        result = self.repo.run("intent", "submit", "--text", "hello", "--file", str(spec_path))
+        self.assertEqual(2, result.returncode)
+        self.assertIn("error", result.stderr.lower())
+
+    def test_cli_submit_ref_and_file_rejected(self):
+        spec_path = self.repo.root / "spec.md"
+        spec_path.write_text("# Test\n", encoding="utf-8")
+        result = self.repo.run("intent", "submit", "--ref", "github:#1", "--file", str(spec_path))
+        self.assertEqual(2, result.returncode)
+        self.assertIn("error", result.stderr.lower())
+
+    def test_cli_submit_all_three_rejected(self):
+        spec_path = self.repo.root / "spec.md"
+        spec_path.write_text("# Test\n", encoding="utf-8")
+        result = self.repo.run("intent", "submit", "--text", "hello", "--ref", "github:#1", "--file", str(spec_path))
+        self.assertEqual(2, result.returncode)
+        self.assertIn("error", result.stderr.lower())
+
+    # --- Fix 4: --file with missing file → error ---
+    def test_cli_submit_missing_file(self):
+        result = self.repo.run("intent", "submit", "--file", "/nonexistent/path/spec.md")
+        self.assertEqual(2, result.returncode)
+        self.assertIn("error", result.stderr.lower())
+
+    # --- Fix 4: --json output goes to stdout only ---
+    def test_cli_submit_json_stdout_clean(self):
+        result = self.repo.run("intent", "submit", "--text", "Clean json test", "--json")
+        self.assertEqual(0, result.returncode, output(result))
+        # Stdout should be valid JSON
+        intent = json.loads(result.stdout)
+        self.assertEqual("prompt", intent["kind"])
+        # Stderr should be empty for success
+        self.assertEqual("", result.stderr.strip())
+
 
 if __name__ == "__main__":
     unittest.main()
