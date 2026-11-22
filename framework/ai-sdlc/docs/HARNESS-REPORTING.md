@@ -37,6 +37,16 @@ row carries `prev` = SHA-256 of the previous line (`genesis` for the first).
 `aisdlc evidence verify` must remain green after harness reports. Adapters must
 not rewrite, delete, or reorder prior rows.
 
+## Adapter validation
+
+`aisdlc harness report` accepts adapter ids returned by `aisdlc harness list` **plus**
+the kit's built-in reference adapter `local-worker`. The reference adapter is always
+accepted even when no `[harness.adapters]` are declared in the profile — it is the
+default for `--adapter` and needs no registration.
+
+Supplying any other unknown adapter exits with code 2 and error code `unknown_adapter`,
+naming the known adapter ids; no ledger record is written.
+
 ## Honesty
 
 - Cancel via HTTP returns **501** with the capabilities.runner reason until a

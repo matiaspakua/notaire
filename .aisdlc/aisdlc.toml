@@ -453,6 +453,13 @@ manifest = "framework/ai-sdlc/plugins/openai-codex/plugin.toml"
 trusted = false
 
 [[plugins.entries]]
+id = "junie"
+kind = "harness"
+version = "1.0.0"
+manifest = "framework/ai-sdlc/plugins/junie/plugin.toml"
+trusted = false
+
+[[plugins.entries]]
 id = "agent-client-protocol"
 kind = "harness"
 version = "1.0.0"

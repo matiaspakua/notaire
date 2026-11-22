@@ -12,7 +12,12 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
+from aisdlc.errors import KitError
 from aisdlc.profile import Profile, ProfileError
+
+# The kit's built-in reference adapter id — always accepted by `harness report`
+# even when no [harness.adapters] are declared in the profile.
+REFERENCE_ADAPTER = "local-worker"
 
 
 def list_adapters(root: Path, profile: Profile) -> list[dict]:
@@ -106,7 +111,7 @@ def report_event(
     *,
     run_id: str,
     event: str,
-    adapter: str = "local-worker",
+    adapter: str = REFERENCE_ADAPTER,
     step: str | None = None,
     step_status: str | None = None,
     ok: bool | None = None,
@@ -117,8 +122,16 @@ def report_event(
     """Local-worker reference adapter: append a harness run event (#2255).
 
     Never launches agents. Hash-chain append only — see docs/HARNESS-REPORTING.md.
+    The kit's reference adapter id is always accepted, even when unregistered.
     """
     from aisdlc import runs
+
+    known_ids = [row["id"] for row in list_adapters(ctx.root, ctx.profile)]
+    if adapter != REFERENCE_ADAPTER and adapter not in known_ids:
+        raise KitError(
+            "unknown_adapter",
+            f"unknown adapter {adapter!r}; known adapters: {', '.join(known_ids)}",
+        )
 
     return runs.append_harness_event(
         ctx,
