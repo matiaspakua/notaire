@@ -18,12 +18,6 @@ from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.evidence import now as evidence_now
 
-try:
-    from aisdlc.telemetry_store import dual_write_event  # noqa: F401
-except Exception:
-    def dual_write_event(ctx, kind, data):  # type: ignore[no-redef]
-        pass
-
 RUNS_DIR = ".aisdlc/runs"
 RUN_KINDS = (
     "run.request",
@@ -190,20 +184,18 @@ def start(
         if isinstance(step, dict) and step.get("id"):
             seed_steps.append({"id": str(step["id"]), "status": "pending"})
 
-    event_data = {
-        "kind": "run.request",
-        "run_id": rid,
-        "project": project_id,
-        "workflow": wf_ref,
-        "requested_by": requested_by,
-        "ts": requested_at,
-        "ok": True,
-    }
-    evidence.append_record(ctx, event_data)
-    try:
-        dual_write_event(ctx, "run.request", event_data)
-    except Exception:
-        pass
+    evidence.append_record(
+        ctx,
+        {
+            "kind": "run.request",
+            "run_id": rid,
+            "project": project_id,
+            "workflow": wf_ref,
+            "requested_by": requested_by,
+            "ts": requested_at,
+            "ok": True,
+        },
+    )
 
     payload = {
         "id": rid,
@@ -292,10 +284,6 @@ def append_harness_event(
         record["ok"] = True
 
     evidence.append_record(ctx, record)
-    try:
-        dual_write_event(ctx, event, record)
-    except Exception:
-        pass
     refreshed = _refresh(ctx, payload)
     return _write(_path(ctx, run_id), refreshed)
 

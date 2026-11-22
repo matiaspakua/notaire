@@ -37,8 +37,23 @@ def _append(ctx: Context, name: str, record: dict) -> Path:
     path = folder / name
     record = {**record, "prev": _digest(_last_line(path))}
     with path.open("a", encoding="utf-8") as handle:
-        handle.write(json.dumps(record, sort_keys=True) + "\n")
+        line = json.dumps(record, sort_keys=True) + "\n"
+        handle.write(line)
+    # Dual-write mirror to the store (fail-open, single choke point)
+    _mirror(ctx, name, line.rstrip("\n"))
     return path
+
+
+def _mirror(ctx: Context, name: str, raw_line: str) -> None:
+    """Mirror a freshly written ledger/cost line to the SQLite store (fail-open)."""
+    try:
+        from aisdlc.telemetry_store import mirror_line as _ml
+
+        source = "ledger" if name == LEDGER else ("cost" if name == COSTS else None)
+        if source:
+            _ml(ctx, source, raw_line)
+    except Exception:
+        pass  # store is supplementary — never break the primary path
 
 
 def _digest(line: str | None) -> str:

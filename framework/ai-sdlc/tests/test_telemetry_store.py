@@ -8,20 +8,15 @@ ImportError until the production module exists.
 from __future__ import annotations
 
 import json
-import os
-import shutil
 import sqlite3
-import subprocess
 import sys
-import tempfile
 import threading
-import time
 import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
 
-from helpers import ENV, KIT, Repo, output, git
+from helpers import KIT, Repo, output
 
 sys.path.insert(0, str(KIT))
 
@@ -66,9 +61,10 @@ class TelemetryStoreSyncTest(unittest.TestCase):
     def test_sync_ledger(self) -> None:
         """sync imports ledger rows into the events table."""
         from aisdlc import evidence
-        from aisdlc.telemetry_store import sync
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -76,13 +72,21 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
-        # Write two ledger rows via evidence.append_record.
+        # Write two ledger rows via evidence.append_record (mirror writes them).
         evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00"})
         evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-merge", "ok": False, "ts": "2026-01-01T00:01:00+00:00"})
 
+        # sync is idempotent — mirror already wrote, so sync inserts 0 new.
         result = sync(ctx)
         self.assertIn("ledger", result)
-        self.assertGreaterEqual(result["ledger"], 2)
+        self.assertEqual(0, result["ledger"], "mirror already imported; sync inserts 0")
+
+        # But the events table should have the rows from mirror.
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        rows = conn.execute("SELECT kind FROM events WHERE kind='stage-run'").fetchall()
+        conn.close()
+        self.assertGreaterEqual(len(rows), 2)
 
     # ------------------------------------------------------------------
     # Cost sync
@@ -90,9 +94,10 @@ class TelemetryStoreSyncTest(unittest.TestCase):
     def test_sync_cost(self) -> None:
         """sync imports cost log entries into the telemetry table."""
         from aisdlc import evidence
-        from aisdlc.telemetry_store import sync
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -100,22 +105,30 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
-        # Write three cost entries.
+        # Write three cost entries (mirror writes them).
         evidence.add_cost(ctx, "junie", "gpt-4", 100, 50, 0.01, "1")
         evidence.add_cost(ctx, "junie", "gpt-4", 200, 100, 0.02, "2")
         evidence.add_cost(ctx, "cursor", "claude-3", 50, 25, 0.005, "3")
 
+        # sync is idempotent — mirror already wrote, so sync inserts 0 new.
         result = sync(ctx)
         self.assertIn("cost", result)
-        self.assertGreaterEqual(result["cost"], 3)
+        self.assertEqual(0, result["cost"], "mirror already imported; sync inserts 0")
+
+        # But the telemetry table should have the cost rows from mirror.
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        rows = conn.execute("SELECT agent, metric FROM telemetry WHERE metric='usd'").fetchall()
+        conn.close()
+        self.assertGreaterEqual(len(rows), 3)
 
     def test_sync_cost_maps_to_telemetry_rows(self) -> None:
         """Cost sync maps cost.jsonl rows to telemetry rows with usd, tokens_in, tokens_out."""
         from aisdlc import evidence
-        from aisdlc.telemetry_store import sync
-        from aisdlc.store import store_path
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -149,10 +162,11 @@ class TelemetryStoreSyncTest(unittest.TestCase):
     # RepoLens sync
     # ------------------------------------------------------------------
     def test_sync_repolens(self) -> None:
-        """sync reads RepoLens usage defensively and stores tool/ms/tokens."""
-        from aisdlc.telemetry_store import sync
+        """sync reads RepoLens usage defensively and stores duration_s/tokens_out."""
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -184,15 +198,30 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         self.assertIn("repolens", result)
         self.assertGreaterEqual(result["repolens"], 3)
 
+        # Verify telemetry rows use duration_s metric with agent='repolens'
+        db_path = store_path(self.repo.root)
+        conn = sqlite3.connect(str(db_path))
+        telem = conn.execute(
+            "SELECT agent, tool, metric, value FROM telemetry "
+            "WHERE agent='repolens' ORDER BY tool, metric"
+        ).fetchall()
+        conn.close()
+        # Should have duration_s rows (ms/1000)
+        metrics = [r[2] for r in telem]
+        self.assertIn("duration_s", metrics)
+        # Agent should be repolens
+        agents = [r[0] for r in telem]
+        self.assertTrue(all(a == "repolens" for a in agents))
+
     # ------------------------------------------------------------------
     # Idempotency
     # ------------------------------------------------------------------
     def test_sync_idempotent(self) -> None:
-        """Second sync inserts 0 rows; third sync after new ledger line inserts exactly 1."""
+        """Second sync inserts 0 rows; mirror + sync are idempotent with each other."""
         from aisdlc import evidence
-        from aisdlc.telemetry_store import sync, stats
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.telemetry_store import stats, sync
 
         ctx = Context(
             root=self.repo.root,
@@ -200,9 +229,11 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             profile_path=find_profile(self.repo.root),
         )
 
+        # append_record mirrors to store, so sync inserts 0
         evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-push", "ok": True, "ts": "2026-01-01T00:00:00+00:00"})
 
         first = sync(ctx)
+        self.assertEqual(0, first["ledger"], "mirror already imported; sync inserts 0")
         stats_after_first = stats(ctx)
 
         second = sync(ctx)
@@ -211,17 +242,18 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         stats_after_second = stats(ctx)
         self.assertEqual(stats_after_first["events"], stats_after_second["events"])
 
-        # Append one new ledger line and sync again — should insert exactly 1.
+        # Append one new ledger line and sync again — mirror imports it, sync inserts 0.
         evidence.append_record(ctx, {"kind": "stage-run", "stage": "pre-merge", "ok": True, "ts": "2026-01-01T00:02:00+00:00"})
         third = sync(ctx)
-        self.assertEqual(1, third["ledger"], "third sync should insert exactly 1 ledger row")
+        self.assertEqual(0, third["ledger"], "mirror already imported; sync inserts 0")
+        # But events count should have grown by 1 (from mirror)
         self.assertEqual(stats_after_second["events"] + 1, stats(ctx)["events"])
 
     def test_sync_repolens_malformed_and_missing_keys(self) -> None:
-        """Sync does not raise on malformed JSON or missing optional keys; counts valid ones."""
-        from aisdlc.telemetry_store import sync
+        """Sync does not raise on malformed JSON or missing optional keys; counts all lines."""
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -235,7 +267,7 @@ class TelemetryStoreSyncTest(unittest.TestCase):
             # Valid line
             json.dumps({"ts": 1794941929.0, "src": "server", "client": "mcp",
                         "tool": "search", "ms": 100.0}),
-            # Malformed JSON line
+            # Malformed JSON line (still counted as imported)
             "this is not json at all {{{",
             # Line missing optional keys (tokens, results)
             json.dumps({"ts": 1794941930.0, "src": "server", "client": "mcp",
@@ -249,18 +281,18 @@ class TelemetryStoreSyncTest(unittest.TestCase):
         # Should not raise.
         result = sync(ctx)
         self.assertIn("repolens", result)
-        # 3 valid lines should be counted.
-        self.assertEqual(3, result["repolens"])
+        # 4 lines total (3 valid + 1 malformed, all counted as imported)
+        self.assertEqual(4, result["repolens"])
 
     # ------------------------------------------------------------------
     # RepoLens input and files never stored
     # ------------------------------------------------------------------
     def test_repolens_no_input_or_files(self) -> None:
         """RepoLens 'input' query text and 'files' never appear in any row."""
-        from aisdlc.telemetry_store import sync
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
         from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -301,10 +333,10 @@ class TelemetryStoreSyncTest(unittest.TestCase):
     def test_no_secrets_in_rows(self) -> None:
         """A ledger row with secret-like keys leaves no secret in any table."""
         from aisdlc import evidence
-        from aisdlc.telemetry_store import sync
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
         from aisdlc.store import store_path
+        from aisdlc.telemetry_store import sync
 
         ctx = Context(
             root=self.repo.root,
@@ -359,8 +391,8 @@ class TelemetryStoreRecordTest(unittest.TestCase):
 
     def test_record_redacts_secrets(self) -> None:
         """record with secret-shaped keys drops them before insert."""
-        from aisdlc.telemetry_store import record
         from aisdlc.store import store_path
+        from aisdlc.telemetry_store import record
 
         ctx = self._ctx()
         record(ctx, stage="pre-push", agent="junie", metric="duration_s",
@@ -411,6 +443,9 @@ class TelemetryStoreReportTest(unittest.TestCase):
         pp = rows["pre-push"]
         self.assertAlmostEqual(5.0, pp["duration_s"], places=2)
         self.assertEqual(1, pp["failures"])
+        # Report rows no longer have repolens_calls/repolens_ms
+        self.assertNotIn("repolens_calls", pp)
+        self.assertNotIn("repolens_ms", pp)
 
         pm = rows["pre-merge"]
         self.assertAlmostEqual(1.0, pm["duration_s"], places=2)
@@ -432,58 +467,23 @@ class TelemetryStoreReportTest(unittest.TestCase):
         self.assertEqual(1, result["total_failures"])
 
     def test_report_failures_by_integration(self) -> None:
-        """Report includes failures_by_integration from real harness events."""
-        from aisdlc import runs, harness
-        from aisdlc.cli import load_context
-        from aisdlc.telemetry_store import sync, report
-        from aisdlc.store import open_store
+        """Report includes failures_by_integration from telemetry ok=0 rows."""
+        from aisdlc.telemetry_store import record, report
 
         ctx = self._ctx()
-        open_store(self.repo.root)
+        # Record failures with ok=0 for different agents
+        record(ctx, stage="s1", agent="junie", metric="duration_s", value=2.0, ok=False)
+        record(ctx, stage="s1", agent="junie", metric="duration_s", value=1.0, ok=False)
+        record(ctx, stage="s2", agent="repolens", metric="duration_s", value=0.5, ok=False)
 
-        # Create a run and report failures via harness.
-        from helpers import Repo as _Repo
-        inner_repo = _Repo(self, PROFILE)
-        for kind, cid in (("agents", "implementer"), ("skills", "java"), ("mcp", "github")):
-            inner_repo.run(
-                "catalog", "add", "--kind", kind, "--id", cid,
-                "--ref", f".aisdlc/{kind}/{cid}", "--summary", cid,
-            )
-        inner_repo.run("project", "create", "--id", "alpha",
-                       "--profile-ref", "aisdlc.toml", "--json")
-        inner_repo.run("workflow", "create", "--id", "w1",
-                       "--summary", "w1", "--agent", "implementer",
-                       "--skill", "java", "--mcp", "github", "--json")
-        for action, extra in (
-            ("define", []),
-            ("request_validation", ["--waive-reason", "unit"]),
-            ("approve", ["--owner-override", "--reason", "unit"]),
-        ):
-            inner_repo.run("workflow", "transition", "--id", "w1",
-                           "--action", action, *extra, "--json")
-
-        inner_ctx = load_context(inner_repo.root, inner_repo.root / "aisdlc.toml")
-        run = runs.start(inner_ctx, project_id="alpha", workflow_id="w1")
-        run_id = run["id"]
-
-        # Report 2 failures from local-worker.
-        harness.report_event(inner_ctx, run_id=run_id, event="run.started",
-                             adapter="local-worker")
-        harness.report_event(inner_ctx, run_id=run_id, event="step.finished",
-                             adapter="local-worker", step="s1", step_status="fail")
-        harness.report_event(inner_ctx, run_id=run_id, event="step.finished",
-                             adapter="local-worker", step="s2", step_status="fail")
-        harness.report_event(inner_ctx, run_id=run_id, event="run.finished",
-                             adapter="local-worker", ok=False)
-
-        sync(inner_ctx)
-        result = report(inner_ctx, "stage")
+        result = report(ctx, "stage")
         fbi = result.get("failures_by_integration", {})
-        self.assertEqual(2, fbi.get("local-worker"))
+        self.assertEqual(2, fbi.get("junie"))
+        self.assertEqual(1, fbi.get("repolens"))
 
     def test_report_repolens_summary(self) -> None:
         """Report includes repolens summary from real sync of usage.jsonl."""
-        from aisdlc.telemetry_store import sync, report
+        from aisdlc.telemetry_store import report, sync
 
         ctx = self._ctx()
 
@@ -508,6 +508,7 @@ class TelemetryStoreReportTest(unittest.TestCase):
         result = report(ctx, "stage")
         rp = result.get("repolens", {})
         self.assertEqual(5, rp.get("calls"))
+        # ms values stored as duration_s (ms/1000), total_ms = sum * 1000
         self.assertAlmostEqual(300.0, rp.get("total_ms", 0), places=1)
         self.assertAlmostEqual(60.0, rp.get("avg_ms", 0), places=1)
         by_tool = rp.get("by_tool", {})
@@ -580,8 +581,8 @@ class TelemetryStoreReportTest(unittest.TestCase):
 
     def test_report_invalid_group_raises(self) -> None:
         """Report with invalid group raises KitError with code invalid_group."""
-        from aisdlc.telemetry_store import report
         from aisdlc.errors import KitError
+        from aisdlc.telemetry_store import report
 
         ctx = self._ctx()
         with self.assertRaises(KitError) as cm:
@@ -590,9 +591,9 @@ class TelemetryStoreReportTest(unittest.TestCase):
 
     def test_absent_store_empty_report(self) -> None:
         """Report with no store file returns empty results and does not create the file."""
-        from aisdlc.telemetry_store import report
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.telemetry_store import report
 
         ctx = Context(
             root=self.repo.root,
@@ -616,9 +617,9 @@ class TelemetryStoreReportTest(unittest.TestCase):
 
     def test_absent_store_empty_stats(self) -> None:
         """Stats with no store file returns zero counts and does not create the file."""
-        from aisdlc.telemetry_store import stats
         from aisdlc.context import Context
         from aisdlc.profile import find_profile, load_profile
+        from aisdlc.telemetry_store import stats
 
         ctx = Context(
             root=self.repo.root,
@@ -656,8 +657,8 @@ class TelemetryStoreStatsTest(unittest.TestCase):
 
     def test_stats(self) -> None:
         """Stats returns counts matching inserted rows."""
+        from aisdlc.store import open_store
         from aisdlc.telemetry_store import record, stats
-        from aisdlc.store import open_store, store_path
 
         ctx = self._ctx()
         open_store(self.repo.root)
@@ -670,7 +671,7 @@ class TelemetryStoreStatsTest(unittest.TestCase):
 
 
 class DualWriteFailOpenTest(unittest.TestCase):
-    """Dual-write hooks in runs.start and runs.append_harness_event are fail-open."""
+    """Dual-write via evidence._append mirror is fail-open."""
 
     def setUp(self) -> None:
         self.repo = Repo(self, PROFILE)
@@ -704,17 +705,16 @@ class DualWriteFailOpenTest(unittest.TestCase):
         from aisdlc.cli import load_context
         return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
 
-    def test_dual_write_fail_open(self) -> None:
-        """Patch dual_write_event to raise RuntimeError; runs.start still succeeds."""
+    def test_mirror_fail_open_runs_start(self) -> None:
+        """Patch mirror_line to raise; runs.start still succeeds."""
         from unittest import mock
-        from aisdlc import runs
-        from aisdlc.telemetry_store import dual_write_event
 
-        with mock.patch.object(
-            runs, "dual_write_event",
+        from aisdlc import runs
+
+        with mock.patch(
+            "aisdlc.telemetry_store.mirror_line",
             side_effect=RuntimeError("store locked"),
         ):
-            # runs.start should not raise — fail-open.
             result = runs.start(
                 self._ctx(),
                 project_id="alpha",
@@ -722,17 +722,18 @@ class DualWriteFailOpenTest(unittest.TestCase):
             )
             self.assertIn("id", result)
 
-    def test_dual_write_event_fail_open_harness(self) -> None:
-        """Patch dual_write_event to raise; harness.report_event still succeeds."""
+    def test_mirror_fail_open_harness(self) -> None:
+        """Patch mirror_line to raise; harness.report_event still succeeds."""
         from unittest import mock
-        from aisdlc import runs, harness
+
+        from aisdlc import harness, runs
 
         ctx = self._ctx()
         run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
         run_id = run["id"]
 
-        with mock.patch.object(
-            runs, "dual_write_event",
+        with mock.patch(
+            "aisdlc.telemetry_store.mirror_line",
             side_effect=RuntimeError("store locked"),
         ):
             result = harness.report_event(
@@ -743,16 +744,17 @@ class DualWriteFailOpenTest(unittest.TestCase):
             )
             self.assertIn("id", result)
 
-    def test_dual_write_event_hook_exists(self) -> None:
-        """dual_write_event is a callable on aisdlc.telemetry_store."""
-        from aisdlc.telemetry_store import dual_write_event
-        self.assertTrue(callable(dual_write_event))
+    def test_mirror_line_and_import_line_exist(self) -> None:
+        """mirror_line and import_line are callables on aisdlc.telemetry_store."""
+        from aisdlc.telemetry_store import import_line, mirror_line
+        self.assertTrue(callable(mirror_line))
+        self.assertTrue(callable(import_line))
 
-    def test_dual_write_creates_store_rows(self) -> None:
-        """After runs.start and harness events, store events table has rows."""
-        from aisdlc import runs, harness
+    def test_mirror_creates_store_rows_without_sync(self) -> None:
+        """After runs.start and harness events, store events table has rows
+        WITHOUT calling sync() first — dual-write via mirror."""
+        from aisdlc import harness, runs
         from aisdlc.store import store_path
-        from aisdlc.telemetry_store import sync
 
         ctx = self._ctx()
         run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
@@ -766,8 +768,7 @@ class DualWriteFailOpenTest(unittest.TestCase):
         harness.report_event(ctx, run_id=run_id, event="run.finished", adapter="local-worker",
                              ok=True)
 
-        # Sync ledger to store, then check events table.
-        sync(ctx)
+        # Check events table WITHOUT calling sync() first.
         db_path = store_path(self.repo.root)
         conn = sqlite3.connect(str(db_path))
         rows = conn.execute("SELECT kind, run_id, actor FROM events").fetchall()
@@ -783,13 +784,11 @@ class DualWriteFailOpenTest(unittest.TestCase):
         self.assertIn("step.finished", kinds)
         self.assertIn("run.finished", kinds)
         self.assertTrue(all(rid == run_id for rid in run_ids if rid))
-        # At least some events should have an actor populated.
         self.assertTrue(any(a for a in actors))
 
-    def test_dual_write_fail_event_in_store(self) -> None:
-        """A harness event with step_status=fail is stored with ok=0."""
-        from aisdlc import runs, harness
-        from aisdlc.store import store_path
+    def test_sync_idempotent_with_mirror(self) -> None:
+        """sync() inserts 0 for ledger lines already mirrored by dual-write."""
+        from aisdlc import harness, runs
         from aisdlc.telemetry_store import sync
 
         ctx = self._ctx()
@@ -797,12 +796,30 @@ class DualWriteFailOpenTest(unittest.TestCase):
         run_id = run["id"]
 
         harness.report_event(ctx, run_id=run_id, event="run.started", adapter="local-worker")
+        harness.report_event(ctx, run_id=run_id, event="run.finished", adapter="local-worker",
+                             ok=True)
+
+        # sync should insert 0 for lines already mirrored
+        result = sync(ctx)
+        self.assertEqual(0, result["ledger"],
+                         "sync should insert 0 for already-mirrored ledger lines")
+
+    def test_fail_event_in_store(self) -> None:
+        """A harness event with step_status=fail is stored with step_status=fail in data."""
+        from aisdlc import harness, runs
+        from aisdlc.store import store_path
+
+        ctx = self._ctx()
+        run = runs.start(ctx, project_id="alpha", workflow_id="feature-delivery")
+        run_id = run["id"]
+
+        harness.report_event(ctx, run_id=run_id, event="run.started", adapter="local-worker")
         harness.report_event(ctx, run_id=run_id, event="step.finished", adapter="local-worker",
-                             step="s1", step_status="fail")
+                             step="s1", step_status="fail", ok=False)
         harness.report_event(ctx, run_id=run_id, event="run.finished", adapter="local-worker",
                              ok=False)
 
-        sync(ctx)
+        # Check without sync — mirror should have written the rows
         db_path = store_path(self.repo.root)
         conn = sqlite3.connect(str(db_path))
         rows = conn.execute(
@@ -811,7 +828,6 @@ class DualWriteFailOpenTest(unittest.TestCase):
         conn.close()
 
         self.assertTrue(len(rows) >= 1)
-        # The step.finished event should have ok=false in data.
         found_fail = False
         for row in rows:
             data = json.loads(row[1]) if row[1] else {}
@@ -928,7 +944,7 @@ class ServeTelemetryEndpointTest(unittest.TestCase):
 
     def test_telemetry_endpoint_no_token_401(self) -> None:
         """GET /factory/telemetry without token returns 401."""
-        port, token = self._serve()
+        port, _token = self._serve()
         status, ctype, body = self._get(
             port, "/factory/telemetry?group=stage", token=None,
         )
@@ -939,7 +955,7 @@ class ServeTelemetryEndpointTest(unittest.TestCase):
     def test_telemetry_endpoint_invalid_group_400(self) -> None:
         """GET /factory/telemetry?group=invalid returns 400."""
         port, token = self._serve()
-        status, ctype, body = self._get(
+        status, ctype, _body = self._get(
             port, "/factory/telemetry?group=invalid", token=token,
         )
         self.assertEqual(400, status)
