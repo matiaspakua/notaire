@@ -24,14 +24,12 @@ from aisdlc import (
     intake,
     isolator,
     lifecycle,
+    materialize,
     metrics,
     ratchet,
     repo,
     skills,
     stages,
-)
-from aisdlc import (
-    materialize as _materialize_mod,
 )
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -495,17 +493,13 @@ def build_parser() -> argparse.ArgumentParser:
                 )
 
     _imp = cat_sub.add_parser("import", help="import AI config from a harness layout into catalog entries")
-    _imp.add_argument(
-        "--harness", required=True, choices=sorted(["claude-code", "cursor", "codex", "junie", "kiro", "agy"]),
-    )
+    _imp.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
     _imp.add_argument("--from", dest="from_dir", required=True, help="source harness root directory", type=Path)
     _imp.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
     _imp.add_argument("--json", action="store_true")
 
     _mat = cat_sub.add_parser("materialize", help="project catalog entries into a harness layout")
-    _mat.add_argument(
-        "--harness", required=True, choices=sorted(["claude-code", "cursor", "codex", "junie", "kiro", "agy"]),
-    )
+    _mat.add_argument("--harness", required=True, choices=sorted(materialize.LAYOUTS))
     _mat.add_argument("--dest", required=True, help="destination directory", type=Path)
     _mat.add_argument("--kind", choices=list(catalogs.KINDS), help="limit to one kind")
     _mat.add_argument("--check", action="store_true", help="verify disk without writing (exits 1 on drift)")
@@ -1034,14 +1028,14 @@ def _catalog(ctx: Context, args: argparse.Namespace) -> int:
         if args.action in ("add", "update"):
             return _catalog_write(ctx, args)
         if args.action == "import":
-            return _materialize_mod.import_harness(
+            return materialize.import_harness(
                 ctx,
                 args.harness,
                 Path(args.from_dir),
                 kind_filter=getattr(args, "kind", None),
             )
         if args.action == "materialize":
-            return _materialize_mod.materialize_harness(
+            return materialize.materialize_harness(
                 ctx,
                 args.harness,
                 Path(args.dest),

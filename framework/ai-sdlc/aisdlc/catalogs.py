@@ -172,6 +172,15 @@ def _exists(ctx: Context, kind: str, entry_id: str) -> bool:
     return _current_path(ctx, kind, entry_id).is_file() or _legacy_path(ctx, kind, entry_id).is_file()
 
 
+def has_entry(ctx: Context, kind: str, entry_id: str) -> bool:
+    """Return True when a current revision for *kind*/*entry_id* exists."""
+    try:
+        load_entry(ctx, kind, entry_id)
+        return True
+    except KitError:
+        return False
+
+
 def load_entry(ctx: Context, kind: str, entry_id: str) -> dict:
     """Load the current revision (directory layout or legacy flat file)."""
     if kind not in KINDS:

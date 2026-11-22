@@ -13,7 +13,7 @@ from helpers import KIT, Repo, output
 
 sys.path.insert(0, str(KIT))
 from aisdlc import catalogs, evidence
-from aisdlc.context import Context
+from aisdlc.cli import load_context
 from aisdlc.errors import KitError
 from aisdlc.telemetry import MemoryTelemetry
 
@@ -217,7 +217,7 @@ class CatalogMaterializeTest(unittest.TestCase):
         res_mat = self.repo.run("catalog", "materialize", "--harness", "claude-code", "--dest", str(dest_dir))
         self.assertEqual(0, res_mat.returncode, output(res_mat))
 
-        ctx = Context(self.repo.root)
+        ctx = load_context(self.repo.root, None)
         records = evidence.ledger_records(ctx)
         kinds = [r.get("kind") for r in records]
         self.assertIn("catalog.import", kinds)
