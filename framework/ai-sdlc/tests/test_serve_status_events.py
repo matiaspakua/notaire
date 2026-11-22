@@ -38,6 +38,30 @@ source = ".aisdlc/harness/local-worker.yml"
 """
 
 
+def _read_frame(resp: http.client.HTTPResponse) -> dict[str, str]:
+    """Read one SSE frame from an HTTPResponse using readline.
+
+    Returns a dict with 'id', 'event', 'data' keys (or empty strings).
+    Raises on connection close.
+    """
+    frame: dict[str, str] = {"id": "", "event": "", "data": ""}
+    while True:
+        line = resp.fp.readline()
+        if not line:
+            raise ConnectionError("connection closed")
+        text = line.decode("utf-8", errors="replace").rstrip("\r\n")
+        if text == "":
+            # Blank line ends the frame
+            break
+        if text.startswith("id: "):
+            frame["id"] = text[4:]
+        elif text.startswith("event: "):
+            frame["event"] = text[7:]
+        elif text.startswith("data: "):
+            frame["data"] = text[6:]
+    return frame
+
+
 class ServeStatusEventsTest(unittest.TestCase):
     """HTTP tests for GET /factory/status and GET /factory/events."""
 
@@ -227,12 +251,11 @@ class ServeStatusEventsTest(unittest.TestCase):
         )
         resp = conn.getresponse()
         self.assertEqual(200, resp.status)
-        # Read a chunk — should only contain id: 3
-        chunk = resp.read(4096).decode("utf-8", errors="replace")
+        frame = _read_frame(resp)
         conn.close()
-        self.assertIn("id: 3", chunk)
-        self.assertNotIn("id: 1", chunk)
-        self.assertNotIn("id: 2", chunk)
+        self.assertEqual("3", frame["id"])
+        self.assertNotIn("id: 1", frame["data"])
+        self.assertNotIn("id: 2", frame["data"])
 
     def test_events_replay_with_query_after(self) -> None:
         """?after=2 returns only rows from line 3 onward."""
@@ -261,10 +284,9 @@ class ServeStatusEventsTest(unittest.TestCase):
         )
         resp = conn.getresponse()
         self.assertEqual(200, resp.status)
-        chunk = resp.read(4096).decode("utf-8", errors="replace")
+        frame = _read_frame(resp)
         conn.close()
-        self.assertIn("id: 3", chunk)
-        self.assertNotIn("id: 1", chunk)
+        self.assertEqual("3", frame["id"])
 
     def test_events_invalid_last_event_id_returns_400(self) -> None:
         """Invalid Last-Event-ID ('abc') returns 400 application/problem+json."""
@@ -288,7 +310,6 @@ class ServeStatusEventsTest(unittest.TestCase):
         from aisdlc import evidence
 
         ctx = self._ctx()
-        # Write one initial row
         evidence.append_record(ctx, {
             "kind": "run.request", "run_id": "R1",
             "ts": "2026-11-22T10:00:00+00:00",
@@ -304,8 +325,8 @@ class ServeStatusEventsTest(unittest.TestCase):
         self.assertEqual(200, resp.status)
 
         # Read the first frame (id: 1)
-        first_chunk = resp.read(4096).decode("utf-8", errors="replace")
-        self.assertIn("id: 1", first_chunk)
+        frame1 = _read_frame(resp)
+        self.assertEqual("1", frame1["id"])
 
         # Append a new row while connection is open
         evidence.append_record(ctx, {
@@ -314,20 +335,17 @@ class ServeStatusEventsTest(unittest.TestCase):
         })
 
         # Wait for the server to poll and emit the new row
-        all_data = first_chunk
         deadline = time.monotonic() + 5
         while time.monotonic() < deadline:
             try:
-                more = resp.read(4096).decode("utf-8", errors="replace")
-                if more:
-                    all_data += more
-                    if "id: 2" in all_data:
-                        break
-                time.sleep(0.2)
-            except (OSError, TimeoutError):
+                frame2 = _read_frame(resp)
+                if frame2["id"] == "2":
+                    conn.close()
+                    return
+            except ConnectionError:
                 break
         conn.close()
-        self.assertIn("id: 2", all_data)
+        self.fail("id: 2 frame not received in time")
 
     def test_sse_and_status_not_blocked(self) -> None:
         """While one SSE connection is open, GET /factory/status still answers."""
@@ -349,8 +367,8 @@ class ServeStatusEventsTest(unittest.TestCase):
         )
         sse_resp = sse_conn.getresponse()
         self.assertEqual(200, sse_resp.status)
-        # Read a bit to establish the connection
-        sse_resp.read(256)
+        # Read a frame to establish the connection
+        _read_frame(sse_resp)
 
         # Now make a status request on a separate connection
         status_conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)

@@ -119,7 +119,9 @@ class LedgerRowsTest(unittest.TestCase):
         return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
 
     def _ledger_path(self) -> Path:
-        return self.repo.root / ".aisdlc" / "evidence" / "ledger.jsonl"
+        path = self.repo.root / ".aisdlc" / "evidence" / "ledger.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path
 
     def test_ledger_rows_returns_all_rows(self) -> None:
         from aisdlc.events_stream import ledger_rows
@@ -251,18 +253,16 @@ class ParseLastEventIdTest(unittest.TestCase):
         self.assertEqual(0, result)
 
     def test_parse_last_event_id_invalid_raises(self) -> None:
-        from aisdlc.events_stream import parse_last_event_id
-
         from aisdlc.errors import KitError
+        from aisdlc.events_stream import parse_last_event_id
 
         with self.assertRaises(KitError) as cm:
             parse_last_event_id("abc", None)
         self.assertEqual("invalid_body", cm.exception.code)
 
     def test_parse_last_event_id_negative_raises(self) -> None:
-        from aisdlc.events_stream import parse_last_event_id
-
         from aisdlc.errors import KitError
+        from aisdlc.events_stream import parse_last_event_id
 
         with self.assertRaises(KitError) as cm:
             parse_last_event_id("-1", None)
@@ -286,7 +286,9 @@ class StreamTest(unittest.TestCase):
         return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
 
     def _ledger_path(self) -> Path:
-        return self.repo.root / ".aisdlc" / "evidence" / "ledger.jsonl"
+        path = self.repo.root / ".aisdlc" / "evidence" / "ledger.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path
 
     def test_stream_replays_existing_rows(self) -> None:
         from aisdlc.events_stream import stream
@@ -415,10 +417,10 @@ class StreamTest(unittest.TestCase):
         def should_stop() -> bool:
             return False  # would loop forever without BrokenPipeError
 
-        # Should not raise
+        # Should not raise — clock advances so keepalive triggers the 2nd write
         stream(
             ctx, write, after=0,
-            poll_seconds=1.0, keepalive_seconds=15.0,
+            poll_seconds=1.0, keepalive_seconds=0.0,
             should_stop=should_stop,
             sleep=lambda s: None,
             clock=lambda: 0,
