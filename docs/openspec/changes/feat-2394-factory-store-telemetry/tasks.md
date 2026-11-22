@@ -29,9 +29,9 @@
 ## 4. Implementación
 
 - [ ] 4.1 Create `aisdlc/store.py`: SQLite connection, schema_migrations table, migration functions for events/intents/telemetry/benchmarks/config_snapshots tables, `migrate()` function, `.aisdlc/.gitignore` for `factory.db`
-- [ ] 4.2 Create `aisdlc/telemetry_store.py`: `sync()` for ledger/cost/RepoLens with idempotency keys, `stats()`, `record()` with redaction, `report()` with group-by logic
+- [ ] 4.2 Create `aisdlc/telemetry_store.py`: `sync()` for ledger/cost/RepoLens with idempotency keys, `stats()`, `record()` with redaction, `report()` with group-by logic including `failures_by_integration` and `repolens` summary object
 - [ ] 4.3 Add CLI subparsers in `aisdlc/cli.py`: `store sync`, `store stats --json`, `telemetry record`, `telemetry report --group --json`
-- [ ] 4.4 Add dual-write hooks in `aisdlc/harness.py::report_event()` and `aisdlc/runs.py::request_run()` (fail-open try/except)
+- [ ] 4.4 Add dual-write hooks in `aisdlc/runs.py::start()` (run.request event) and `aisdlc/runs.py::append_harness_event()` (all harness events; `harness.report_event` delegates to it) — fail-open try/except
 - [ ] 4.5 Add serve route in `aisdlc/serve.py`: `GET /factory/telemetry?group=...` (read scope)
 - [ ] 4.6 Update `framework/ai-sdlc/openapi/factory-control.openapi.yaml` with new endpoint
 - [ ] 4.7 Update `framework/ai-sdlc/README.md` with store and telemetry commands

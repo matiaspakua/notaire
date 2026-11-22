@@ -149,3 +149,22 @@ response SHALL match the JSON shape of `aisdlc telemetry report --json`.
 
 - **WHEN** a client sends `GET /factory/telemetry?group=invalid` with a valid token
 - **THEN** the response is 400 with an error message listing valid groups
+
+#### Scenario: report includes failure counts by integration
+
+- **WHEN** the store has harness events with `ok=false` from adapters `junie` (2
+  failures) and `repolens` (1 failure)
+- **THEN** the report JSON contains `failures_by_integration: {"junie": 2, "repolens": 1}`
+
+#### Scenario: report includes repolens summary
+
+- **WHEN** the store has RepoLens sync rows with tools `search` (3 calls, 120 ms total)
+  and `node` (2 calls, 80 ms total)
+- **THEN** the report JSON contains `repolens: {calls: 5, total_ms: 200, avg_ms: 40,
+  by_tool: {"search": 3, "node": 2}}`
+
+#### Scenario: GET /factory/telemetry matches CLI report
+
+- **WHEN** a client sends `GET /factory/telemetry?group=stage` with a valid read token
+- **THEN** the response body is the same JSON shape as `aisdlc telemetry report --group stage --json`
+  including `failures_by_integration` and `repolens` fields

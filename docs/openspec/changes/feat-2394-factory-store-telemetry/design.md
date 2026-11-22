@@ -56,8 +56,9 @@ run request) must not fail. The dual-write hook catches and logs the exception.
 
 ### Redact before store
 
-**Why redact at insert time?** The `telemetry.redact_attributes` function already
-filters banned keys (prompt, secret, token, etc.). We apply it to every row before
+**Why redact at insert time?** The `telemetry.redact_attributes` function drops both
+keys and values that match banned words (prompt, diff, secret, password, token,
+authorization, api_key, private_key, credential). We apply it to every row before
 insert. For RepoLens, we additionally drop `input` (query text) and `files` keys
 explicitly — they are not covered by the regex but contain sensitive content.
 
@@ -67,6 +68,26 @@ The report returns a JSON object with:
 - `group`: the grouping dimension (intent, stage, agent, skill, tool).
 - `rows`: array of `{key, runs, duration_s, usd, failures, repolens_calls, repolens_ms}`.
 - `total_runs`, `total_duration_s`, `total_usd`, `total_failures`.
+- `failures_by_integration`: object mapping integration name (tool/adapter id such as
+  `repolens` or the harness adapter id) to the failure count.
+- `repolens`: object `{calls, total_ms, avg_ms, by_tool}` summarizing RepoLens usage
+  (calls is total invocations, total_ms is sum of latency, avg_ms is mean latency,
+  by_tool maps tool name to call count).
+
+`GET /factory/telemetry` returns the same JSON as `aisdlc telemetry report`.
+
+#### Scenario: report includes failure counts by integration
+
+- **WHEN** the store has harness events with `ok=false` from adapters `junie` (2
+  failures) and `repolens` (1 failure)
+- **THEN** the report contains `failures_by_integration: {"junie": 2, "repolens": 1}`
+
+#### Scenario: report includes repolens summary
+
+- **WHEN** the store has RepoLens sync rows with tools `search` (3 calls, 120 ms total)
+  and `node` (2 calls, 80 ms total)
+- **THEN** the report contains `repolens: {calls: 5, total_ms: 200, avg_ms: 40,
+  by_tool: {"search": 3, "node": 2}}`
 
 ## Riesgos / Trade-offs
 

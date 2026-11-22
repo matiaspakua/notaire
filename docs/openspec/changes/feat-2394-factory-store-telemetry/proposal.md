@@ -1,4 +1,4 @@
-# <!-- change title -->
+# Factory Store — Persistent SQLite Telemetry Store
 
 > Governed by [CONSTITUTION.md](../../../../CONSTITUTION.md). This proposal documents
 > **only this change**; permanent documentation remains the single source of truth.
@@ -8,7 +8,7 @@
 | GitHub Issue | #2394 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
 | Branch | `feat/2394_factory_store_telemetry` |
-| Gate 1 status | <!-- pending / passed --> |
+| Gate 1 status | passed |
 
 ## Objetivo
 
@@ -29,7 +29,8 @@ making the factory observable across sessions.
    `report()` groups by intent, stage, agent, skill, or tool with time, cost, and failure counts.
 3. **CLI extensions in `aisdlc/cli.py`** — new subparsers: `aisdlc store sync`,
    `aisdlc store stats --json`, `aisdlc telemetry record`, `aisdlc telemetry report --group --json`.
-4. **Dual-write hooks** — `aisdlc/harness.py::report_event()` and `aisdlc/runs.py::request_run()`
+4. **Dual-write hooks** — `aisdlc/runs.py::start()` (run.request event) and
+   `aisdlc/runs.py::append_harness_event()` (all harness events; `harness.report_event` delegates to it)
    write events to the store (fail-open: store failure never breaks the primary path).
 5. **Serve route in `aisdlc/serve.py`** — `GET /factory/telemetry?group=intent|stage|agent|skill|tool`
    returns the telemetry report (read scope).
