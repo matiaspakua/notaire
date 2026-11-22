@@ -12,7 +12,7 @@ Owners: `CONSTITUTION.md` §5, `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-
 ## 1. Read the whole PR first
 
 Merge state and open review threads. A PR is ready when `bash workspace/sdlc/preflight.sh --full`
-has passed on the head. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
+has passed on the head. It runs the suites the branch touches; `--all` runs every suite (#2413). `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
 Product workflows do not run on the pull request (#2001). The script fails only when a heavy
 workflow was started on that head and is pending or red.
 
