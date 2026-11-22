@@ -198,6 +198,20 @@ class MCPServerTest(unittest.TestCase):
         # Tool not found should return isError
         self.assertTrue(resp["result"].get("isError", False))
 
+    # --- Fix 2: MCP intent_show rejects path traversal ---
+    def test_mcp_intent_show_rejects_path_traversal(self):
+        proc = self._spawn_mcp()
+        self._send(proc, "initialize", {"protocolVersion": "2024-11-05", "capabilities": {}})
+        self._send(proc, "notifications/initialized", {}, is_notification=True)
+
+        resp = self._send(proc, "tools/call", {
+            "name": "intent_show",
+            "arguments": {"id": "../../etc/passwd"},
+        })
+        self.assertIn("result", resp)
+        # Should return an error (isError) for invalid id
+        self.assertTrue(resp["result"].get("isError", False))
+
 
 if __name__ == "__main__":
     unittest.main()

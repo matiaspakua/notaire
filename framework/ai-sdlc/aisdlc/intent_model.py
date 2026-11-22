@@ -8,8 +8,10 @@ the reference — no network call is made.
 from __future__ import annotations
 
 import json
+import os
 import re
 import secrets
+import tempfile
 from pathlib import Path
 
 from aisdlc import evidence
@@ -21,6 +23,20 @@ from aisdlc.factory import SECRET_VALUES
 
 INTENTS_DIR = ".aisdlc/intents"
 VALID_SYSTEMS = ("github", "jira", "url", "file")
+
+# Intent id pattern — same shape as serve.ID_RE
+_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+
+
+# ---------------------------------------------------------------------------
+# Id validation
+# ---------------------------------------------------------------------------
+
+def _assert_id(value: str) -> str:
+    """Validate an intent id — rejects path traversal and invalid characters."""
+    if not value or not _ID_RE.fullmatch(value):
+        raise KitError("invalid_id", f"invalid intent id {value!r}")
+    return value
 
 
 # ---------------------------------------------------------------------------
@@ -67,7 +83,7 @@ def parse_spec(markdown: str) -> dict:
     # Gather description: text before any ## heading, plus ## Description body
     desc_section = sections.get("## Description", [])
     if desc_section:
-        description_lines = [l.strip() for l in desc_section if l.strip()]
+        description_lines = [line.strip() for line in desc_section if line.strip()]
     else:
         # Text before the first ## heading
         for line in lines:
@@ -172,20 +188,31 @@ def _write_intent(ctx: Context, intent: dict) -> dict:
     version = _next_version(ctx, intent_id)
     intent["version"] = version
 
+    payload_text = json.dumps(intent, indent=2, sort_keys=True) + "\n"
+
     # Write version file
     vpath = _version_path(ctx, intent_id, version)
     vpath.parent.mkdir(parents=True, exist_ok=True)
-    vpath.write_text(json.dumps(intent, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    vpath.write_text(payload_text, encoding="utf-8")
 
-    # Write current.json
+    # Write current.json atomically (temp file + os.replace)
     cpath = _current_path(ctx, intent_id)
     cpath.parent.mkdir(parents=True, exist_ok=True)
-    cpath.write_text(json.dumps(intent, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    dir_path = cpath.parent
+    fd, tmp_path = tempfile.mkstemp(dir=str(dir_path), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(payload_text)
+        os.replace(tmp_path, str(cpath))
+    except BaseException:
+        os.unlink(tmp_path)
+        raise
 
     return intent
 
 
 def _read_intent(ctx: Context, intent_id: str) -> dict:
+    _assert_id(intent_id)
     cpath = _current_path(ctx, intent_id)
     if not cpath.is_file():
         raise KitError("not_found", f"intent not found: {intent_id}")
@@ -199,10 +226,11 @@ def _read_intent(ctx: Context, intent_id: str) -> dict:
 # Secrets check
 # ---------------------------------------------------------------------------
 
-def _check_secrets(text: str) -> None:
-    """Raise KitError if text matches factory SECRET_VALUES patterns."""
-    if SECRET_VALUES.search(text):
-        raise KitError("literal_secret", "intent text contains a value that looks like a secret")
+def _check_secrets(*texts: str) -> None:
+    """Raise KitError if any text matches factory SECRET_VALUES patterns."""
+    for text in texts:
+        if text and SECRET_VALUES.search(text):
+            raise KitError("literal_secret", "intent text contains a value that looks like a secret")
 
 
 # ---------------------------------------------------------------------------
@@ -250,13 +278,18 @@ def submit(
     spec: str | None = None,
     title: str | None = None,
     actor: str | None = None,
+    source_ref: str | None = None,
 ) -> dict:
     """Create an intent (prompt | reference | spec).
 
     Exactly one of ``text``, ``ref``, ``spec`` must be provided.
+    ``source_ref`` is used only for spec intents submitted via CLI ``--file``.
     """
     actor = actor or from_env(channel="cli")
     created_at = evidence_now()
+
+    if title is not None:
+        _check_secrets(title)
 
     if text is not None:
         _check_secrets(text)
@@ -265,7 +298,7 @@ def submit(
             "kind": "prompt",
             "title": title or text,
             "text": text,
-            "source": {"system": "cli", "ref": ""},
+            "source": {"system": "", "ref": ""},
             "acceptance": [],
             "references": [],
             "status": "open",
@@ -305,7 +338,7 @@ def submit(
             "kind": "spec",
             "title": title or parsed["title"],
             "text": parsed["text"],
-            "source": {"system": "file", "ref": ""},
+            "source": {"system": "file", "ref": source_ref or ""},
             "acceptance": parsed["acceptance"],
             "references": parsed["references"],
             "status": "open",

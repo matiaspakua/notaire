@@ -293,6 +293,75 @@ class IntentModelListShowTest(unittest.TestCase):
             show_intent(ctx, "int-nonexistent")
 
 
+class IntentModelSecurityTest(unittest.TestCase):
+    """Tests for path traversal, secrets in title, prompt source, and CLI file ref."""
+
+    def setUp(self) -> None:
+        self.repo = Repo(self, PROFILE)
+
+    def _ctx(self):
+        from aisdlc.cli import load_context
+
+        return load_context(self.repo.root, self.repo.root / "aisdlc.toml")
+
+    # --- Fix 2: path traversal in show_intent ---
+    def test_show_intent_rejects_path_traversal(self):
+        from aisdlc.errors import KitError
+        from aisdlc.intent_model import show_intent
+
+        ctx = self._ctx()
+        with self.assertRaises(KitError) as cm:
+            show_intent(ctx, "../../etc/passwd")
+        self.assertEqual("invalid_id", cm.exception.code)
+
+    # --- Fix 2: path traversal in attach_run ---
+    def test_attach_run_rejects_path_traversal(self):
+        from aisdlc.errors import KitError
+        from aisdlc.intent_model import attach_run
+
+        ctx = self._ctx()
+        with self.assertRaises(KitError) as cm:
+            attach_run(ctx, "../../../x", "run-abc")
+        self.assertEqual("invalid_id", cm.exception.code)
+
+    # --- Fix 3: secrets in title are refused ---
+    def test_secrets_in_title_refused(self):
+        from aisdlc.errors import KitError
+        from aisdlc.intent_model import submit
+
+        ctx = self._ctx()
+        with self.assertRaises(KitError) as cm:
+            submit(ctx, text="safe text", title="Use ghp_ABCDEFGHIJKLMNOP", actor="test-agent")
+        self.assertEqual("literal_secret", cm.exception.code)
+
+    # --- Fix 4: prompt intent source is empty, not "cli" ---
+    def test_prompt_intent_source_is_empty(self):
+        from aisdlc.intent_model import submit
+
+        ctx = self._ctx()
+        intent = submit(ctx, text="Source test", actor="test-agent")
+        self.assertEqual("prompt", intent["kind"])
+        self.assertEqual("", intent["source"]["system"])
+        self.assertEqual("", intent["source"]["ref"])
+
+    # --- Fix 4: spec submitted via CLI --file records source_ref ---
+    def test_cli_file_spec_records_source_ref(self):
+        from aisdlc.intent_model import submit
+
+        ctx = self._ctx()
+        spec_path = self.repo.root / "spec.md"
+        spec_path.write_text("# Test spec\n\nSome description.\n", encoding="utf-8")
+        intent = submit(
+            ctx,
+            spec=spec_path.read_text(encoding="utf-8"),
+            source_ref=str(spec_path),
+            actor="test-agent",
+        )
+        self.assertEqual("spec", intent["kind"])
+        self.assertEqual("file", intent["source"]["system"])
+        self.assertEqual(str(spec_path), intent["source"]["ref"])
+
+
 class IntentUniformRepresentationTest(unittest.TestCase):
     """Scenario: same intent produced from CLI, API, and MCP — uniform representation."""
 
@@ -317,10 +386,15 @@ class IntentUniformRepresentationTest(unittest.TestCase):
         i2 = submit(ctx, text=shared_text, actor="api-actor")
         i3 = submit(ctx, text=shared_text, actor="mcp-actor")
 
-        # Normalize: drop id, created_at, created_by, run_ids (expected to differ)
+        # Normalize: drop id, created_at, created_by, run_ids, source.ref (file path may differ)
         def normalize(intent):
-            return {k: v for k, v in intent.items()
-                    if k not in ("id", "created_at", "created_by", "run_ids")}
+            n = {k: v for k, v in intent.items()
+                 if k not in ("id", "created_at", "created_by", "run_ids")}
+            if "source" in n and isinstance(n["source"], dict):
+                n = dict(n)
+                n["source"] = dict(n["source"])
+                n["source"]["ref"] = ""
+            return n
 
         self.assertEqual(normalize(i1), normalize(i2))
         self.assertEqual(normalize(i2), normalize(i3))

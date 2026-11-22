@@ -1387,6 +1387,7 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
                 ref=getattr(args, "ref", None),
                 spec=spec_content,
                 title=getattr(args, "title", None),
+                source_ref=getattr(args, "spec_file", None),
             )
             if getattr(args, "json", False):
                 print(json.dumps(intent, indent=2, sort_keys=True))

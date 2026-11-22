@@ -208,6 +208,15 @@ def run(ctx) -> None:
                     },
                     request_id,
                 )
+            except Exception as exc:  # noqa: BLE001
+                # Catches KitError (invalid_id, not_found, etc.)
+                resp = _jsonrpc_result(
+                    {
+                        "content": [{"type": "text", "text": json.dumps({"error": str(exc)})}],
+                        "isError": True,
+                    },
+                    request_id,
+                )
             sys.stdout.write(json.dumps(resp) + "\n")
             sys.stdout.flush()
             continue
