@@ -54,10 +54,10 @@ The kit SHALL parse Markdown specification documents into structured intent data
 the title SHALL be extracted from the first level-1 heading (`# Title`) or a `## Title`
 section; the description SHALL be extracted from the text body preceding criteria;
 acceptance criteria SHALL be extracted from checkboxes (`- [ ]`) or bullet items under
-an Acceptance Criteria heading; references SHALL be extracted from markdown links
-`[label](url)`
-or bullet lines, with reference `kind` inferred as `architecture`, `security`, `adr`,
-or `standard` if found in the label or URL, defaulting to `other`.
+an Acceptance Criteria heading; references SHALL be extracted from Markdown links (a
+label and a target URL) or bullet lines, with reference `kind` inferred as
+`architecture`, `security`, `adr`, or `standard` if found in the label or URL,
+defaulting to `other`.
 
 #### Scenario: parse markdown spec into title, description, criteria, and typed references
 
