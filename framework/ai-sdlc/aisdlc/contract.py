@@ -27,6 +27,7 @@ REQUIRED_PATHS = (
     "/factory/runs",
     "/factory/coach",
     "/factory/session",
+    "/factory/line",
 )
 SCHEMA_MARKERS = (
     "FactoryEntity",
@@ -39,6 +40,10 @@ SCHEMA_MARKERS = (
     "RunRequest",
     "CoachReport",
     "SessionView",
+    "ProductionLine",
+    "LineStage",
+    "LineGate",
+    "LineGuardrails",
 )
 CONFIG_REQUIRED = (
     "schema",
