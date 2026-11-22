@@ -72,6 +72,7 @@ in all three canonical sources so that product version coherence passes.
 - `docs/openspec/changes/fix-2401-v08-release-train/**`
 - `docs/openspec/changes/archive/**fix-2401*/**`
 - `docs/openspec/specs/**`
+- `github-page/lib/releases.json`
 
 ### Breaking Changes
 
