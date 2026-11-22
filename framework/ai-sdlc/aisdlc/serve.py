@@ -17,13 +17,30 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from aisdlc import approval, catalogs, coach, evidence, harness, isolator, projects, runs, workflows
+from aisdlc import (
+    approval,
+    catalogs,
+    coach,
+    config_files,
+    evidence,
+    harness,
+    isolator,
+    projects,
+    runs,
+    workflows,
+)
 from aisdlc.actor import from_token_identity
 from aisdlc.context import Context
 from aisdlc.errors import KitError
 from aisdlc.factory import config_view, list_plugins, redact, resolve_max_open_prs
 from aisdlc.kitroot import kit_root
-from aisdlc.serve_token import ServeToken, authenticate, ensure_token, load_token, load_tokens
+from aisdlc.serve_token import (
+    ServeToken,
+    authenticate,
+    ensure_token,
+    load_token,
+    load_tokens,
+)
 
 ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 LOOPBACK = {"127.0.0.1", "::1", "localhost"}
@@ -182,6 +199,11 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
     m = re.fullmatch(r"/factory/runs/([^/]+)", path)
     if m:
         return runs.show(ctx, _assert_id(m.group(1)))
+    if path == "/factory/config/files":
+        return config_files.list_config_files(ctx)
+    m = re.fullmatch(r"/factory/config/files/(.+)", path)
+    if m:
+        return config_files.read_config_file(ctx, m.group(1))
     raise KitError("not_found", f"unknown path {path}")
 
 
@@ -230,6 +252,20 @@ def _dispatch_put(ctx: Context, path: str, body: dict, *, expected_version: int,
         expected_version=expected_version,
         actor=actor,
         fields=body.get("fields"),
+    )
+
+
+def _dispatch_delete(ctx: Context, path: str, *, expected_version: int, actor: str) -> Any:
+    _guard_path(path)
+    m = re.fullmatch(r"/factory/catalogs/([^/]+)/([^/]+)", path)
+    if not m:
+        raise KitError("method_not_allowed", f"DELETE not implemented for {path}")
+    kind = m.group(1)
+    entry_id = _assert_id(m.group(2))
+    if kind not in catalogs.KINDS:
+        raise KitError("unknown_kind", f"unknown catalog kind {kind!r}")
+    return catalogs.delete(
+        ctx, kind, entry_id, expected_version=expected_version, actor=actor,
     )
 
 
@@ -329,7 +365,7 @@ def start_server(
     ui.mkdir(parents=True, exist_ok=True)
 
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, format: str, *args) -> None:  # noqa: A003
+        def log_message(self, format: str, *args) -> None:
             return
 
         def _authenticate(self, need: str) -> ServeToken:
@@ -374,19 +410,19 @@ def start_server(
             ctype = "text/css" if target.suffix == ".css" else "text/plain; charset=utf-8"
             self._send(200, target.read_bytes(), ctype)
 
-        def do_GET(self) -> None:  # noqa: N802
+        def do_GET(self) -> None:
             self._handle("GET")
 
-        def do_POST(self) -> None:  # noqa: N802
+        def do_POST(self) -> None:
             self._handle("POST")
 
-        def do_PUT(self) -> None:  # noqa: N802
+        def do_PUT(self) -> None:
             self._handle("PUT")
 
-        def do_PATCH(self) -> None:  # noqa: N802
+        def do_PATCH(self) -> None:
             self._handle("PATCH")
 
-        def do_DELETE(self) -> None:  # noqa: N802
+        def do_DELETE(self) -> None:
             self._handle("DELETE")
 
         def _read_json_body(self) -> dict:
@@ -449,6 +485,16 @@ def start_server(
                     body = self._read_json_body()
                     actor = from_token_identity(active.identity, active.scope)
                     data = _dispatch_post(ctx, path, body, actor=actor)
+                    self._send_json(200, data)
+                    return
+                if method == "DELETE":
+                    active = self._authenticate("write")
+                    _require_csrf(self.headers, active)
+                    expected = _parse_if_match(self.headers.get("If-Match"))
+                    actor = from_token_identity(active.identity, active.scope)
+                    data = _dispatch_delete(
+                        ctx, path, expected_version=expected, actor=actor,
+                    )
                     self._send_json(200, data)
                     return
                 self._problem("method_not_allowed", f"{method} not implemented")
