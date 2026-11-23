@@ -25,7 +25,8 @@ _PATH_LINE = re.compile(r"(?<![\w/.-])((?:[\w@.+-]+/)*[\w@+-][\w@.+-]*\.[A-Za-z0
 _RESULT_LINE = re.compile(r"^\s*\d+\.\s+(?:\[\w+\]\s+)?(\S+?):\d", re.M)
 NAVIGATION_TOOLS = {"Read": "read", "Grep": "grep", "Glob": "glob", "LS": "glob", "NotebookRead": "read"}
 _SHELL_START = r"(?:^|[;&|(]\s*|\bxargs\s+|\bthen\s+|\bdo\s+)"
-_SHELL_REPOLENS = re.compile(r"(?:^|[\s/;&|(\"'])repolens[\"']?\s+(search|node|impact|path|outline|snippet|neighbors|orphans)\b")
+_SHELL_REPOLENS = re.compile(r"(?:^|[\s/;&|(\"'])repolens[\"']?\s+"
+                             r"(search|node|impact|path|outline|snippet|neighbors|orphans)\b")
 _SHELL_GREP = re.compile(_SHELL_START + r"(?:rg|grep|egrep|fgrep|ag|ack|git\s+grep)\b")
 _SHELL_GLOB = re.compile(_SHELL_START + r"(?:find|fd|git\s+ls-files)\b")
 
