@@ -35,10 +35,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a priced row with cache tokens | test_factory_metrics.py | pending |
-| Junie sessions are attributed to their steps | test_factory_metrics.py | pending |
-| an intent's time and cost | test_factory_metrics.py | pending |
-| no data stays visible as no data | test_factory_metrics.py | pending |
+| a priced row with cache tokens | test_factory_metrics.py | passing |
+| Junie sessions are attributed to their steps | test_factory_metrics.py | passing |
+| an intent's time and cost | test_factory_metrics.py | passing |
+| no data stays visible as no data | test_factory_metrics.py | passing |
 
 ## Permanent documentation updated
 
