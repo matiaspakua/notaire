@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import unittest
 
-from helpers import Repo, output
+from helpers import Repo, git, output
 
 PROTECTED = """
     [protected]
@@ -154,6 +154,58 @@ class WriteSetTest(unittest.TestCase):
         self.assertEqual(0, result.returncode)
         self.assertIn("NOT EVALUABLE", output(result))
         self.assertEqual(1, repo.run("scope", "--base", repo.base, "--strict").returncode)
+
+
+class ReviewSizeRenameTest(unittest.TestCase):
+    """Rename-aware size checks — red tests for issue #2466."""
+
+    def test_pure_rename_counts_zero_lines(self):
+        """A commit that only renames a 600-line file passes size --limit 400 and reports 0 changed lines."""
+        repo = Repo(self, "[size]\nlimit = 400\n")
+        file_content = "line\n" * 600
+        repo.write("src/old_name.py", file_content)
+        repo.commit("feat: add file")
+        git(repo.root, "mv", "src/old_name.py", "src/new_name.py")
+        repo.commit("refactor: rename file")
+        result = repo.run("size", "--base", repo.base)
+        out = output(result)
+        self.assertEqual(0, result.returncode, out)
+        self.assertIn("0 changed lines", out)
+
+    def test_rename_with_edits_counts_only_edited_lines(self):
+        """A commit that renames a 600-line file and edits 3 lines counts only those edits and reports the NEW path."""
+        repo = Repo(self, "[size]\nlimit = 400\n")
+        file_content = "line\n" * 600
+        repo.write("src/old_name.py", file_content)
+        repo.commit("feat: add file")
+        git(repo.root, "mv", "src/old_name.py", "src/new_name.py")
+        edited_content = "line\n" * 598 + "edited_line_1\n" + "edited_line_2\n" + "edited_line_3\n"
+        (repo.root / "src/new_name.py").write_text(edited_content)
+        repo.commit("refactor: rename and edit file")
+        result = repo.run("size", "--base", repo.base)
+        out = output(result)
+        self.assertEqual(0, result.returncode, out)
+        self.assertIn("src/new_name.py", out)
+
+    def test_renamed_file_new_path_matched_against_exclude(self):
+        """The NEW path of a renamed file is the one matched against [size] exclude.
+
+        A file is renamed from an excluded directory to a non-excluded one.
+        With rename detection the change is a pure rename (0 lines) — the new path
+        is reported but there are no lines to exclude.  Without rename detection the
+        new file appears as 600 additions at the non-excluded path and blows past
+        the budget.
+        """
+        repo = Repo(self, '[size]\nlimit = 10\nexclude = ["generated/**"]\n')
+        file_content = "line\n" * 600
+        repo.write("generated/data.py", file_content)
+        repo.commit("feat: add file")
+        (repo.root / "src").mkdir(exist_ok=True)
+        git(repo.root, "mv", "generated/data.py", "src/data.py")
+        repo.commit("refactor: move out of generated")
+        result = repo.run("size", "--base", repo.base)
+        out = output(result)
+        self.assertEqual(0, result.returncode, out)
 
 
 class DoctorTest(unittest.TestCase):
