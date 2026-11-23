@@ -67,6 +67,15 @@ echo "# Policy" > POLICY.md
 git add -A && git commit -qm seed
 python3 "$KIT_BIN" demo seed >/dev/null
 python3 "$KIT_BIN" project create --id storefront --repo-id web --url https://example.invalid/web --forge github >/dev/null
+# A finished run with its own intent and measured cost, for the factory metrics (#2447).
+measured=$(python3 "$KIT_BIN" intent submit --text "Checkout totals" --json | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])")
+python3 "$KIT_BIN" run start --project storefront --workflow factory-feature --id totals-run --intent "$measured" >/dev/null
+python3 "$KIT_BIN" harness report --run totals-run --adapter local-worker --event run.started >/dev/null
+python3 "$KIT_BIN" harness report --run totals-run --adapter local-worker --event step.started --step plan >/dev/null
+python3 "$KIT_BIN" harness report --run totals-run --adapter local-worker --event step.finished --step plan --step-status pass >/dev/null
+python3 "$KIT_BIN" harness report --run totals-run --adapter local-worker --event run.finished --ok true >/dev/null
+python3 "$KIT_BIN" cost --agent foreman --model claude-e2e --input 1000 --output 500 --usd 0.42 --run totals-run --step plan --source manual >/dev/null
+sleep 1
 python3 "$KIT_BIN" run start --project storefront --workflow factory-feature --id checkout-flow >/dev/null
 # The run is at red for the production-line diagram; plan's gate has real evidence.
 python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event run.started >/dev/null
@@ -103,10 +112,7 @@ Add a production-line timeline view to the factory dashboard with stations, gate
 - [Issue #2400](https://github.com/example/repo/issues/2400) (architecture)
 - [ADR-006](https://example.invalid/adr-006) (adr)
 SPEC
-intent_id=$(python3 "$KIT_BIN" intent submit --file "$WORK/spec.md" --json | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])")
-# The run belongs to the intent and has measured cost, for the factory metrics (#2447).
-python3 "$KIT_BIN" intent attach --id "$intent_id" --run checkout-flow >/dev/null
-python3 "$KIT_BIN" cost --agent foreman --model claude-e2e --input 1000 --output 500 --usd 0.42 --run checkout-flow --step plan --source manual >/dev/null
+python3 "$KIT_BIN" intent submit --file "$WORK/spec.md" >/dev/null
 
 # Record telemetry rows for the Metrics view e2e.
 python3 "$KIT_BIN" telemetry record --stage plan --agent planner --metric duration_s --value 12.5 --ok >/dev/null

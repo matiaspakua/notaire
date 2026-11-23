@@ -6,6 +6,7 @@ import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { useLang, useT } from "../i18n.ts";
 import { formatDuration, type Report, type TelemetryResponse } from "../model.ts";
+import { IntentMetrics } from "./IntentMetrics.tsx";
 
 function seconds(value: number, lang: string): string {
   if (value >= 90) {
@@ -274,6 +275,7 @@ export function Metrics() {
     <Loaded resource={report} rows={5}>
       {(data) => (
         <div className="stack">
+          <IntentMetrics />
           <Kpis report={data} />
           <div className="charts-grid">
             <Section title={t("metrics.stages")}><StageBars report={data} /></Section>

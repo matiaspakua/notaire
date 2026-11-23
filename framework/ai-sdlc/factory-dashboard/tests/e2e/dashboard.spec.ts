@@ -305,7 +305,7 @@ test.describe("factory metrics (#2447)", () => {
     await page.goto("/#/e2e/metrics");
     const intents = page.getByTestId("intent-metrics");
     await expect(intents.getByRole("heading", { name: "Time, cost and RepoLens per intent" })).toBeVisible();
-    const row = intents.getByRole("row", { name: /Dashboard Production Line/ });
+    const row = intents.getByRole("row", { name: /Checkout totals/ });
     await expect(row).toContainText("$0.42");
     await expect(row).toContainText("1,500");
     await expect(page.getByTestId("factory-overall")).toContainText("$0.42");
