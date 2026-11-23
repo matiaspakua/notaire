@@ -74,6 +74,7 @@ Backlog, Catalog and the cohorts use a one-line purpose instead.
 | `v0.7 · AI Factory & repo knowledge (2027-03)` | 2027-03 | AI SDLC framework, RepoLens, agent skills |
 | `v0.8 · Observable self-managing factory (2027-03)` | 2027-03 | observable factory: production line, intents, live state, store, config as code |
 | `v0.9 · Factory control plane (2027-03)` | 2027-03 | intents, live status, telemetry, configuration as code, catalog-owned AI config |
+| `v0.10 · Factory production line & delivery gates (2027-03)` | 2027-03 | production-line dashboard, step inputs and outputs, stack lock, change-aware preflight |
 | `v1.0 · GA: legacy-free (2027-04)` | 2027-04 | Phase 6, Owner GA decision |
 | `Backlog · Unscheduled` | – | unscheduled work |
 | `Catalog · Requirements & use cases` | – | requirement anchors |

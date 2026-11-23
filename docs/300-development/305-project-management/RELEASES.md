@@ -88,6 +88,16 @@ The rule that matters: a tag is valid only when the *tagged tree* is coherent.
 A train fix that lands after a cut belongs to the fix's release, not retroactively
 to the cut it describes.
 
+### The release branch proves its train (#2448)
+
+0.10.0 nearly repeated the 0.9.0 failure: the release PR read `CLEAN` with no
+`v0.10 · …` train, because no CI runs on the bot release branch (#2001) and CD
+checks coherence only once the tag exists. The Release Please job now runs
+`check-product-version-coherence.py --tag v<next>` on the release branch after
+the OpenAPI sync. A missing train fails that job, naming the three mirrors to
+edit, while the cut can still be fixed on `main`. Add the next minor's train
+before merging the release PR.
+
 ## Where the version is visible
 
 | Surface | What it shows |
