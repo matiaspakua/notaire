@@ -350,6 +350,65 @@ describe("events stream proxy", () => {
     expect(eventsCall?.headers["Last-Event-ID"]).toBe("5");
   });
 
+  it("carries security headers on the SSE stream response", async () => {
+    let upstreamSignal: AbortSignal | undefined;
+    const streamingFetch: typeof fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes("/factory/session")) {
+        return json(200, { identity: "alice", scope: "write", actor: "ui:alice", write_enabled: true });
+      }
+      if (url.includes("/factory/events")) {
+        upstreamSignal = (init?.signal) ?? undefined;
+        const body = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('event: ready\ndata: {}\n\n'));
+            upstreamSignal?.addEventListener("abort", () => controller.close());
+          },
+        });
+        return new Response(body, {
+          status: 200,
+          headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store" },
+        });
+      }
+      return json(200, { ok: true });
+    }) as typeof fetch;
+    const config = { ...CONFIG, secureCookies: false };
+    const testApp = buildApp({ config, fetcher: streamingFetch });
+    await testApp.listen({ port: 0, host: "127.0.0.1" });
+    const port = (testApp.server.address() as import("net").AddressInfo).port;
+    const signInResp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/session`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: "tok-alice" }),
+    });
+    const setCookie = signInResp.headers.get("set-cookie")!;
+    const cookie = setCookie.split(";")[0];
+    const normalResp = await fetch(`http://127.0.0.1:${port}/api/session`, {
+      headers: { cookie },
+    });
+    await normalResp.body!.cancel();
+    const clientAbort = new AbortController();
+    const resp = await fetch(`http://127.0.0.1:${port}/api/workspaces/alpha/factory/events`, {
+      headers: { cookie }, signal: clientAbort.signal,
+    });
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("content-type")).toContain("text/event-stream");
+    expect(resp.headers.get("x-accel-buffering")).toBe("no");
+    const securityHeaders = ["content-security-policy", "x-content-type-options", "referrer-policy", "cache-control"];
+    for (const h of securityHeaders) {
+      const normal = normalResp.headers.get(h);
+      const sse = resp.headers.get(h);
+      expect(sse, `${h} should be non-null on SSE response`).not.toBeNull();
+      expect(sse, `${h} should match the normal response value`).toBe(normal);
+    }
+    expect(resp.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(resp.headers.get("referrer-policy")).toBe("no-referrer");
+    expect(resp.headers.get("cache-control")).toBe("no-store");
+    clientAbort.abort();
+    await new Promise((r) => setTimeout(r, 200));
+    expect(upstreamSignal?.aborted).toBe(true);
+    await testApp.close();
+  });
+
   it("never leaks the server-side token to the client response", async () => {
     await start();
     const cookie = await signIn("alpha", "tok-alice");

@@ -5,6 +5,7 @@ tools:
   - Read
   - Grep
   - Glob
+model: sonnet
 ---
 
 # Code Review Agent — Notaire

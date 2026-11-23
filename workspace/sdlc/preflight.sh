@@ -25,6 +25,8 @@
 #   bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
 #   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; not sufficient to open a pull request
 #   bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR: Playwright, Bruno, Docker, database V&V
+#                                               # for the suite groups the branch touches (#2413)
+#   bash workspace/sdlc/preflight.sh --all      # every suite group, whatever changed (releases, cross-cutting)
 #   bash workspace/sdlc/preflight.sh --list     # show local-check -> release-workflow mapping
 #
 # Exit code is non-zero if any blocking check fails.
@@ -37,12 +39,13 @@ cd "$REPO_ROOT"
 # .git/config (core.bare = true, fixture identity). From the root, discovery is correct (#1958).
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX
 
-MODE_FIX=0; MODE_FAST=0; MODE_FULL=0
+MODE_FIX=0; MODE_FAST=0; MODE_FULL=0; MODE_ALL=0
 for arg in "$@"; do
     case "$arg" in
         --fix)  MODE_FIX=1 ;;
         --fast) MODE_FAST=1 ;;
         --full) MODE_FULL=1 ;;
+        --all)  MODE_FULL=1; MODE_ALL=1 ;;
         --list)
             cat <<'MAP'
 Local check                     CI job                          Workflow
@@ -113,9 +116,9 @@ fail()    { FAILED+=("$1");  printf '%s✗%s %s\n' "$RED" "$NC" "$1"; }
 # run <label> <cmd...> — blocking check
 run() {
     local label="$1"; shift
-    local log; log="$(mktemp)"
+    local log; log="$(mktemp)"; local t0=$SECONDS
     if "$@" >"$log" 2>&1; then
-        pass "$label"
+        pass "$label ($((SECONDS - t0))s)"
     else
         fail "$label"
         printf '%s--- last 25 lines: %s ---%s\n' "$RED" "$label" "$NC"
@@ -167,6 +170,17 @@ BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 echo "branch: $BRANCH"
 # Spotless ratchets against origin/main; without it the format gate cannot run.
 git fetch origin main --quiet 2>/dev/null || warn "could not fetch origin/main (offline?)"
+
+# Suite groups the branch touches (#2413): backend, frontend, testing, pages, stack, or all.
+# Changes to shared infrastructure, or no base to compare with, run everything.
+if [ "$MODE_ALL" = "1" ]; then
+    AFFECTED=all
+else
+    AFFECTED="$(python3 workspace/sdlc/preflight_affected.py --base origin/main 2>/dev/null || echo all)"
+fi
+echo "affected suite groups: $AFFECTED"
+touches() { [ "$AFFECTED" = "all" ] || [[ " $AFFECTED " == *" $1 "* ]]; }
+not_affected() { skip "$1" "not affected by this branch; preflight.sh --all runs it"; }
 
 # Mirrors: Branch Naming Convention Check (pr-validation.yml) — warn-only there too.
 if [[ "$BRANCH" =~ ^(main|develop|feature/|bugfix/|hotfix/|release/|cursor/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/) ]] \
@@ -222,10 +236,15 @@ run "agent rule files" bash workspace/sdlc/check-agent-rules.sh
 # Do not add this stage under pre-push — preflight is already that stage's command.
 run "aisdlc gate signal (ratchet+skills → evidence)" \
     python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate signal --base origin/main
+if touches kit; then
+    run "kit self-tests" bash -c \
+        "python3 -m unittest discover -s local-ai/sdlc/tests \
+         && python3 -m unittest discover -s framework/ai-sdlc/tests"
+else
+    not_affected "kit self-tests"
+fi
 run "process script self-tests" bash -c \
-    "python3 -m unittest discover -s local-ai/sdlc/tests \
-     && python3 -m unittest discover -s framework/ai-sdlc/tests \
-     && python3 -m unittest discover -s workspace/tests \
+    "python3 -m unittest discover -s workspace/tests \
      && python3 -m unittest workspace.sdlc.test_milestone_policy \
      && python3 -m unittest discover -s contracts/tests \
      && python3 -m unittest discover -s security/tests \
@@ -262,9 +281,11 @@ if git diff --name-only origin/main...HEAD -- framework/ai-sdlc/factory-dashboar
     fi
 fi
 
-if [ "$MODE_FULL" = "1" ]; then
+if [ "$MODE_FULL" = "1" ] && touches boundaries; then
     run "factory/repolens extraction boundaries" \
         python3 workspace/sdlc/check-factory-boundaries.py
+elif [ "$MODE_FULL" = "1" ]; then
+    not_affected "factory/repolens extraction boundaries"
 fi
 
 # Security case catalog (CU78, #1500). The same command is a phase of
@@ -312,6 +333,9 @@ GIT_DIR_PATH="$(git rev-parse --git-dir)"
 SPOTLESS_NATIVE=1
 [ -f "$REPO_ROOT/.git" ] && SPOTLESS_NATIVE=0   # .git is a file => worktree
 
+if ! touches backend; then
+    not_affected "spotless / checkstyle"
+else
 if [ "$MODE_FIX" = "1" ]; then
     if [ "$SPOTLESS_NATIVE" = "1" ]; then
         run_warn "spotless:apply" mvn spotless:apply -pl backend-api "${MVN_FLAGS[@]}"
@@ -327,11 +351,14 @@ else
 fi
 
 run_warn "checkstyle" mvn checkstyle:check -pl backend-api "${MVN_FLAGS[@]}"
+fi
 
 # ---------------------------------------------------------------------------
 section "Report-only checks (mirror ci.yml/pr-validation.yml advisory jobs)"
 # ---------------------------------------------------------------------------
-if [ "$MODE_FAST" = "0" ]; then
+if ! touches backend && ! touches frontend; then
+    not_affected "dependency analysis / spotbugs / trivy fs"
+elif [ "$MODE_FAST" = "0" ]; then
     run_warn "dependency analysis" mvn dependency:analyze -pl backend-api -am "${MVN_FLAGS[@]}"
     run_warn "spotbugs" mvn compile com.github.spotbugs:spotbugs-maven-plugin:spotbugs -pl backend-api -am -DskipSpotBugs=false "${MVN_FLAGS[@]}"
     if command -v trivy >/dev/null 2>&1; then
@@ -347,6 +374,9 @@ fi
 # ---------------------------------------------------------------------------
 section "Backend"
 # ---------------------------------------------------------------------------
+if ! touches backend; then
+    not_affected "backend compile / verify / pg-integration"
+else
 run "backend compile" mvn clean compile -DskipTests "${MVN_FLAGS[@]}"
 
 run "packaged app.version" python3 workspace/sdlc/check-product-version-coherence.py \
@@ -374,10 +404,14 @@ if [ "$MODE_FAST" = "0" ]; then
 else
     skip "backend tests" "--fast"
 fi
+fi
 
 # ---------------------------------------------------------------------------
 section "Frontend"
 # ---------------------------------------------------------------------------
+if ! touches frontend; then
+    not_affected "frontend typecheck / eslint / vitest / build"
+else
 if [ ! -d frontend/node_modules ]; then
     echo "installing frontend deps (npm ci)…"
     (cd frontend && npm ci) >/dev/null 2>&1 || warn "npm ci failed"
@@ -399,21 +433,29 @@ if [ "$MODE_FAST" = "0" ]; then
 else
     skip "frontend tests + build" "--fast"
 fi
+fi
 
 # ---------------------------------------------------------------------------
 section "E2E suite (testing/e2e)"
 # ---------------------------------------------------------------------------
+if ! touches testing; then
+    not_affected "e2e typecheck / eslint"
+else
 if [ ! -d testing/e2e/node_modules ]; then
     echo "installing E2E suite deps (npm ci)…"
     (cd testing/e2e && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
 fi
 run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
 run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
+fi
 
 # ---------------------------------------------------------------------------
 section "GitHub Pages app (github-page)"
 # ---------------------------------------------------------------------------
 # Mirrors pages-ci.yml (#1970). Local binaries, like the frontend section above.
+if ! touches pages; then
+    not_affected "pages typecheck / eslint / vitest / build / playwright"
+else
 if [ ! -d github-page/node_modules ]; then
     echo "installing github-page deps (npm ci)…"
     (cd github-page && npm ci) >/dev/null 2>&1 || warn "npm ci failed (github-page)"
@@ -434,11 +476,14 @@ if [ "$MODE_FAST" = "0" ]; then
 else
     skip "pages vitest / build / links" "--fast"
 fi
+fi
 
 # ---------------------------------------------------------------------------
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
-if [ "$MODE_FULL" = "1" ]; then
+if [ "$MODE_FULL" = "1" ] && ! touches stack; then
+    not_affected "http integration / playwright e2e / bruno api / database v&v / docker build"
+elif [ "$MODE_FULL" = "1" ]; then
     # A full run that reaches this point has already paid for Maven, Vitest and
     # the Pages build. Failing here because nothing is listening throws that
     # work away (registration-draft, 2026-11-18; #2374, 2026-11-20). Start the

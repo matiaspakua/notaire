@@ -769,7 +769,11 @@ Agent-specific entry points:
   label is only valid on such a PR (`workspace/sdlc/check-sdlc-exception.sh`).
 - **Enforcement:**
   - Local: `workspace/sdlc/preflight.sh --full` + pre-push git hook. A run
-    without `--full` is not sufficient to open a PR.
+    without `--full` is not sufficient to open a PR. `--full` runs the suite
+    groups the branch touches compared with origin/main; changes to shared
+    infrastructure run every group, and `--all` runs every group on request
+    (releases, cross-cutting changes). The hook does not gate again a commit
+    that already passed (#2413).
     `workspace/sdlc/run_pipeline.sh` is the dashboarded final check before
     opening a PR (→ Gate 3) and already includes `preflight.sh --full`.
   - Release CI: GitHub Actions product workflows run on version tags and
@@ -818,7 +822,7 @@ drift.
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
-| Local preflight | `bash workspace/sdlc/preflight.sh --full` is mandatory before push/PR (`--fix` / `--fast` are not sufficient to open a PR); pre-push hook runs `--full` |
+| Local preflight | `bash workspace/sdlc/preflight.sh --full` is mandatory before push/PR (`--fix` / `--fast` are not sufficient to open a PR); pre-push hook runs `--full`, which runs the suites the branch touches; `--all` runs every suite (#2413) |
 | Product version coherence (#1591) | `python3 workspace/sdlc/check-product-version-coherence.py` (`--tag`, `--packaged`); mirrored in `preflight.sh`, `sdlc-process.yml`, `ci.yml`, and `cd.yml` `release-identity` |
 | Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | Product workflows (`ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml`, …) run on tags `v*` / `notaire-v*` and `workflow_dispatch`, not on pull requests (#2001). `cd.yml` publishes images only then. Release Please stays on push to `main`. |
