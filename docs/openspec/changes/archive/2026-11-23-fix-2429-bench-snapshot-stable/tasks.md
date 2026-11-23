@@ -118,4 +118,3 @@
   the tracked output file. The tests now call `write(snap, path)` on a temporary file, and `write()` holds the
   compare-and-keep rule while `build()` stays pure. This applies the design's decision 1 unchanged; it does not
   change scope, contract, data or permissions.
-

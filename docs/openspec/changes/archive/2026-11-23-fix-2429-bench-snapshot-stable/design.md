@@ -8,11 +8,13 @@
 ## Goals / Non-Goals
 
 **Goals:**
+
 - The tracked snapshot file stays byte-identical when only `generated_at` would differ.
 - When bench data genuinely changes, a fresh `generated_at` is written.
 - Existing `--check` mode and validation logic remain unchanged.
 
 **Non-Goals:**
+
 - Moving the snapshot to a git-ignored path.
 - Making regeneration opt-in via a separate command.
 
