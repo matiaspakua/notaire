@@ -139,6 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * **sdlc:** RepoLens harness drift test ignores Cursor `agent-hooks` path remaps so Cloud Agent preflight is not blocked by a host-only hooks mirror (Refs #2315)
+* **e2e:** raise API rate limit to 20 000 for the e2e/preflight stack so the full Playwright suite no longer hits silent 429s (#2389)
 
 ### Fixed
 
