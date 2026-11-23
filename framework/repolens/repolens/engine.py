@@ -29,6 +29,7 @@ from .store import Store
 
 HIDDEN_KINDS = frozenset({"dir", "project", "external"})
 DOC_LANGS = frozenset({"md", "mdx", "markdown", "txt", "rst", "adoc", "pdf", "text", "html"})
+STYLE_LANGS = frozenset({"css", "scss", "sass", "less"})
 SCOPES = ("all", "code", "docs", "tests")
 RELEVANCE_TOP = 10
 TYPE_KINDS = frozenset({"class", "interface", "enum", "record", "type"})
@@ -43,6 +44,7 @@ DEFAULT_TUNING = {
     "ppr_eps": 1e-5,                                       # sparse PageRank: mass below this is not propagated
     "ppr_sparse_from": 150_000,                            # graphs with fewer nodes use exact PageRank
     "test_factor": 0.5,                                    # weight of test files unless the query asks for tests
+    "doc_factor": 0.3,                                     # weight of docs and styles when the query asks for code
 }
 DEPENDENCY_EDGES = frozenset({
     "calls", "references", "inherits", "imports", "http_call", "handles", "tests", "uses_table",
@@ -57,6 +59,11 @@ para por con se es como donde cual cuales
 """.split())
 _TEST_WORDS = re.compile(r"\b(tests?|testing|tested|specs?|coverage|covers?|covered|mocks?|fixtures?|e2e)\b", re.I)
 _TEST_IDENT = re.compile(r"[a-z0-9](Tests?|IT|Spec)\b|\b(test_\w+|\w+_test)\b|\.(test|spec)\.[jt]sx?\b")
+_CODE_WORDS = re.compile(r"\b(components?|functions?|methods?|class(?:es)?|interfaces?|hooks?|handlers?|"
+                         r"controllers?|services?|adapters?|constructors?|endpoints?|implement(?:s|ed|ation)?)\b",
+                         re.I)
+_DOC_WORDS = re.compile(r"\b(docs?|documentation|documented|readme|adrs?|specs?|specifications?|requirements?|"
+                        r"guides?|runbooks?|changelog|proposals?|use[- ]cases?)\b", re.I)
 _IDENT_IN_QUERY = re.compile(r"[\w$.-]*[a-z][A-Z][\w$.]*|\w+_\w+|[\w-]+(?:/[\w.-]+)+|[\w-]+\.[a-z]{1,5}\b")
 
 
@@ -129,6 +136,11 @@ class Engine:
             self.boost = self._boosts()
             tests = {p: _looks_test(p) for p in set(self.path) if p}
             self.is_test = np.fromiter((tests.get(p, False) for p in self.path), dtype=bool, count=len(self.path))
+            self.is_doc = np.fromiter((lang in DOC_LANGS or kind in ("section", "tag")
+                                       for lang, kind in zip(self.lang, self.kind, strict=True)),
+                                      dtype=bool, count=len(self.kind))
+            self.not_code = self.is_doc | np.fromiter((lang in STYLE_LANGS for lang in self.lang), dtype=bool,
+                                                      count=len(self.lang))
             self._load_edges(conn, self._containment(conn))
             self._load_embeddings(vhashes)
             self.roots = self.store.project_roots()
@@ -168,8 +180,7 @@ class Engine:
             return True
         if scope == "tests":
             return _looks_test(self.path[i])
-        is_doc = self.lang[i] in DOC_LANGS or self.kind[i] in ("section", "tag")
-        return is_doc if scope == "docs" else not is_doc
+        return bool(self.is_doc[i]) if scope == "docs" else not self.is_doc[i]
 
     def _load_edges(self, conn, contains: np.ndarray) -> None:
         n = len(self.ids)
@@ -325,6 +336,9 @@ class Engine:
                     pmax = float(mass[top].max()) or 1.0
                     for i, m in zip(nodes[top].tolist(), mass[top].tolist(), strict=True):
                         scores[i] = scores.get(i, 0.0) + t["w_graph"] * boost[i] * m / pmax
+            # Docs still seed and carry the walk (a spec often names the code); they only rank lower.
+            if t["doc_factor"] != 1.0 and _CODE_WORDS.search(query) and not _DOC_WORDS.search(query):
+                scores = {i: s * t["doc_factor"] if self.not_code[i] else s for i, s in scores.items()}
             allowed = set(kinds) if kinds else None
             ranked = [i for i in sorted(scores, key=scores.get, reverse=True)
                       if not self.hidden[i] and (allowed is None or self.kind[i] in allowed)
