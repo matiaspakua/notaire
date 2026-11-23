@@ -6,7 +6,7 @@ import { usePreferences } from "@/components/site/Preferences";
 export function FactoryNowView({ model }: { model: FactoryNow }) {
   const { locale } = usePreferences();
   const copy = model[locale];
-  const shipped = [copy.config, copy.grant, copy.isolator, copy.foreman, copy.leadTime];
+  const shipped = [copy.line, copy.runs, copy.gate, copy.config, copy.grant, copy.isolator, copy.foreman, copy.leadTime];
   return (
     <section aria-labelledby="factory-now-title" className="mt-10">
       <h2 id="factory-now-title" className="font-display text-3xl font-semibold text-slate-900">
