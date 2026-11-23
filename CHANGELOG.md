@@ -130,6 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* **frontend:** the workflow editor runs on `@xyflow/react` 13 (`NodeChangeset.applyTo`); Dependabot proposes its majors again (Refs #2441)
 * **pages:** polish RepoLens AI Factory page — ranking pipeline FlowDiagram, chart entry motion and focus tooltips, scroll reveals; honors prefers-reduced-motion; Cytoscape HTTP explorer left unchanged (Refs #2318)
 
 ### Added
