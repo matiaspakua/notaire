@@ -51,6 +51,23 @@ class StepsTest(unittest.TestCase):
         self.assertNotIn("agent bench", result.stdout)
 
 
+class EvidenceRootTest(unittest.TestCase):
+    """The ledger and costs are git-ignored and live in the main worktree, not in the worktree that refreshes."""
+
+    def test_evidence_root_is_the_main_worktree(self):
+        main = Path(tempfile.mkdtemp(prefix="main-"))
+        git(main, "init", "-q", "-b", "main")
+        git(main, "commit", "-q", "--allow-empty", "-m", "root")
+        linked = main.parent / (main.name + "-wt")
+        git(main, "worktree", "add", "-q", "-b", "work", str(linked))
+        self.assertEqual(main.resolve(), load().evidence_root(linked).resolve())
+
+    def test_kit_steps_read_the_evidence_root(self):
+        plan = dict(load().steps(evidence=Path("/evidence")))
+        self.assertIn("/evidence", plan["junie usage"])
+        self.assertIn("/evidence", plan["factory metrics snapshot"])
+
+
 class StaleResultsTest(unittest.TestCase):
     def results(self, stamps):
         folder = Path(tempfile.mkdtemp(prefix="bench-results-"))
