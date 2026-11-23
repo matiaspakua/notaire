@@ -454,6 +454,12 @@ def build_parser() -> argparse.ArgumentParser:
     intent_list_p.set_defaults(command="intent")
     intent_list_p.add_argument("--json", action="store_true")
 
+    intent_attach_p = intent_sub.add_parser("attach", help="attach an existing run to an intent (#2447)")
+    intent_attach_p.set_defaults(command="intent")
+    intent_attach_p.add_argument("--id", required=True, help="intent id")
+    intent_attach_p.add_argument("--run", required=True, help="run id")
+    intent_attach_p.add_argument("--json", action="store_true")
+
     intent_show_p = intent_sub.add_parser("show", help="show an intent by id")
     intent_show_p.set_defaults(command="intent")
     intent_show_p.add_argument("id", help="intent id")
@@ -1613,6 +1619,17 @@ def _intent(ctx: Context, args: argparse.Namespace) -> int:
             print(f"[intents] {len(entries)}")
             for entry in entries:
                 print(f"  - {entry['id']} · {entry.get('title', '')} ({entry.get('kind', '')})")
+        return 0
+
+    if args.action == "attach":
+        from aisdlc import runs
+
+        try:
+            run = runs.attach_intent(ctx, args.run, args.id)
+        except KitError as exc:
+            print(f"error: {exc.code}: {exc.detail}", file=sys.stderr)
+            return 2
+        print(json.dumps(run, indent=2, sort_keys=True) if args.json else f"run {run['id']} → intent {run['intent']}")
         return 0
 
     if args.action == "show":
