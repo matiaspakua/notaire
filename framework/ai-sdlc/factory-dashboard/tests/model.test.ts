@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isSafeLink } from "../src/ui/model.ts";
+import { isSafeLink, pickIntent, type Intent } from "../src/ui/model.ts";
 import type { LinePayload } from "../src/ui/model.ts";
 
 const sampleLine: LinePayload = {
@@ -110,5 +110,20 @@ describe("isSafeLink", () => {
   it("rejects invalid URLs", () => {
     expect(isSafeLink("not-a-url")).toBe(false);
     expect(isSafeLink("")).toBe(false);
+  });
+});
+
+describe("pickIntent (#2447)", () => {
+  const a = { id: "int-aaa", title: "older", created_at: "2026-11-01T00:00:00Z" } as Intent;
+  const b = { id: "int-bbb", title: "newer", created_at: "2026-11-02T00:00:00Z" } as Intent;
+
+  it("shows the current run's intent", () => {
+    expect(pickIntent("int-aaa", [b, a])?.title).toBe("older");
+  });
+
+  it("falls back to the most recently submitted intent, not the first by id", () => {
+    expect(pickIntent(null, [a, b])?.title).toBe("newer");
+    expect(pickIntent(null, [b, a])?.title).toBe("newer");
+    expect(pickIntent(null, [])).toBeNull();
   });
 });
