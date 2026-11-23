@@ -5,16 +5,30 @@ All notable changes to repolens. Versions follow [SemVer](https://semver.org); t
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-23
+
+### Added
+
+- The usage hook records Bash commands: `repolens <query>` as a repolens call of that session, with the files its answer printed; `rg`, `grep`, `git grep` as grep; `find`, `fd`, `git ls-files` as glob. `repolens setup` registers the hook for `Bash` and moves an older registration instead of adding a second one (#2452).
+- `doc_factor` (`[ranking.tuning]`, default 0.3): a question that names a code construct and no documentation word ranks docs and stylesheets lower. Only the final rank moves; docs still seed the walk. Notaire graph arm: tuning recall@10 0.904 -> 0.904, MRR 0.788 -> 0.788; held-out recall@10 0.786 -> 0.786, MRR 0.882 -> 0.896.
+- The explorer has a How it works view (pipeline with the store's counts, measured benchmarks at a glance and per run, live usage report) and explains every search: matched or reached through a relation, the time of each stage, and the exact answer an agent receives with its tokens.
+- `repolens setup` now wires the Junie CLI (`.junie/mcp/mcp.json`) alongside Claude Code, Cursor, Codex and OpenCode (#2386).
+- `tests/test_boundaries.py`: the package, runners and launcher import no factory kit and name no adopter.
+- `repolens serve --bench <folder>` names the benchmark results the explorer shows. `/api/subgraph?q=` returns `timings` and `answer`; `/api/metrics` classifies each benchmark as `agent`, `retrieval` or `other`.
+
+### Fixed
+
+- Reads of files outside the repository are not recorded, and the report leaves those already logged out of the hit rate. On the 2026-11-23 log, reads counted after a repolens call fell from 52 to 7.
+- Benchmark task files resolve the repository from the module's new location; since the move the retrieval benchmark could not start.
+- `bench/report.py` skips an agent result with no session instead of dividing by zero.
+- The explorer's graph labels follow the theme toggle, and the page says when Cytoscape cannot load.
+- Warming the query model and reloading the engine take the query lock. The MCP server warms on a thread while its first tool call may reload the engine; both used the store's one SQLite connection at once (`bad parameter or other API misuse`, seen as a flaky `test_orphans` under a loaded pre-push run).
+
 ### Changed
 
 - RepoLens lives at `framework/repolens`, beside the AI SDLC kit instead of inside it. The kit reaches it only as a command, an MCP server and the HTTP API. `repolens setup` rewrites a repository's wiring for the new launcher path.
 - `GET /api/metrics` describes the served store: index size, orphan counts and the usage report from that store's own log. Benchmark results appear only from the folder named by `REPOLENS_BENCH_RESULTS`.
 - The CLI comparison experiment takes its tasks file and corpus as arguments instead of a built-in project.
-
-### Added
-
-- `repolens setup` now wires the Junie CLI (`.junie/mcp/mcp.json`) alongside Claude Code, Cursor, Codex and OpenCode (#2386).
-- `tests/test_boundaries.py`: the package, runners and launcher import no factory kit and name no adopter.
 
 ## [0.6.2] - 2026-11-20
 

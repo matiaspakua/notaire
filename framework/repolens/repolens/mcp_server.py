@@ -24,6 +24,7 @@ Start with `search` instead of grep/glob: one call returns the relevant files wi
 a path, path:line or a symbol name. Use grep for exact literal strings (log messages, config values)."""
 
 
+DETAILED = 4  # results `search` describes in full by default
 ALSO = 4  # one-line results listed after the detailed top k
 CORE_TOOLS = ("search", "node", "impact", "path", "outline", "snippet", "orphans")
 ALL_TOOLS = (*CORE_TOOLS, "neighbors", "stats", "reindex")
@@ -80,7 +81,7 @@ def build(kg: KnowledgeGraph, tools: tuple[str, ...] = CORE_TOOLS):
     threading.Thread(target=lambda: kg.engine.warm(), daemon=True).start()
 
     @_tool(mcp, tools)
-    def search(query: str, k: int = 4, scope: str = "all", group_by_file: bool = True,
+    def search(query: str, k: int = DETAILED, scope: str = "all", group_by_file: bool = True,
                kinds: list[str] | None = None, project: str | None = None, repos: str | None = None) -> str:
         """Find code, tests, docs, configs, routes and tables relevant to a natural-language question or
         identifier. Ranks by semantic + keyword similarity, then expands through the code graph (calls,

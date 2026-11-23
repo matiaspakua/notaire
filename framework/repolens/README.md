@@ -17,9 +17,9 @@ append cost when the codebase changes.
 <!-- RESULTS:START -->
 | | grep-driven (baseline) | with repolens |
 |---|---|---|
-| Retrieval recall@10 (tuning / held-out tasks) | 0.18 / 0.31 | **0.89 / 0.77** |
-| Recall of one MCP `search` call (top 10 + 10 one-line results) | n/a | **0.94 / 0.96** in 3.2 KB |
-| Retrieval latency per query | 1,280 ms | **30 ms** |
+| Retrieval recall@10 (tuning / held-out tasks) | 0.18 / 0.31 | **0.90 / 0.79** |
+| Recall of one MCP `search` call (top 10 + 10 one-line results) | n/a | **0.92 / 0.96** in 3.3 KB |
+| Retrieval latency per query | 1,147 ms | **28 ms** |
 | Text returned per query (top 10) | 204 KB | **2.3 KB** |
 | Agent, Sonnet, held-out tasks (repolens 0.3.0, 6 tasks): recall / tool calls / time / input tokens / cost | 1.00 / 4.0 / 8.7 s / 21.9k / $0.0323 | **1.00 / 2.0 / 7.3 s / 24.4k / $0.0331** (tool calls −50%, time −16%, tokens +11%, cost +3%) |
 | Agent, Haiku, tuning tasks (repolens 0.2.0): recall / tool calls / time / input tokens / cost | 0.98 / 5.6 / 11.6 s / 56.3k / $0.0036 | **0.99 / 4.5 / 8.8 s / 38.1k / $0.0024** (tool calls −19%, time −24%, tokens −32%, cost −32%) |
@@ -144,8 +144,14 @@ larger, and the walk over it is slower in proportion; ranking did not move.
    are damped by `1 / log2(2 + degree)`. Graphs above 150k nodes propagate only mass of at least `ppr_eps`
    (a batched forward push), so the walk costs the same on a large repository as on a small one.
 3. **Rank.** `0.2 · text score + 0.8 · walk score`, with `demote` globs (e.g. retired code) applied and test
-   files at half weight unless the question is about tests (`test_factor`); results can be grouped by file and
-   carry a `via` explanation (the relation that put them there).
+   files at half weight unless the question is about tests (`test_factor`). A question that names a code construct
+   (component, function, class, hook, controller, service, endpoint...) and no documentation word (docs, spec,
+   README, ADR, guide...) ranks docs and stylesheets at `doc_factor` (0.3) of their score. Docs still seed and
+   carry the walk, a spec often names the code it describes, so only their final rank moves: weighting the seeds
+   instead dropped a held-out task. Measured on Notaire (graph arm, before -> after): tuning recall@10 0.904 ->
+   0.904, MRR 0.788 -> 0.788; held-out recall@10 0.786 -> 0.786, MRR 0.882 -> 0.896; the recorded miss "the
+   station detail panel component" now ranks the component first instead of third. Results can be grouped by
+   file and carry a `via` explanation (the relation that put them there).
 
 `impact` is a reverse-dependency closure (who calls, implements, imports, routes to or tests a node);
 `path` is a Dijkstra search that prefers strong structural edges and avoids hubs.
@@ -391,7 +397,7 @@ several harnesses and models, each in its own worktree and branch, opening pull 
 | Answers follow the agent's edits | Before a tool call the MCP server starts an incremental refresh in the background (at most every `REPOLENS_REFRESH_SECONDS`, default 15); answers come from the last published graph meanwhile. Git `post-checkout`/`post-merge` hooks refresh after a branch switch or a pull. A CLI query that still sees a stale index starts `refresh` in the background and answers at once. `git pull` and `git merge` run the `post-merge` hook, which starts that refresh before the next query. |
 | Many agents, one worktree | An inter-process lock serialises index runs; a refresh that finds the lock taken steps aside. Readers never block (SQLite WAL). |
 | First start | An MCP server on an unindexed repository builds the index in the background and tells the agent to retry or use grep meanwhile; the graph and keyword search are published before the slow embedding pass. |
-| Evidence | Every tool call is logged (`.repolens/usage.jsonl`), and the Claude Code hook logs Read/Grep/Glob, so `repolens report` measures real use (below). |
+| Evidence | Every tool call is logged (`.repolens/usage.jsonl`), and the Claude Code hook logs Read/Grep/Glob and the Bash commands that run `repolens <query>`, `rg`, `grep`, `git grep`, `find`, `fd` or `git ls-files`, so `repolens report` measures real use (below). |
 
 ### Usage report
 
@@ -407,6 +413,15 @@ repolens report [--since 7d] [--json] [--md report.md] [--gate]
 | grep fallback | share of repolens calls followed by a grep/glob before the next repolens call |
 | navigation tokens | what navigation tools returned to the model, per session, with and without repolens |
 | latency, zero-result searches, refreshes | server side, for every harness |
+
+The hook (`repolens hook`, a `PostToolUse` command on `Read|Grep|Glob|Bash|mcp__repolens__.*`) records the
+session id with each event. Agents often run repolens and `rg` through the shell, so a Bash command that runs a
+repolens query counts as a repolens call of that session, with the files its answer printed, and a shell search
+counts as a grep. Reads of files outside the repository (a scratchpad, a temp file) are not navigation and are
+not recorded; the report also leaves those already in a log out of the hit rate. Before 0.7.0 the hook did not
+match Bash: on Notaire's log of 2026-11-23, all 76 CLI calls carried no session and 46 of 63 recorded reads were
+outside the repository, which is why adoption read 25% and the hit rate 0%. The hook adds about 40 ms to a shell
+command (interpreter start) and never fails it.
 
 Each finding comes with an action (strengthen the instructions, add the missed questions to `bench/tasks`,
 tune `demote`/weights, look at the zero-result queries). `--gate` prints one advisory line; Notaire's AI SDLC
@@ -425,7 +440,7 @@ a few days of work.
 
 ## HTTP API
 
-`repolens serve [--host 127.0.0.1] [--port 7474]` — OpenAPI docs at `/docs`.
+`repolens serve [--host 127.0.0.1] [--port 7474] [--bench <folder>]` — OpenAPI docs at `/docs`.
 
 | Endpoint | |
 |---|---|
@@ -433,16 +448,29 @@ a few days of work.
 | `GET /api/node?ref=` · `/api/neighbors?ref=&depth=&direction=&kind=` | node + relations |
 | `GET /api/impact?ref=&depth=` · `/api/path?a=&b=` | impact, relation path |
 | `GET /api/outline?path=` · `/api/snippet?ref=&lines=` | file outline, source text |
-| `GET /api/subgraph?q=` or `?ref=&depth=` | nodes + edges for visualisation |
+| `GET /api/subgraph?q=` or `?ref=&depth=` | nodes + edges for visualisation; with `q`, also the hits, the time of each retrieval stage (`timings`, ms) and `answer`: the text the MCP `search` tool returns for that question, with its bytes and tokens |
+| `GET /api/metrics?since=` | the served store's index size, orphan counts, usage report, and the benchmark results of `--bench` (or `$REPOLENS_BENCH_RESULTS`), each classified as `agent` (with and without the tools), `retrieval` (grep-driven and graph) or `other` |
 | `GET /api/orphans?symbols=&all=` | files (and symbols) that relate to nothing, history-only files, held-out counts |
 | `GET /api/stats` · `POST /api/index?full=` | store statistics, re-index |
 
 ## Graph explorer
 
-`repolens serve`, then open `http://127.0.0.1:7474` (or `/?q=your+question`). Search shows the ranked hits and
-the subgraph that connects them; click a node for its relations and source, double-click to expand its
-neighbours, toggle edge kinds in the legend. **Orphans** lists the files that relate to nothing, the files
-related only through git history and the symbols with no relation, and places them in the graph.
+`repolens serve [--bench bench/results]`, then open `http://127.0.0.1:7474` (or `/?q=your+question`). Two views:
+
+- **Explore.** Search shows the ranked hits and the subgraph that connects them. Each hit says whether it
+  *matched* the question (an anchor) or was reached through a relation (`via calls`, `via tests`...). The panel
+  above the hits shows the time of each stage (keywords, meaning, graph walk, rank) and the exact answer an agent
+  receives for the same question, with its size in tokens, next to what the benchmark's grep-driven search
+  returned. Click a node for its relations and source, double-click to expand its neighbours, toggle edge kinds
+  in the legend. **Orphans** lists the files that relate to nothing, the files related only through git history
+  and the symbols with no relation, and places them in the graph.
+- **How it works.** The indexing pipeline with this store's counts, how an answer is built, the measured
+  benchmarks at a glance (accuracy, speed, tool calls, text and tokens, as ranges across runs, worse results shown
+  as worse) and per benchmark, and the live usage report with its recommendations. Without `--bench` it says how
+  to add benchmark results.
+
+The page is one HTML file (`repolens/ui/index.html`) with Cytoscape from cdnjs; offline, the graph pane says so and
+search, relations and source still work. Light and dark themes, keyboard navigation, readable at 320 px.
 
 ## Extending
 
@@ -629,15 +657,15 @@ Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of 
   git root, so agents working there cannot wander into the enclosing repository).
 
 <!-- BENCH:START -->
-Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Haiku runs with 0.2.0:
+Results on commit `073e9776`; retrieval runs with repolens 0.7.0, Sonnet runs with 0.3.0, Haiku runs with 0.2.0:
 
 ### Retrieval, task set `notaire-holdout` (top-10 files, 12 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 1,088 | 230.4 | n/a |
-| repolens hybrid (no graph) | 0.61 | 0.80 | 0.83 | 0.79 | 21 | 2.3 | 3.2 |
-| repolens graph | 0.63 | 0.77 | 0.96 | 0.84 | 28 | 2.4 | 3.3 |
+| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 1,034 | 230.4 | n/a |
+| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 25 | 2.4 | 3.3 |
+| repolens graph | 0.63 | 0.79 | 0.96 | 0.90 | 32 | 2.4 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
@@ -645,24 +673,24 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | docs | 0.00 | 0.50 | 0.50 |
 | impact | 0.00 | 0.20 | 0.60 |
 | lexical | 0.78 | 0.89 | 0.89 |
-| multi-hop | 0.21 | 0.81 | 0.81 |
+| multi-hop | 0.21 | 0.81 | 0.88 |
 | tests | 0.50 | 1.00 | 1.00 |
 
 ### Retrieval, task set `notaire` (top-10 files, 11 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,280 | 204.3 | n/a |
-| repolens hybrid (no graph) | 0.59 | 0.79 | 0.90 | 0.72 | 23 | 2.3 | 3.3 |
-| repolens graph | 0.67 | 0.89 | 0.94 | 0.79 | 30 | 2.3 | 3.2 |
+| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,147 | 204.3 | n/a |
+| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 26 | 2.3 | 3.3 |
+| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 28 | 2.3 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
 | cross-stack | 0.00 | 0.88 | 0.88 |
 | docs | 0.50 | 0.83 | 0.83 |
-| impact | 0.00 | 0.71 | 0.71 |
+| impact | 0.00 | 0.71 | 0.86 |
 | lexical | 0.00 | 0.83 | 1.00 |
-| multi-hop | 0.00 | 0.46 | 0.83 |
+| multi-hop | 0.00 | 0.58 | 0.83 |
 | tests | 0.50 | 1.00 | 1.00 |
 
 ### Agent: haiku, task set `notaire-holdout` (72 runs, 3 rep., $0.20 total)
@@ -711,12 +739,6 @@ Results on commit `073e9776`; retrieval and Sonnet runs with repolens 0.3.0, Hai
 | Tuning set recall@10 / MRR | 0.86 / 0.79 | 0.89 / 0.79 |  |
 | Held-out set recall@10 / MRR | 0.77 / 0.84 | 0.77 / 0.84 |  |
 
-![Retrieval recall@10, tuning set](bench/results/charts/retrieval-recall10.svg)
-![Retrieval recall@10, held-out set](bench/results/charts/retrieval-notaire-holdout-recall10.svg)
-![Agent tool calls, Sonnet, held-out](bench/results/charts/agent-sonnet-notaire-holdout-tool_calls.svg)
-![Agent tool calls, Haiku](bench/results/charts/agent-haiku-tool_calls.svg)
-![Agent time, Haiku, held-out](bench/results/charts/agent-haiku-notaire-holdout-duration_s.svg)
-![Recall@10 per task, held-out set](bench/results/charts/retrieval-notaire-holdout-per-task.svg)
 <!-- BENCH:END -->
 
 **Caveats.** Two task sets on one repository, 23 questions in total. Ranking parameters were tuned on the

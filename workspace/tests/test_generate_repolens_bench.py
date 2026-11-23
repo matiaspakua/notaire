@@ -44,7 +44,7 @@ class GenerateRepoLensBenchTest(unittest.TestCase):
             out = Path(tmp) / "repolens-bench-snapshot.json"
             out.write_text(json.dumps(snap), encoding="utf-8")
             data = json.loads(out.read_text(encoding="utf-8"))
-            self.assertEqual(data["headlines"]["tuning_recall"], "4.9x more")
+            self.assertEqual(data["headlines"]["tuning_recall"], "5.0x more")
 
 
     # #2429: a Pages build must not rewrite the tracked snapshot when its data is unchanged.

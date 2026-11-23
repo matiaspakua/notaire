@@ -2,9 +2,9 @@
 # Same format as notaire.yaml; ground truth verified with grep against main (2026-11-16).
 name: notaire
 corpus:
-  repo: ../../../../..
+  repo: ../../../..
   clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module
-  profile: ../../../../../repolens.toml     # the repository's repolens profile, reused for the clone
+  profile: ../../../../repolens.toml     # the repository's repolens profile, reused for the clone
   strip: framework/repolens
 answer_suffix: >-
   Answer concisely. Finish with one line that starts with `FILES:` followed by the repository-relative

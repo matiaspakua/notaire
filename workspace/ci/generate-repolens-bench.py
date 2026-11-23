@@ -217,13 +217,13 @@ def validate(snap: dict) -> None:
     for key in required:
         if key not in snap:
             raise SystemExit(f"snapshot missing {key}")
-    if snap["headlines"]["tuning_recall"] != "4.9x more":
+    if snap["headlines"]["tuning_recall"] != "5.0x more":
         raise SystemExit(f"unexpected tuning_recall label: {snap['headlines']['tuning_recall']}")
-    if snap["headlines"]["holdout_recall"] != "2.5x more":
+    if snap["headlines"]["holdout_recall"] != "2.6x more":
         raise SystemExit(f"unexpected holdout_recall label: {snap['headlines']['holdout_recall']}")
-    if snap["headlines"]["latency"] != "43x faster":
+    if snap["headlines"]["latency"] != "41x faster":
         raise SystemExit(f"unexpected latency label: {snap['headlines']['latency']}")
-    if snap["headlines"]["bytes"] != "91x less":
+    if snap["headlines"]["bytes"] != "89x less":
         raise SystemExit(f"unexpected bytes label: {snap['headlines']['bytes']}")
     if snap["headlines"]["sonnet_tool_calls"] != "2.0x fewer":
         raise SystemExit(f"unexpected sonnet tool-call label: {snap['headlines']['sonnet_tool_calls']}")
