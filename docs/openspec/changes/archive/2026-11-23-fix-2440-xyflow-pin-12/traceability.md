@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| an incompatible major is installed | xyflow-api.test.ts | pending |
-| the pinned version builds | xyflow-api.test.ts | pending |
+| an incompatible major is installed | xyflow-api.test.ts | passing |
+| the pinned version builds | xyflow-api.test.ts | passing |
 
 ## Permanent documentation updated
 

@@ -54,6 +54,11 @@ Pin @xyflow/react ^12.12.1, guard the used API with a unit test, ignore xyflow m
 
 ### Write set
 
+- `frontend/src/types/api.generated.ts`
+- `backend-api/openapi/**`
+- `.github/workflows/deploy-github-page.yml`
+- `.github/workflows/sdlc-process.yml`
+- `workspace/tests/**`
 - `frontend/package.json`
 - `frontend/package-lock.json`
 - `frontend/src/tests/unit/xyflow-api.test.ts`
