@@ -137,6 +137,15 @@ class StoreSchemaTest(unittest.TestCase):
         content = gitignore.read_text(encoding="utf-8")
         self.assertIn("factory.db", content)
 
+    def test_gitignore_keeps_sqlite_side_files_out_of_git(self) -> None:
+        """SQLite writes -wal, -shm and -journal next to the store; none may reach a commit (#2439)."""
+        from aisdlc.store import open_store
+
+        open_store(self.root)
+        lines = (self.root / ".aisdlc" / ".gitignore").read_text(encoding="utf-8").splitlines()
+        for name in ("factory.db-wal", "factory.db-shm", "factory.db-journal"):
+            self.assertIn(name, lines)
+
 
 class StorePathTest(unittest.TestCase):
     """store_path returns the correct path without creating the DB."""
