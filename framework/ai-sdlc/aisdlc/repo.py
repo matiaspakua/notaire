@@ -50,59 +50,25 @@ def changed_files(root: Path, base: str) -> list[str]:
 
 
 def numstat(root: Path, base: str) -> list[tuple[int | None, int | None, str]]:
-    """(added, deleted, path) per changed file since the merge base; None for binary files.
-
-    Uses ``-M`` to detect renames so a pure rename contributes 0 lines and a rename
-    with edits contributes only the edited lines.  The path reported (and matched
-    against [size] exclude) is the **new** path.
-    """
+    """Return (added, deleted, path) per file; renames use the new path."""
     require_ref(root, base)
-    # With -M -z, each record is NUL-terminated.
-    # Normal file: "added\tdeleted\tpath\x00"
-    # Rename:      "added\tdeleted\t\x00old_path\x00new_path\x00"
-    # (the third tab field is empty, then NUL-separated old and new paths)
     result = _git(root, "diff", "--numstat", "-M", "-z", f"{base}...HEAD")
     if result.returncode != 0:
         raise GitError(result.stderr.strip())
     rows: list[tuple[int | None, int | None, str]] = []
-    raw = result.stdout
-    if not raw:
-        return rows
-    # Split on NUL to get all fields; reconstruct records.
-    # Each record starts with "added\tdeleted\t" then either:
-    #   - path\x00  (normal)
-    #   - \x00old_path\x00new_path\x00  (rename)
-    tokens = raw.split("\x00")
-    i = 0
-    while i < len(tokens):
-        # Each record begins with "added\tdeleted\tpath" or "added\tdeleted\t"
-        head = tokens[i]
-        if not head.strip():
-            i += 1
+    tokens = iter(result.stdout.split("\x00"))
+    for head in tokens:
+        if not head:
             continue
-        parts = head.split("\t")
-        if len(parts) == 3 and parts[2]:
-            # Normal file: added, deleted, path
-            added, deleted, path = parts
-            rows.append((
-                None if added == "-" else int(added),
-                None if deleted == "-" else int(deleted),
-                path,
-            ))
-            i += 1
-        elif len(parts) == 3 and parts[2] == "":
-            # Rename: added, deleted, empty — next two tokens are old_path, new_path
-            added, deleted, _ = parts
-            old_path = tokens[i + 1] if i + 1 < len(tokens) else ""
-            new_path = tokens[i + 2] if i + 2 < len(tokens) else ""
-            rows.append((
-                None if added == "-" else int(added),
-                None if deleted == "-" else int(deleted),
-                new_path,
-            ))
-            i += 3
-        else:
-            i += 1
+        added, deleted, path = head.split("\t", 2)
+        if not path:  # a rename: the old path, then the new path follow
+            next(tokens, "")
+            path = next(tokens, "")
+        rows.append((
+            None if added == "-" else int(added),
+            None if deleted == "-" else int(deleted),
+            path,
+        ))
     return rows
 
 
