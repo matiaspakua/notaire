@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- `aisdlc line` and `GET /factory/line` stages always carry `agents`, `skills`, `mcp`, `tools`, `model`, `effort` and `guardrails` (grants of the stage), with empty values when nothing is configured; contract `factory-control` 1.4.0 (additive) (#2404).
 - Factory dashboard SSE events stream now carries the same security headers (CSP, X-Content-Type-Options, Referrer-Policy, Cache-Control) as other responses — previously skipped by `reply.hijack()` (#2405).
 - `harness report` refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`), but always accepts the kit's reference adapter `local-worker` without registration (#2385).
 

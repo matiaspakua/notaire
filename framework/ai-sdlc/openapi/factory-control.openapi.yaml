@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.3.0
+  version: 1.4.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -33,6 +33,9 @@ info:
     rows with Last-Event-ID replay and keep-alive.
     1.3.0 (#2398) adds configuration-as-code: config file tree and read with redaction
     and confinement, plus catalog DELETE with If-Match, CSRF, write scope, and evidence.
+    1.4.0 (#2404) makes every LineStage always carry `agents`, `skills`, `mcp`, `tools`,
+    `model`, `effort`, `guardrails` — with empty defaults when nothing is configured —
+    and adds per-stage guardrails (grants tagged with `kind: grant`).
 servers:
   - url: http://127.0.0.1:8765
     description: Default `aisdlc serve` loopback (CLI remains the system of record)
@@ -1689,7 +1692,7 @@ components:
     LineStage:
       type: object
       additionalProperties: true
-      required: [id, gates]
+      required: [id, gates, agents, skills, mcp, tools, model, effort, guardrails, inputs, outputs, io_source]
       properties:
         id: { type: string }
         title: { type: [string, "null"] }
@@ -1709,10 +1712,35 @@ components:
         tools:
           type: array
           items: { type: string }
-        model: { type: [string, "null"] }
+          description: Equals the mcp ids; the profile has no other tool source
+        model:
+          type: [string, "null"]
+          description: Model id for the stage, or null when not configured
         effort:
-          type: [object, "null"]
+          type: object
           additionalProperties: true
+          description: "{} when none declared; keys among tokens, time_seconds, questions, review_lines"
+        guardrails:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            properties:
+              kind:
+                type: string
+                enum: [grant]
+              id: { type: string }
+              stage: { type: string }
+              worktree: { type: string }
+              write_set:
+                type: array
+                items: { type: string }
+              required_checks:
+                type: array
+                items: { type: string }
+              budget:
+                type: object
+                additionalProperties: true
         inputs:
           type: array
           items: { type: string }

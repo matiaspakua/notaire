@@ -1,14 +1,53 @@
 import { describe, expect, it } from "vitest";
 
-import { isSafeLink, mergeLineConfig, stationState } from "../src/ui/model.ts";
-import type { ConfigPayload, FactoryStatus, LinePayload } from "../src/ui/model.ts";
+import { isSafeLink, stationState } from "../src/ui/model.ts";
+import type { FactoryStatus, LinePayload } from "../src/ui/model.ts";
 
 const sampleLine: LinePayload = {
   schema_version: 1,
   stages: [
-    { id: "plan", gates: [{ id: "spec", name: "Spec review", required: true, mode: "required" }], inputs: ["issue"], outputs: ["spec"] },
-    { id: "red", gates: [], inputs: ["spec"], outputs: ["tests"] },
-    { id: "green", gates: [{ id: "tests", name: "Tests pass", required: true, mode: "required" }, { id: "lint", name: "Lint", required: false, mode: "advisory" }], inputs: ["tests"], outputs: ["code"] },
+    {
+      id: "plan",
+      gates: [{ id: "spec", name: "Spec review", required: true, mode: "required" }],
+      inputs: ["issue"],
+      outputs: ["spec"],
+      io_source: "default",
+      agents: ["architect"],
+      skills: ["openspec"],
+      mcp: [],
+      tools: [],
+      model: "claude-sonnet-4-20250514",
+      effort: { tokens: 50000 },
+      guardrails: [],
+    },
+    {
+      id: "red",
+      gates: [],
+      inputs: ["spec"],
+      outputs: ["tests"],
+      io_source: "default",
+      agents: [],
+      skills: [],
+      mcp: [],
+      tools: [],
+      model: null,
+      effort: {},
+      guardrails: [],
+    },
+    {
+      id: "green",
+      gates: [{ id: "tests", name: "Tests pass", required: true, mode: "required" }, { id: "lint", name: "Lint", required: false, mode: "advisory" }],
+      inputs: ["tests"],
+      outputs: ["code"],
+      io_source: "default",
+      agents: ["coder"],
+      skills: [],
+      mcp: ["repolens"],
+      tools: ["repolens"],
+      model: null,
+      effort: {},
+      guardrails: [{ kind: "grant" as const, id: "g1", stage: "green", write_set: ["src/**"] }],
+    },
   ],
   guardrails: {
     protected: { owner: "main", paths: ["src/**"] },
@@ -18,54 +57,41 @@ const sampleLine: LinePayload = {
   },
 };
 
-const sampleConfig: ConfigPayload = {
-  stages: [
-    { id: "plan", agents: ["architect"], skills: ["openspec"], mcp: [], model: "claude-sonnet-4-20250514", effort: { tokens: 50000 }, inputs: [], outputs: [] },
-    { id: "green", agents: ["coder"], skills: [], mcp: ["repolens"], model: null, effort: {}, inputs: [], outputs: [] },
-  ],
-};
+describe("LineStage carries metadata directly from /factory/line", () => {
+  it("stages include agents, skills, mcp, tools, model, effort, guardrails", () => {
+    const plan = sampleLine.stages.find((s) => s.id === "plan");
+    expect(plan).toBeDefined();
+    expect(plan!.agents).toEqual(["architect"]);
+    expect(plan!.skills).toEqual(["openspec"]);
+    expect(plan!.mcp).toEqual([]);
+    expect(plan!.tools).toEqual([]);
+    expect(plan!.model).toBe("claude-sonnet-4-20250514");
+    expect(plan!.effort).toEqual({ tokens: 50000 });
+    expect(plan!.guardrails).toEqual([]);
+    expect(plan!.gates.length).toBe(1);
+    expect(plan!.inputs).toEqual(["issue"]);
 
-describe("mergeLineConfig", () => {
-  it("merges config stage details into line stages by id", () => {
-    const merged = mergeLineConfig(sampleLine, sampleConfig);
-    expect(merged.length).toBe(3);
+    const green = sampleLine.stages.find((s) => s.id === "green");
+    expect(green!.agents).toEqual(["coder"]);
+    expect(green!.mcp).toEqual(["repolens"]);
+    expect(green!.tools).toEqual(["repolens"]);
+    expect(green!.gates.length).toBe(2);
+    expect(green!.guardrails.length).toBe(1);
+    expect(green!.guardrails[0].kind).toBe("grant");
 
-    const plan = merged.find((s) => s.id === "plan") as any;
-    expect(plan.agents).toEqual(["architect"]);
-    expect(plan.skills).toEqual(["openspec"]);
-    expect(plan.model).toBe("claude-sonnet-4-20250514");
-    expect(plan.effort).toEqual({ tokens: 50000 });
-    expect(plan.gates.length).toBe(1);
-    expect(plan.inputs).toEqual(["issue"]);
-
-    const green = merged.find((s) => s.id === "green") as any;
-    expect(green.agents).toEqual(["coder"]);
-    expect(green.mcp).toEqual(["repolens"]);
-    expect(green.gates.length).toBe(2);
-
-    const red = merged.find((s) => s.id === "red") as any;
-    expect(red.agents).toEqual([]);
-    expect(red.skills).toEqual([]);
-    expect(red.effort).toEqual({});
+    const red = sampleLine.stages.find((s) => s.id === "red");
+    expect(red!.agents).toEqual([]);
+    expect(red!.skills).toEqual([]);
+    expect(red!.mcp).toEqual([]);
+    expect(red!.tools).toEqual([]);
+    expect(red!.model).toBeNull();
+    expect(red!.effort).toEqual({});
+    expect(red!.guardrails).toEqual([]);
   });
 
-  it("tolerates missing config", () => {
-    const merged = mergeLineConfig(sampleLine, undefined);
-    expect(merged.length).toBe(3);
-    for (const s of merged as any[]) {
-      expect(s.agents).toEqual([]);
-      expect(s.skills).toEqual([]);
-      expect(s.mcp).toEqual([]);
-      expect(s.effort).toEqual({});
-    }
-  });
-
-  it("tolerates empty config", () => {
-    const merged = mergeLineConfig(sampleLine, { stages: [] });
-    expect(merged.length).toBe(3);
-    for (const s of merged as any[]) {
-      expect(s.agents).toEqual([]);
-    }
+  it("mergeLineConfig no longer exists", async () => {
+    const model = await import("../src/ui/model.ts");
+    expect("mergeLineConfig" in model).toBe(false);
   });
 });
 
