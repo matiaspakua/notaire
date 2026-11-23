@@ -112,6 +112,8 @@ def _parser() -> argparse.ArgumentParser:
     s = sub.add_parser("serve", help="HTTP API + graph UI")
     s.add_argument("--host", default="127.0.0.1")
     s.add_argument("--port", type=int, default=7474)
+    s.add_argument("--bench", type=Path, help="folder of benchmark result JSON files for the explorer's Overview "
+                   "(default: $REPOLENS_BENCH_RESULTS)")
 
     s = sub.add_parser("mcp", help="MCP server (stdio by default)")
     s.add_argument("--transport", choices=["stdio", "sse", "streamable-http"], default="stdio")
@@ -221,9 +223,9 @@ def _dispatch(args) -> int:  # noqa: C901 - flat command table
         print(json.dumps(report, indent=2) if args.json else _index_summary(report))
         return 0
     if args.cmd == "serve":
-        from .api import run
+        from . import api
 
-        run(kg, args.host, args.port)
+        api.run(kg, args.host, args.port, args.bench)
         return 0
     if args.cmd == "mcp":
         from .mcp_server import ALL_TOOLS, CORE_TOOLS, build
