@@ -1,6 +1,5 @@
 ![repolens vs grep-driven navigation](charts/headline.svg)
 
-
 ### Retrieval, task set `notaire-holdout` (top-10 files, 12 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |

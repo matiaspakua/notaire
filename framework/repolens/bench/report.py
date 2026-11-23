@@ -437,7 +437,7 @@ def main() -> int:
     headline = headline_chart(out)
     if headline:
         sections.append(f'<section><h2>At a glance</h2>{headline}</section>')
-        md_parts.append("![repolens vs grep-driven navigation](charts/headline.svg)\n")
+        md_parts.append("![repolens vs grep-driven navigation](charts/headline.svg)")
     for retrieval in sorted(out.glob("retrieval*.json")):
         h, m, _ = retrieval_section(json.loads(retrieval.read_text()), charts_dir)
         sections.append(h)
