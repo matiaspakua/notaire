@@ -1,28 +1,28 @@
 {
-  "generated_at": "2026-11-23T17:29:24.188336+00:00",
+  "generated_at": "2026-11-23T21:22:10.818921+00:00",
   "method": "python3 workspace/ci/generate-factory-metrics.py (aisdlc metrics factory --json)",
   "overall": {
-    "intents": 13,
-    "runs": 20,
+    "intents": 14,
+    "runs": 21,
     "succeeded": 16,
     "corrections": 5,
-    "median_active_s": 2196.0,
-    "median_wall_s": 3326.0,
-    "median_usd": 2.15,
-    "median_tokens": 25241927,
+    "median_active_s": 2046.0,
+    "median_wall_s": 3205.5,
+    "median_usd": 2.07,
+    "median_tokens": 22122823.0,
     "usd": {
       "total": 122.129095,
       "attributed": 39.365995,
       "overhead": 82.7631
     },
     "tokens": {
-      "cache_read": 541716842,
+      "cache_read": 545041530,
       "cache_write": 4053681,
-      "input": 9789236,
-      "output": 1572509,
-      "total": 557132268
+      "input": 10298654,
+      "output": 1626490,
+      "total": 561020355
     },
-    "repolens_calls": 146,
+    "repolens_calls": 196,
     "repolens_p50_ms": 40.7
   },
   "intents": [
@@ -124,6 +124,17 @@
       "usd": 0.630364,
       "cost_note": "priced",
       "repolens_calls": 0
+    },
+    {
+      "title": "fix(aisdlc): size counts a renamed file as delete plus add (CU76)",
+      "runs": 1,
+      "active_s": 1020.0,
+      "wall_s": 1210.0,
+      "corrections": 0,
+      "tokens": 3888087,
+      "usd": 0.0,
+      "cost_note": "reported",
+      "repolens_calls": 24
     },
     {
       "title": "Fix #2429: a Pages build must leave the git tree unchanged (stable RepoLens bench snapshot)",
