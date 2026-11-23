@@ -132,9 +132,10 @@ class CoherentTreeTest(unittest.TestCase):
         errors = mod.coherence_errors(REPO_ROOT)
         self.assertEqual(errors, [])
 
-    def test_real_repository_passes_for_v090_tag(self):
+    def test_real_repository_passes_for_its_own_release_tag(self):
         mod = load_module()
-        errors = mod.coherence_errors(REPO_ROOT, tag="v0.9.0")
+        tag = mod.tag_for(mod.manifest_version(REPO_ROOT))
+        errors = mod.coherence_errors(REPO_ROOT, tag=tag)
         self.assertEqual(errors, [])
 
     def test_release_branch_at_0_10_0_passes_for_its_tag(self):
