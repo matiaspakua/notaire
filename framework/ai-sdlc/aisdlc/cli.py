@@ -379,6 +379,14 @@ def build_parser() -> argparse.ArgumentParser:
     stages = metrics_sub.add_parser("stages", help="stage durations from the evidence ledger")
     stages.add_argument("--json", action="store_true")
     stages.add_argument("--since", help="ISO date, e.g. 2026-10-01")
+    factory_p = metrics_sub.add_parser(
+        "factory", help="time, tokens, money and RepoLens effect per intent, per run and overall (#2447)")
+    factory_p.add_argument("--usage", type=Path, default=Path(".repolens/usage.jsonl"),
+                           help="RepoLens usage log (default .repolens/usage.jsonl)")
+    factory_p.add_argument("--bench-dir", dest="bench_dir", type=Path,
+                           default=Path("framework/repolens/bench/results"),
+                           help="RepoLens agent benchmark results (agent-*.json)")
+    factory_p.add_argument("--json", action="store_true")
     intents = metrics_sub.add_parser("intents", help="summarize, list, export, or compare intent runs")
     intents.set_defaults(command="metrics")
     intent_metrics = intents.add_subparsers(dest="intents_action", required=True)
@@ -462,6 +470,22 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--output", type=int, required=True, help="output tokens")
     p.add_argument("--usd", type=float, help="actual cost; computed from [cost.prices] when omitted")
     p.add_argument("--issue")
+    p.add_argument("--run", help="run id the cost belongs to (#2447)")
+    p.add_argument("--step", help="step id within the run")
+    p.add_argument("--cache-read", dest="cache_read", type=int, default=0, help="cache-read input tokens")
+    p.add_argument("--cache-write", dest="cache_write", type=int, default=0, help="cache-write input tokens")
+    p.add_argument("--source", help="where the numbers come from, e.g. junie, claude-code, manual")
+
+    p = sub.add_parser("usage", help="import real token usage from worker logs into cost rows (#2447)")
+    usage_sub = p.add_subparsers(dest="action", required=True)
+    usage_import = usage_sub.add_parser("import", help="attribute Junie or Claude Code usage to a run's steps")
+    usage_import.add_argument("--source", required=True, choices=["junie", "claude-code"])
+    usage_import.add_argument("--path", required=True, type=Path, help="Junie logs dir, or a transcript file or dir")
+    usage_import.add_argument("--run", required=True)
+    usage_import.add_argument("--step", help="claude-code: attribute to this step (its window, or a label)")
+    usage_import.add_argument("--since", help="claude-code: window start (ISO)")
+    usage_import.add_argument("--until", help="claude-code: window end (ISO)")
+    usage_import.add_argument("--json", action="store_true")
 
     p = sub.add_parser(
         "improve",
@@ -935,7 +959,12 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
             return change.new(ctx, args.name, args.issue, args.title)
         return change.check(ctx, args.names)
     if args.command == "cost":
-        return evidence.add_cost(ctx, args.agent, args.model, args.input, args.output, args.usd, args.issue)
+        evidence.add_cost(ctx, args.agent, args.model, args.input, args.output, args.usd, args.issue, run=args.run,
+                          step=args.step, cache_read=args.cache_read, cache_write=args.cache_write,
+                          source=args.source)
+        return 0
+    if args.command == "usage":
+        return _usage(ctx, args)
     simple = {
         "doctor": lambda: adopt.doctor(ctx),
         "ratchet": lambda: ratchet.run(ctx, args.base, args.name),
@@ -1415,9 +1444,48 @@ def _improve(ctx: Context, args: argparse.Namespace) -> int:
     return improve.autonomy(ctx, args.json, getattr(args, "since", None))
 
 
+def _resolve(ctx: Context, path: Path) -> Path:
+    return path if path.is_absolute() else ctx.root / path
+
+
+def _usage(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import usage_import
+
+    try:
+        result = usage_import.import_usage(ctx, source=args.source, path=args.path, run_id=args.run, step=args.step,
+                                           since=args.since, until=args.until)
+    except KitError as exc:
+        print(f"error: {exc.code}: {exc.detail}")
+        return 2
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        print(f"usage import: {result['recorded']} cost row(s) for run {result['run']} from {result['source']}")
+    return 0
+
+
+def _factory_metrics(ctx: Context, args: argparse.Namespace) -> int:
+    from aisdlc import factory_metrics
+
+    report = factory_metrics.build(ctx, usage_path=_resolve(ctx, args.usage), bench_dir=_resolve(ctx, args.bench_dir))
+    if args.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 0
+    overall = report["overall"]
+    print(f"factory metrics: {overall['intents']} intents, {overall['runs']} runs")
+    for intent in report["intents"]:
+        usd = intent["cost"]["usd"]
+        print(f"  {intent['id']}  active {intent['time']['active_s']}s  wall {intent['time']['wall_s']}s  "
+              f"tokens {sum(intent['tokens'].values())}  usd {'n/a' if usd is None else f'{usd:.4f}'}  "
+              f"repolens {intent['repolens']['calls']} calls  {intent['title']}")
+    return 0
+
+
 def _metrics(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "intents":
         return _intent_metrics(ctx, args)
+    if args.action == "factory":
+        return _factory_metrics(ctx, args)
     if args.action == "lead-time":
         from aisdlc import forge
 
