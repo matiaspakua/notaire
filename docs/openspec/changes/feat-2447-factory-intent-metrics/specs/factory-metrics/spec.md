@@ -15,7 +15,7 @@ null), never 0.
 
 ### Requirement: Usage is imported from worker logs
 
-`aisdlc cost import --source junie|claude-code --path P --run R` SHALL attribute token usage to the
+`aisdlc usage import --source junie|claude-code --path P --run R` SHALL attribute token usage to the
 run's steps by time window. Junie logs SHALL be read from their last token snapshot. Claude Code
 messages SHALL be counted once per request. Importing twice SHALL add nothing.
 
