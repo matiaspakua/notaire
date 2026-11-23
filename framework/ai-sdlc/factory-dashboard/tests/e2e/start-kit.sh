@@ -103,7 +103,10 @@ Add a production-line timeline view to the factory dashboard with stations, gate
 - [Issue #2400](https://github.com/example/repo/issues/2400) (architecture)
 - [ADR-006](https://example.invalid/adr-006) (adr)
 SPEC
-python3 "$KIT_BIN" intent submit --file "$WORK/spec.md" >/dev/null
+intent_id=$(python3 "$KIT_BIN" intent submit --file "$WORK/spec.md" --json | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])")
+# The run belongs to the intent and has measured cost, for the factory metrics (#2447).
+python3 "$KIT_BIN" intent attach --id "$intent_id" --run checkout-flow >/dev/null
+python3 "$KIT_BIN" cost --agent foreman --model claude-e2e --input 1000 --output 500 --usd 0.42 --run checkout-flow --step plan --source manual >/dev/null
 
 # Record telemetry rows for the Metrics view e2e.
 python3 "$KIT_BIN" telemetry record --stage plan --agent planner --metric duration_s --value 12.5 --ok >/dev/null
