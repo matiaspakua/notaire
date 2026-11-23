@@ -113,3 +113,5 @@
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
+
+> **Decision deviation (Foreman review, 2026-11-23):** the worker's script computed the numbers only when `PLAYWRIGHT_RESULTS_JSON` and `BRUNO_RESULTS_JSON` were set, but the Pages deploy never set them, so every run would have published the stale fallback. The deploy workflow now downloads the Bruno `api-test-report` and passes both result files (added to the write set, covered by `DeployWorkflowWiringTest`). The four repeated fall-back blocks became one `fresh_or_live` helper. The architecture note no longer claims a change to `generate_e2e_coverage_report.py`, which stayed unchanged. Same scope and acceptance criteria.

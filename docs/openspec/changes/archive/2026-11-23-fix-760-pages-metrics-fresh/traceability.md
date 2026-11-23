@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/fix-760-pages-metrics-fresh/` | archived |
 | Branch | `fix/760_pages_metrics_fresh` | created |
 | Tasks | `tasks.md` | 4/12 complete (Gates 1-3 partial; 4-12 pending) |
-| Commits | 7608c12f, 6b8e3014, cef0054b, b7e429e0 | done |
+| Commits | 7608c12f, 6b8e3014, cef0054b, b7e429e0, 36b9e835, 58c310d7, 734dc675 | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |

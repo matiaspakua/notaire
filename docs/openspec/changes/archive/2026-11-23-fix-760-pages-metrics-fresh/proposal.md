@@ -66,18 +66,19 @@ _None._
 
 ### Write set
 
-- ``workspace/ci/generate-github-page-metrics.sh``
-- ``workspace/tests/test_generate_github_page_metrics.py``
-- ``testing/tools/generate_e2e_coverage_report.py``
-- ``testing/tests/test_generate_e2e_coverage_report.py``
-- ``github-page/lib/**``
-- ``github-page/components/**``
-- ``docs/openspec/changes/**``
-- ``docs/openspec/specs/**``
+- `workspace/ci/generate-github-page-metrics.sh`
+- `.github/workflows/deploy-github-page.yml`
+- `workspace/tests/test_generate_github_page_metrics.py`
+- `testing/tools/generate_e2e_coverage_report.py`
+- `testing/tests/test_generate_e2e_coverage_report.py`
+- `github-page/lib/**`
+- `github-page/components/**`
+- `docs/openspec/changes/**`
+- `docs/openspec/specs/**`
 
 ### Architecture review
 
-Follows existing architecture: the shared metrics generator (`generate-github-page-metrics.sh`) already calls external tools and merges their output into `metrics.json`. The `generate_e2e_coverage_report.py` script already parses Playwright and Bruno artifacts — we extend it with a `--json` output mode. The Coverage UI component already handles `null` values — we add a stale indicator. No ADR required.
+Follows existing architecture: the shared metrics generator (`generate-github-page-metrics.sh`) already calls external tools and merges their output into `metrics.json`. The script reads the Playwright `results.json` and the Bruno `bruno-results.json` with `jq`; `generate_e2e_coverage_report.py` is unchanged. The Coverage UI component already handles `null` values — we add a stale indicator. No ADR required.
 
 ## Documentation Impact
 
