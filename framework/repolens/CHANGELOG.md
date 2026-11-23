@@ -22,6 +22,7 @@ All notable changes to repolens. Versions follow [SemVer](https://semver.org); t
 - Benchmark task files resolve the repository from the module's new location; since the move the retrieval benchmark could not start.
 - `bench/report.py` skips an agent result with no session instead of dividing by zero.
 - The explorer's graph labels follow the theme toggle, and the page says when Cytoscape cannot load.
+- Warming the query model and reloading the engine take the query lock. The MCP server warms on a thread while its first tool call may reload the engine; both used the store's one SQLite connection at once (`bad parameter or other API misuse`, seen as a flaky `test_orphans` under a loaded pre-push run).
 
 ### Changed
 

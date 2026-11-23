@@ -288,10 +288,11 @@ class Engine:
 
     def refresh(self) -> bool:
         """Reload when another process re-indexed the store."""
-        if self.store.get_meta("last_index") != self.loaded_at:
-            self.load()
-            return True
-        return False
+        with self._lock:
+            if self.store.get_meta("last_index") != self.loaded_at:
+                self.load()
+                return True
+            return False
 
     @property
     def embedder(self):
@@ -304,8 +305,11 @@ class Engine:
         return self._embedder
 
     def warm(self) -> None:
-        if self.embedder is not None:
-            self.embedder.embed_query("warm up")
+        """Load the query model ahead of the first question. Under the query lock: the MCP server warms on a thread
+        while the first tool call may reload the engine, and both read the store's single connection."""
+        with self._lock:
+            if self.embedder is not None:
+                self.embedder.embed_query("warm up")
 
     # -- search ----------------------------------------------------------------------------
     def search(self, query: str, k: int = 10, kinds: list[str] | None = None, project: str | None = None,
