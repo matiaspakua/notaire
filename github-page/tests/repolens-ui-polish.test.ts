@@ -16,8 +16,8 @@ describe("RepoLens UI polish (#2318)", () => {
   it("keeps metric honesty after polish and ships the polished page modules", () => {
     const snap = loadRepoLensBench();
     const factors = headlineFactors(snap);
-    expect(factors.tuningRecallLabel).toBe("4.9x more");
-    expect(factors.bytesLabel).toBe("91x less");
+    expect(factors.tuningRecallLabel).toBe("5.0x more");
+    expect(factors.bytesLabel).toBe("89x less");
     const charts = path.join(__dirname, "..", "components", "factory", "RepoLensCharts.tsx");
     const page = path.join(__dirname, "..", "app", "ai-sdlc", "repolens", "page.tsx");
     expect(existsSync(charts)).toBe(true);

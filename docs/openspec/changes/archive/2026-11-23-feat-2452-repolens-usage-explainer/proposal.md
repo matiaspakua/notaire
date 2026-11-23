@@ -65,6 +65,10 @@ None.
 - `docs/openspec/changes/feat-2452-repolens-usage-explainer/**`
 - `docs/openspec/specs/code-knowledge-graph/spec.md`
 - `workspace/tests/test_product_version_coherence.py`
+- `workspace/ci/generate-repolens-bench.py`
+- `workspace/tests/test_generate_repolens_bench.py`
+- `github-page/lib/repolens-bench-snapshot.json`
+- `github-page/tests/repolens-*.test.ts`
 
 ### Architecture review
 
