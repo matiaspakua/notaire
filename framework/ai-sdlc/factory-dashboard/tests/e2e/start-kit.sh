@@ -30,6 +30,12 @@ inputs = ["OpenSpec change"]
 outputs = ["failing tests"]
 
 [[stages]]
+id = "pre-push"
+agents = ["implementer"]
+inputs = ["failing tests"]
+outputs = ["passing tests"]
+
+[[stages]]
 id = "signal"
 agents = ["reviewer"]
 inputs = ["passing tests"]
@@ -47,6 +53,12 @@ run = "echo lint"
 required = false
 
 [[gates]]
+name = "preflight check"
+stage = "pre-push"
+run = "echo ok"
+required = false
+
+[[gates]]
 name = "signal check"
 stage = "signal"
 run = "echo ok"
@@ -56,6 +68,12 @@ git add -A && git commit -qm seed
 python3 "$KIT_BIN" demo seed >/dev/null
 python3 "$KIT_BIN" project create --id storefront --repo-id web --url https://example.invalid/web --forge github >/dev/null
 python3 "$KIT_BIN" run start --project storefront --workflow factory-feature --id checkout-flow >/dev/null
+# The run is at red for the production-line diagram; plan's gate has real evidence.
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event run.started >/dev/null
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step plan >/dev/null
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.finished --step plan --step-status pass >/dev/null
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step red >/dev/null
+python3 "$KIT_BIN" gate plan >/dev/null
 
 # Seed an intent from a Markdown spec file (for the intent bar e2e).
 cat > "$WORK/spec.md" <<'SPEC'

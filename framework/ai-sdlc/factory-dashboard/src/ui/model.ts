@@ -227,14 +227,6 @@ export interface Intent {
 }
 
 
-export function stationState(stationId: string, status: FactoryStatus | undefined): "done" | "current" | "upcoming" {
-  if (!status || !status.run_status) return "upcoming";
-  if (status.stage === stationId && status.run_status === "running") return "current";
-  const prevDone = status.previous.some((p) => p.stage === stationId);
-  if (prevDone) return "done";
-  return "upcoming";
-}
-
 export interface ConfigFileEntry {
   path: string;
   kind: string;

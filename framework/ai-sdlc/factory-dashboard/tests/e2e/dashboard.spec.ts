@@ -107,20 +107,50 @@ test.describe("phone width", () => {
 });
 
 test.describe("production line", () => {
-  test("shows stations and gates between them, expanding reveals inputs and outputs", async ({ page }) => {
+  test("draws the line with the run at its station, gate evidence and the correction loop", async ({ page }) => {
     await signIn(page, tokens().owner.token);
     await expect(page.getByRole("heading", { level: 1, name: "Production line" })).toBeVisible();
     const stations = page.getByTestId("station");
-    await expect(stations.first()).toBeVisible();
-    expect(await stations.count()).toBeGreaterThanOrEqual(3);
-    const gates = page.getByTestId("gate");
-    await expect(gates.first()).toBeVisible();
-    await expect(page.getByText("required").first()).toBeVisible();
-    await expect(page.getByText("advisory")).toBeVisible();
-    await stations.first().click();
-    await expect(page.getByTestId("station-details")).toBeVisible();
-    await expect(page.getByTestId("stage-inputs")).toBeVisible();
-    await expect(page.getByTestId("stage-outputs")).toBeVisible();
+    await expect(stations).toHaveCount(4);
+    expect(await stations.evaluateAll((els) => els.map((e) => e.getAttribute("data-stage")))).toEqual([
+      "plan", "red", "pre-push", "signal",
+    ]);
+    await expect(page.locator('[data-stage="plan"][data-testid="station"]')).toHaveAttribute("data-state", "done");
+    await expect(page.locator('[data-stage="red"][data-testid="station"]')).toHaveAttribute("data-state", "running");
+    await expect(page.locator('[data-stage="red"][data-testid="station"]')).toContainText("Running");
+    await expect(page.getByTestId("line-token")).toHaveAttribute("data-stage", "red");
+    await expect(page.getByTestId("intent-strip")).toContainText("1 of 4 stations complete");
+    await expect(page.getByTestId("intent-strip")).toContainText("No intent attached to this run");
+    await expect(page.locator('[data-testid="gate"][data-state="passed"]').filter({ hasText: "plan check" })).toBeVisible();
+    await expect(page.locator('[data-testid="gate"].advisory').filter({ hasText: "lint check" })).toContainText("Not run");
+    await expect(page.getByTestId("correction-loop")).toContainText("One correction per blocker");
+    await expect(page.getByText("AI agent").first()).toBeVisible();
+    await expectAccessible(page);
+  });
+
+  test("a station is chosen with the keyboard and its detail lists agents, I/O and gates", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await expect(page.getByTestId("station-details")).toContainText("red");
+    await page.locator('[data-stage="red"][data-testid="station"]').focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator('[data-stage="pre-push"][data-testid="station"]')).toBeFocused();
+    await page.keyboard.press("Enter");
+    const detail = page.getByTestId("station-details");
+    await expect(detail.getByRole("heading", { name: "pre-push" })).toBeVisible();
+    await expect(detail).toContainText("implementer");
+    await expect(page.getByTestId("stage-inputs")).toContainText("failing tests");
+    await expect(page.getByTestId("stage-outputs")).toContainText("passing tests");
+    await expect(page.locator('[data-stage="pre-push"][data-testid="station"]')).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("on a phone the line is vertical and the page does not scroll sideways", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 900 });
+    await signIn(page, tokens().owner.token);
+    const plan = await page.locator('[data-stage="plan"][data-testid="station"]').boundingBox();
+    const red = await page.locator('[data-stage="red"][data-testid="station"]').boundingBox();
+    expect(red!.y).toBeGreaterThan(plan!.y + plan!.height - 1);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
     await expectAccessible(page);
   });
 
@@ -172,7 +202,7 @@ test.describe("production line", () => {
     const rows = page.getByTestId("telemetry-row");
     expect(await rows.count()).toBeGreaterThanOrEqual(1);
     await expect(rows.first()).toBeVisible();
-    await expect(page.getByText("plan")).toBeVisible();
+    await expect(rows.filter({ hasText: "plan" }).first()).toBeVisible();
     await expectAccessible(page);
   });
 

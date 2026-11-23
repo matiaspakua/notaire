@@ -1,9 +1,14 @@
 # Factory Control (factory dashboard)
 
-A web dashboard for one or more AI SDLC factories. It is an optional companion of the kit: it
-speaks only the `aisdlc serve` contract (`../openapi/factory-control.openapi.yaml`) and, when you
-add it, the RepoLens HTTP API. It never reads or writes a repository's files. The kit stays the
-system of record and enforces scope, CSRF, `If-Match` and the actor. See
+A web dashboard for one or more AI SDLC factories. The Overview presents the factory as a
+production-line diagram: a rail with one station per stage, a token at the running station that
+moves with live events, a kind marker per station (AI agent, deterministic step, human decision),
+gates under each station with their last evidence state (passed, failed, not evaluable, not run),
+the correction loop from pre-push back to red, per-station throughput and cost, an intent progress
+strip, and a detail panel with a gates table. It is an optional companion of the kit: it speaks
+only the `aisdlc serve` contract (`../openapi/factory-control.openapi.yaml`) and, when you add it,
+the RepoLens HTTP API. It never reads or writes a repository's files. The kit stays the system of
+record and enforces scope, CSRF, `If-Match` and the actor. See
 [ADR-006](../docs/adr/ADR-006-dashboard-contract-client.md).
 
 What you get per workspace:

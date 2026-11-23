@@ -50,9 +50,37 @@ system until the person picks one in the sidebar footer.
 `StatusBadge` (pill), station cards on the production line, `Loaded` (the state machine for one
 resource), `ErrorNote`, `Empty`, `ActionForm`, `Field`, and the icon set in `Icon.tsx`.
 
-New in v2: station timeline with gate pills (required/advisory), intent bar and drawer with intake
-form, live indicator dot in the sidebar, file tree and read-only viewer for configuration as code,
+New in v2: the production-line diagram (below), intent bar and drawer with intake form, live indicator dot in the sidebar, file tree and read-only viewer for configuration as code,
 telemetry panel with grouped tables.
+
+## Production-line diagram
+
+The Overview draws the line as a diagram in the visual language of the factory deck's workflow
+slide. By Owner decision (#2407) that language is scoped to this diagram, in
+`src/ui/production-line.css` under `.pl`; every other screen follows the rest of this file.
+
+- **Rail and stations.** A 2.5px ink rail joins one station per stage of `GET /factory/line`.
+  Stations are square, with a 1.5px ink border, a status lamp, the stage name (weight 800) and the
+  state as a word. The running station gets a 2.5px border in `--line-agent`, a failed one in the
+  error color.
+- **Kinds.** Markers are drawn in CSS: an AI agent is a circle in `--line-agent` (#ee5a1b), a
+  deterministic step a square in `--line-det` (#2b3139), and a human decision a diamond in
+  `--line-human` (#2453c2), with dark values. The kind is derived until the kit declares it (#2411).
+- **Token.** It sits on the rail over the running station and glides to the next one (600ms,
+  `--ease-out`). The running lamp pulses. Nothing loops: motion only explains a state change, and
+  reduced motion removes both.
+- **Gates.** Gates hang under their station on a 2px drop, as chips bordered in their state's
+  ink: passed, failed, not evaluable (skip or todo) and not run. Required gates are solid,
+  advisory ones dashed. Skipped is never shown as passed.
+- **Correction loop.** A dashed `--line-agent` arc runs from pre-push back to red with an SVG
+  arrowhead and the rule "One correction per blocker; if it persists, a human decision".
+- **Above and below.** The intent strip carries the intent (or its absence), the run, a segmented
+  progress bar with an accessible name, and the elapsed time, cost and current step in tabular
+  mono. The detail panel is a polite live region: the facts on the left, the gates table on the
+  right.
+- **Small screens.** Under 768px the rail turns vertical on the left, the token becomes the
+  running node and the loop becomes a dashed bracket note. The line's own region scrolls sideways
+  when stations do not fit; the page never does.
 
 ## Charts
 
