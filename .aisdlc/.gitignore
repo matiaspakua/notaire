@@ -5,3 +5,5 @@ factory.db
 factory.db-journal
 runs/
 intents/
+factory.db-wal
+factory.db-shm

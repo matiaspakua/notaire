@@ -134,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* **docs:** README covers the AI SDLC factory and RepoLens with the current coverage floors; Pages lists what the observable factory shipped; the factory results of 2026-11-23 and refreshed delivery and AI SDLC history snapshots (Refs #2439)
 * **aisdlc:** the Factory Control sidebar collapses to an icon rail and remembers the choice (Refs #2434)
 * **pages:** AI Factory RepoLens showcase at `/ai-sdlc/repolens/` with charts from committed offline and factory-loop benches (Refs #2315)
 

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19",
+  "updated": "2026-11-23",
   "source": "factory loop locate commands and framework/ai-sdlc/repolens/bench/results/summary.md",
   "routing": "search when the symbol is unknown; rg for an exact symbol or path; impact for callers; repolens miss on fallback",
   "sampled_ab": "every third implemented issue, and every miss",
@@ -8,25 +8,75 @@
     "note": "Wall times and output bytes are from time.perf_counter and the command stdout. Hit rate is named diff files over existing diff files. Not a full agent session.",
     "note_0_5_0": "The repolens wall times above are 0.4.x, a new process per call. With the 0.5.0 resident service a CLI search answers in about 0.09 s; see release_0_5_0.cli_latency.",
     "exact_symbol_or_known_file": {
-      "examples": ["frontend vitest in preflight.sh", "useUsers() callers"],
+      "examples": [
+        "frontend vitest in preflight.sh",
+        "useUsers() callers"
+      ],
       "rg_faster": true,
-      "rg_wall_s": [0.002, 0.008],
-      "repolens_search_wall_s": [1.924, 1.878],
+      "rg_wall_s": [
+        0.002,
+        0.008
+      ],
+      "repolens_search_wall_s": [
+        1.924,
+        1.878
+      ],
       "hit_rate_same_or_rg_better": true
     },
     "caller_search": {
-      "examples": ["Deed.getDto", "Folio.getDto"],
-      "grep_hit": ["3/4", "5/6"],
-      "search_plus_impact_hit": ["3/4", "5/6"],
+      "examples": [
+        "Deed.getDto",
+        "Folio.getDto"
+      ],
+      "grep_hit": [
+        "3/4",
+        "5/6"
+      ],
+      "search_plus_impact_hit": [
+        "3/4",
+        "5/6"
+      ],
       "search_alone_hit_folio": "1/6",
       "repolens_slower_s": true
     }
   },
   "offline_bench_summary_md": {
-    "haiku_notaire_holdout": {"runs_per_arm": 36, "recall_both": 0.97, "tool_calls_baseline": 5.89, "tool_calls_repolens": 4.56, "input_tokens_baseline": 48468, "input_tokens_repolens": 36165, "cost_usd_baseline": 0.00334, "cost_usd_repolens": 0.00228},
-    "haiku_notaire": {"runs_per_arm": 33, "tool_calls_baseline": 5.61, "tool_calls_repolens": 4.52, "input_tokens_baseline": 56301, "input_tokens_repolens": 38122, "cost_usd_baseline": 0.0036, "cost_usd_repolens": 0.00245},
-    "sonnet_notaire_holdout": {"runs_per_arm": 6, "tool_calls_baseline": 4.0, "tool_calls_repolens": 2.0, "input_tokens_baseline": 21914, "input_tokens_repolens": 24419, "cost_usd_baseline": 0.0323, "cost_usd_repolens": 0.03312},
-    "sonnet_scale": {"runs_per_arm": 8, "tool_calls_both": 2.0, "input_tokens_baseline": 18727, "input_tokens_repolens": 22506, "cost_usd_baseline": 0.02573, "cost_usd_repolens": 0.02646}
+    "haiku_notaire_holdout": {
+      "runs_per_arm": 36,
+      "recall_both": 0.97,
+      "tool_calls_baseline": 5.89,
+      "tool_calls_repolens": 4.56,
+      "input_tokens_baseline": 48468,
+      "input_tokens_repolens": 36165,
+      "cost_usd_baseline": 0.00334,
+      "cost_usd_repolens": 0.00228
+    },
+    "haiku_notaire": {
+      "runs_per_arm": 33,
+      "tool_calls_baseline": 5.61,
+      "tool_calls_repolens": 4.52,
+      "input_tokens_baseline": 56301,
+      "input_tokens_repolens": 38122,
+      "cost_usd_baseline": 0.0036,
+      "cost_usd_repolens": 0.00245
+    },
+    "sonnet_notaire_holdout": {
+      "runs_per_arm": 6,
+      "tool_calls_baseline": 4.0,
+      "tool_calls_repolens": 2.0,
+      "input_tokens_baseline": 21914,
+      "input_tokens_repolens": 24419,
+      "cost_usd_baseline": 0.0323,
+      "cost_usd_repolens": 0.03312
+    },
+    "sonnet_scale": {
+      "runs_per_arm": 8,
+      "tool_calls_both": 2.0,
+      "input_tokens_baseline": 18727,
+      "input_tokens_repolens": 22506,
+      "cost_usd_baseline": 0.02573,
+      "cost_usd_repolens": 0.02646
+    }
   },
   "usage_report_last_gate": "6 calls, 0 sessions, adoption 0%, hit rate n/a, p95 988 ms",
   "usage_report_note": "That 0% is the line printed before 0.4.4. With zero harness sessions the gate now prints adoption n/a. No new live gate line was captured in this change.",
@@ -34,7 +84,7 @@
     "rg_wall_s": 0.004,
     "rg_bytes": 2751,
     "git_grep_origin_main_wall_s": 0.015,
-    "search_wall_s": 0.680,
+    "search_wall_s": 0.68,
     "search_result": "no results",
     "impact_wall_s": 0.205,
     "impact_result": "node not found",
@@ -62,7 +112,11 @@
       "refresh_reported_s": 5.79,
       "first_query_wall_s": 7.718,
       "query": "Procedure.getDto",
-      "top_hits": ["Procedure.getDto", "DeedLegacyMapper.toDto", "TestimonyLegacyMapper.copyDeed"]
+      "top_hits": [
+        "Procedure.getDto",
+        "DeedLegacyMapper.toDto",
+        "TestimonyLegacyMapper.copyDeed"
+      ]
     },
     "second_query_wall_s": 1.508,
     "second_query_refreshed": false,
@@ -86,15 +140,24 @@
     "tasks": 12,
     "default_bytes": 13682,
     "old_k10_also10_bytes": 35053,
-    "ratio": 0.390,
-    "token_estimate_bytes_div_4": [3420, 8763],
+    "ratio": 0.39,
+    "token_estimate_bytes_div_4": [
+      3420,
+      8763
+    ],
     "note": "Default is 4 detailed hits plus 4 one-line hits. The old arm is -k 10 --also 10, the previous default shape. Token estimates are bytes/4 of the answer text only."
   },
   "background_refresh": {
     "query_blocks": false,
     "fixture_test": "test_a_query_does_not_wait_for_the_refresh_after_head_moves",
-    "notaire_blocking_refresh_s": [5.52, 5.79],
-    "notaire_blocking_query_s": [7.104, 7.718],
+    "notaire_blocking_refresh_s": [
+      5.52,
+      5.79
+    ],
+    "notaire_blocking_query_s": [
+      7.104,
+      7.718
+    ],
     "remeasure_range": "b0065a209ca9 -> 623b2d5621b5",
     "notaire_stale_query_s": 1.31,
     "notaire_caught_up_s": 2.112,
@@ -104,7 +167,11 @@
   },
   "preflight": {
     "vitest_retry": "one extra attempt for frontend vitest only",
-    "full_runs_with_a_recorded_restart": ["registration-draft: 3", "folio: 3", "cli-usage: 2"]
+    "full_runs_with_a_recorded_restart": [
+      "registration-draft: 3",
+      "folio: 3",
+      "cli-usage: 2"
+    ]
   },
   "release_0_5_0": {
     "issue": 2336,
@@ -321,5 +388,51 @@
     "holdout_benchmark": "not run",
     "scale_benchmark": "not run",
     "note": "No session numbers were recorded. Existing Claude rows in offline_bench_summary_md are unchanged and are not Cursor measurements."
+  },
+  "factory_2026_11_23": {
+    "source": "repolens report --json and repolens doctor on the main checkout, 2026-11-23, after epic #2393 and #2429/#2434/#2435",
+    "store": {
+      "files": 10532,
+      "vectors": 90596,
+      "embedder": "fastembed:BAAI/bge-small-en-v1.5",
+      "harnesses_registered": [
+        "claude",
+        "codex",
+        "opencode",
+        "cursor",
+        "junie",
+        "git"
+      ]
+    },
+    "usage_report": {
+      "events": 144,
+      "server_calls": 79,
+      "p50_ms": 40.1,
+      "p95_ms": 665.2,
+      "tokens_served": 444331,
+      "zero_result_rate": 0.0,
+      "agent_sessions": 4,
+      "adoption": 0.25,
+      "first_tool_repolens": 0.0,
+      "hit_rate": 0.0,
+      "reads_after_repolens": 49
+    },
+    "usage_report_note": "Sessions are Claude Code sessions recorded by the hook. The Foreman session used rg for known strings, as AGENTS.md routes it, and Junie (registered) ran outside the hook's session tracking, so adoption 25% and hit rate 0% understate tool use by workers and are not a retrieval-quality measure.",
+    "paired_locate_2435": {
+      "note": "Every-third-issue sample (#2435). Wall time from time.perf_counter around the CLI; hit = the file an engineer edits for the question.",
+      "q1_run_step_merge": {
+        "rg_s": 0.02,
+        "rg_hit": "runs.py among 4 files",
+        "repolens_s": 1.292,
+        "repolens_top1": "aisdlc/step_io.py merge (the function that merges step io)"
+      },
+      "q2_station_detail_component": {
+        "rg_s": 0.01,
+        "rg_hit": "ProductionLine.tsx (needed the known literal station-details)",
+        "repolens_s": 0.523,
+        "repolens_rank_of_component": 4,
+        "recorded_miss": true
+      }
+    }
   }
 }

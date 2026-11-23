@@ -5,7 +5,9 @@ production-line diagram: a rail with one station per stage, a token at the runni
 moves with live events, a kind marker per station (AI agent, deterministic step, human decision),
 gates under each station with their last evidence state (passed, failed, not evaluable, not run),
 the correction loop from pre-push back to red, per-station throughput and cost, an intent progress
-strip, and a detail panel with a gates table. It is an optional companion of the kit: it speaks
+strip, and a detail panel with a gates table and what the current run's steps received and
+produced at that station (request, prompt, files, commits and links, #2435). The sidebar collapses
+to an icon rail (#2434). It is an optional companion of the kit: it speaks
 only the `aisdlc serve` contract (`../openapi/factory-control.openapi.yaml`) and, when you add it,
 the RepoLens HTTP API. It never reads or writes a repository's files. The kit stays the system of
 record and enforces scope, CSRF, `If-Match` and the actor. See
@@ -15,7 +17,7 @@ What you get per workspace:
 
 | View | Source | Notes |
 |------|--------|-------|
-| Production line | `/factory/line`, `/factory/status`, `/factory/config`, `/factory/events` | Station timeline with gates; current run position; live sync via SSE with polling fallback |
+| Production line | `/factory/line`, `/factory/status`, `/factory/runs/{id}`, `/factory/projects`, `/factory/events` | Station timeline with gates; current run position; each station's received and produced artifacts with repository links; live sync via SSE with polling fallback |
 | Runs | `/factory/runs`, `/factory/runs/{id}/events`, `POST /factory/runs` | Steps and evidence per run; request a run with an approved workflow |
 | Metrics | `/factory/report`, `/factory/telemetry` | KPI cards, stage duration bars, gates, autonomy, cost by model; telemetry by intent, stage, agent, skill, tool |
 | Configuration | `/factory/catalogs/{kind}`, `DELETE /factory/catalogs/{kind}/{id}` | Providers, agents, skills, MCP, workflows, rules, prompts, hooks, memory, integrations; versioned edits; delete with confirmation |

@@ -42,4 +42,17 @@ describe("factory status on main (#2201)", () => {
       expect(help, token).toContain(token);
     }
   });
+
+  it("lists what the observable factory shipped, in both languages (#2439)", () => {
+    const now = loadFactoryNow();
+    for (const command of ["line", "status", "intent", "run", "harness", "workflow"]) {
+      expect(now.commands).toContain(command);
+    }
+    for (const locale of ["en", "es"] as const) {
+      expect(now[locale].line).toMatch(/#2407/);
+      expect(now[locale].line).toMatch(/#2435/);
+      expect(now[locale].runs).toMatch(/#2426/);
+      expect(now[locale].gate).toMatch(/#2413/);
+    }
+  });
 });

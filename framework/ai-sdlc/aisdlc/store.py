@@ -36,7 +36,7 @@ def keep_out_of_git(root: Path, names: list[str]) -> None:
 
 def _keep_out_of_git(root: Path) -> None:
     """Thin wrapper kept for backward compatibility."""
-    keep_out_of_git(root, ["factory.db"])
+    keep_out_of_git(root, ["factory.db", "factory.db-wal", "factory.db-shm", "factory.db-journal"])
 
 
 def migrate(conn: sqlite3.Connection) -> None:
