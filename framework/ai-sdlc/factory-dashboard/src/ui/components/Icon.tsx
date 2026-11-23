@@ -30,6 +30,7 @@ const PATHS = {
   agent: "M10 17.5a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Zm-2-5.5a2 2 0 1 1 4 0M7.5 14c.8-1.2 2.2-2 2.5-2s1.7.8 2.5 2",
   intent: "M10 2.5 2.5 6.25 10 10l7.5-3.75L10 2.5ZM2.5 10 10 13.75 17.5 10M2.5 13.75 10 17.5l7.5-3.75",
   close: "m5.5 5.5 9 9m0-9-9 9",
+  panel: "M3.5 3.5h13v13h-13zM8 3.5v13",
 } as const;
 
 export type IconName = keyof typeof PATHS;
