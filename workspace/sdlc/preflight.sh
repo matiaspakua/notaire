@@ -445,6 +445,10 @@ if [ "$MODE_FULL" = "1" ]; then
     # stack once, then judge reachability.
     if ! curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        || ! curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
+        # Playwright suite runs as a single admin user and exceeds 2000 req/min (#2389).
+        if [ -z "${NOTAIRE_API_RATE_LIMIT_MAX:-}" ]; then
+            export NOTAIRE_API_RATE_LIMIT_MAX=20000
+        fi
         echo "server-backed suites: stack is down; starting it once (workspace/stack/start.sh --no-admin)"
         stack_log="$(mktemp)"
         bash workspace/stack/start.sh --no-admin >"$stack_log" 2>&1 || true
