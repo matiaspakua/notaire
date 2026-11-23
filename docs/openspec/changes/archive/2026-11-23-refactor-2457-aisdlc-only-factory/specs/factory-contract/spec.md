@@ -50,14 +50,13 @@ including schemas `ConfigFileTree`, `ConfigFileContent`, and error responses
 - **WHEN** `aisdlc contract check` runs after this change
 - **THEN** the factory OpenAPI remains a single tree
 
-
 ## ADDED Requirements
 
 ### Requirement: The contract file carries the kit's name
 
 The factory contract SHALL live at `openapi/aisdlc-factory.openapi.yaml` in the kit and in the packaged wheel
 (`aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml`). The HTTP paths it declares SHALL NOT change because of the
-rename. No file named `factory-control.openapi.yaml` SHALL remain in the kit.
+rename. The kit's `openapi/` directory SHALL hold no other contract file.
 
 #### Scenario: aisdlc contract resolves the renamed file
 
@@ -67,5 +66,4 @@ rename. No file named `factory-control.openapi.yaml` SHALL remain in the kit.
 #### Scenario: the wheel ships the renamed contract
 
 - **WHEN** the kit wheel is built
-- **THEN** it contains `aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml` and no `factory-control.openapi.yaml`
-
+- **THEN** it contains `aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml` and no other contract file

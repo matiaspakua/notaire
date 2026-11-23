@@ -80,7 +80,7 @@ and Runs UI surfaces adapt existing catalog and evidence/report operations.
 
 ### Requirement: One OpenAPI tree documents A.3 writes
 
-`openapi/factory-control.openapi.yaml` SHALL remain the single factory contract
+`openapi/aisdlc-factory.openapi.yaml` SHALL remain the single factory contract
 tree. It SHALL document `If-Match` on catalog PUT, `schema_version` /
 `created_by` on the entity envelope, workflow body v2 schemas, and 409
 version-conflict Problem responses. No second OpenAPI write tree SHALL be added.
@@ -93,7 +93,7 @@ version-conflict Problem responses. No second OpenAPI write tree SHALL be added.
 
 ### Requirement: One OpenAPI tree documents Project Run and RunRequest
 
-`openapi/factory-control.openapi.yaml` SHALL remain the single factory contract
+`openapi/aisdlc-factory.openapi.yaml` SHALL remain the single factory contract
 tree. It SHALL document Project, Run, and RunRequest schemas plus
 `/factory/projects` and `/factory/runs` paths (including events and cancel).
 No second OpenAPI tree SHALL be added.
@@ -120,7 +120,7 @@ notes MAY document that the runtime UI adapts those existing operations.
 
 ### Requirement: OpenAPI contract documents config file endpoints and catalog delete
 
-`openapi/factory-control.openapi.yaml` SHALL document `GET /factory/config/files`,
+`openapi/aisdlc-factory.openapi.yaml` SHALL document `GET /factory/config/files`,
 `GET /factory/config/files/{path}`, and `DELETE /factory/catalogs/{kind}/{id}` paths,
 including schemas `ConfigFileTree`, `ConfigFileContent`, and error responses
 (409 version_conflict, 428 if_match_required). No second OpenAPI tree SHALL be added.
@@ -141,3 +141,19 @@ including schemas `ConfigFileTree`, `ConfigFileContent`, and error responses
 
 - **WHEN** `aisdlc contract check` runs after this change
 - **THEN** the factory OpenAPI remains a single tree
+
+### Requirement: The contract file carries the kit's name
+
+The factory contract SHALL live at `openapi/aisdlc-factory.openapi.yaml` in the kit and in the packaged wheel
+(`aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml`). The HTTP paths it declares SHALL NOT change because of the
+rename. The kit's `openapi/` directory SHALL hold no other contract file.
+
+#### Scenario: aisdlc contract resolves the renamed file
+
+- **WHEN** `aisdlc contract show` runs
+- **THEN** it names `openapi/aisdlc-factory.openapi.yaml` and `aisdlc contract check` passes
+
+#### Scenario: the wheel ships the renamed contract
+
+- **WHEN** the kit wheel is built
+- **THEN** it contains `aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml` and no other contract file
