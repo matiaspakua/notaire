@@ -65,6 +65,7 @@ None — `skip_specs: true` in `.openspec.yaml`.
 - `workspace/sdlc/preflight.sh`
 - `workspace/sdlc/stack_lock.sh`
 - `workspace/tests/test_stack_lock.py`
+- `workspace/tests/test_preflight_affected.py` (pages deps assertion)
 - `testing/e2e/README.md`
 - `docs/openspec/changes/chore-2414-stack-lock/`
 
