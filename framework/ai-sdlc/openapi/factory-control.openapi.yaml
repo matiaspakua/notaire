@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.4.0
+  version: 1.5.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -1692,10 +1692,14 @@ components:
     LineStage:
       type: object
       additionalProperties: true
-      required: [id, gates, agents, skills, mcp, tools, model, effort, guardrails, inputs, outputs, io_source]
+      required: [id, gates, agents, skills, mcp, tools, model, effort, guardrails, inputs, outputs, io_source, kind]
       properties:
         id: { type: string }
         title: { type: [string, "null"] }
+        kind:
+          type: string
+          enum: [agent, deterministic, human]
+          description: Declared in [[stages]]; otherwise agent when the stage lists agents, human for merge, else deterministic (#2411).
         gates:
           type: array
           items:
