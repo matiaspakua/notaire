@@ -213,6 +213,52 @@ test.describe("production line", () => {
   });
 });
 
+test.describe("collapsible sidebar (#2434)", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("collapses to an icon rail, keeps names, and remembers the choice", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    const toggle = page.getByRole("button", { name: "Collapse navigation" });
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    const sidebar = page.locator(".sidebar");
+    const wide = (await sidebar.boundingBox())!.width;
+    await toggle.click();
+    const expand = page.getByRole("button", { name: "Expand navigation" });
+    await expect(expand).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator(".app-shell")).toHaveAttribute("data-sidebar", "collapsed");
+    await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeLessThan(wide / 2);
+    const runs = page.getByRole("link", { name: "Runs" });
+    await expect(runs).toBeVisible();
+    await expect(runs).toHaveAttribute("title", "Runs");
+    await expect(page.getByRole("link", { name: "Production line" })).toHaveAttribute("aria-current", "page");
+    await expectAccessible(page);
+    await page.reload();
+    await expect(page.getByRole("button", { name: "Expand navigation" })).toBeVisible();
+    await page.getByRole("button", { name: "Expand navigation" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("button", { name: "Collapse navigation" })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator(".app-shell")).toHaveAttribute("data-sidebar", "expanded");
+  });
+
+  test("collapsed in dark mode stays accessible", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.getByRole("button", { name: "Collapse navigation" }).click();
+    await page.getByRole("button", { name: "Switch light or dark" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expectAccessible(page);
+  });
+});
+
+test.describe("collapsible sidebar on a phone (#2434)", () => {
+  test.use({ viewport: { width: 375, height: 780 } });
+
+  test("the toggle is hidden where the sidebar is a top bar", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await expect(page.getByTestId("station").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Collapse navigation" })).toBeHidden();
+  });
+});
+
 test.describe("step inputs and outputs (#2435)", () => {
   test("a station shows what its step received and produced, with repository links", async ({ page }) => {
     await signIn(page, tokens().owner.token);

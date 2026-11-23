@@ -94,8 +94,20 @@ function SignIn({ workspace, onSignedIn }: { workspace: WorkspaceInfo; onSignedI
   );
 }
 
-function Sidebar({ current, view, grant, theme, lang, liveState, onTheme, onLang }: {
+const SIDEBAR_KEY = "fd.sidebar";
+
+function storedCollapsed(): boolean {
+  try {
+    return localStorage.getItem(SIDEBAR_KEY) === "collapsed";
+  } catch {
+    return false;
+  }
+}
+
+function Sidebar({ current, view, grant, theme, lang, liveState, collapsed, onCollapse, onTheme, onLang }: {
   current: WorkspaceInfo;
+  collapsed: boolean;
+  onCollapse: () => void;
   view: string;
   grant: Grant | undefined;
   theme: Theme;
@@ -111,10 +123,15 @@ function Sidebar({ current, view, grant, theme, lang, liveState, onTheme, onLang
     <aside className="sidebar">
       <div className="sidebar-brand">
         <span className="sidebar-brand-icon" aria-hidden="true">F</span>
-        {t("app.name")}
+        <span className="sidebar-brand-text">{t("app.name")}</span>
+        <button type="button" className="sidebar-collapse" onClick={onCollapse} aria-expanded={!collapsed}
+          aria-controls="sidebar-nav" aria-label={collapsed ? t("nav.expand") : t("nav.collapse")}
+          title={collapsed ? t("nav.expand") : t("nav.collapse")}>
+          <Icon name="panel" />
+        </button>
       </div>
       {grant && (
-        <nav className="sidebar-nav" aria-label={t("nav.label")}>
+        <nav id="sidebar-nav" className="sidebar-nav" aria-label={t("nav.label")}>
           {SECTIONS.map((section) => (
             <div key={section.label} className="sidebar-section">
               <div className="sidebar-section-label" aria-hidden="true">{t(section.label)}</div>
@@ -122,9 +139,9 @@ function Sidebar({ current, view, grant, theme, lang, liveState, onTheme, onLang
                 {section.views.map((item) => (
                   <li key={item.id}>
                     <a className="sidebar-nav-item" href={`#/${current.id}/${item.id}`}
-                      aria-current={item.id === view ? "page" : undefined}>
+                      aria-current={item.id === view ? "page" : undefined} title={collapsed ? t(item.label) : undefined}>
                       <Icon name={item.icon} />
-                      <span>{t(item.label)}</span>
+                      <span className="sidebar-nav-text">{t(item.label)}</span>
                       {item.id === "coach" && grant.scope !== "owner" && (
                         <span className="lock"><Icon name="lock" size={14} label={t("error.forbidden")} /></span>
                       )}
@@ -137,15 +154,17 @@ function Sidebar({ current, view, grant, theme, lang, liveState, onTheme, onLang
         </nav>
       )}
       <div className="sidebar-footer">
-        <button type="button" className="sidebar-toggle" onClick={onTheme} aria-label={t("theme.toggle")}>
+        <button type="button" className="sidebar-toggle" onClick={onTheme} aria-label={t("theme.toggle")}
+          title={collapsed ? t("theme.toggle") : undefined}>
           <Icon name={theme === "dark" ? "sun" : "moon"} />
           <span className="toggle-text">{theme === "dark" ? t("theme.light") : t("theme.dark")}</span>
         </button>
-        <button type="button" className="sidebar-toggle" onClick={onLang} lang={lang === "en" ? "es" : "en"}>
+        <button type="button" className="sidebar-toggle" onClick={onLang} lang={lang === "en" ? "es" : "en"}
+          title={collapsed ? t("lang.toggle") : undefined}>
           <Icon name="globe" />
           <span className="toggle-text">{t("lang.toggle")}</span>
         </button>
-        <p className="sidebar-status" role="status" data-testid="live-indicator">
+        <p className="sidebar-status" role="status" data-testid="live-indicator" title={collapsed ? liveLabel : undefined}>
           <span className={`status-dot ${liveDot}`} aria-hidden="true" />
           <span className="toggle-text">{liveLabel}</span>
         </p>
@@ -173,6 +192,11 @@ function Shell({ workspaces, session, current, view, sub, lang, theme, onLang, o
   const bumpVersion = useCallback(() => setVersion((v) => v + 1), []);
   const liveState = useLiveSync(current.id, Boolean(grant), bumpVersion);
   const [signOutError, setSignOutError] = useState<ApiError>();
+  const [collapsed, setCollapsed] = useState(storedCollapsed);
+  const toggleCollapsed = () => {
+    store(SIDEBAR_KEY, collapsed ? "expanded" : "collapsed");
+    setCollapsed(!collapsed);
+  };
   const context = useMemo<WorkspaceContext | null>(
     () => (grant ? { workspace: current, grant, writable: grant.write_enabled, go, expire: onSession, version, bumpVersion } : null),
     [current, grant, go, onSession, version, bumpVersion],
@@ -187,9 +211,10 @@ function Shell({ workspaces, session, current, view, sub, lang, theme, onLang, o
   };
   const active = VIEWS.find((item) => item.id === view) ?? VIEWS[0];
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-sidebar={collapsed ? "collapsed" : "expanded"}>
       <a className="skip" href="#main">{t("skip")}</a>
-      <Sidebar current={current} view={active.id} grant={grant} theme={theme} lang={lang} liveState={liveState} onTheme={onTheme} onLang={onLang} />
+      <Sidebar current={current} view={active.id} grant={grant} theme={theme} lang={lang} liveState={liveState}
+        collapsed={collapsed} onCollapse={toggleCollapsed} onTheme={onTheme} onLang={onLang} />
       <div className="main-content">
         <header className="top-bar">
           <span className="source-badge">aisdlc</span>

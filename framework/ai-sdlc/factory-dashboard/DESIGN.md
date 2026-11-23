@@ -24,6 +24,9 @@ only what the kit and RepoLens report.
   identity with its scope tag.
 - The canvas (`#f7f8f9`) holds a 24px view title, a one-line subtitle, and phase groups: a 3px
   colored indicator, an uppercase label and a mono count, then cards or KPI rows.
+- A button beside the brand collapses the sidebar to a 72px icon rail and expands it again (#2434).
+  Collapsed, the labels stay in the accessibility tree (visually hidden) and each item shows its
+  name as a tooltip; the choice is kept per browser under `fd.sidebar`. Phones ignore it.
 - Under 768px the sidebar becomes a row with the brand and footer icons, and the navigation
   scrolls sideways under it. KPI rows take two columns under 900px.
 
