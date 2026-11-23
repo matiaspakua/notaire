@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-28T14:28:38+00:00",
+  "generated_at": "2026-11-23T15:04:23+00:00",
   "generated_by": "python3 workspace/ci/generate-ai-sdlc-history.py",
   "notes": "process_prs: merged PR titles naming the SDLC itself (sdlc, openspec, agents, fleet, harness, constitution, preflight, skills, archive\u2026); bug_issues: issues labelled type:bug by creation month; Dependabot PRs excluded.",
   "legacy_commits": 24,
   "totals": {
-    "commits": 2187,
-    "merged_prs": 954,
-    "merged_prs_without_bots": 834,
-    "issues": 985,
-    "bug_issues": 169
+    "commits": 2809,
+    "merged_prs": 1256,
+    "merged_prs_without_bots": 1121,
+    "issues": 1160,
+    "bug_issues": 184
   },
   "months": [
     {
@@ -83,10 +83,17 @@
     },
     {
       "month": "2026-10",
-      "commits": 670,
-      "merged_prs": 435,
-      "process_prs": 69,
+      "commits": 681,
+      "merged_prs": 444,
+      "process_prs": 71,
       "bug_issues": 40
+    },
+    {
+      "month": "2026-11",
+      "commits": 611,
+      "merged_prs": 278,
+      "process_prs": 32,
+      "bug_issues": 15
     }
   ],
   "mechanisms": [
@@ -95,6 +102,12 @@
       "label": "First agent entry file",
       "issue": null,
       "path": "AGENTS.md"
+    },
+    {
+      "date": "2026-03-01",
+      "label": "Shrink-only ArchUnit baseline",
+      "issue": 1695,
+      "path": "backend-api/src/test/resources/architecture/hexagon-baseline.txt"
     },
     {
       "date": "2026-07-25",
@@ -179,12 +192,6 @@
       "label": "Continuous publication",
       "issue": 1681,
       "path": "workspace/sdlc/publish-progress.sh"
-    },
-    {
-      "date": "2026-10-14",
-      "label": "Shrink-only ArchUnit baseline",
-      "issue": 1695,
-      "path": "backend-api/src/test/resources/architecture/hexagon-baseline.txt"
     },
     {
       "date": "2026-10-14",

@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-11-10T10:16:50+00:00",
+  "generated_at": "2026-11-23T15:04:23+00:00",
   "generated_by": "python3 workspace/ci/generate-delivery-metrics.py",
   "repository": "matiaspakua/notaire",
   "window": {
-    "from": "2026-08-12",
-    "to": "2026-11-10",
+    "from": "2026-08-25",
+    "to": "2026-11-23",
     "days": 90
   },
   "method": {
@@ -17,24 +17,16 @@
     "releases": "Published, non-draft GitHub releases in the window."
   },
   "lead_time_hours": {
-    "n": 691,
-    "median": 0.4,
-    "p90": 4.2
+    "n": 820,
+    "median": 0.3,
+    "p90": 3.3
   },
   "throughput": {
-    "merged_prs": 691,
-    "bot_prs_excluded": 86,
+    "merged_prs": 820,
+    "bot_prs_excluded": 102,
     "weeks": 14,
-    "median_per_week": 22.5,
+    "median_per_week": 34.5,
     "series": [
-      {
-        "week": "2026-W33",
-        "merged": 2
-      },
-      {
-        "week": "2026-W34",
-        "merged": 10
-      },
       {
         "week": "2026-W35",
         "merged": 13
@@ -81,13 +73,21 @@
       },
       {
         "week": "2026-W46",
-        "merged": 25
+        "merged": 79
+      },
+      {
+        "week": "2026-W47",
+        "merged": 72
+      },
+      {
+        "week": "2026-W48",
+        "merged": 15
       }
     ]
   },
   "change_failure": {
     "failure_prs": 1,
-    "merged_prs": 691,
+    "merged_prs": 820,
     "rate_pct": 0.1,
     "examples": [
       "#1204"
@@ -95,15 +95,15 @@
   },
   "restore_main_hours": {
     "available": false,
-    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since none remain for a window that starts 2026-08-12."
+    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since none remain for a window that starts 2026-08-25."
   },
   "first_push_ci": {
     "available": false,
-    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since none remain for a window that starts 2026-08-12."
+    "reason": "Not derivable: .github/workflows/cleanup-actions.yml deletes all but the latest ci.yml run every night, so only runs since none remain for a window that starts 2026-08-25."
   },
-  "issues_closed": 657,
+  "issues_closed": 731,
   "releases": {
-    "count": 12,
+    "count": 22,
     "tags": [
       {
         "tag": "docs-manuals",
@@ -152,6 +152,46 @@
       {
         "tag": "v0.3.0",
         "published": "2026-11-08"
+      },
+      {
+        "tag": "v0.4.0",
+        "published": "2026-11-10"
+      },
+      {
+        "tag": "v0.4.1",
+        "published": "2026-11-11"
+      },
+      {
+        "tag": "v0.4.2",
+        "published": "2026-11-18"
+      },
+      {
+        "tag": "v0.5.0",
+        "published": "2026-11-18"
+      },
+      {
+        "tag": "v0.5.1",
+        "published": "2026-11-19"
+      },
+      {
+        "tag": "v0.6.0",
+        "published": "2026-11-20"
+      },
+      {
+        "tag": "v0.7.0",
+        "published": "2026-11-20"
+      },
+      {
+        "tag": "v0.7.1",
+        "published": "2026-11-21"
+      },
+      {
+        "tag": "v0.9.0",
+        "published": "2026-11-22"
+      },
+      {
+        "tag": "v0.8.0",
+        "published": "2026-11-23"
       }
     ]
   }
