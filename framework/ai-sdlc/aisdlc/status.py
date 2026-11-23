@@ -70,11 +70,15 @@ def _intent_from_run(ctx: Context, run: dict) -> str | None:
     return str(current) if current else None
 
 
-def _step_stage(step_id: str, events: list[dict], profile_stages: list[str]) -> str | None:
-    """Derive stage for a step from its ledger events or profile."""
+def _step_stage(
+    step_id: str, events: list[dict], profile_stages: list[str], wf_stages: dict[str, str] | None = None,
+) -> str | None:
+    """Derive stage for a step from its ledger events, its workflow step (#2410) or the profile."""
     for ev in events:
         if ev.get("step") == step_id and ev.get("stage"):
             return str(ev["stage"])
+    if wf_stages and wf_stages.get(step_id):
+        return wf_stages[step_id]
     if step_id in profile_stages:
         return step_id
     return None
@@ -121,6 +125,7 @@ def _build_previous(
     ctx: Context, run_id: str, events: list[dict], profile_stages: list[str],
 ) -> list[dict]:
     """Build the 'previous' list from completed steps."""
+    wf_stages = _workflow_stages(ctx, run_id)
     started_map: dict[str, dict] = {}
     finished_map: dict[str, dict] = {}
     for ev in events:
@@ -141,7 +146,7 @@ def _build_previous(
         step_status = str(fin_ev.get("step_status", "fail")).strip().casefold()
         if step_status == "pass" and fin_ev.get("skip"):
             step_status = "skip"
-        stage = _step_stage(step_id, events, profile_stages)
+        stage = _step_stage(step_id, events, profile_stages, wf_stages)
         previous.append({
             "step": step_id,
             "stage": stage,
@@ -241,7 +246,8 @@ def _build_next(
     next_items = _workflow_next(wf_steps, all_done)
     next_step_ids = {n["step"] for n in next_items} | all_done
 
-    current_stage = _step_stage(current_step, events, profile_stages) if current_step else None
+    wf_stages = {str(ws["id"]): str(ws["stage"]) for ws in wf_steps if ws.get("id") and ws.get("stage")}
+    current_stage = _step_stage(current_step, events, profile_stages, wf_stages) if current_step else None
 
     last_completed_stage = None
     if previous:
@@ -251,6 +257,11 @@ def _build_next(
         _line_next(profile_stages, current_stage, last_completed_stage, next_step_ids)
     )
     return next_items
+
+
+def _workflow_stages(ctx: Context, run_id: str) -> dict[str, str]:
+    return {str(ws["id"]): str(ws["stage"]) for ws in show(ctx, run_id).get("steps", [])
+            if ws.get("id") and ws.get("stage")}
 
 
 def status(ctx: Context) -> dict:
@@ -271,7 +282,7 @@ def status(ctx: Context) -> dict:
     # step and stage are non-null ONLY when run_status is 'running'
     if run_status == "running" and in_flight_step:
         step = in_flight_step
-        stage = _step_stage(in_flight_step, events, profile_stages)
+        stage = _step_stage(in_flight_step, events, profile_stages, _workflow_stages(ctx, run_id))
     else:
         step = None
         stage = None
