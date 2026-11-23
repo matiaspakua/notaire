@@ -32,7 +32,7 @@
 - [ ] 4.2 For rename rows: count 0 lines for pure renames (0 additions, 0 deletions); count only edited lines for renames with changes; report the new path
 - [ ] 4.3 For non-rename rows: behave identically to current implementation
 - [ ] 4.4 Update `diffchecks.py` if needed to pass the new path through to `[size] exclude` matching
-- [ ] 4.5 Add one line to `framework/ai-sdlc/CHANGELOG.md` under `[Unreleased] ### Fixed`
+- [x] 4.5 Add one line to `framework/ai-sdlc/CHANGELOG.md` under `[Unreleased] ### Fixed` — done: added entry "`aisdlc size` counts a renamed file by its edits, under its new path; a pure rename counts 0 lines (#2466)."
 
 ## 5. Actualizar tests existentes
 
