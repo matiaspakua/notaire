@@ -70,9 +70,21 @@ python3 "$KIT_BIN" project create --id storefront --repo-id web --url https://ex
 python3 "$KIT_BIN" run start --project storefront --workflow factory-feature --id checkout-flow >/dev/null
 # The run is at red for the production-line diagram; plan's gate has real evidence.
 python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event run.started >/dev/null
-python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step plan >/dev/null
-python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.finished --step plan --step-status pass >/dev/null
-python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step red >/dev/null
+# Each step says what it received and produced (#2435).
+cat > "$WORK/plan-in.json" <<'JSON'
+{"inputs": {"request": "Add a checkout flow", "prompt": "Write the OpenSpec change for the checkout flow.",
+ "files": ["docs/checkout.md"], "links": [{"label": "Issue #12", "url": "https://example.invalid/web/issues/12"}]}}
+JSON
+cat > "$WORK/plan-out.json" <<'JSON'
+{"outputs": {"summary": "OpenSpec change written", "commits": ["0123abcd"],
+ "files": ["docs/openspec/changes/checkout/proposal.md"]}}
+JSON
+cat > "$WORK/red-in.json" <<'JSON'
+{"inputs": {"prompt": "Write failing tests for the checkout flow.", "files": ["docs/openspec/changes/checkout/proposal.md"]}}
+JSON
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step plan --io-file "$WORK/plan-in.json" >/dev/null
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.finished --step plan --step-status pass --io-file "$WORK/plan-out.json" >/dev/null
+python3 "$KIT_BIN" harness report --run checkout-flow --adapter local-worker --event step.started --step red --io-file "$WORK/red-in.json" >/dev/null
 python3 "$KIT_BIN" gate plan >/dev/null
 
 # Seed an intent from a Markdown spec file (for the intent bar e2e).

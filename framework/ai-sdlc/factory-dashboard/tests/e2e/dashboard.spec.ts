@@ -212,3 +212,43 @@ test.describe("production line", () => {
     await expectAccessible(page);
   });
 });
+
+test.describe("step inputs and outputs (#2435)", () => {
+  test("a station shows what its step received and produced, with repository links", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.locator('[data-stage="plan"][data-testid="station"]').click();
+    const io = page.getByTestId("step-io");
+    await expect(io).toHaveCount(1);
+    await expect(io).toContainText("plan");
+    const received = io.getByRole("region", { name: "Received" });
+    await expect(received).toContainText("Add a checkout flow");
+    await received.getByText("Prompt").click();
+    await expect(received.getByText("Write the OpenSpec change for the checkout flow.")).toBeVisible();
+    await expect(received.getByRole("link", { name: "docs/checkout.md" }))
+      .toHaveAttribute("href", "https://example.invalid/web/blob/HEAD/docs/checkout.md");
+    const issue = received.getByRole("link", { name: "Issue #12" });
+    await expect(issue).toHaveAttribute("target", "_blank");
+    await expect(issue).toHaveAttribute("rel", /noopener/);
+    const produced = io.getByRole("region", { name: "Produced" });
+    await expect(produced).toContainText("OpenSpec change written");
+    await expect(produced.getByRole("link", { name: "0123abcd" }))
+      .toHaveAttribute("href", "https://example.invalid/web/commit/0123abcd");
+    await expect(produced.getByRole("link", { name: "docs/openspec/changes/checkout/proposal.md" }))
+      .toHaveAttribute("href", "https://example.invalid/web/blob/0123abcd/docs/openspec/changes/checkout/proposal.md");
+    await expectAccessible(page);
+  });
+
+  test("a running step shows its inputs and says nothing was produced yet", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.locator('[data-stage="red"][data-testid="station"]').click();
+    const io = page.getByTestId("step-io");
+    await expect(io.getByRole("region", { name: "Received" })).toContainText("Prompt");
+    await expect(io.getByRole("region", { name: "Produced" })).toContainText("Nothing recorded yet");
+  });
+
+  test("a station no step reached says so", async ({ page }) => {
+    await signIn(page, tokens().owner.token);
+    await page.locator('[data-stage="signal"][data-testid="station"]').click();
+    await expect(page.getByTestId("step-io-empty")).toBeVisible();
+  });
+});
