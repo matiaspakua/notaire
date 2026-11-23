@@ -460,6 +460,11 @@ if [ ! -d github-page/node_modules ]; then
     echo "installing github-page deps (npm ci)…"
     (cd github-page && npm ci) >/dev/null 2>&1 || warn "npm ci failed (github-page)"
 fi
+# The demo build compiles the product frontend, so it needs frontend deps even when the frontend group is skipped.
+if [ ! -d frontend/node_modules ]; then
+    echo "installing frontend deps for the pages demo (npm ci)…"
+    (cd frontend && npm ci) >/dev/null 2>&1 || warn "npm ci failed (frontend, for the pages demo)"
+fi
 run "pages typecheck" bash -c "cd github-page && ./node_modules/.bin/tsc --noEmit"
 run "pages eslint" bash -c "cd github-page && ./node_modules/.bin/eslint ."
 if [ "$MODE_FAST" = "0" ]; then
@@ -481,47 +486,31 @@ fi
 # ---------------------------------------------------------------------------
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
+STACK_READY=0
 if [ "$MODE_FULL" = "1" ] && ! touches stack; then
     not_affected "http integration / playwright e2e / bruno api / database v&v / docker build"
 elif [ "$MODE_FULL" = "1" ]; then
-    # Exclusive lock: only one preflight run touches the shared Docker stack at a time (#2414).
-    _stack_lock_pid=""
-    _stack_lock_cleanup() {
-        if [ -n "$_stack_lock_pid" ]; then
-            kill "$_stack_lock_pid" 2>/dev/null || true
-            wait "$_stack_lock_pid" 2>/dev/null || true
-        fi
-        bash workspace/sdlc/stack_lock.sh release 2>/dev/null || true
-    }
-    bash workspace/sdlc/stack_lock.sh acquire &
-    _stack_lock_pid=$!
-    # Wait for the lock to be acquired (the background process blocks after acquiring).
-    # Give it a generous timeout — the lock script handles its own wait/timeout.
-    local_wait=0
-    while kill -0 "$_stack_lock_pid" 2>/dev/null; do
-        sleep 1
-        local_wait=$((local_wait + 1))
-        if [ "$local_wait" -ge 3610 ]; then
-            fail "server-backed suites: could not acquire stack lock within 3610s"
-            _stack_lock_cleanup
-            break
-        fi
-    done
-    trap _stack_lock_cleanup EXIT
-
-    # .env: worktrees have no .env (git-ignored). Copy from the main checkout (#2414).
-    if [ ! -f "$REPO_ROOT/.env" ]; then
-        _main_root="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
-        if [ -f "$_main_root/.env" ]; then
-            cp "$_main_root/.env" "$REPO_ROOT/.env"
-            echo "copied .env from main checkout ($_main_root)"
+    # One stack-backed run at a time: the lock belongs to this preflight run ($$) (#2414).
+    STACK_READY=1
+    if bash workspace/sdlc/stack_lock.sh acquire "$$"; then
+        trap 'bash workspace/sdlc/stack_lock.sh release "$$" >/dev/null 2>&1' EXIT
+    else
+        fail "server-backed suites: the shared Docker stack is busy (holder above); retry when it is free"
+        STACK_READY=0
+    fi
+    # A linked worktree has no .env (git-ignored); compose needs it, so borrow the main checkout's.
+    if [ "$STACK_READY" = "1" ] && [ ! -f "$REPO_ROOT/.env" ]; then
+        MAIN_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+        if [ -f "$MAIN_ROOT/.env" ]; then
+            cp "$MAIN_ROOT/.env" "$REPO_ROOT/.env"
+            echo "server-backed suites: copied .env from $MAIN_ROOT"
         else
-            fail "server-backed suites: .env missing (neither $REPO_ROOT nor $_main_root has one)"
-            _stack_lock_cleanup
-            exit 1
+            fail "server-backed suites: no .env here or in $MAIN_ROOT; create one from .env.example"
+            STACK_READY=0
         fi
     fi
-
+fi
+if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
     # A full run that reaches this point has already paid for Maven, Vitest and
     # the Pages build. Failing here because nothing is listening throws that
     # work away (registration-draft, 2026-11-18; #2374, 2026-11-20). Start the
@@ -591,7 +580,7 @@ elif [ "$MODE_FULL" = "1" ]; then
     else
         fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
-else
+elif [ "$MODE_FULL" = "0" ]; then
     skip "playwright e2e / bruno api / docker build" "not --full; this run is not sufficient to open a pull request"
 fi
 
