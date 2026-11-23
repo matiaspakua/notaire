@@ -9,6 +9,7 @@ import { OutcomesSection } from "@/components/Outcomes";
 import { HISTORY, HistoryChart } from "@/components/CaseStudy";
 import { Card, PageHeader, SectionTitle, Sources } from "@/components/FactoryUI";
 import { Fill, T } from "@/components/site/T";
+import { FactoryMetricsSection } from "@/components/factory/FactoryMetrics";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata("/ai-sdlc/results/");
@@ -85,6 +86,8 @@ export default function ResultsPage() {
       <OutcomesSection data={outcomes} />
       <DeliveryWeeks series={outcomes.throughput.series} medianPerWeek={outcomes.throughput.median_per_week} />
       <LeadTimeScale n={outcomes.lead_time_hours.n} median={outcomes.lead_time_hours.median} p90={outcomes.lead_time_hours.p90} />
+
+      <FactoryMetricsSection />
 
       <SectionTitle id="factory">The factory itself</SectionTitle>
       <p className="leading-relaxed text-slate-700">

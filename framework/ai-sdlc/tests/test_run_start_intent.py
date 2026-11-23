@@ -48,6 +48,20 @@ class RunStartIntentTest(unittest.TestCase):
         status = json.loads(self.repo.run("status", "--json").stdout)
         self.assertEqual(self.intent, status["intent"])
 
+    def test_an_existing_run_is_attached_to_an_intent(self):
+        self.assertEqual(0, self.repo.run("run", "start", "--project", "web", "--workflow", "feature",
+                                          "--id", "r3").returncode)
+        attached = self.repo.run("intent", "attach", "--id", self.intent, "--run", "r3", "--json")
+        self.assertEqual(0, attached.returncode, output(attached))
+        run = json.loads(self.repo.run("run", "show", "--id", "r3", "--json").stdout)
+        self.assertEqual(self.intent, run["intent"])
+        shown = json.loads(self.repo.run("intent", "show", self.intent, "--json").stdout)
+        self.assertIn("r3", shown["run_ids"])
+        other = json.loads(self.repo.run("intent", "submit", "--text", "Another goal", "--json").stdout)["id"]
+        moved = self.repo.run("intent", "attach", "--id", other, "--run", "r3")
+        self.assertEqual(2, moved.returncode)
+        self.assertIn("already attached", output(moved))
+
     def test_an_unknown_intent_is_refused(self):
         started = self.repo.run("run", "start", "--project", "web", "--workflow", "feature", "--id", "r2",
                                 "--intent", "int-000000000000")

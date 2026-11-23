@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.7.0
+  version: 1.8.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -189,6 +189,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EvidenceReport"
+  /factory/metrics/factory:
+    get:
+      tags: [evidence]
+      operationId: getFactoryMetrics
+      summary: Time, tokens, money and RepoLens effect per intent, per run and overall (CLI `metrics factory --json`, #2447)
+      responses:
+        "200":
+          description: Factory metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FactoryMetrics"
   /factory/session:
     get:
       tags: [capabilities]
@@ -1539,6 +1551,27 @@ components:
           $ref: "#/components/schemas/StepIO"
         outputs:
           $ref: "#/components/schemas/StepIO"
+    FactoryMetrics:
+      type: object
+      additionalProperties: true
+      required: [generated_at, intents, runs, overall, repolens_effect]
+      description: >-
+        Per intent and per run: time (wall_s, active_s, by_stage, corrections), tokens (input, output,
+        cache_read, cache_write), cost (usd — null when nothing is recorded — fully_priced, rows,
+        reported_rows, by_source) and repolens (calls, tokens_served, p50_ms, zero_result_rate) in the
+        run's window. overall adds totals and per-intent medians. repolens_effect holds the agent
+        benchmark comparison (bench) and the live paired runs (live_ab) with their sample sizes.
+      properties:
+        generated_at: { type: string, format: date-time }
+        intents: { type: array, items: { type: object, additionalProperties: true } }
+        runs: { type: array, items: { type: object, additionalProperties: true } }
+        overall: { type: object, additionalProperties: true }
+        repolens_effect:
+          type: object
+          additionalProperties: true
+          properties:
+            bench: { type: array, items: { type: object, additionalProperties: true } }
+            live_ab: { type: object, additionalProperties: true }
     StepIO:
       type: object
       additionalProperties: false

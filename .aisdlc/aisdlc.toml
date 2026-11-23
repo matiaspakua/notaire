@@ -516,3 +516,19 @@ source = "docs/300-development/304-ai-sdlc-cloud/fleet-manifest.yaml"
 id = "local-foreman"
 runtime = "local-omlx"
 source = ".aisdlc/project.yml"
+
+# Anthropic first-party prices, USD per million tokens (claude-api reference, 2026-11-03).
+# Cache writes default to 1.25x input (5-minute TTL) and 2x input (1-hour TTL) (#2447).
+[cost.prices.claude-opus-5-5]
+input = 4.0
+output = 20.0
+cache_read = 0.2
+
+[cost.prices.claude-sonnet-5-5]
+input = 2.0
+output = 10.0
+cache_read = 0.1
+
+[cost.prices.claude-haiku-5-5]
+input = 0.1
+output = 0.5

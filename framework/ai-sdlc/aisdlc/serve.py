@@ -178,6 +178,11 @@ def _dispatch_get(ctx: Context, path: str, query: dict[str, list[str]]) -> Any:
         return harness.list_adapters(ctx.root, ctx.profile)
     if path == "/factory/report":
         return evidence.report_summary(ctx)
+    if path == "/factory/metrics/factory":
+        from aisdlc import factory_metrics
+
+        return factory_metrics.build(ctx, usage_path=ctx.root / ".repolens" / "usage.jsonl",
+                                     bench_dir=ctx.root / "framework" / "repolens" / "bench" / "results")
     if path == "/factory/line":
         from aisdlc import line as _line_mod
 

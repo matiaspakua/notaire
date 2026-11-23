@@ -686,6 +686,9 @@ def _check_prices(prices: dict, errors: list[str]) -> None:
         for key in ("input", "output"):
             if not isinstance(price.get(key), (int, float)):
                 errors.append(f"cost.prices.{model} needs a numeric {key} (USD per million tokens)")
+        for key in ("cache_read", "cache_write", "cache_write_1h"):
+            if key in price and not isinstance(price[key], (int, float)):
+                errors.append(f"cost.prices.{model}.{key} must be a number (USD per million tokens)")
 
 
 def _string_list(raw, where: str, errors: list[str]) -> tuple[str, ...]:

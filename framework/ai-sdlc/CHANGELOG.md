@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- The dashboard intent bar shows the most recently submitted intent when the current run has none; it showed the first intent by random id (#2447).
 - `open_store` also git-ignores the SQLite side files `factory.db-wal`, `factory.db-shm` and `factory.db-journal`, so a live store never shows up as untracked files (#2439).
 - `aisdlc run start --intent ID` records the intent on the run and attaches the run to it, like `POST /factory/runs`; before, CLI runs never carried their intent (#2426).
 - `aisdlc line` and `GET /factory/line` stages always carry `agents`, `skills`, `mcp`, `tools`, `model`, `effort` and `guardrails` (grants of the stage), with empty values when nothing is configured; contract `factory-control` 1.4.0 (additive) (#2404).
@@ -19,6 +20,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `aisdlc metrics factory` and `GET /factory/metrics/factory` answer how long each intent took, what it cost in tokens and USD, and what RepoLens changes, per intent, per run and overall; `aisdlc usage import` attributes Junie logs and Claude Code transcripts to run steps (`--all-runs` splits the Foreman's usage and keeps overhead); cost rows carry run, step, cache tokens and source; `[cost.prices]` takes cache prices; `aisdlc intent attach` gives an existing run its intent; the dashboard Metrics view shows the answers; contract `factory-control` 1.8.0 (additive) (#2447).
 - `aisdlc harness report --io-file` records what a step received and produced (`request`, `prompt`, `summary`, `files`, `commits`, `links`), validated before it reaches the ledger; run steps expose them and the dashboard's station detail shows them with repository links; contract `factory-control` 1.7.0 (additive) (#2435).
 - `aisdlc workflow edit --steps-file` and `PUT /factory/workflows/{id}` write a workflow's v2 steps, each with its line stage; runs keep each step's stage and `aisdlc status` reports it; contract `factory-control` 1.6.0 (additive) (#2410).
 - Factory dashboard Overview renders the line as a production-line diagram with station kinds, gate evidence states, correction loop, throughput, cost and an intent progress strip (#2407).

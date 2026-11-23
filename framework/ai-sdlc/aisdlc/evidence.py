@@ -156,13 +156,44 @@ def append_record(ctx: Context, record: dict) -> Path:
     return _append(ctx, LEDGER, payload)
 
 
+def price_usd(price: dict | None, tokens_in: int, tokens_out: int, cache_read: int = 0,
+              cache_write: int = 0, cache_write_1h: int = 0) -> float | None:
+    """USD from a per-million-token price; None when a token kind present has no price (#2447).
+
+    Cache writes default to the documented multipliers of the input price (1.25x for the 5-minute
+    TTL, 2x for the 1-hour TTL); cache reads need their own price because the ratio varies by model.
+    """
+    if not price:
+        return None
+    if cache_read and not isinstance(price.get("cache_read"), (int, float)):
+        return None
+    write_5m = price.get("cache_write", price["input"] * 1.25)
+    write_1h = price.get("cache_write_1h", price["input"] * 2)
+    total = (tokens_in * price["input"] + tokens_out * price["output"] + cache_read * price.get("cache_read", 0)
+             + (cache_write - cache_write_1h) * write_5m + cache_write_1h * write_1h)
+    return round(total / 1e6, 6)
+
+
+def cost_rows(ctx: Context) -> list[dict]:
+    """Every recorded cost row (public read of cost.jsonl)."""
+    return _read(ctx, COSTS, None)
+
+
 def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: int,
-             usd: float | None, issue: str | None) -> int:
-    price = ctx.profile.prices.get(model)
-    if usd is None and price:
-        usd = round(tokens_in / 1e6 * price["input"] + tokens_out / 1e6 * price["output"], 6)
-    _append(ctx, COSTS, {"ts": now(), "agent": agent, "model": model, "input": tokens_in,
-                         "output": tokens_out, "usd": usd, "issue": issue})
+             usd: float | None, issue: str | None, *, run: str | None = None, step: str | None = None,
+             cache_read: int = 0, cache_write: int = 0, cache_write_1h: int = 0, source: str | None = None,
+             key: str | None = None, quiet: bool = False) -> dict:
+    """Append one cost row; a reported ``usd`` is kept, otherwise it is priced or left unpriced."""
+    usd_source = "reported" if usd is not None else None
+    if usd is None:
+        usd = price_usd(ctx.profile.prices.get(model), tokens_in, tokens_out, cache_read, cache_write, cache_write_1h)
+        usd_source = "priced" if usd is not None else None
+    row = {"ts": now(), "agent": agent, "model": model, "input": tokens_in, "output": tokens_out,
+           "cache_read": cache_read, "cache_write": cache_write, "usd": usd, "usd_source": usd_source,
+           "issue": issue, "run": run, "step": step, "source": source}
+    if key:
+        row["key"] = key
+    _append(ctx, COSTS, row)
     record_cost_event(
         get_telemetry(),
         agent=agent,
@@ -171,9 +202,10 @@ def add_cost(ctx: Context, agent: str, model: str, tokens_in: int, tokens_out: i
         tokens_out=tokens_out,
         usd=usd,
     )
-    print(f"cost recorded: {agent} · {model} · {tokens_in}+{tokens_out} tokens · "
-          f"{'unpriced' if usd is None else f'${usd:.4f}'}")
-    return 0
+    if not quiet:
+        print(f"cost recorded: {agent} · {model} · {tokens_in}+{tokens_out} tokens · "
+              f"{'unpriced' if usd is None else f'${usd:.4f}'}")
+    return row
 
 
 def ledger_records(ctx: Context, since: str | None = None) -> list[dict]:

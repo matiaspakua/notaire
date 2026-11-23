@@ -1,0 +1,221 @@
+{
+  "generated_at": "2026-11-23T17:29:24.188336+00:00",
+  "method": "python3 workspace/ci/generate-factory-metrics.py (aisdlc metrics factory --json)",
+  "overall": {
+    "intents": 13,
+    "runs": 20,
+    "succeeded": 16,
+    "corrections": 5,
+    "median_active_s": 2196.0,
+    "median_wall_s": 3326.0,
+    "median_usd": 2.15,
+    "median_tokens": 25241927,
+    "usd": {
+      "total": 122.129095,
+      "attributed": 39.365995,
+      "overhead": 82.7631
+    },
+    "tokens": {
+      "cache_read": 541716842,
+      "cache_write": 4053681,
+      "input": 9789236,
+      "output": 1572509,
+      "total": 557132268
+    },
+    "repolens_calls": 146,
+    "repolens_p50_ms": 40.7
+  },
+  "intents": [
+    {
+      "title": "feat(aisdlc): AI configuration owned by catalogs and materialized into harnesses (F)",
+      "runs": 3,
+      "active_s": 5366.0,
+      "wall_s": 5708.0,
+      "corrections": 2,
+      "tokens": 28140666,
+      "usd": 2.232446,
+      "cost_note": "priced",
+      "repolens_calls": 5
+    },
+    {
+      "title": "feat(aisdlc): one intent entry point for CLI, API, MCP and UI (B)",
+      "runs": 2,
+      "active_s": 4142.0,
+      "wall_s": 4289.0,
+      "corrections": 1,
+      "tokens": 32782221,
+      "usd": 2.073698,
+      "cost_note": "priced",
+      "repolens_calls": 6
+    },
+    {
+      "title": "Pages metrics compute e2eTests and apiEndpoints every run (#760)",
+      "runs": 1,
+      "active_s": 3938.0,
+      "wall_s": 4727.0,
+      "corrections": 0,
+      "tokens": 33971865,
+      "usd": 6.041359,
+      "cost_note": "priced",
+      "repolens_calls": 0
+    },
+    {
+      "title": "feat(aisdlc): the production line model \u2014 stages, gates, guardrails, steps, tools, inputs and outputs (C)",
+      "runs": 1,
+      "active_s": 3570.0,
+      "wall_s": 4061.0,
+      "corrections": 1,
+      "tokens": 9393154,
+      "usd": 2.229894,
+      "cost_note": "priced",
+      "repolens_calls": 6
+    },
+    {
+      "title": "feat(aisdlc): persistent factory store and mandatory telemetry (A)",
+      "runs": 1,
+      "active_s": 2882.0,
+      "wall_s": 3085.0,
+      "corrections": 0,
+      "tokens": 32786682,
+      "usd": 0.597566,
+      "cost_note": "priced",
+      "repolens_calls": 5
+    },
+    {
+      "title": "feat(aisdlc): live factory status and event stream (D)",
+      "runs": 1,
+      "active_s": 2275.0,
+      "wall_s": 3559.0,
+      "corrections": 0,
+      "tokens": 47404893,
+      "usd": 2.652922,
+      "cost_note": "priced",
+      "repolens_calls": 3
+    },
+    {
+      "title": "test(e2e): TS-0123/0124/0133/0134 are flaky in the local full preflight",
+      "runs": 1,
+      "active_s": 2196.0,
+      "wall_s": 3410.0,
+      "corrections": 0,
+      "tokens": 33723088,
+      "usd": 7.278093,
+      "cost_note": "priced",
+      "repolens_calls": 4
+    },
+    {
+      "title": "feat(aisdlc): factory configuration as code and full catalog lifecycle (E)",
+      "runs": 1,
+      "active_s": 1896.0,
+      "wall_s": 3066.0,
+      "corrections": 0,
+      "tokens": 19003719,
+      "usd": 0.525465,
+      "cost_note": "priced",
+      "repolens_calls": 2
+    },
+    {
+      "title": "fix(aisdlc): /factory/line stages omit agents, skills, tools, model, effort and guardrails",
+      "runs": 1,
+      "active_s": 1339.0,
+      "wall_s": 1340.0,
+      "corrections": 0,
+      "tokens": 10879675,
+      "usd": 0.630364,
+      "cost_note": "priced",
+      "repolens_calls": 0
+    },
+    {
+      "title": "Fix #2429: a Pages build must leave the git tree unchanged (stable RepoLens bench snapshot)",
+      "runs": 1,
+      "active_s": 818.0,
+      "wall_s": 1354.0,
+      "corrections": 1,
+      "tokens": 9815137,
+      "usd": 1.575763,
+      "cost_note": "priced",
+      "repolens_calls": 0
+    },
+    {
+      "title": "feat(dashboard): production-line timeline, intent bar, live sync, configuration as code, telemetry (G)",
+      "runs": 1,
+      "active_s": 702.0,
+      "wall_s": 3326.0,
+      "corrections": 0,
+      "tokens": 25241927,
+      "usd": 5.183924,
+      "cost_note": "priced",
+      "repolens_calls": 8
+    },
+    {
+      "title": "feat(dashboard): production-line diagram \u2014 live run, station kinds, gates, correction loop, throughput and intent progress",
+      "runs": 1,
+      "active_s": 0.0,
+      "wall_s": 105.0,
+      "corrections": 0,
+      "tokens": 2923327,
+      "usd": 0.735407,
+      "cost_note": "priced",
+      "repolens_calls": 0
+    },
+    {
+      "title": "fix(dashboard): the events stream response skips the CSP and security headers",
+      "runs": 1,
+      "active_s": 0.0,
+      "wall_s": 0.0,
+      "corrections": 0,
+      "tokens": 0,
+      "usd": null,
+      "cost_note": "none",
+      "repolens_calls": 0
+    }
+  ],
+  "repolens": {
+    "bench": [
+      {
+        "model": "haiku",
+        "file": "agent-haiku-notaire-holdout.json",
+        "runs_per_arm": 36,
+        "cost_change_pct": -31.9,
+        "input_tokens_change_pct": -25.4,
+        "tool_calls_change_pct": -22.6,
+        "time_change_pct": -24.1,
+        "recall_change": 0.005
+      },
+      {
+        "model": "haiku",
+        "file": "agent-haiku.json",
+        "runs_per_arm": 33,
+        "cost_change_pct": -32.1,
+        "input_tokens_change_pct": -32.3,
+        "tool_calls_change_pct": -19.5,
+        "time_change_pct": -24.5,
+        "recall_change": 0.005
+      },
+      {
+        "model": "sonnet",
+        "file": "agent-sonnet-holdout-0.3.0.json",
+        "runs_per_arm": 6,
+        "cost_change_pct": 2.5,
+        "input_tokens_change_pct": 11.4,
+        "tool_calls_change_pct": -50.0,
+        "time_change_pct": -16.1,
+        "recall_change": 0.0
+      },
+      {
+        "model": "sonnet",
+        "file": "agent-sonnet-scale.json",
+        "runs_per_arm": 8,
+        "cost_change_pct": 2.9,
+        "input_tokens_change_pct": 20.2,
+        "tool_calls_change_pct": 0.0,
+        "time_change_pct": 9.9,
+        "recall_change": 0.0
+      }
+    ],
+    "live_pairs": {
+      "with_repolens": 0,
+      "without": 0
+    }
+  }
+}

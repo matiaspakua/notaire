@@ -5,7 +5,7 @@ import { Icon } from "./Icon.tsx";
 import { useWorkspace } from "../context.ts";
 import { useResource } from "../hooks.ts";
 import { useT } from "../i18n.ts";
-import { type Intent, type IntentRef, isSafeLink } from "../model.ts";
+import { type Intent, type IntentRef, isSafeLink, pickIntent } from "../model.ts";
 
 type IntentKind = "prompt" | "reference" | "spec";
 
@@ -203,13 +203,7 @@ export function IntentBar() {
   const statusRes = useResource<{ intent: string | null }>(factory(workspace.id, "/status"));
   const intentsRes = useResource<{ entries: Intent[] }>(factory(workspace.id, "/intents"));
 
-  const intentId = statusRes.data?.intent;
-  let currentIntent: Intent | null = null;
-  if (intentId && intentsRes.data) {
-    currentIntent = intentsRes.data.entries.find((i) => i.id === intentId) ?? null;
-  } else if (intentsRes.data?.entries.length) {
-    currentIntent = intentsRes.data.entries[0] ?? null;
-  }
+  const currentIntent = intentsRes.data ? pickIntent(statusRes.data?.intent, intentsRes.data.entries) : null;
 
   return (
     <>

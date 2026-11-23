@@ -225,6 +225,19 @@ def show(ctx: Context, run_id: str) -> dict:
     return _write(_path(ctx, run_id), payload)
 
 
+def attach_intent(ctx: Context, run_id: str, intent_id: str) -> dict:
+    """Record the intent of a run that started without one (#2447); a run keeps a single intent."""
+    from aisdlc import intent_model
+
+    intent_model.show_intent(ctx, intent_id)
+    payload = show(ctx, run_id)
+    if payload.get("intent") not in (None, intent_id):
+        raise KitError("conflict", f"run {run_id!r} is already attached to intent {payload['intent']!r}")
+    payload["intent"] = intent_id
+    intent_model.attach_run(ctx, intent_id, run_id)
+    return _write(_path(ctx, run_id), payload)
+
+
 def list_runs(ctx: Context) -> dict:
     root = _root(ctx)
     entries: list[dict] = []
