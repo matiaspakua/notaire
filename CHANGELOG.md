@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0](https://github.com/matiaspakua/notaire/compare/v0.9.0...v0.10.0) (2026-11-23)
+
+
+### Features
+
+* **#2414:** add stack_lock.sh for exclusive Docker stack access ([ecffa26](https://github.com/matiaspakua/notaire/commit/ecffa26c515e563d2590be08bb7735ba26f5e88e)), closes [#2414](https://github.com/matiaspakua/notaire/issues/2414)
+* **aisdlc:** [[stages]] kind = agent | deterministic | human, returned on the line ([5d7b23c](https://github.com/matiaspakua/notaire/commit/5d7b23cf58000573889e73ae78317cea0a36260b)), closes [#2411](https://github.com/matiaspakua/notaire/issues/2411)
+* **aisdlc:** edit a workflow's v2 steps with their line stage (CLI and PUT) ([9949fe3](https://github.com/matiaspakua/notaire/commit/9949fe364a5855c5d32de29b933783e5249d0e06)), closes [#2410](https://github.com/matiaspakua/notaire/issues/2410)
+* **aisdlc:** factory-feature v10 maps its steps onto the production line ([bb6c18f](https://github.com/matiaspakua/notaire/commit/bb6c18f4e36910a7fc099cdef703d12c7efb38e6)), closes [#2410](https://github.com/matiaspakua/notaire/issues/2410)
+* **aisdlc:** harness report records a step's inputs and outputs ([96a4938](https://github.com/matiaspakua/notaire/commit/96a4938ce65f4e298b7370869b5c1026ac607fe3)), closes [#2435](https://github.com/matiaspakua/notaire/issues/2435)
+* **aisdlc:** intent attach gives an existing run its intent ([a39154b](https://github.com/matiaspakua/notaire/commit/a39154b11d5cb6a23c7f242c4bf1345b392120c9)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **aisdlc:** metrics factory answers time, cost and RepoLens effect per intent ([89cbc23](https://github.com/matiaspakua/notaire/commit/89cbc23ae23743ac5e8f24f7be3c4c7b28ba9de9)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **aisdlc:** price Claude tokens in the Notaire profile ([177a7f1](https://github.com/matiaspakua/notaire/commit/177a7f1c82973f50ccd0fa751019beeddfde4b97)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **aisdlc:** usage import --all-runs splits Foreman usage by run window; overhead is kept ([cdb824f](https://github.com/matiaspakua/notaire/commit/cdb824fe2ea99a8a730ff323133f965990b277a1)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **dashboard:** collapse the sidebar to an icon rail ([2b71448](https://github.com/matiaspakua/notaire/commit/2b71448fba51a586d413fec51664e36ff4bb5140)), closes [#2434](https://github.com/matiaspakua/notaire/issues/2434)
+* **dashboard:** draw the Overview as a production-line diagram ([b95c23a](https://github.com/matiaspakua/notaire/commit/b95c23a1bfd1e9ddf87a5d1e13d13211e1443d24)), closes [#2407](https://github.com/matiaspakua/notaire/issues/2407)
+* **dashboard:** inspect what each station's step received and produced ([73e56cc](https://github.com/matiaspakua/notaire/commit/73e56ccce1034e98b25173d89b176804e29dd156)), closes [#2435](https://github.com/matiaspakua/notaire/issues/2435)
+* **dashboard:** production-line model for station kind, state, gates, throughput and progress ([a207573](https://github.com/matiaspakua/notaire/commit/a207573c3a93682868e7c9ef73015545a029d3b9)), closes [#2407](https://github.com/matiaspakua/notaire/issues/2407)
+* **dashboard:** station kind comes from the kit ([f852a5d](https://github.com/matiaspakua/notaire/commit/f852a5dae11cad725ff29b20c59eab6a392dadbc)), closes [#2411](https://github.com/matiaspakua/notaire/issues/2411)
+* **dashboard:** the Metrics view answers time, cost and RepoLens per intent ([c577d87](https://github.com/matiaspakua/notaire/commit/c577d8789da7b20703f5778493625fd4dae3146d)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **pages:** factory metrics snapshot generated from aisdlc metrics factory ([119d377](https://github.com/matiaspakua/notaire/commit/119d3775de88af8863c760445a5468abb4c302ee)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **pages:** Results shows what each intent cost, how long it took and what RepoLens changes ([8ef31b4](https://github.com/matiaspakua/notaire/commit/8ef31b489bcad1f6e5aac1535e5f19dd962ad3ed)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **sdlc:** run only the preflight suites a branch touches, and skip a re-push that passed ([189f221](https://github.com/matiaspakua/notaire/commit/189f221a93c051c72663d55641ed5af00a6d8356)), closes [#2413](https://github.com/matiaspakua/notaire/issues/2413)
+* **security:** log API rate limit rejections without personal data ([26e3f75](https://github.com/matiaspakua/notaire/commit/26e3f75a583c232aaa800b91c0171e69d888bce5)), closes [#2389](https://github.com/matiaspakua/notaire/issues/2389)
+
+
+### Bug Fixes
+
+* **aisdlc:** a run keeps each step's stage, and status reports it ([a4ddd74](https://github.com/matiaspakua/notaire/commit/a4ddd7432c4daac3f9e32c1e895c129d0fe17abe)), closes [#2410](https://github.com/matiaspakua/notaire/issues/2410)
+* **aisdlc:** attribute a Junie session to the run of the issue its task names ([38706ef](https://github.com/matiaspakua/notaire/commit/38706efeee2c327931ba81f7c5139a2def20b348)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **aisdlc:** keep the store's SQLite WAL and SHM files out of git ([6a07f6c](https://github.com/matiaspakua/notaire/commit/6a07f6c263558d296052ee69a37f2b29d924536d)), closes [#2439](https://github.com/matiaspakua/notaire/issues/2439)
+* **aisdlc:** run start --intent records the intent and attaches the run ([73f0401](https://github.com/matiaspakua/notaire/commit/73f0401372d06b3a1fa1a378641d76d58772876e)), closes [#2426](https://github.com/matiaspakua/notaire/issues/2426)
+* **aisdlc:** usage import skips zero-usage synthetic Claude Code messages ([ec374c7](https://github.com/matiaspakua/notaire/commit/ec374c7ba6542649fa1e16545c133aafc1aa7e98)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **api:** sync the committed OpenAPI with the running API ([4d35e3a](https://github.com/matiaspakua/notaire/commit/4d35e3a5d35c19e6a38552ac8c05fcb9276c7632)), closes [#2440](https://github.com/matiaspakua/notaire/issues/2440)
+* **ci:** compute e2eTests and apiEndpoints every run; mark a fallback stale ([cef0054](https://github.com/matiaspakua/notaire/commit/cef0054b135c90b5c2b13a57aaeb5d0ac781163a)), closes [#760](https://github.com/matiaspakua/notaire/issues/760)
+* **ci:** keep the bench snapshot unchanged when its data is unchanged ([328ea09](https://github.com/matiaspakua/notaire/commit/328ea09d0dcae0f7574744e4d70f0a7c3bdcac44)), closes [#2429](https://github.com/matiaspakua/notaire/issues/2429)
+* **ci:** main health fetches origin/main; the Pages deploy builds coverage without the reactor-root JaCoCo call ([722208f](https://github.com/matiaspakua/notaire/commit/722208f0f03ecfeb36d893104c78b2a12eb65281)), closes [#2440](https://github.com/matiaspakua/notaire/issues/2440)
+* **ci:** the Pages deploy passes fresh Playwright and Bruno results; one fallback helper ([734dc67](https://github.com/matiaspakua/notaire/commit/734dc675188b2e2f3fb33646ccf3bc16ebb2ac50)), closes [#760](https://github.com/matiaspakua/notaire/issues/760)
+* **dashboard:** the intent bar shows the latest intent when the run has none ([e8b35d5](https://github.com/matiaspakua/notaire/commit/e8b35d538098be425a27b53443e78e88c8d5676d)), closes [#2447](https://github.com/matiaspakua/notaire/issues/2447)
+* **e2e:** raise the API rate limit for the e2e stack only ([6ce2758](https://github.com/matiaspakua/notaire/commit/6ce2758a26d97a1c07e8bb32a06bfe76f17cd878)), closes [#2389](https://github.com/matiaspakua/notaire/issues/2389)
+* **frontend:** pin @xyflow/react 12 until the workflow editor is migrated ([3b9f3de](https://github.com/matiaspakua/notaire/commit/3b9f3de3d3d772889c4b5d6d62ba8d7718642880)), closes [#2440](https://github.com/matiaspakua/notaire/issues/2440)
+* **release:** add the v0.9 factory control plane train ([342db2d](https://github.com/matiaspakua/notaire/commit/342db2d4be1d185330747eac7f367c4f60372cc1)), closes [#2408](https://github.com/matiaspakua/notaire/issues/2408)
+* **release:** add v0.9 train and publish the 0.8.0/0.9.0 cuts ([737fa15](https://github.com/matiaspakua/notaire/commit/737fa151c523d902a60db33e084c7304c7de7637))
+* **sdlc:** hold the stack lock for the preflight run itself; pages gets its frontend deps ([e3a4240](https://github.com/matiaspakua/notaire/commit/e3a42402215906509fadc2fb332f34076e761d07)), closes [#2414](https://github.com/matiaspakua/notaire/issues/2414)
+* **sdlc:** install the e2e suite before Playwright; the types check always cleans up ([c8b817c](https://github.com/matiaspakua/notaire/commit/c8b817c4f460aa9f37ef9fed81fc023c326762bc)), closes [#2442](https://github.com/matiaspakua/notaire/issues/2442)
+* **security:** make the rate window insert race-proof with ON CONFLICT ([9a6d46c](https://github.com/matiaspakua/notaire/commit/9a6d46c0d4e84f3c64e8753d04a1645884966067)), closes [#2389](https://github.com/matiaspakua/notaire/issues/2389)
+* **test:** RepoLens wiring drift ignores machine-local .git/hooks ([7e80404](https://github.com/matiaspakua/notaire/commit/7e80404819c6c223c93b1fae6291763f00069403)), closes [#2440](https://github.com/matiaspakua/notaire/issues/2440)
+
 ## [0.9.0](https://github.com/matiaspakua/notaire/compare/v0.8.0...v0.9.0) (2026-11-22)
 
 
