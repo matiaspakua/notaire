@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/feat-2410-workflow-steps/` | <!-- --> |
 | Branch | `feat/2410_workflow_steps` | <!-- --> |
-| Tasks | `tasks.md` | <!-- n/N complete --> |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Tasks | `tasks.md` | groups 1-8 complete |
+| Commits | 0a3ba474, c6d6b30f, 93f4269a, 9949fe36, a4ddd743, bb6c18f4, 7c3b834f | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,12 +35,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Steps with stages are saved and the workflow returns to draft | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_steps_with_stages_are_saved_as_a_draft` | pending |
-| A step without a stage is refused | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_a_step_without_a_stage_is_refused` | pending |
-| Duplicate step ids are refused | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_duplicate_step_ids_are_refused` | pending |
-| An approved workflow is immutable | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_an_approved_workflow_is_immutable` | pending |
-| The API needs If-Match with the current version | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_put_needs_the_current_version` | pending |
-| Status shows the step's stage | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_status_reports_the_steps_stage` | pending |
+| Steps with stages are saved and the workflow returns to draft | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_steps_with_stages_are_saved_as_a_draft` | passing |
+| A step without a stage is refused | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_a_step_without_a_stage_is_refused` | passing |
+| Duplicate step ids are refused | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_duplicate_step_ids_are_refused` | passing |
+| An approved workflow is immutable | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_an_approved_workflow_is_immutable` | passing |
+| The API needs If-Match with the current version | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_put_needs_the_current_version` | passing |
+| Status shows the step's stage | `framework/ai-sdlc/tests/test_workflow_steps_edit.py` `test_status_reports_the_steps_stage` | passing |
 
 ## Permanent documentation updated
 

@@ -71,12 +71,15 @@ None.
 - `framework/ai-sdlc/aisdlc/workflows.py`
 - `framework/ai-sdlc/aisdlc/cli.py`
 - `framework/ai-sdlc/aisdlc/serve.py`
+- `framework/ai-sdlc/aisdlc/runs.py`
+- `framework/ai-sdlc/aisdlc/status.py`
 - `framework/ai-sdlc/tests/test_workflow_steps_edit.py`
 - `framework/ai-sdlc/openapi/factory-control.openapi.yaml`
 - `framework/ai-sdlc/README.md`
 - `framework/ai-sdlc/CHANGELOG.md`
 - `.aisdlc/catalogs/workflows/factory-feature/**`
 - `docs/openspec/changes/**`
+- `docs/openspec/changes/archive/**`
 - `docs/openspec/specs/aisdlc-workflows/**`
 
 ### Architecture review
