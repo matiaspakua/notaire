@@ -92,6 +92,56 @@ class TddEvidenceTest(unittest.TestCase):
         repo.commit("docs: readme")
         self.assertEqual(0, repo.run("tdd", "--base", repo.base).returncode)
 
+    def code_then_tests(self, profile: str) -> tuple[Repo, str]:
+        repo = Repo(self, profile)
+        repo.write("src/app.py", "x = 1\n")
+        sha = repo.commit("feat: app")
+        repo.write("tests/test_app.py", "def test(): pass\n")
+        repo.commit("test: app")
+        return repo, sha
+
+    def test_order_fails_on_code_before_tests(self):
+        repo, sha = self.code_then_tests(self.PROFILE + "order = true\n")
+        result = repo.run("tdd", "--base", repo.base)
+        self.assertEqual(1, result.returncode, output(result))
+        self.assertIn(sha[:7], output(result))
+        self.assertIn("feat: app", output(result))
+
+    def test_order_passes_tests_first(self):
+        repo = Repo(self, self.PROFILE + "order = true\n")
+        repo.write("tests/test_app.py", "def test(): pass\n")
+        repo.commit("test: app red")
+        repo.write("src/app.py", "x = 1\n")
+        repo.commit("feat: app")
+        self.assertEqual(0, repo.run("tdd", "--base", repo.base).returncode)
+
+    def test_order_counts_a_commit_with_both_as_tests_first(self):
+        repo = Repo(self, self.PROFILE + "order = true\n")
+        repo.write("tests/test_app.py", "def test(): pass\n")
+        repo.write("src/app.py", "x = 1\n")
+        repo.commit("feat: app with test")
+        self.assertEqual(0, repo.run("tdd", "--base", repo.base).returncode)
+
+    def test_without_order_only_presence_counts(self):
+        repo, _ = self.code_then_tests(self.PROFILE)
+        self.assertEqual(0, repo.run("tdd", "--base", repo.base).returncode)
+
+    WAIVED = PROFILE + 'waive_labels = ["sdlc-exception"]\n'
+
+    def test_waive_label_passes(self):
+        repo = Repo(self, self.WAIVED)
+        repo.write("src/app.py", "x = 1\n")
+        repo.commit("feat: app")
+        result = repo.run("tdd", "--base", repo.base, "--labels", "chore,sdlc-exception")
+        self.assertEqual(0, result.returncode, output(result))
+        self.assertIn("sdlc-exception", output(result))
+
+    def test_unlisted_label_does_not_waive(self):
+        repo = Repo(self, self.WAIVED)
+        repo.write("src/app.py", "x = 1\n")
+        repo.commit("feat: app")
+        self.assertEqual(1, repo.run("tdd", "--base", repo.base, "--labels", "chore").returncode)
+
 
 if __name__ == "__main__":
     unittest.main()
