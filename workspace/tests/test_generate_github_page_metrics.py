@@ -388,7 +388,7 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
         """Passing Playwright / Bruno inputs must not disturb the existing
         coverage keys (backendInstruction, backendBranch, frontendComponent,
         lastUpdated) when their own snapshots are also present."""
-        pw = self._playwright_results_json(expected=15, unexpected=0)
+        pw = self._playwright_results_json(expected=15, unexpected=0, skipped=0)
         br = self._bruno_results_json(total_requests=40)
         data = self._run(
             live={},

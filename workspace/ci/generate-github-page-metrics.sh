@@ -102,20 +102,78 @@ else
   FRONTEND_COMPONENT=$(coverage_fallback frontendComponent)
 fi
 
-# Not recomputed fresh this pass (tracked as a scoped follow-up per issue
-# #758 / #760) -- carry the last *measured* deployed value forward rather than
-# a hardcoded zero.
-E2E_TESTS=$(coverage_fallback e2eTests)
-API_ENDPOINTS=$(coverage_fallback apiEndpoints)
+# -----------------------------------------------------------------------
+# Issue #760 — compute e2eTests from Playwright results, apiEndpoints from
+# Bruno report.  Fall back to last live value only when the artefact is
+# missing, and visibly mark the fallback stale.
+# -----------------------------------------------------------------------
 
+# -- e2eTests -----------------------------------------------------------
+E2E_TESTS="null"
+E2E_TESTS_STALE="false"
+PW_JSON="${PLAYWRIGHT_RESULTS_JSON:-}"
+if [ -n "$PW_JSON" ] && [ -f "$PW_JSON" ]; then
+  _pw_total=$(jq -r '.stats.total // empty' "$PW_JSON" 2>/dev/null || true)
+  if [ -n "$_pw_total" ] && [ "$_pw_total" != "null" ]; then
+    E2E_TESTS="$_pw_total"
+  else
+    # Fallback to live
+    E2E_TESTS=$(coverage_fallback e2eTests)
+    if [ "$E2E_TESTS" != "null" ]; then
+      E2E_TESTS_STALE="true"
+    fi
+  fi
+else
+  # No Playwright artefact — fall back to live
+  E2E_TESTS=$(coverage_fallback e2eTests)
+  if [ "$E2E_TESTS" != "null" ]; then
+    E2E_TESTS_STALE="true"
+  fi
+fi
+
+# -- apiEndpoints -------------------------------------------------------
+API_ENDPOINTS="null"
+API_ENDPOINTS_STALE="false"
+BR_JSON="${BRUNO_RESULTS_JSON:-}"
+if [ -n "$BR_JSON" ] && [ -f "$BR_JSON" ]; then
+  # Bruno CLI --reporter-json writes a LIST of per-iteration objects;
+  # each carries its own "summary" with "totalRequests" (issue #658).
+  _br_total=$(jq -r 'if type == "array" then (map(.summary.totalRequests // 0) | add // 0) else (.summary.totalRequests // empty) end' "$BR_JSON" 2>/dev/null || true)
+  if [ -n "$_br_total" ] && [ "$_br_total" != "null" ] && [ "$_br_total" != "0" ]; then
+    API_ENDPOINTS="$_br_total"
+  else
+    # Fallback to live
+    API_ENDPOINTS=$(coverage_fallback apiEndpoints)
+    if [ "$API_ENDPOINTS" != "null" ]; then
+      API_ENDPOINTS_STALE="true"
+    fi
+  fi
+else
+  # No Bruno artefact — fall back to live
+  API_ENDPOINTS=$(coverage_fallback apiEndpoints)
+  if [ "$API_ENDPOINTS" != "null" ]; then
+    API_ENDPOINTS_STALE="true"
+  fi
+fi
+
+# Build the coverage JSON object.  Stale flags are only emitted when the
+# value is a non-null fallback (issue #760).
+_COVERAGE_BUILD='
+  {backendInstruction:$bi, backendBranch:$bb, frontendComponent:$fc,
+   e2eTests:$et, apiEndpoints:$ae, lastUpdated:$lu}
+  | (if $et_stale == "true" then . + {e2eTestsStale: true} else . end)
+  | (if $ae_stale == "true" then . + {apiEndpointsStale: true} else . end)
+'
 COVERAGE_JSON=$(jq -n \
-  --argjson backendInstruction "$BACKEND_INSTRUCTION" \
-  --argjson backendBranch "$BACKEND_BRANCH" \
-  --argjson frontendComponent "$FRONTEND_COMPONENT" \
-  --argjson e2eTests "$E2E_TESTS" \
-  --argjson apiEndpoints "$API_ENDPOINTS" \
-  --arg lastUpdated "$COVERAGE_UPDATED" \
-  '{backendInstruction:$backendInstruction, backendBranch:$backendBranch, frontendComponent:$frontendComponent, e2eTests:$e2eTests, apiEndpoints:$apiEndpoints, lastUpdated:$lastUpdated}')
+  --argjson bi "$BACKEND_INSTRUCTION" \
+  --argjson bb "$BACKEND_BRANCH" \
+  --argjson fc "$FRONTEND_COMPONENT" \
+  --argjson et "$E2E_TESTS" \
+  --argjson ae "$API_ENDPOINTS" \
+  --arg lu "$COVERAGE_UPDATED" \
+  --arg et_stale "$E2E_TESTS_STALE" \
+  --arg ae_stale "$API_ENDPOINTS_STALE" \
+  "$_COVERAGE_BUILD")
 
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)

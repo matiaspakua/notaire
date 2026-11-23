@@ -16,6 +16,7 @@ interface CoverageMetric {
   trend: string;
   lastUpdate: string;
   measured: boolean;
+  stale?: boolean;
 }
 
 function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
@@ -54,18 +55,20 @@ function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
       type: "Test Coverage",
       percentage: coverage.e2eTests,
       color: "var(--ai-purple)",
-      trend: coverage.e2eTests === null ? "n/a" : "↑ Increasing",
+      trend: coverage.e2eTests === null ? "n/a" : (coverage.e2eTestsStale ? "↻ Stale" : "↑ Increasing"),
       lastUpdate: coverage.lastUpdated,
       measured: coverage.e2eTests !== null,
+      stale: coverage.e2eTestsStale ?? false,
     },
     {
       name: "API (Bruno)",
       type: "Endpoint Coverage",
       percentage: coverage.apiEndpoints,
       color: "#ff375f",
-      trend: coverage.apiEndpoints === null ? "n/a" : "↑ Increasing",
+      trend: coverage.apiEndpoints === null ? "n/a" : (coverage.apiEndpointsStale ? "↻ Stale" : "↑ Increasing"),
       lastUpdate: coverage.lastUpdated,
       measured: coverage.apiEndpoints !== null,
+      stale: coverage.apiEndpointsStale ?? false,
     },
   ];
 }
@@ -160,7 +163,12 @@ function CoverageCard({ metric, index }: { metric: CoverageMetric; index: number
         </div>
       </div>
 
-      <div className="text-xs text-neutral-500 mt-2">Updated: {metric.lastUpdate}</div>
+      <div className="flex items-center gap-2 mt-2">
+        <span className="text-xs text-neutral-500">Updated: {metric.lastUpdate}</span>
+        {metric.stale && (
+          <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">stale</span>
+        )}
+      </div>
     </div>
     </Es>
   );
