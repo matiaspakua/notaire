@@ -13,6 +13,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `aisdlc line` and `GET /factory/line` stages always carry `agents`, `skills`, `mcp`, `tools`, `model`, `effort` and `guardrails` (grants of the stage), with empty values when nothing is configured; contract `factory-control` 1.4.0 (additive) (#2404).
 - Factory dashboard SSE events stream now carries the same security headers (CSP, X-Content-Type-Options, Referrer-Policy, Cache-Control) as other responses — previously skipped by `reply.hijack()` (#2405).
 - `harness report` refuses adapter ids not returned by `harness list` (exit 2, `unknown_adapter`), but always accepts the kit's reference adapter `local-worker` without registration (#2385).
+- Serve token files are git-ignored through `.aisdlc/.gitignore`; before, `git add -A` in an adopter repository could commit a live token (#2384).
 
 ### Added
 
@@ -51,10 +52,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `aisdlc foreman claim`: claim-protocol refuse when intake fails under `[intake] required` (#2257).
 - `aisdlc intake board`: clean-board report over `[tracker] list` / `--file`; raise-only evidence before flipping enforcement (#2257).
 - Profile `[intake] required` (default false / advisory) and `[tracker] list` (#2257).
-
-### Fixed
-
-- Serve token files are git-ignored through `.aisdlc/.gitignore`; before, `git add -A` in an adopter repository could commit a live token (#2384).
 
 ### Changed
 
