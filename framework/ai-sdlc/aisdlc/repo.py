@@ -50,15 +50,25 @@ def changed_files(root: Path, base: str) -> list[str]:
 
 
 def numstat(root: Path, base: str) -> list[tuple[int | None, int | None, str]]:
-    """(added, deleted, path) per changed file since the merge base; None for binary files."""
+    """Return (added, deleted, path) per file; renames use the new path."""
     require_ref(root, base)
-    result = _git(root, "diff", "--numstat", "--no-renames", f"{base}...HEAD")
+    result = _git(root, "diff", "--numstat", "-M", "-z", f"{base}...HEAD")
     if result.returncode != 0:
         raise GitError(result.stderr.strip())
-    rows = []
-    for line in result.stdout.splitlines():
-        added, deleted, path = line.split("\t", 2)
-        rows.append((None if added == "-" else int(added), None if deleted == "-" else int(deleted), path))
+    rows: list[tuple[int | None, int | None, str]] = []
+    tokens = iter(result.stdout.split("\x00"))
+    for head in tokens:
+        if not head:
+            continue
+        added, deleted, path = head.split("\t", 2)
+        if not path:  # a rename: the old path, then the new path follow
+            next(tokens, "")
+            path = next(tokens, "")
+        rows.append((
+            None if added == "-" else int(added),
+            None if deleted == "-" else int(deleted),
+            path,
+        ))
     return rows
 
 

@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- `aisdlc size` counts a renamed file by its edits, under its new path; a pure rename counts 0 lines (#2466).
 - The dashboard intent bar shows the most recently submitted intent when the current run has none; it showed the first intent by random id (#2447).
 - `open_store` also git-ignores the SQLite side files `factory.db-wal`, `factory.db-shm` and `factory.db-journal`, so a live store never shows up as untracked files (#2439).
 - `aisdlc run start --intent ID` records the intent on the run and attaches the run to it, like `POST /factory/runs`; before, CLI runs never carried their intent (#2426).
