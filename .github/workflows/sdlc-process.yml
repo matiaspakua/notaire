@@ -45,11 +45,11 @@ jobs:
 
       - name: Commit messages are Conventional Commits
         if: ${{ !cancelled() }}
-        run: bash workspace/sdlc/check-commit-messages.sh "$BASE_SHA"
+        run: python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml commits --base "$BASE_SHA"
 
       - name: Tests come before production code
         if: ${{ !cancelled() }}
-        run: bash workspace/sdlc/check-tdd-evidence.sh "$BASE_SHA"
+        run: python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml tdd --base "$BASE_SHA" --labels "$PR_LABELS"
 
       - name: OpenSpec change or approved sdlc-exception
         if: ${{ !cancelled() }}

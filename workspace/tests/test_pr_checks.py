@@ -1,11 +1,17 @@
-"""Tests for the PR-range process checks run by sdlc-process.yml and preflight.sh."""
+"""Tests for the PR-range process checks run by sdlc-process.yml and preflight.sh.
+
+Commit subjects and TDD evidence run on the kit (`aisdlc commits|tdd`) with Notaire's real profile (#2458).
+"""
 import os
 import shutil
 import subprocess
 import tempfile
 import unittest
 
-SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "workspace", "sdlc")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SCRIPTS = os.path.join(REPO_ROOT, "workspace", "sdlc")
+AISDLC = os.path.join(REPO_ROOT, "framework", "ai-sdlc", "bin", "aisdlc")
+PROFILE = os.path.join(REPO_ROOT, ".aisdlc", "aisdlc.toml")
 
 # A git hook (pre-push runs these suites) exports GIT_DIR and friends; they would
 # point the temp repos, and the scripts under test, at the outer repository.
@@ -43,12 +49,19 @@ def run(script, *args, cwd, **env):
                           text=True, env={**os.environ, "PR_LABELS": "", "PR_AUTHOR": "someone", "PR_HEAD_REF": "", **env})
 
 
+def aisdlc(check, base, cwd, labels=""):
+    args = ["python3", AISDLC, "--root", cwd, "--profile", PROFILE, check, "--base", base]
+    if labels:
+        args += ["--labels", labels]
+    return subprocess.run(args, cwd=cwd, capture_output=True, text=True)
+
+
 class CommitMessagesTest(unittest.TestCase):
     def test_rejects_non_conventional_subject(self):
         repo, base = new_repo()
         commit(repo, "feat(api): add thing")
         commit(repo, "update stuff")
-        result = run("check-commit-messages.sh", base, cwd=repo)
+        result = aisdlc("commits", base, repo)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("update stuff", result.stdout)
 
@@ -57,18 +70,24 @@ class CommitMessagesTest(unittest.TestCase):
         commit(repo, "feat(api): add thing")
         commit(repo, "docs: add CI report for 2026-09-28 [skip ci]")
         commit(repo, "fix!: breaking fix")
-        self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+        self.assertEqual(aisdlc("commits", base, repo).returncode, 0)
 
 
     def test_accepts_squash_merge_subjects_with_issue_prefix_and_pr_suffix(self):
         repo, base = new_repo()
         commit(repo, "[#1210] docs(constitution): point the Playwright suite at testing/e2e (#1214)")
-        self.assertEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+        self.assertEqual(aisdlc("commits", base, repo).returncode, 0)
+
+    def test_accepts_design_and_revert_subjects(self):
+        repo, base = new_repo()
+        commit(repo, "design(ui): tokens for the review page")
+        commit(repo, 'Revert "feat(api): add thing"')
+        self.assertEqual(aisdlc("commits", base, repo).returncode, 0)
 
     def test_rejects_issue_prefix_without_a_conventional_subject(self):
         repo, base = new_repo()
         commit(repo, "[#1210] update stuff (#1214)")
-        self.assertNotEqual(run("check-commit-messages.sh", base, cwd=repo).returncode, 0)
+        self.assertNotEqual(aisdlc("commits", base, repo).returncode, 0)
 
 
 class TddEvidenceTest(unittest.TestCase):
@@ -78,38 +97,44 @@ class TddEvidenceTest(unittest.TestCase):
     def test_rejects_production_code_without_tests(self):
         repo, base = new_repo()
         commit(repo, "feat: foo", self.MAIN)
-        self.assertNotEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+        self.assertNotEqual(aisdlc("tdd", base, repo).returncode, 0)
 
     def test_accepts_tests_first(self):
         repo, base = new_repo()
         commit(repo, "test: foo red", self.TEST)
         commit(repo, "feat: foo", self.MAIN)
-        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+        self.assertEqual(aisdlc("tdd", base, repo).returncode, 0)
 
     def test_accepts_docs_tests_as_tdd_evidence(self):
         """docs/tests guards count as tests (#2023 — session lesson from #1980)."""
         repo, base = new_repo()
         commit(repo, "test: docs guard red", "docs/tests/test_flyway_docs_no_stale_version_range.py")
         commit(repo, "docs: refresh properties comment", "backend-api/src/main/resources/application.properties")
-        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+        self.assertEqual(aisdlc("tdd", base, repo).returncode, 0)
 
     def test_rejects_code_before_tests_and_names_commit(self):
         repo, base = new_repo()
         sha = commit(repo, "feat: foo", self.MAIN)
         commit(repo, "test: foo", self.TEST)
-        result = run("check-tdd-evidence.sh", base, cwd=repo)
+        result = aisdlc("tdd", base, repo)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(sha, result.stdout)
+
+    def test_accepts_infra_tests_as_tdd_evidence(self):
+        repo, base = new_repo()
+        commit(repo, "test: panel guard red", "infra/tests/test_postgres_panels.py")
+        commit(repo, "feat: panel", "frontend/src/app/page.tsx")
+        self.assertEqual(aisdlc("tdd", base, repo).returncode, 0)
 
     def test_ignores_docs_only_ranges(self):
         repo, base = new_repo()
         commit(repo, "docs: readme", "docs/README.md")
-        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo).returncode, 0)
+        self.assertEqual(aisdlc("tdd", base, repo).returncode, 0)
 
     def test_exception_label_passes(self):
         repo, base = new_repo()
         commit(repo, "feat: foo", self.MAIN)
-        self.assertEqual(run("check-tdd-evidence.sh", base, cwd=repo, PR_LABELS="chore,sdlc-exception").returncode, 0)
+        self.assertEqual(aisdlc("tdd", base, repo, labels="chore,sdlc-exception").returncode, 0)
 
 
 class SdlcExceptionTest(unittest.TestCase):

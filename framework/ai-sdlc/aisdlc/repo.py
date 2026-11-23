@@ -103,6 +103,20 @@ def commits_since(root: Path, base: str) -> list[dict[str, str]]:
     return rows
 
 
+def commit_files(root: Path, base: str) -> list[tuple[str, str, list[str]]]:
+    """(short hash, subject, changed paths) of each non-merge commit since base, oldest first."""
+    require_ref(root, base)
+    result = _git(root, "log", "--reverse", "--no-merges", "--name-only", "--format=%x1e%h%x00%s", f"{base}..HEAD")
+    if result.returncode != 0:
+        raise GitError(result.stderr.strip())
+    rows = []
+    for record in result.stdout.split("\x1e")[1:]:
+        header, _, names = record.partition("\n")
+        short, _, subject = header.partition("\x00")
+        rows.append((short, subject, [line for line in names.splitlines() if line]))
+    return rows
+
+
 def show(root: Path, ref: str, path: str) -> str | None:
     """The file's content at `ref`, or None when the file does not exist there."""
     require_ref(root, ref)

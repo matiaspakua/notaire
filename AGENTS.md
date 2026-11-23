@@ -89,5 +89,5 @@ Baselines only shrink (`… ratchet`); the skills catalog is linted (`… skills
 ## Context budget (#1259)
 
 Always-loaded set must stay ≤8,000 tokens (bytes/4) per
-`python3 workspace/ci/agent-context-budget.py --max-tokens 8000`.
+`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml budget` (`[context]` in the profile).
 Do not re-add bulk `@` rule imports or `alwaysApply: true` on large skills.

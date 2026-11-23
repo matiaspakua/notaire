@@ -33,9 +33,7 @@ MOVED = {
     "scripts/run_pipeline.sh": "workspace/sdlc/run_pipeline.sh",
     "scripts/validate-sdlc-plan.sh": "workspace/sdlc/validate-sdlc-plan.sh",
     "scripts/check-agent-rules.sh": "workspace/sdlc/check-agent-rules.sh",
-    "scripts/check-commit-messages.sh": "workspace/sdlc/check-commit-messages.sh",
     "scripts/check-sdlc-exception.sh": "workspace/sdlc/check-sdlc-exception.sh",
-    "scripts/check-tdd-evidence.sh": "workspace/sdlc/check-tdd-evidence.sh",
     "scripts/check-heavy-ci.sh": "workspace/sdlc/check-heavy-ci.sh",
     "scripts/seed-openspec-change.sh": "workspace/sdlc/seed-openspec-change.sh",
     "scripts/install-git-hooks.sh": "workspace/sdlc/install-git-hooks.sh",
@@ -62,7 +60,13 @@ MOVED = {
     "scripts/tests/test_validate_sdlc_plan.py": "workspace/tests/test_validate_sdlc_plan.py",
     "scripts/tests/test_workflow_concurrency.py": "workspace/tests/test_workflow_concurrency.py",
 }
-REMOVED = ("scripts/validate-cu-api-matrix.sh", "scripts/tests/test_guard_wrappers.py")
+REMOVED = (
+    "scripts/validate-cu-api-matrix.sh", "scripts/tests/test_guard_wrappers.py",
+    # The kit runs these checks with Notaire's profile (#2458).
+    "scripts/check-commit-messages.sh", "workspace/sdlc/check-commit-messages.sh",
+    "scripts/check-tdd-evidence.sh", "workspace/sdlc/check-tdd-evidence.sh",
+    "workspace/ci/agent-context-budget.py",
+)
 HISTORY = (
     "CHANGELOG.md", "deprecated/", "docs/000-archive/", "docs/openspec/changes/archive/",
     "workspace/tests/test_scripts_layout.py",

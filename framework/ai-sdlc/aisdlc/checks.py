@@ -74,11 +74,17 @@ def commits(ctx: Context, base: str | None) -> int:
     return 1 if bad else 0
 
 
-def tdd(ctx: Context, base: str | None) -> int:
+def tdd(ctx: Context, base: str | None, labels: str | None = None) -> int:
     production, tests = ctx.profile.tdd_production, ctx.profile.tdd_tests
     if not production:
         print("no production globs configured ([tdd] production)")
         return 0
+    waiver = _waiver(ctx.profile.tdd_waive_labels, labels)
+    if waiver:
+        print(f"tdd: waived by the {waiver!r} label")
+        return 0
+    if ctx.profile.tdd_order:
+        return _tdd_order(ctx, base or ctx.profile.base)
     changed = repo.changed_files(ctx.root, base or ctx.profile.base)
     changed_tests = [p for p in changed if repo.matches(p, tests)]
     changed_code = [p for p in changed if repo.matches(p, production) and p not in changed_tests]
@@ -89,4 +95,33 @@ def tdd(ctx: Context, base: str | None) -> int:
         print("tdd: FAILED — write the failing test first (it belongs in the same change)")
         return 1
     print(f"tdd: {len(changed_code)} production and {len(changed_tests)} test file(s) changed — PASSED")
+    return 0
+
+
+def _waiver(waive_labels: tuple[str, ...], labels: str | None) -> str | None:
+    given = {label.strip() for label in (labels or "").split(",")}
+    return next((label for label in waive_labels if label in given), None)
+
+
+def _tdd_order(ctx: Context, base: str) -> int:
+    """Tests first, commit by commit: a commit changing both counts as tests first."""
+    production, tests = ctx.profile.tdd_production, ctx.profile.tdd_tests
+    seen_test, first_bad, code_commits = False, None, 0
+    for short, subject, paths in repo.commit_files(ctx.root, base):
+        seen_test = seen_test or any(repo.matches(p, tests) for p in paths)
+        if any(repo.matches(p, production) and not repo.matches(p, tests) for p in paths):
+            code_commits += 1
+            if not seen_test and first_bad is None:
+                first_bad = f"{short} {subject}"
+    if not code_commits:
+        print("tdd: no production code changed — PASSED")
+        return 0
+    if not seen_test:
+        print("tdd: FAILED — production code changed but no test did; write the failing test first")
+        return 1
+    if first_bad:
+        print(f"  FAIL  production code changed before any test: {first_bad}")
+        print("tdd: FAILED — commit the failing test first (red), then the implementation (green)")
+        return 1
+    print(f"tdd: tests come before production code in {code_commits} commit(s) — PASSED")
     return 0

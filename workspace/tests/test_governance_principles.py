@@ -70,20 +70,14 @@ class DigestBudgetTest(unittest.TestCase):
             self.assertIn("CONSTITUTION", text)
             self.assertIn("self-improve", text.lower())
 
-    def test_context_budget_script_passes(self):
+    def test_context_budget_passes(self):
         result = subprocess.run(
-            [
-                "python3",
-                "workspace/ci/agent-context-budget.py",
-                "--max-tokens",
-                "8000",
-            ],
+            ["python3", "framework/ai-sdlc/bin/aisdlc", "--profile", ".aisdlc/aisdlc.toml", "budget"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -230,7 +230,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
     tone: "cyan",
     steps: [
       { n: "8", title: "Design test cases", gate: 2, what: "Happy path, edge cases and error paths at unit, integration and E2E level." },
-      { n: "9–10", title: "Write failing tests", what: "Unit and integration tests first, and watch them fail. A test you never saw fail proves nothing (P1).", check: "check-tdd-evidence.sh: production code needs test changes" },
+      { n: "9–10", title: "Write failing tests", what: "Unit and integration tests first, and watch them fail. A test you never saw fail proves nothing (P1).", check: "aisdlc tdd: production code needs test changes" },
       { n: "11", title: "Implement", what: "The minimum code that makes the tests pass, following the conventions." },
       { n: "12", title: "Update existing tests", what: "Never weaken an assertion to force green." },
       { n: "13–14", title: "Run tests and full regression", what: "Unit, integration, coverage ratchet, Bruno API tests. No @Disabled without approval.", check: "mvn verify -pl backend-api" },
@@ -242,7 +242,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
     tone: "emerald",
     steps: [
       { n: "16", title: "Permanent documentation", gate: 3, what: "Update the docs the change affects, in the same diff. Never duplicate; point at the permanent document.", check: "check-doc-traceability.py" },
-      { n: "17", title: "Atomic commits", what: "Conventional Commits; Refs #N on intermediate commits, Closes #N on the closing one.", check: "check-commit-messages.sh" },
+      { n: "17", title: "Atomic commits", what: "Conventional Commits; Refs #N on intermediate commits, Closes #N on the closing one.", check: "aisdlc commits" },
       { n: "17.5", title: "Full local pipeline", what: "One dashboarded pre-PR gate: plan check, security cases, preflight --full, markdown lint.", check: "bash workspace/sdlc/run_pipeline.sh" },
       { n: "18–19", title: "Pull request and local full preflight", what: "PR titled [#N] type(scope): description, with the PR template. GitHub does not re-run the product suite on a pull request (#2001): the PR is ready when preflight --full has passed locally and the required process checks are green.", check: "bash workspace/sdlc/preflight.sh --full" },
     ],
@@ -262,7 +262,7 @@ export const LIFECYCLE_PHASES: { phase: string; tone: string; steps: Step[] }[] 
 
 export const GATES = [
   { n: 1, name: "Do not start implementation without", items: ["Issue linked to a Use Case", "Specification written", "Acceptance criteria defined"], machine: "validate-sdlc-plan.sh resolves the Issue live with gh: an invented or closed number fails" },
-  { n: 2, name: "Do not implement without", items: ["Test cases designed", "Unit tests written and observed failing", "Integration tests where applicable"], machine: "check-tdd-evidence.sh; the local harness requires TEST_CMD to fail" },
+  { n: 2, name: "Do not implement without", items: ["Test cases designed", "Unit tests written and observed failing", "Integration tests where applicable"], machine: "aisdlc tdd; the local harness requires TEST_CMD to fail" },
   { n: 3, name: "Do not create a PR if", items: ["Docs not updated", "Any test failing", "Coverage below the JaCoCo ratchet", "Lint/format failing", "run_pipeline.sh not run or red"], machine: "preflight.sh pre-push hook + run_pipeline.sh dashboard" },
   { n: 4, name: "Do not merge if", items: ["CI red or pending", "Review unresolved", "Merge conflicts", "Docs pending"], machine: "check-heavy-ci.sh; aisdlc protected sends owner-only paths to the Owner; aisdlc evidence verify checks the ledger chain; the protect-main ruleset requires a pull request" },
   { n: 5, name: "Not finished until", items: ["Deploy succeeded", "Smoke test passed", "Issue closed", "Board Status and labels coherent"], machine: "check-board-status-label-coherence.py; archive hygiene on main (Main Health)" },
@@ -286,7 +286,7 @@ export const GUARDRAILS: { layer: string; what: string; sources: Source[] }[] = 
     sources: [
       { label: "docs/openspec/config.yaml", href: src("docs/openspec/config.yaml") },
       { label: "schema notaire-sdlc", href: src("docs/openspec/schemas/notaire-sdlc/schema.yaml") },
-      { label: "agent-context-budget.py", href: src("workspace/ci/agent-context-budget.py") },
+      { label: "aisdlc budget ([context])", href: src(".aisdlc/aisdlc.toml") },
     ],
   },
   {
@@ -546,7 +546,7 @@ export const LESSONS: Lesson[] = [
     happened: "Bulk rule imports and alwaysApply skills crowded the context window of every session.",
     rule: "The always-loaded set stays ≤8,000 tokens: slim AGENTS.md, a 3 KB Constitution card, and on-demand rules.",
     refs: [1259],
-    source: { label: "agent-context-budget.py", href: src("workspace/ci/agent-context-budget.py") },
+    source: { label: "aisdlc budget ([context])", href: src(".aisdlc/aisdlc.toml") },
   },
   {
     title: "Heavy suites on docs-only PRs",
@@ -795,10 +795,10 @@ export const CASE_CHAPTERS: Chapter[] = [
     after: {
       label: "3,385 bytes, a 3 KB card, rules on demand, budget checked in CI",
       lang: "markdown",
-      code: "**CONSTITUTION.md is highest process authority.**\nAlways-loaded digest: CONSTITUTION-AGENT-CARD.md.\n\n| When touching | Load |\n| Any Java/backend | .claude/rules/programming.md, … |\n| Flyway / schema  | .claude/rules/database-migrations.md |\n\n# guard: agent-context-budget.py --max-tokens 8000",
+      code: "**CONSTITUTION.md is highest process authority.**\nAlways-loaded digest: CONSTITUTION-AGENT-CARD.md.\n\n| When touching | Load |\n| Any Java/backend | .claude/rules/programming.md, … |\n| Flyway / schema  | .claude/rules/database-migrations.md |\n\n# guard: aisdlc budget ([context] max_tokens = 8000)",
       source: { label: "AGENTS.md", href: src("AGENTS.md") },
     },
-    sources: [{ label: "agent-context-budget.py", href: src("workspace/ci/agent-context-budget.py") }],
+    sources: [{ label: "aisdlc budget ([context])", href: src(".aisdlc/aisdlc.toml") }],
   },
   {
     id: "constitution",

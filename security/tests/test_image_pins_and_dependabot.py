@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import os
 import re
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -39,7 +40,7 @@ CI_WORKFLOWS = (
     REPO_ROOT / ".github" / "workflows" / "performance-test.yml",
 )
 DEPENDABOT = REPO_ROOT / ".github" / "dependabot.yml"
-COMMIT_CHECK = REPO_ROOT / "workspace" / "sdlc" / "check-commit-messages.sh"
+PROFILE = REPO_ROOT / ".aisdlc" / "aisdlc.toml"
 PR_VALIDATION = REPO_ROOT / ".github" / "workflows" / "pr-validation.yml"
 TYPES_ASSIGNMENT = re.compile(r"TYPES=[\"']([a-z|]+)[\"']")
 
@@ -134,6 +135,14 @@ def update_for(ecosystem: str, directory: str) -> dict:
 def commit_types(path: Path) -> set[str]:
     match = TYPES_ASSIGNMENT.search(path.read_text(encoding="utf-8"))
     assert match, f"no TYPES= list in {path}"
+    return set(match.group(1).split("|"))
+
+
+def profile_commit_types(path: Path) -> set[str]:
+    """Types in the profile's `[commits] pattern`, the regex `aisdlc commits` checks (#2458)."""
+    pattern = tomllib.loads(path.read_text(encoding="utf-8"))["commits"]["pattern"]
+    match = re.search(r"\(\(([a-z|]+)\)", pattern)
+    assert match, f"no type group in [commits] pattern of {path}"
     return set(match.group(1).split("|"))
 
 
@@ -335,7 +344,7 @@ class ImagePinsAndDependabotTest(unittest.TestCase):
         )
 
     def test_dependabot_commit_prefixes_are_allowed_conventional_types(self):
-        allowed = commit_types(COMMIT_CHECK) & commit_types(PR_VALIDATION)
+        allowed = profile_commit_types(PROFILE) & commit_types(PR_VALIDATION)
         for update in dependabot_updates():
             message = update.get("commit-message") or {}
             for key in ("prefix", "prefix-development"):

@@ -1,45 +1,38 @@
 #!/usr/bin/env python3
 """Guards #1259 / #1197 P0.4 — always-loaded agent context ≤8k tokens.
 
-Requires workspace/ci/agent-context-budget.py and CONSTITUTION-AGENT-CARD.md.
+`aisdlc budget` measures the always-loaded set declared in `.aisdlc/aisdlc.toml` `[context]` (#2458).
 """
 from __future__ import annotations
 
-import importlib.util
-import os
+import subprocess
+import tomllib
 import unittest
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-BUDGET_SCRIPT = REPO_ROOT / "workspace" / "ci" / "agent-context-budget.py"
+AISDLC = REPO_ROOT / "framework" / "ai-sdlc" / "bin" / "aisdlc"
+PROFILE = REPO_ROOT / ".aisdlc" / "aisdlc.toml"
 CARD = REPO_ROOT / "CONSTITUTION-AGENT-CARD.md"
 FRONTEND_SKILL = REPO_ROOT / ".claude" / "skills" / "frontend-design" / "SKILL.md"
 MAX_TOKENS = 8000
 MAX_CARD_BYTES = 3072
 
 
-def _load_budget():
-    spec = importlib.util.spec_from_file_location("agent_context_budget", BUDGET_SCRIPT)
-    mod = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(mod)
-    return mod
+def run_budget():
+    return subprocess.run(["python3", str(AISDLC), "--root", str(REPO_ROOT), "--profile", str(PROFILE), "budget"],
+                          capture_output=True, text=True)
 
 
 class AgentContextBudgetTest(unittest.TestCase):
-    def test_budget_script_exists(self):
-        self.assertTrue(BUDGET_SCRIPT.is_file(), f"missing {BUDGET_SCRIPT}")
+    def test_profile_declares_the_budget(self):
+        context = tomllib.loads(PROFILE.read_text(encoding="utf-8"))["context"]
+        self.assertEqual(MAX_TOKENS, context["max_tokens"])
+        self.assertIn("AGENTS.md", context["files"])
 
     def test_always_loaded_within_budget(self):
-        mod = _load_budget()
-        data = mod.measure(REPO_ROOT)
-        self.assertLessEqual(
-            data["tokens_est"],
-            MAX_TOKENS,
-            f"always-loaded tokens_est={data['tokens_est']} exceeds {MAX_TOKENS}: {data}",
-        )
-        missing = [r["path"] for r in data["files"] if r["missing"]]
-        self.assertEqual(missing, [], f"missing always-loaded files: {missing}")
+        result = run_budget()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
     def test_constitution_agent_card_small(self):
         self.assertTrue(CARD.is_file())

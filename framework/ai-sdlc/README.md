@@ -189,7 +189,7 @@ otherwise off. `core.*` / `security.*` cannot relax policy; required gates canno
 | `skills` | Every skill folder has a `SKILL.md` with a description, names are unique, generic skills carry no forbidden project pattern. | any of those |
 | `budget` | Always-loaded `[context].files` ∪ memory catalog pack `ref`s ≤ `max_tokens` (bytes/4). Pack ids must exist; list/budget never execute packs (#2186). | over budget, missing file/pack/ref |
 | `commits [--base R]` | Commit subjects match `[commits] pattern` (Conventional Commits by default). | a subject does not match |
-| `tdd [--base R]` | Production globs changed ⇒ test globs changed too. | code without tests |
+| `tdd [--base R] [--labels a,b]` | Production globs changed ⇒ test globs changed too; with `order = true`, no commit changes production before a commit changed a test. A label in `waive_labels` waives it. | code without tests, or code before tests |
 | `protected [--base R]` | Owner-only paths (`[protected] paths`) changed since the base: the policy, gates, harness and merge path. Agents may propose such a change; a person merges it. | an owner-only path changed |
 | `committer [--base R] [--json]` | Sole-committer **dry-run** (#2167/#2169): flag agent-authored commits vs runtime allowlist. **no-evaluable** until `runtime_names`/`runtime_emails` set; exit 1 only if `required = true`. Never claims OS isolation. | required + runtime configured and agent commit found |
 | `grant list\|show [--json]` · `grant check [--base] [--json]` | Grant profile data (#2192) + write-set **policy** dry-run (#2194) + optional expire kill-switch (#2198 / axiom 5): `expires_at` / `ttl_seconds` fail closed when past; compare changed paths to `write_set` globs (`pass`/`fail`/`no-evaluable`). Expire alone is **not** Isolator OS; never claims sandbox. Unknown check refs fail closed; omit = no-op. | check: path outside write_set or all grants expired (exit 1); unknown grant id (show); invalid profile |
@@ -259,6 +259,8 @@ pattern = '^(feat|fix|docs|chore|test|refactor|ci|build|perf|style|revert)(\(.+\
 [tdd]
 production = ["src/**"]
 tests = ["tests/**", "**/*_test.go"]   # a leading **/ also matches at the root
+order = true                           # optional: tests first, commit by commit (names the first bad commit)
+waive_labels = ["sdlc-exception"]      # optional: `aisdlc tdd --labels …` carrying one of these skips the check
 
 [context]
 max_tokens = 8000

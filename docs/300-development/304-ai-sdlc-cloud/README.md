@@ -61,7 +61,7 @@ coordination protocol shared by every agent runtime and humans.
 ## Agent context packing (#1259 / #1197 P0.4)
 
 Always-loaded files are measured by
-`python3 workspace/ci/agent-context-budget.py --max-tokens 8000` (bytes/4 heuristic).
+`python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml budget` (bytes/4 heuristic; limit and files in `[context]`).
 The set is: `CLAUDE.md`, slim `AGENTS.md`, `CONSTITUTION-AGENT-CARD.md`, and
 `.claude/rules/ai-agent-workflow.md`. Large area rules/skills (frontend-design,
 ui-ux-design, programming, refactoring) use `alwaysApply: false` and load via the

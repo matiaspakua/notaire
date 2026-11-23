@@ -807,8 +807,8 @@ drift.
 | Lifecycle skill composition | `.claude/skills/README.md`; generic skills under `.claude/skills/`; project skills for implementation details |
 | Skill references and evaluation | `<skill>/references/` for progressive disclosure; `<skill>/evals/evals.json` for repeatable scenarios |
 | Exploration → Issue traceability (P4, §4) | Explore → Issue → Propose sequence: `.claude/skills/openspec-triage/SKILL.md` turns an exploration report into real, estimated, Use-Case-linked Issues; `workspace/sdlc/validate-sdlc-plan.sh` resolves the Issue live via `gh` so an invented number cannot pass Gate 1; see `docs/openspec/NOTAIRE-ADAPTATIONS.md` |
-| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `workspace/sdlc/check-commit-messages.sh` (`sdlc-process.yml`) |
-| TDD evidence (Gate 2) | `workspace/sdlc/check-tdd-evidence.sh` — a PR that changes production code must change tests too (`sdlc-process.yml`) |
+| Branch + commits | Git; Conventional Commits; branch `<type>/<issue-number>_<description>`; `aisdlc commits` with `.aisdlc/aisdlc.toml` `[commits]` (`sdlc-process.yml`, preflight) |
+| TDD evidence (Gate 2) | `aisdlc tdd` with `.aisdlc/aisdlc.toml` `[tdd]` — a PR that changes production code must change tests first; the `sdlc-exception` label waives it (`sdlc-process.yml`, preflight) |
 | Agent rule files | `workspace/sdlc/check-agent-rules.sh` — broken paths and stale module names (`sdlc-process.yml`) |
 | Stack-agnostic framework (#1958) | `framework/ai-sdlc/` (`aisdlc` kit) with Notaire's profile `.aisdlc/aisdlc.toml`: stages map onto the scripts in this table; report `docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md` |
 | Baselines only shrink (#1958) | `aisdlc ratchet --base <base>` — ArchUnit and ESLint baselines may not gain an entry versus `main` (`preflight.sh`, Process Checks); the owning tests still fail stale entries |

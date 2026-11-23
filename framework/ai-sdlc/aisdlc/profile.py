@@ -215,6 +215,8 @@ class Profile:
     commit_pattern: str = DEFAULT_COMMIT_PATTERN
     tdd_production: tuple[str, ...] = ()
     tdd_tests: tuple[str, ...] = ()
+    tdd_order: bool = False
+    tdd_waive_labels: tuple[str, ...] = ()
     context_max_tokens: int | None = None
     context_files: tuple[str, ...] = ()
     context_memory: tuple[str, ...] = ()
@@ -318,6 +320,8 @@ def _build(data: dict, errors: list[str]) -> Profile:
         commit_pattern=_regex(commits.get("pattern", DEFAULT_COMMIT_PATTERN), "commits.pattern", errors),
         tdd_production=tuple(tdd.get("production", ())),
         tdd_tests=tuple(tdd.get("tests", ())),
+        tdd_order=_tdd_order(tdd.get("order", False), errors),
+        tdd_waive_labels=_string_list(tdd.get("waive_labels", []), "tdd.waive_labels", errors),
         context_max_tokens=context.get("max_tokens"),
         context_files=tuple(context.get("files", ())),
         context_memory=_string_list(context.get("memory", []), "context.memory", errors),
@@ -605,6 +609,13 @@ def _positive(value, where: str, errors: list[str]) -> int | None:
         errors.append(f"{where} must be a positive integer, got {value!r}")
         return None
     return value
+
+
+def _tdd_order(value: object, errors: list[str]) -> bool:
+    if isinstance(value, bool):
+        return value
+    errors.append(f"[tdd] order must be true or false, got {value!r}")
+    return False
 
 
 def _regex(pattern: str, where: str, errors: list[str]) -> str:

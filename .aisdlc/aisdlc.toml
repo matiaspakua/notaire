@@ -34,10 +34,18 @@ label_prefixes = ["area:", "type:"]
 # Notaire uses OpenSpec (schema notaire-sdlc); the plan gate calls its validator.
 dir = "docs/openspec/changes"
 
+# Conventional Commits, plus the squash form `[#n] <subject> (#pr)` and `Revert "…"` (CONSTITUTION §4).
+[commits]
+pattern = '^(\[#[0-9]+\] )?((feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|design)(\([^()]+\))?!?: .+|Revert ".+")$'
+
+# Tests first, commit by commit (Gate 2). Guards under docs/tests and infra/tests are test evidence
+# (#2023). The Owner's sdlc-exception label waives it (CONSTITUTION §12).
 [tdd]
 production = ["backend-api/src/main/**", "frontend/src/**"]
-tests = ["backend-api/src/test/**", "frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx",
-         "frontend/src/tests/**", "testing/**"]
+tests = ["**/src/test/**", "**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "frontend/src/tests/**",
+         "testing/**", "infra/tests/**", "docs/tests/**"]
+order = true
+waive_labels = ["sdlc-exception", "process:sdlc-exception"]
 
 [skills]
 dir = ".claude/skills"
@@ -88,8 +96,7 @@ dir = ".aisdlc/catalogs"
 
 # Always-loaded context budget (#1259/#2186): memory pack ids resolve against
 # [catalogs] memory entries; aisdlc budget measures files ∪ pack refs (dedupe).
-# List/validate/budget never execute packs. Coexists with
-# workspace/ci/agent-context-budget.py (same ALWAYS_LOADED set).
+# List/validate/budget never execute packs.
 [context]
 max_tokens = 8000
 files = [
@@ -116,7 +123,7 @@ paths = [
   ".github/CODEOWNERS", ".github/workflows/sdlc-process.yml",
   "workspace/sdlc/preflight.sh", "workspace/sdlc/run_pipeline.sh", "workspace/sdlc/check-heavy-ci.sh",
   "workspace/sdlc/check-sdlc-exception.sh", "workspace/sdlc/validate-sdlc-plan.sh",
-  "workspace/ci/agent-context-budget.py", "workspace/ci/enforce-quality-ratchet.py",
+  "workspace/ci/enforce-quality-ratchet.py",
   "security/apply-protect-main-ruleset.sh", "security/assert-protect-main-ruleset.sh",
   "security/rulesets/**",
   "docs/openspec/schemas/**", "docs/openspec/config.yaml",
@@ -318,7 +325,7 @@ timeout = 3600
 [[gates]]
 name = "always-loaded context ≤ 8k tokens"
 stage = "pre-push"
-run = "python3 workspace/ci/agent-context-budget.py --max-tokens 8000"
+run = "aisdlc budget"
 
 [[gates]]
 name = "dashboarded pipeline (stack, security cases, E2E)"

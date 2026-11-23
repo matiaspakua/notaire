@@ -177,9 +177,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("skills", help="lint the skills catalog")
     sub.add_parser("budget", help="check the always-loaded agent context budget")
-    for name, text in (("commits", "check commit subjects since the base"),
-                       ("tdd", "production changes must come with test changes")):
-        sub.add_parser(name, help=text).add_argument("--base")
+    sub.add_parser("commits", help="check commit subjects since the base").add_argument("--base")
+    p = sub.add_parser("tdd", help="production changes must come with test changes")
+    p.add_argument("--base")
+    p.add_argument("--labels", help="comma-separated labels of the change; one in [tdd] waive_labels waives the check")
     sub.add_parser("protected", help="owner-only paths changed since the base").add_argument("--base")
     p = sub.add_parser("size", help="changed lines since the base stay within the review budget")
     p.add_argument("--base")
@@ -979,7 +980,7 @@ def dispatch(args: argparse.Namespace, ctx: Context) -> int:
         "skills": lambda: skills.lint(ctx),
         "budget": lambda: checks.budget(ctx),
         "commits": lambda: checks.commits(ctx, args.base),
-        "tdd": lambda: checks.tdd(ctx, args.base),
+        "tdd": lambda: checks.tdd(ctx, args.base, args.labels),
         "report": lambda: evidence.report(
             ctx,
             args.json,
