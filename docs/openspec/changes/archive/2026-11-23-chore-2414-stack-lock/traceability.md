@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Issue | #2414 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/chore-2414-stack-lock/` | seeded |
-| Branch | `chore/2414_stack_lock` | created |
+| Branch | `chore/2414_preflight_stack_lock` | created |
 | Tasks | `tasks.md` | 8/8 complete |
 | Commits | ecffa26c, e4729869 | complete |
 | Pull Request | #<!-- number --> | pending |

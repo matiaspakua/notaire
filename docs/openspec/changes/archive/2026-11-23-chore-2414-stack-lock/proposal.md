@@ -7,7 +7,7 @@
 |-------|-------|
 | GitHub Issue | #2414 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
-| Branch | `chore/2414_stack_lock` |
+| Branch | `chore/2414_preflight_stack_lock` |
 | Gate 1 status | pending |
 
 ## Objetivo

@@ -114,3 +114,5 @@
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
+
+> **Decision deviation (Foreman review, 2026-11-23):** the first implementation's `acquire` stayed alive after taking the lock while preflight waited for it to exit, so every stack-backed run would wait an hour and fail; its holder pid also died with it. Replaced: `acquire <pid>` records the preflight run's pid and returns once held (exit 1 naming the holder on timeout), `release <pid>` only drops the caller's lock, and a busy stack or missing `.env` records a failure instead of exiting. Also added: the pages section installs the frontend deps its demo build needs (gap found by the first change-aware run, #2413). Same scope and permissions.
