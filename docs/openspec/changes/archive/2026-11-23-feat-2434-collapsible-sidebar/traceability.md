@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| collapse and expand | sidebar-collapse.spec.ts | pending |
-| the choice persists | sidebar-collapse.spec.ts | pending |
-| narrow screens are unchanged | sidebar-collapse.spec.ts | pending |
+| collapse and expand | sidebar-collapse.spec.ts | passing |
+| the choice persists | sidebar-collapse.spec.ts | passing |
+| narrow screens are unchanged | sidebar-collapse.spec.ts | passing |
 
 ## Permanent documentation updated
 
