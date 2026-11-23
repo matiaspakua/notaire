@@ -37,3 +37,18 @@ def test_the_package_runners_and_launcher_stay_free_of_the_kit_and_of_adopters()
 def test_repolens_does_not_live_inside_the_factory_kit():
     kit = ROOT.parent
     assert not (kit / "aisdlc").is_dir() and not (kit / "bin" / "aisdlc").exists(), "RepoLens sits beside the kit"
+
+
+def test_benchmark_tasks_resolve_to_the_checkout_that_holds_this_module():
+    """A task file that strips this module from its corpus must clone the repository this module lives in: after
+    the module moved, the relative paths pointed one folder too high and the benchmark could not run."""
+    import yaml
+
+    for task_file in sorted((ROOT / "bench" / "tasks").glob("*.yaml")):
+        corpus = yaml.safe_load(task_file.read_text(encoding="utf-8"))["corpus"]
+        strip = corpus.get("strip")
+        if not strip or "repo" not in corpus or not ROOT.as_posix().endswith("/" + strip):
+            continue  # a prebuilt corpus, or this module copied out of the repository it measures
+        expected = Path(ROOT.as_posix()[: -len(strip) - 1])
+        assert (task_file.parent / corpus["repo"]).resolve() == expected, task_file.name
+        assert (task_file.parent / corpus["profile"]).resolve().parent == expected, task_file.name
