@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests for workspace/sdlc/stack_lock.sh (#2414, CU76).
+"""Guards #2414 (CU76): one stack-backed preflight at a time.
 
-Runs the real shell script in a temporary git repository, so the lock
-behaviour is exercised end-to-end.  Also contains text-level assertions
-over preflight.sh to ensure the integration points are wired correctly.
+`stack_lock.sh acquire <pid>` records <pid> (the preflight run) as the holder and returns as soon
+as it holds the lock; it fails naming the holder after PREFLIGHT_STACK_WAIT seconds. A lock whose
+holder pid is dead is taken over. `release <pid>` only drops a lock that pid holds.
 
-Run with: python3 -m unittest workspace/tests/test_stack_lock
+Run with: python3 workspace/tests/test_stack_lock.py
 """
 from __future__ import annotations
 
@@ -13,216 +13,95 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Any
 
+ROOT = Path(__file__).resolve().parents[2]
+SCRIPT = ROOT / "workspace" / "sdlc" / "stack_lock.sh"
+PREFLIGHT = ROOT / "workspace" / "sdlc" / "preflight.sh"
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-_STACK_LOCK = _REPO_ROOT / "workspace" / "sdlc" / "stack_lock.sh"
-_PREFLIGHT = _REPO_ROOT / "workspace" / "sdlc" / "preflight.sh"
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _run(cmd: list[str], **kw: Any) -> subprocess.CompletedProcess[str]:
-    """Run a command, capturing stdout/stderr."""
-    return subprocess.run(cmd, capture_output=True, text=True, **kw)
-
-
-def _git_init(tmp: Path) -> None:
-    """Create a bare-minimum git repo inside *tmp*."""
-    _run(["git", "init", "-b", "main", str(tmp)])
-    _run(["git", "config", "user.email", "test@local"])
-    _run(["git", "config", "user.name", "Test"])
-    (tmp / "dummy").write_text("hi")
-    _run(["git", "add", "dummy"], cwd=str(tmp))
-    _run(["git", "commit", "-m", "init"], cwd=str(tmp))
-
-
-def _kill_tree(pid: int) -> None:
-    """Kill a process and its children."""
-    try:
-        os.kill(pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
-
-
-import signal
-
-
-# ---------------------------------------------------------------------------
-# stack_lock.sh tests
-# ---------------------------------------------------------------------------
 
 class StackLockTest(unittest.TestCase):
-    """Exercise stack_lock.sh acquire / release in a throwaway git repo."""
+    def setUp(self):
+        self.common = Path(tempfile.mkdtemp(prefix="stack-lock-"))
+        self.addCleanup(shutil.rmtree, self.common, ignore_errors=True)
+        self.holders: list[subprocess.Popen] = []
+        self.addCleanup(self._stop_holders)
 
-    def setUp(self) -> None:
-        self.tmp = Path(subprocess.check_output(
-            ["mktemp", "-d"], text=True
-        ).strip())
-        _git_init(self.tmp)
-        self.env = os.environ.copy()
-        self.env["GIT_COMMON_DIR"] = str(self.tmp / ".git")
-        self._holders: list[subprocess.Popen] = []
+    def _stop_holders(self):
+        for proc in self.holders:
+            proc.kill()
+            proc.wait()
 
-    def tearDown(self) -> None:
-        # Kill any background holders
-        for p in self._holders:
-            try:
-                p.terminate()
-                p.wait(timeout=3)
-            except Exception:
-                try:
-                    p.kill()
-                    p.wait(timeout=2)
-                except Exception:
-                    pass
-        # Clean up any leftover lock dirs
-        lock_dir = self.tmp / ".git" / "preflight-stack.lock"
-        if lock_dir.exists():
-            shutil.rmtree(lock_dir, ignore_errors=True)
-        shutil.rmtree(self.tmp, ignore_errors=True)
+    def holder(self) -> int:
+        proc = subprocess.Popen(["sleep", "60"])
+        self.holders.append(proc)
+        return proc.pid
 
-    def _acquire_bg(self, **extra_env: str) -> subprocess.Popen:
-        """Start acquire in background; it blocks after acquiring."""
-        env = self.env.copy()
-        env.update(extra_env)
-        p = subprocess.Popen(
-            ["bash", str(_STACK_LOCK), "acquire"],
-            env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        self._holders.append(p)
-        return p
+    def lock(self, command: str, pid: int, wait: str = "5") -> subprocess.CompletedProcess[str]:
+        env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+        env.update(GIT_COMMON_DIR=str(self.common), PREFLIGHT_STACK_WAIT=wait, PREFLIGHT_STACK_POLL="1")
+        return subprocess.run(["bash", str(SCRIPT), command, str(pid)], env=env, capture_output=True,
+                              text=True, timeout=30)
 
-    def _acquire_wait(self, **extra_env: str) -> subprocess.CompletedProcess[str]:
-        """Run acquire with short poll interval for timeout tests."""
-        env = self.env.copy()
-        env["PREFLIGHT_STACK_POLL"] = "1"
-        env.update(extra_env)
-        return _run(["bash", str(_STACK_LOCK), "acquire"], env=env)
+    def holder_pid(self) -> str:
+        return (self.common / "preflight-stack.lock" / "holder").read_text(encoding="utf-8").splitlines()[0]
 
-    def _release(self) -> subprocess.CompletedProcess[str]:
-        return _run(["bash", str(_STACK_LOCK), "release"], env=self.env)
+    def test_acquire_returns_at_once_and_records_the_caller(self):
+        pid = self.holder()
+        started = time.monotonic()
+        result = self.lock("acquire", pid)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertLess(time.monotonic() - started, 3)
+        self.assertEqual(str(pid), self.holder_pid())
 
-    # -- 1. Acquire then release -------------------------------------------
+    def test_a_second_run_times_out_and_names_the_holder(self):
+        first = self.holder()
+        self.assertEqual(0, self.lock("acquire", first).returncode)
+        second = self.lock("acquire", self.holder(), wait="2")
+        self.assertNotEqual(0, second.returncode)
+        self.assertIn(f"pid {first}", second.stdout + second.stderr)
 
-    def test_acquire_then_release(self) -> None:
-        p = self._acquire_bg()
-        time.sleep(0.3)  # let it acquire
-        self.assertIsNone(p.poll())  # still running (holding lock)
+    def test_a_lock_whose_holder_died_is_taken_over(self):
+        dead = subprocess.Popen(["true"])
+        dead.wait()
+        self.assertEqual(0, self.lock("acquire", dead.pid).returncode)
+        mine = self.holder()
+        self.assertEqual(0, self.lock("acquire", mine).returncode)
+        self.assertEqual(str(mine), self.holder_pid())
 
-        lock_dir = self.tmp / ".git" / "preflight-stack.lock"
-        self.assertTrue(lock_dir.is_dir())
+    def test_release_only_drops_the_callers_lock(self):
+        owner = self.holder()
+        self.assertEqual(0, self.lock("acquire", owner).returncode)
+        self.lock("release", self.holder())
+        self.assertEqual(str(owner), self.holder_pid())
+        self.lock("release", owner)
+        self.assertFalse((self.common / "preflight-stack.lock").exists())
 
-        # Kill the holder, then release
-        p.terminate()
-        p.wait(timeout=3)
-
-        r = self._release()
-        self.assertEqual(r.returncode, 0, r.stderr)
-        self.assertFalse(lock_dir.exists())
-
-    # -- 2. Second acquire waits and times out -----------------------------
-
-    def test_second_acquire_times_out(self) -> None:
-        p1 = self._acquire_bg()
-        time.sleep(0.5)  # let p1 acquire the lock
-        self.assertIsNone(p1.poll())  # p1 should still be running
-
-        # Second acquire with short timeout should fail
-        r2 = self._acquire_wait(PREFLIGHT_STACK_WAIT="2")
-        self.assertNotEqual(r2.returncode, 0)
-        combined = r2.stdout + r2.stderr
-        self.assertIn("holder", combined.lower())
-
-        # Clean up
-        p1.terminate()
-        p1.wait(timeout=3)
-        self._release()
-
-    # -- 3. Stale lock (dead PID) is taken over ----------------------------
-
-    def test_stale_lock_taken_over(self) -> None:
-        # Manually create a lock with a PID that doesn't exist
-        lock_dir = self.tmp / ".git" / "preflight-stack.lock"
-        lock_dir.mkdir(parents=True)
-        (lock_dir / "holder").write_text("199999\nmain\n0\n")
-
-        p = self._acquire_bg()
-        time.sleep(0.5)
-        self.assertIsNone(p.poll())
-        # Lock should now be held by the new process
-        holder_file = lock_dir / "holder"
-        self.assertTrue(holder_file.exists())
-
-        p.terminate()
-        p.wait(timeout=3)
-        self._release()
-
-    # -- 4. Two concurrent acquirers: only one holds at a time -------------
-
-    def test_concurrent_acquirers(self) -> None:
-        env2 = {**self.env, "PREFLIGHT_STACK_WAIT": "2", "PREFLIGHT_STACK_POLL": "1"}
-
-        # p1 acquires and stays alive
-        p1 = self._acquire_bg()
-        time.sleep(0.5)
-        self.assertIsNone(p1.poll())  # p1 should still be running
-
-        # p2 tries to acquire but p1 is alive — should time out
-        p2 = subprocess.Popen(
-            ["bash", str(_STACK_LOCK), "acquire"],
-            env=env2, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        _, _ = p2.communicate()
-
-        # p1 succeeded (still running), p2 failed (timed out)
-        self.assertIsNone(p1.poll())
-        self.assertNotEqual(p2.returncode, 0)
-
-        # Clean up
-        p1.terminate()
-        p1.wait(timeout=3)
-        self._release()
+    def test_only_one_of_two_concurrent_runs_gets_the_lock(self):
+        pids = [self.holder(), self.holder()]
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(lambda pid: self.lock("acquire", pid, wait="2"), pids))
+        self.assertEqual([0, 1], sorted(min(r.returncode, 1) for r in results))
 
 
-# ---------------------------------------------------------------------------
-# preflight.sh text-level tests
-# ---------------------------------------------------------------------------
+class PreflightUsesTheLockTest(unittest.TestCase):
+    def setUp(self):
+        text = PREFLIGHT.read_text(encoding="utf-8")
+        start = text.index('section "Server-backed suites"')
+        self.section = text[start:text.index("PREFLIGHT SUMMARY", start)]
 
-class PreflightIntegrationTest(unittest.TestCase):
-    """Text-level assertions on preflight.sh to verify integration points."""
+    def test_the_server_backed_section_holds_the_lock_for_this_run(self):
+        self.assertRegex(self.section, r'stack_lock\.sh acquire "\$\$"')
+        self.assertRegex(self.section, r'stack_lock\.sh release "\$\$"')
+        self.assertNotRegex(self.section, r"stack_lock\.sh acquire[^\n]*&\s*$")
 
-    def setUp(self) -> None:
-        self.content = _PREFLIGHT.read_text()
-
-    def test_preflight_calls_stack_lock_acquire(self) -> None:
-        """preflight.sh must call stack_lock.sh acquire inside server-backed section."""
-        self.assertIn("stack_lock.sh", self.content)
-        self.assertIn("acquire", self.content)
-
-    def test_preflight_smoke_test_always_reaches_down(self) -> None:
-        """The docker compose smoke test command must always reach 'docker compose down'."""
-        # The smoke test should ensure 'docker compose down' always runs.
-        # It can use a trap, a sequential "; docker compose down", or a standalone
-        # "docker compose down" line after the up command (within the same bash -c block).
-        has_trap = bool(re.search(r"trap.*docker compose down", self.content))
-        has_sequential_down = bool(re.search(r";\s*docker compose down", self.content))
-        # Also accept a standalone "docker compose down" line in the smoke test section
-        # (the new pattern: up || rc=$? ; docker compose down ; exit $rc)
-        has_standalone_down = bool(
-            re.search(r"docker compose down\s*$", self.content, re.MULTILINE)
-        )
-        self.assertTrue(
-            has_trap or has_sequential_down or has_standalone_down,
-            "Smoke test should ensure 'docker compose down' always runs "
-            f"(trap: {has_trap}, sequential: {has_sequential_down}, standalone: {has_standalone_down})"
-        )
+    def test_the_smoke_test_always_takes_the_stack_down(self):
+        smoke = self.section[self.section.index("docker compose smoke test"):]
+        self.assertTrue(re.search(r"\|\| _smoke_rc=\$\?\n\s*docker compose down", smoke))
 
 
 if __name__ == "__main__":
