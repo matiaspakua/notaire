@@ -13,6 +13,7 @@ This skill guides the implementation of forms and UI components using the centra
 ## When to Use This Skill
 
 Use this skill when:
+
 - Creating or updating form pages
 - Building new UI components
 - Styling input fields, buttons, cards, or modals
@@ -120,6 +121,7 @@ theme.spacing[12]  // 48px
 ```
 
 Standard form spacings:
+
 - **Card padding**: `spacing[8]` (32px)
 - **Section gap**: `spacing[6]` (24px)
 - **Form field gap**: `spacing[4]` (16px)
@@ -545,4 +547,5 @@ Every form implementation must verify:
 - **Form Patterns**: `/frontend/src/theme/form-patterns.tsx`
 - **Design System Guide**: `/docs/200-architecture/203-design/FRONTEND-DESIGN-SYSTEM.md`
 - **UI/UX Rules**: `/.claude/rules/ui-ux-design.md`
+- **UI/UX reference** (full tables, examples and checklist): `references/ui-ux-reference.md`
 - **Component Examples**: `/frontend/src/components/`

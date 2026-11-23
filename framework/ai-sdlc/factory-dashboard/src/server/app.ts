@@ -34,6 +34,13 @@ const CSP = [
   "frame-ancestors 'none'",
 ].join("; ");
 
+const SECURITY_HEADERS: Record<string, string> = {
+  "Content-Security-Policy": CSP,
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "no-referrer",
+  "Cache-Control": "no-store",
+};
+
 function cookieValue(header: string | undefined, name: string): string | undefined {
   for (const part of (header ?? "").split(";")) {
     const [key, ...rest] = part.trim().split("=");
@@ -80,10 +87,9 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
   const cookieFlags = `Path=/; HttpOnly; SameSite=Strict${config.secureCookies ? "; Secure" : ""}`;
 
   app.addHook("onSend", async (_request, reply) => {
-    reply.header("Content-Security-Policy", CSP);
-    reply.header("X-Content-Type-Options", "nosniff");
-    reply.header("Referrer-Policy", "no-referrer");
-    reply.header("Cache-Control", "no-store");
+    for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+      reply.header(key, value);
+    }
   });
 
   const sessionOf = (request: FastifyRequest) => sessions.get(cookieValue(request.headers.cookie, COOKIE));
@@ -204,8 +210,8 @@ export function buildApp({ config, fetcher = fetch, staticRoot }: AppOptions): F
     const { Readable } = await import("node:stream");
     const stream = Readable.fromWeb(upstream.body as import("node:stream/web").ReadableStream);
     reply.raw.writeHead(200, {
+      ...SECURITY_HEADERS,
       "Content-Type": "text/event-stream",
-      "Cache-Control": "no-store",
       "X-Accel-Buffering": "no",
     });
     stream.pipe(reply.raw);

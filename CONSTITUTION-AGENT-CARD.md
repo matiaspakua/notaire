@@ -16,16 +16,16 @@
    **Foreman merge rule (#1624):** the Foreman merges Worker PRs only when all
    required checks are green + `check-heavy-ci.sh` exits 0; the Owner merges
    Constitution, `sdlc-exception` and harness PRs; Workers never merge.
-11. **Archive in the PR (#1623):** a PR archives the OpenSpec change it implements
+6. **Archive in the PR (#1623):** a PR archives the OpenSpec change it implements
    (`openspec archive <c> --yes`) unless the change sets `multi_pr: true`.
-6. **Flyway** is schema source of truth; never edit applied migrations.
-7. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
-8. **KISS**, bounded **Boy Scout**, and **self-improve while delivering**
+7. **Flyway** is schema source of truth; never edit applied migrations.
+8. **Docs are part of Done**; no secrets in git; design-system tokens on frontend.
+9. **KISS**, bounded **Boy Scout**, and **self-improve while delivering**
    (CONSTITUTION §2 P2/P11/P12): simplest fix; clean only what you touch in the same PR;
    when a gate/tool/doc wastes time or fails for the wrong reason, fix or Issue it before moving on.
-9. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
+10. **Path-scoped CI (#1257)**: docs-only PRs skip Java/E2E leaves; aggregators accept `skipped`;
    `main` always full suite.
-10. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
+11. **Board coherence (#1550)**: CLOSED⇒Done+no WIP labels; OPEN WIP⇒In Progress+`in-progress`;
    blocked⇒`blocked` label (no Blocked column). Validate:
    `python3 workspace/sdlc/check-board-status-label-coherence.py` (skips without `gh` auth).
 
@@ -46,7 +46,7 @@ docs → PR → merge → smoke.
 | Ops workflow | `.claude/rules/ai-agent-workflow.md` |
 | Modules | `python3 workspace/modules.py …` / `workspace/modules.yaml` |
 | OpenSpec | `docs/openspec/` (run CLI from `docs/`) |
-| Preflight | `bash workspace/sdlc/preflight.sh --full` (mandatory before a PR) |
+| Preflight | `bash workspace/sdlc/preflight.sh --full` (before a PR; touched suites; `--all`) |
 | Board Status/labels | `python3 workspace/sdlc/check-board-status-label-coherence.py` |
 | Skills catalog | `.claude/skills/README.md` (load on demand) |
 
