@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Guards issue #2457: Notaire runs its AI SDLC only through the aisdlc kit. The external Factory Control and
-agentic-os projects are separate experiments, so no tracked file names them. Released history (CHANGELOG
+Guards issue #2457: Notaire runs its AI SDLC only through the aisdlc kit. Other factory products the Owner
+experiments with live elsewhere, so no tracked file names them. Released history (CHANGELOG
 files), the archive and OpenSpec change records keep what was true when written.
 
 Run with: python3 workspace/tests/test_no_external_factory.py

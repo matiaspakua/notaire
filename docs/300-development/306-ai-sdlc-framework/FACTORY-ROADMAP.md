@@ -90,7 +90,7 @@ code** — and **prove every slice by running it against Notaire** (issues → g
 
 ### OpenAPI surface
 
-- Separate factory control description (**3.1.0**), never the product OpenAPI tree.
+- Separate aisdlc factory description (**3.1.0**), never the product OpenAPI tree.
 - CLI JSON payloads and any future HTTP share one schema; breaking changes via `oasdiff` + explicit accept files (#2136).
 
 ### CLI + UI
@@ -356,7 +356,7 @@ mirrors omit Unreleased when that slice owns the fence.
 
 - Kit README: [`framework/ai-sdlc/README.md`](../../../framework/ai-sdlc/README.md)
 - Cloud fleet: [`../304-ai-sdlc-cloud/`](../304-ai-sdlc-cloud/)
-- Cross-repo assessment: [`CROSS-ASSESSMENT-2026-11.md`](CROSS-ASSESSMENT-2026-11.md)
+- Cross-repo assessment: [`CROSS-ASSESSMENT-2026-11.md`](../../000-archive/300-development/306-ai-sdlc-framework/CROSS-ASSESSMENT-2026-11.md) (archived)
 - Factory as a product — gap analysis: [`FACTORY-PRODUCT-ANALYSIS.md`](FACTORY-PRODUCT-ANALYSIS.md)
 - Factory UI and host — architecture spec: [`FACTORY-UI-SPEC.md`](FACTORY-UI-SPEC.md)
 - Constitution P12 / gates: [`CONSTITUTION.md`](../../../CONSTITUTION.md)

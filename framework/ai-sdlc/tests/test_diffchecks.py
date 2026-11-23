@@ -1,8 +1,7 @@
 """Owner-only paths, the review budget and the write set are checked on the change's own diff.
 
-Sources: agentic-os C14-004 (agents cannot change their own rules) and factory-control
-`protectedPaths`; gentle-ai's 400-line review budget; agentic-os C15-006 (changed paths are
-compared with the task's write set before anything is accepted) and Notaire audit item S2.
+Why: agents cannot change their own rules; a reviewer reads at most 400 changed lines in one sitting;
+changed paths are compared with the task's write set before anything is accepted (Notaire audit S2).
 """
 from __future__ import annotations
 

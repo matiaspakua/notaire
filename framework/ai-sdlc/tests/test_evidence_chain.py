@@ -1,7 +1,7 @@
 """The evidence ledger is hash-chained: an altered record is detected, not trusted.
 
-Source: agentic-os journal (each entry carries the SHA-256 of the one before it) and the
-factory-control assessment (F-05). The chain cannot see a change to its own last line, so the
+Each entry carries the SHA-256 of the one before it, so an edited or removed record breaks the
+chain. The chain cannot see a change to its own last line, so the
 verifier prints the head digest for the Foreman to anchor in the PR.
 """
 from __future__ import annotations
