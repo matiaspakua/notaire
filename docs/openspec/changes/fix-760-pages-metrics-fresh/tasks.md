@@ -67,6 +67,8 @@
 - [ ] 8.5 Confirm no information was duplicated — permanent docs remain the single source of truth
 - [ ] 8.6 `bash workspace/sdlc/preflight.sh --fix` — mirrors every CI gate
 
+**Note (8.1–8.3):** The proposal's Documentation Impact table lists only `CHANGELOG.md` and marks it "n/a — not user visible (internal metrics page improvement)." No other permanent documents (CU76 use case, ADRs, runbooks, etc.) require updates: the fresh coverage computation and stale marker behavior are fully captured by the inline comments in `generate-github-page-metrics.sh` (lines 105–109, 159–166) and the OpenSpec delta spec (`specs/github-page-metrics-coverage-honesty/spec.md`). No permanent documentation changes are needed beyond these script comments.
+
 ## 9. Commits atómicos
 
 - [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
