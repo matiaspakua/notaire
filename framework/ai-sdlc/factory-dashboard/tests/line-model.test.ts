@@ -61,6 +61,11 @@ describe("stationKind", () => {
     expect(stationKind(stage("merge"))).toBe("human");
   });
 
+  it("uses the kind the kit declares", () => {
+    expect(stationKind({ ...stage("release"), kind: "human" })).toBe("human");
+    expect(stationKind({ ...stage("plan", ["openspec-planner"]), kind: "deterministic" })).toBe("deterministic");
+  });
+
   it("names any other stage a deterministic step", () => {
     expect(stationKind(stage("release"))).toBe("deterministic");
   });
