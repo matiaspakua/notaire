@@ -34,6 +34,7 @@ production-grade observability.
 - [Quick start](#-quick-start)
 - [Testing and quality](#-testing-and-quality)
 - [Observability and security](#-observability-and-security)
+- [AI SDLC factory and RepoLens](#-ai-sdlc-factory-and-repolens)
 - [Documentation](#-documentation)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -164,11 +165,16 @@ Full stack (Prometheus, Grafana, SonarQube, Homer): `bash workspace/stack/start-
 ```bash
 mvn test -pl backend-api                 # backend unit + integration
 cd testing/e2e && npm test              # Playwright E2E
-bash workspace/sdlc/preflight.sh --full         # local replica of every CI gate
+bash workspace/sdlc/preflight.sh --full         # the pull-request gate: suites this branch touches
+bash workspace/sdlc/preflight.sh --all          # every suite
 ```
 
-Current coverage: ~84% lines / ~74% branches (mandatory floor: 70%/25%,
-target: 80%/80% — see [`code-quality.md`](.claude/rules/code-quality.md)).
+The pre-push hook runs `--full` and skips a commit that already passed (#2413). GitHub does not
+re-run the heavy suites on a pull request, so a local `--full` pass is the proof.
+
+Coverage floors (raise-only): backend JaCoCo **85% lines / 70% branches**, frontend Vitest
+**87% statements / 79% branches / 85% functions / 88% lines**. The Owner's target is more than 90%
+across the pyramid (#2046) — see [`code-quality.md`](.claude/rules/code-quality.md).
 
 The full testing strategy (unit, integration, API, E2E, CU↔API matrix):
 [`docs/300-development/303-testing/`](docs/300-development/303-testing/).
@@ -182,6 +188,21 @@ Local ↔ CI mapping of each gate: [`docs/300-development/CI-PREFLIGHT.md`](docs
   scanning — see [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/)
   (HTTPS/TLS runbook, installation isolation checklist, security tools).
 - **DevSecOps / deployment**: [`docs/200-architecture/208-devsecops/`](docs/200-architecture/208-devsecops/) and [`docs/200-architecture/209-deployment/`](docs/200-architecture/209-deployment/).
+
+## 🏭 AI SDLC factory and RepoLens
+
+Notaire is built by a governed AI SDLC factory. Every change goes through an Issue, an OpenSpec
+plan, failing tests first, gates and evidence:
+
+- **Kit** — [`framework/ai-sdlc/`](framework/ai-sdlc/README.md): stack-agnostic `aisdlc` CLI and
+  HTTP contract, with intents, runs, workflows, catalogs, gates and a hash-chained evidence ledger.
+- **Factory Control** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
+  the factory drawn as a production line. Each station shows its gates and cost, plus what the
+  run's steps received and produced.
+- **RepoLens** — [`framework/repolens/`](framework/repolens/): the code knowledge graph agents use to
+  find code; measured in [`bench/results/`](framework/repolens/bench/results/factory-learning-log.md).
+- **Results** — [factory results of 2026-11-23](framework/ai-sdlc/docs/retrospectives/2026-11-23-factory-results.md),
+  and the [AI SDLC case study on GitHub Pages](https://matiaspakua.github.io/notaire/ai-sdlc/).
 
 ## 📚 Documentation
 
