@@ -1,7 +1,7 @@
 {
   "approval": {
     "mode": "owner_override",
-    "reason": "Owner Phase E demo seed (approvals_live=false)"
+    "reason": "Owner instruction 2026-11-23: map factory-feature onto the production line (#2410)"
   },
   "body": {
     "inputs": [],
@@ -15,35 +15,150 @@
           "usd": null
         },
         "gates": [],
-        "id": "main",
+        "id": "spec",
         "mcp": [],
         "on_fail": "stop",
         "provider": null,
         "skills": [
           "skills:openspec-propose@1",
           "skills:openspec-update-change@1",
-          "skills:openspec-triage@1",
-          "skills:qa-automation-strategy@1",
+          "skills:openspec-triage@1"
+        ],
+        "stage": "plan"
+      },
+      {
+        "agent": "agents:testing-qa@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "red",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:qa-automation-strategy@1"
+        ],
+        "stage": "red"
+      },
+      {
+        "agent": "agents:backend-implementer@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "green",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
           "skills:openspec-apply-change@1",
           "skills:maven-build@1",
-          "skills:ai-agent-workflow@1",
-          "skills:ci-cd-quality-gates@1",
+          "skills:ai-agent-workflow@1"
+        ],
+        "stage": "pre-push"
+      },
+      {
+        "agent": "agents:openspec-planner@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "docs",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:openspec-update-change@1"
+        ],
+        "stage": "pre-pr"
+      },
+      {
+        "agent": "agents:openspec-planner@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "archive",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:openspec-apply-change@1"
+        ],
+        "stage": "pre-pr"
+      },
+      {
+        "agent": "agents:code-reviewer@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "merge",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
           "skills:steward@1",
+          "skills:ci-cd-quality-gates@1"
+        ],
+        "stage": "merge"
+      },
+      {
+        "agent": "agents:devops-engineer@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "release",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
+          "skills:ci-cd-quality-gates@1"
+        ],
+        "stage": "release"
+      },
+      {
+        "agent": "agents:cloud-foreman@1",
+        "budget": {
+          "time_seconds": null,
+          "tokens": null,
+          "usd": null
+        },
+        "gates": [],
+        "id": "signal",
+        "mcp": [],
+        "on_fail": "stop",
+        "provider": null,
+        "skills": [
           "skills:devsecops-traceability@1"
         ],
-        "stage": "implement"
+        "stage": "signal"
       }
     ]
   },
-  "created_at": "2026-11-12T04:39:16+00:00",
+  "created_at": "2026-11-23T09:21:26+00:00",
   "created_by": "cli:local",
-  "digest": "57371500de5cefdd60b1d3b4605b3ca8f9ec2e53b2b66a5068917df7b2ad49e5",
+  "digest": "7d6429771a0b6b2c693eec486029c99b38558d5d0649f96902daa71261c6d7da",
   "governance": "approved",
   "id": "factory-feature",
   "kind": "workflows",
   "ref": null,
   "schema_version": 2,
-  "summary": "Factory demo feature workflow (pinned refs; never auto-executed)",
+  "summary": "Factory feature workflow: one step per production-line stage (#2410)",
   "validation": {
     "pins": [
       {
@@ -63,8 +178,16 @@
         "ref": "skills:openspec-triage@1"
       },
       {
+        "digest": "036c1facabf8a4f36e5b4a0aed544a85d317a18d30e47b29d1ccc095af4694ed",
+        "ref": "agents:testing-qa@1"
+      },
+      {
         "digest": "938e6d9e96053fbcc01cc7e3061d3a62c55a554b484e9ea55828b9e0323b096c",
         "ref": "skills:qa-automation-strategy@1"
+      },
+      {
+        "digest": "3b038129b9afa78757fb54b5b283e4ff7453b79242235ccacad69bbecda8837c",
+        "ref": "agents:backend-implementer@1"
       },
       {
         "digest": "9b5c28c7122bb0dfacaaed01000a51e8133b89903e0b22736ad200fe99d9502e",
@@ -79,19 +202,31 @@
         "ref": "skills:ai-agent-workflow@1"
       },
       {
-        "digest": "c3dbe6082fe2f89eb20ba83aebd6279cf8faa96f5c99b64e56f42241518d3134",
-        "ref": "skills:ci-cd-quality-gates@1"
+        "digest": "6dc7d7ee5742620a5da3893ed44e6627983b86411eef03e0bc9d43a3dc996aae",
+        "ref": "agents:code-reviewer@1"
       },
       {
         "digest": "58e8e120f5046dfcb6859b8e8a94eac3483f4c329e52265cf830bad1a39f2456",
         "ref": "skills:steward@1"
       },
       {
+        "digest": "c3dbe6082fe2f89eb20ba83aebd6279cf8faa96f5c99b64e56f42241518d3134",
+        "ref": "skills:ci-cd-quality-gates@1"
+      },
+      {
+        "digest": "645ff6cf8fc889b7cb14b98bab8e4181a4397e31153065309ba8227f7c0912d4",
+        "ref": "agents:devops-engineer@1"
+      },
+      {
+        "digest": "9b8f564ca54cd7cbbb968e6ed9e48f9adf03dad4cada3bb5c3e0f8145c5e6a74",
+        "ref": "agents:cloud-foreman@1"
+      },
+      {
         "digest": "c59f548609058a7721678d2560b4e604447abb81f052212f0dcbb7afab7e26b8",
         "ref": "skills:devsecops-traceability@1"
       }
     ],
-    "waive_reason": "Phase E demo dry-run validation"
+    "waive_reason": "Owner instruction 2026-11-23 (#2410)"
   },
-  "version": 5
+  "version": 10
 }
