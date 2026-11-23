@@ -8,6 +8,11 @@ factory-loop A/B table without inventing numbers. This script copies summaries f
 framework/repolens/bench/results/ into a typed snapshot the Next app can import
 offline. Headline factor labels reuse the same rounding as bench/report.py::_factor.
 
+The ``generated_at`` timestamp only changes when the underlying data changes (#2429).
+When the snapshot the script would write is identical to the existing file apart from
+the timestamp, the existing ``generated_at`` is preserved so the tracked file remains
+byte-identical and a Pages build does not dirty the git tree.
+
 USAGE
   python3 workspace/ci/generate-repolens-bench.py
   python3 workspace/ci/generate-repolens-bench.py --check   # validate existing snapshot
