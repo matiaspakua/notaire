@@ -594,6 +594,11 @@ def build_parser() -> argparse.ArgumentParser:
     show = wf_sub.add_parser("show", help="show current workflow JSON")
     show.add_argument("--id", required=True)
     show.add_argument("--json", action="store_true")
+    edit = wf_sub.add_parser("edit", help="replace a workflow's v2 steps (each names its line stage); back to draft")
+    edit.add_argument("--id", required=True)
+    edit.add_argument("--steps-file", required=True, help="JSON list of steps: id, stage, agent, skills, ...")
+    edit.add_argument("--summary")
+    edit.add_argument("--json", action="store_true")
     transition = wf_sub.add_parser("transition", help="apply a governance transition")
     transition.add_argument("--id", required=True)
     transition.add_argument(
@@ -1241,6 +1246,15 @@ def _workflow(ctx: Context, args: argparse.Namespace) -> int:
             return _print_workflow_list(payload, as_json)
         if args.action == "show":
             return _print_workflow(workflows.show(ctx, args.id), as_json)
+        if args.action == "edit":
+            try:
+                steps = json.loads(Path(args.steps_file).read_text(encoding="utf-8"))
+            except (OSError, ValueError) as exc:
+                raise KitError("invalid_body", f"cannot read steps from {args.steps_file}: {exc}") from exc
+            return _print_workflow(
+                workflows.new_version(ctx, args.id, steps=steps, summary=getattr(args, "summary", None)),
+                as_json,
+            )
         if args.action == "transition":
             return _print_workflow(
                 workflows.transition(
@@ -2018,7 +2032,8 @@ def _plain(view: dict) -> str:
 
 def _store_cmd(ctx: Context, args: argparse.Namespace) -> int:
     """Handle store sync and stats commands (#2394)."""
-    from aisdlc.telemetry_store import stats as store_stats, sync as store_sync
+    from aisdlc.telemetry_store import stats as store_stats
+    from aisdlc.telemetry_store import sync as store_sync
 
     if args.action == "sync":
         counts = store_sync(ctx)
@@ -2038,7 +2053,8 @@ def _store_cmd(ctx: Context, args: argparse.Namespace) -> int:
 
 def _telemetry_cmd(ctx: Context, args: argparse.Namespace) -> int:
     """Handle telemetry record and report commands (#2394)."""
-    from aisdlc.telemetry_store import record as telemetry_record, report as telemetry_report
+    from aisdlc.telemetry_store import record as telemetry_record
+    from aisdlc.telemetry_store import report as telemetry_report
 
     if args.action == "record":
         ok = getattr(args, "ok", True)
