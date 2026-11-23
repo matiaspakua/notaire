@@ -181,6 +181,52 @@ def _import_claude(ctx: Context, path: Path, run_id: str, known: set[str], step:
     return rows
 
 
+def import_all_runs(ctx: Context, path: Path) -> dict:
+    """Attribute every Claude Code request between the first and last run event to the runs.
+
+    A request inside one run's window goes to that run; inside several overlapping windows it is
+    split evenly between them (``allocation: split``); between runs it is factory overhead
+    (``run: null``, ``step: overhead``), so overall cost stays complete.
+    """
+    spans = {}
+    for run in runs.list_runs(ctx)["entries"]:
+        try:
+            spans[run["id"]] = run_window(ctx, run["id"])
+        except KitError:
+            continue
+    if not spans:
+        return {"run": None, "source": "claude-code", "recorded": 0, "rows": []}
+    first, last = min(s for s, _ in spans.values()), max(e for _, e in spans.values())
+    kinds = ("input", "output", "cache_read", "cache_write", "cache_write_1h")
+    buckets: dict[tuple[str | None, str], dict] = {}
+    for message in claude_messages(path):
+        if not first <= message["ts"] <= last:
+            continue
+        owners = [run_id for run_id, (start, end) in spans.items() if start <= message["ts"] <= end] or [None]
+        for owner in owners:
+            bucket = buckets.setdefault((owner, message["model"]), {k: 0.0 for k in kinds} | {
+                "requests": [], "split": False})
+            for kind in kinds:
+                bucket[kind] += message[kind] / len(owners)
+            bucket["requests"].append(message["request"])
+            bucket["split"] = bucket["split"] or len(owners) > 1
+    known = _existing_keys(ctx)
+    rows = []
+    for (owner, model), bucket in sorted(buckets.items(), key=lambda item: (item[0][0] or "", item[0][1])):
+        requests = bucket["requests"]
+        key = f"claude-code:all:{owner or 'overhead'}:{model}:{requests[0]}:{requests[-1]}:{len(requests)}"
+        if key in known:
+            continue
+        total = {kind: round(bucket[kind]) for kind in kinds}
+        row = evidence.add_cost(
+            ctx, "foreman", model, total["input"], total["output"], None, None, run=owner,
+            step="foreman" if owner else "overhead", cache_read=total["cache_read"],
+            cache_write=total["cache_write"], cache_write_1h=total["cache_write_1h"], source="claude-code",
+            key=key, quiet=True)
+        rows.append(row)
+    return {"run": None, "source": "claude-code", "recorded": len(rows), "rows": rows}
+
+
 def import_usage(ctx: Context, *, source: str, path: Path, run_id: str, step: str | None = None,
                  since: str | None = None, until: str | None = None) -> dict:
     if source not in SOURCES:

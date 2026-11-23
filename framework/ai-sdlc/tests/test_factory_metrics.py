@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import sys
 import threading
+import time
 import unittest
 import urllib.request
 from datetime import datetime, timezone
@@ -154,6 +155,7 @@ class FactoryMetricsTest(unittest.TestCase):
         self.assertAlmostEqual((40 + 2000 + 200 + 1600) / 1e6, row["usd"])
 
     def test_foreman_usage_across_runs_is_split_and_overhead_is_kept(self):
+        time.sleep(2.1)  # ledger stamps have second resolution; leave a gap between the runs
         self.ok("run", "start", "--project", "web", "--workflow", "feature", "--id", "r2")
         for event in (("--event", "run.started"), ("--event", "step.started", "--step", "red"),
                       ("--event", "step.finished", "--step", "red", "--step-status", "pass"),

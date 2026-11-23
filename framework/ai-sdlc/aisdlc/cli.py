@@ -487,7 +487,9 @@ def build_parser() -> argparse.ArgumentParser:
     usage_import = usage_sub.add_parser("import", help="attribute Junie or Claude Code usage to a run's steps")
     usage_import.add_argument("--source", required=True, choices=["junie", "claude-code"])
     usage_import.add_argument("--path", required=True, type=Path, help="Junie logs dir, or a transcript file or dir")
-    usage_import.add_argument("--run", required=True)
+    usage_import.add_argument("--run", help="run id (or --all-runs for claude-code)")
+    usage_import.add_argument("--all-runs", dest="all_runs", action="store_true",
+                              help="claude-code: split requests across every run's window; the rest is overhead")
     usage_import.add_argument("--step", help="claude-code: attribute to this step (its window, or a label)")
     usage_import.add_argument("--since", help="claude-code: window start (ISO)")
     usage_import.add_argument("--until", help="claude-code: window end (ISO)")
@@ -1457,16 +1459,25 @@ def _resolve(ctx: Context, path: Path) -> Path:
 def _usage(ctx: Context, args: argparse.Namespace) -> int:
     from aisdlc import usage_import
 
+    if not args.run and not (args.all_runs and args.source == "claude-code"):
+        print("error: invalid_body: pass --run, or --all-runs with --source claude-code")
+        return 2
     try:
-        result = usage_import.import_usage(ctx, source=args.source, path=args.path, run_id=args.run, step=args.step,
-                                           since=args.since, until=args.until)
+        if args.all_runs:
+            if not args.path.exists():
+                raise KitError("not_found", f"{args.path} does not exist")
+            result = usage_import.import_all_runs(ctx, args.path)
+        else:
+            result = usage_import.import_usage(ctx, source=args.source, path=args.path, run_id=args.run,
+                                               step=args.step, since=args.since, until=args.until)
     except KitError as exc:
         print(f"error: {exc.code}: {exc.detail}")
         return 2
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))
     else:
-        print(f"usage import: {result['recorded']} cost row(s) for run {result['run']} from {result['source']}")
+        print(f"usage import: {result['recorded']} cost row(s) for {result['run'] or 'all runs'} "
+              f"from {result['source']}")
     return 0
 
 

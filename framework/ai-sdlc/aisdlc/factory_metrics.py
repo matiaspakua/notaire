@@ -199,7 +199,9 @@ def build(ctx: Context, *, usage_path: Path | None = None, bench_dir: Path | Non
             continue
         intent_rows.append({"id": intent["id"], "title": intent.get("title"), "status": intent.get("status"),
                             "runs": [r["id"] for r in mine], **_sum_runs(mine, cost_rows, usage)})
-    totals = _sum_runs(run_metrics, cost_rows, usage) if run_metrics else _sum_runs([], cost_rows, usage)
+    totals = _sum_runs(run_metrics, cost_rows, usage)
+    everything = _cost(cost_rows)
+    overhead = _cost([r for r in cost_rows if not r.get("run")])
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "intents": intent_rows,
@@ -210,8 +212,10 @@ def build(ctx: Context, *, usage_path: Path | None = None, bench_dir: Path | Non
             "succeeded": sum(1 for r in run_metrics if r["status"] == "succeeded"),
             "time": {"active_s": totals["time"]["active_s"], "corrections": totals["time"]["corrections"],
                      "by_stage": totals["time"]["by_stage"]},
-            "tokens": totals["tokens"],
-            "cost": totals["cost"],
+            "tokens": everything["tokens"],
+            "cost": everything["cost"],
+            "attributed": {"tokens": totals["tokens"], "cost": totals["cost"]},
+            "overhead": {"tokens": overhead["tokens"], "cost": overhead["cost"]},
             "repolens": _repolens(usage),
             "per_intent": {
                 "median_wall_s": _median([i["time"]["wall_s"] for i in intent_rows if i["time"]["wall_s"] is not None]),
