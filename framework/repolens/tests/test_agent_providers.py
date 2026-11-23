@@ -58,3 +58,10 @@ def test_stream_usage_is_labeled_separately_from_a_missing_session():
         json.dumps({"type": "result", "usage": {"input_tokens": 10, "output_tokens": 1}, "result": "FILES: a.py"}),
     ])
     assert usage_from_stream(stream)["input_tokens"] == 10
+
+
+def test_the_report_skips_an_agent_run_that_recorded_no_session(tmp_path):
+    """A provider probe that ran no session leaves an empty summary; the report must not divide by zero on it."""
+    import report
+
+    assert report.agent_section({"model": "m", "rows": [], "summary": {}}, tmp_path) == ("", "", [])

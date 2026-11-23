@@ -24,7 +24,7 @@ import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .usage import read
+from .usage import outside, read
 
 NAVIGATION = ("grep", "glob", "read")
 
@@ -112,6 +112,8 @@ def session_metrics(events: list[dict]) -> dict:
                     waiting_fallback = False
             elif tool == "read" and seen_repolens:
                 path = (e.get("files") or [""])[0]
+                if outside(path):
+                    continue
                 reads_after += 1
                 hits += any(path == f or path.endswith("/" + f) or f.endswith("/" + path) for f in returned)
         first = next(iter(evs), {})

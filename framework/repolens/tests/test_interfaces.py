@@ -285,5 +285,51 @@ def test_metrics_describe_the_served_store_and_bench_results_only_from_a_configu
         "label": "any", "summary": {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}}))
     monkeypatch.setenv("REPOLENS_BENCH_RESULTS", str(tmp_path))
     bench = TestClient(create_app(kg)).get("/api/metrics").json()["bench"]
-    assert bench == [{"name": "retrieval-any", "label": "any",
-                      "summary": {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}}]
+    assert [(b["name"], b["label"], b["kind"]) for b in bench] == [("retrieval-any", "any", "retrieval")]
+    assert bench[0]["summary"] == {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}
+
+
+def test_metrics_classify_benchmarks_from_the_folder_serve_names(kg, tmp_path, monkeypatch):
+    """`serve --bench DIR` names the folder; each file says what it measured, with or without the graph."""
+    from fastapi.testclient import TestClient
+
+    from repolens.api import create_app
+
+    monkeypatch.delenv("REPOLENS_BENCH_RESULTS", raising=False)
+    (tmp_path / "agent-any.json").write_text(json.dumps({
+        "model": "m", "taskset": "held-out", "repeat": 3, "stamp": "2026-11-23",
+        "summary": {"baseline": {"recall": 1.0, "tool_calls": 4.0}, "graph": {"recall": 1.0, "tool_calls": 2.0}}}))
+    (tmp_path / "retrieval-any.json").write_text(json.dumps({
+        "taskset": "tuning", "commit": "abc123", "summary": {"grep": {"recall@10": 0.2}, "graph": {"recall@10": 0.9}}}))
+    (tmp_path / "notes.json").write_text(json.dumps({"anything": 1}))
+    (tmp_path / "broken.json").write_text("{")
+    bench = TestClient(create_app(kg, bench=tmp_path)).get("/api/metrics").json()["bench"]
+    assert [(b["name"], b["kind"]) for b in bench] == [
+        ("agent-any", "agent"), ("notes", "other"), ("retrieval-any", "retrieval")]
+    agent = bench[0]
+    assert (agent["model"], agent["taskset"], agent["runs"], agent["date"]) == ("m", "held-out", 3, "2026-11-23")
+    assert bench[2]["commit"] == "abc123" and bench[2]["summary"]["graph"]["recall@10"] == 0.9
+
+
+def test_serve_passes_the_benchmark_folder_to_the_explorer(cli_args, tmp_path, monkeypatch):
+    from repolens import api
+
+    seen = {}
+    monkeypatch.setattr(api, "run", lambda kg, host, port, bench=None: seen.update(port=port, bench=bench))
+    assert cli.main([*cli_args, "serve", "--port", "7999", "--bench", str(tmp_path)]) == 0
+    assert seen == {"port": 7999, "bench": tmp_path}
+
+
+def test_a_search_in_the_explorer_shows_its_stages_and_the_answer_an_agent_receives(kg):
+    from fastapi.testclient import TestClient
+
+    from repolens.api import create_app
+    from repolens.mcp_server import ALSO
+
+    graph = TestClient(create_app(kg)).get("/api/subgraph", params={"q": "verify code", "k": 8}).json()
+    assert {"fts", "dense", "ppr"} <= graph["timings"].keys()
+    assert all(ms >= 0 for ms in graph["timings"].values())
+    answer = graph["answer"]
+    assert answer["text"].startswith("1. [") and answer["hits"] <= 4 + ALSO
+    assert answer["bytes"] == len(answer["text"].encode("utf-8")) and answer["tokens"] == answer["bytes"] // 4
+    assert "match" in {h["why"] for h in graph["hits"]}

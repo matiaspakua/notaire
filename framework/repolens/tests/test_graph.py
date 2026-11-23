@@ -278,3 +278,50 @@ def test_an_unknown_name_is_not_answered_with_a_guess(kg):
     text = eng.missing("CodeService", "CodeController")
     assert text.startswith("not found: 'CodeService'") and "CodeVerificationService" in text
     assert "'CodeController'" not in text
+
+
+def _first(hits, predicate):
+    return next((n for n, h in enumerate(hits) if predicate(h)), len(hits))
+
+
+def _search_without_doc_factor(kg, query):
+    saved = kg.engine.tuning.get("doc_factor")
+    kg.engine.tuning["doc_factor"] = 1.0
+    try:
+        return kg.engine.search(query, k=8)
+    finally:
+        if saved is None:
+            del kg.engine.tuning["doc_factor"]
+        else:
+            kg.engine.tuning["doc_factor"] = saved
+
+
+def test_a_question_about_code_ranks_the_code_above_the_prose_that_describes_it(kg):
+    """Recorded miss (#2452): asked for a component, the spec sections that describe it ranked first."""
+    query = "one-time codes verification function"
+    is_doc = lambda h: h.kind == "section"  # noqa: E731
+    is_verify = lambda h: h.name == "verify" and h.kind == "method"  # noqa: E731
+    unweighted = _search_without_doc_factor(kg, query)
+    weighted = kg.engine.search(query, k=8)
+    assert _first(unweighted, is_doc) < _first(unweighted, is_verify)
+    assert _first(weighted, is_verify) < _first(weighted, is_doc)
+
+
+def test_a_question_that_names_documentation_keeps_its_weight(kg):
+    query = "one-time codes verification function ADR"
+    unweighted = [(h.id, h.score) for h in _search_without_doc_factor(kg, query)]
+    assert [(h.id, h.score) for h in kg.engine.search(query, k=8)] == unweighted
+
+
+def test_warming_and_reloading_wait_for_a_running_query(kg):
+    """The MCP server warms the embedder on a thread while the first tool call reloads the engine: both used the
+    store's connection at once (sqlite3 'bad parameter or other API misuse' under load). They take the query lock."""
+    import threading
+
+    engine = kg.engine
+    done = threading.Event()
+    with engine._lock:
+        worker = threading.Thread(target=lambda: (engine.refresh(), engine.warm(), done.set()), daemon=True)
+        worker.start()
+        assert not done.wait(0.3)
+    assert done.wait(30)

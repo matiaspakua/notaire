@@ -9,27 +9,40 @@ from pathlib import Path
 from .service import KnowledgeGraph
 
 UI = Path(__file__).parent / "ui" / "index.html"
+BENCH_ENV = "REPOLENS_BENCH_RESULTS"
+# The arms a benchmark result compares, as `bench/` writes them: an agent with and without the tools, or retrieval
+# by grep against retrieval through the graph.
+BENCH_KINDS = (("agent", {"baseline", "graph"}), ("retrieval", {"grep", "graph"}))
 
-# Bench results directory — sibling of repolens/repolens/
+
+def bench_kind(summary) -> str:
+    arms = set(summary) if isinstance(summary, dict) else set()
+    return next((kind for kind, needed in BENCH_KINDS if needed <= arms), "other")
 
 
-def _bench_results() -> list[dict]:
-    """Benchmark result files of the folder `REPOLENS_BENCH_RESULTS` names: name, label and summary of each."""
-    folder = os.environ.get("REPOLENS_BENCH_RESULTS")
-    if not folder or not Path(folder).is_dir():
+def bench_results(folder: Path | None = None) -> list[dict]:
+    """The benchmark result files of `folder` (default: `$REPOLENS_BENCH_RESULTS`), each with what it measured.
+    Nothing here names an adopter: the folder and its files are the adopter's."""
+    folder = folder or (Path(os.environ[BENCH_ENV]) if os.environ.get(BENCH_ENV) else None)
+    if folder is None or not folder.is_dir():
         return []
     out = []
-    for path in sorted(Path(folder).glob("*.json")):
+    for path in sorted(folder.glob("*.json")):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue
-        if isinstance(data, dict):
-            out.append({"name": path.stem, "label": data.get("label", path.stem), "summary": data.get("summary")})
+        if not isinstance(data, dict):
+            continue
+        summary = data.get("summary")
+        out.append({"name": path.stem, "label": data.get("label", path.stem), "kind": bench_kind(summary),
+                    "model": data.get("model"), "taskset": data.get("taskset"), "runs": data.get("repeat"),
+                    "commit": data.get("commit"), "date": data.get("stamp") or data.get("updated"),
+                    "summary": summary})
     return out
 
 
-def create_app(kg: KnowledgeGraph):
+def create_app(kg: KnowledgeGraph, bench: Path | None = None):
     from fastapi import FastAPI, HTTPException, Query
     from fastapi.responses import HTMLResponse
 
@@ -90,13 +103,26 @@ def create_app(kg: KnowledgeGraph):
         eng = kg.engine
         if q:
             hits = eng.search(q, k=k, scope=scope)
+            timings = {stage: round(seconds * 1000, 2) for stage, seconds in eng.timings.items()}
             graph = eng.subgraph([h.id for h in hits], expand=0)
             graph["hits"] = [h.to_dict() for h in hits]
+            graph["timings"] = timings
+            graph["answer"] = agent_answer(q, scope)
             return graph
         if ref:
             result = found(eng.neighbors(ref, None, "both", min(depth, 2), limit=120))
             return eng.subgraph([n["id"] for n in result["nodes"]])
         raise HTTPException(status_code=400, detail="pass q or ref")
+
+    def agent_answer(q: str, scope: str) -> dict:
+        """What the MCP `search` tool returns for the same question, and its size: what an agent reads."""
+        from . import render
+        from .mcp_server import ALSO, DETAILED
+
+        hits = kg.engine.search(q, k=DETAILED + ALSO, scope=scope, mode="files")
+        text = render.hits(hits, q, detailed=DETAILED)
+        size = len(text.encode("utf-8"))
+        return {"text": text, "hits": len(hits), "bytes": size, "tokens": size // 4}
 
     @app.post("/api/index")
     def reindex(full: bool = False):
@@ -107,7 +133,7 @@ def create_app(kg: KnowledgeGraph):
     @app.get("/api/metrics")
     def metrics(since: str | None = None):
         """The served store's index size, orphan counts and usage report (from its own usage log). Benchmark
-        results are optional: the JSON files in `REPOLENS_BENCH_RESULTS`, listed by file name, never named here."""
+        results are optional: the JSON files of `serve --bench` (or `$REPOLENS_BENCH_RESULTS`)."""
         from . import orphans
         from . import report as usage_report
         from .paths import usage_log
@@ -117,7 +143,7 @@ def create_app(kg: KnowledgeGraph):
             "index": kg.engine.stats(),
             "orphans": orphans.counts(kg.engine),
             "usage": usage_report.build(log, since),
-            "bench": _bench_results(),
+            "bench": bench_results(bench),
         }
 
     @app.get("/api/metrics/usage")
@@ -139,8 +165,8 @@ def create_app(kg: KnowledgeGraph):
     return app
 
 
-def run(kg: KnowledgeGraph, host: str = "127.0.0.1", port: int = 7474) -> None:
+def run(kg: KnowledgeGraph, host: str = "127.0.0.1", port: int = 7474, bench: Path | None = None) -> None:
     import uvicorn
 
     kg.engine.warm()
-    uvicorn.run(create_app(kg), host=host, port=port, log_level="warning")
+    uvicorn.run(create_app(kg, bench), host=host, port=port, log_level="warning")

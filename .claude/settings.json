@@ -65,7 +65,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Read|Grep|Glob|mcp__repolens__.*",
+        "matcher": "Read|Grep|Glob|Bash|mcp__repolens__.*",
         "hooks": [
           {
             "type": "command",

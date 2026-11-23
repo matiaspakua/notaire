@@ -20,8 +20,9 @@ preflight runs it when a branch touches this module.
 - The TOML profile schema documented in `README.md` (`[index]`, `[[source]]`, `[embed]`, `[git]`, `[tags]`,
   `[routes]`, `[ranking]`, `[harness]`)
 - The MCP tools `search`, `node`, `impact`, `path`, `outline`, `snippet` (+ `neighbors`, `stats`, `reindex`
-  with `--all-tools`) and the HTTP endpoints under `/api/*`
-- `repolens setup` writes the harness registrations described in `README.md`; `repolens report --gate` prints
+  with `--all-tools`) and the HTTP endpoints under `/api/*`; `repolens serve --bench <folder>` (benchmark results for the explorer)
+- `repolens setup` writes the harness registrations described in `README.md` (the Claude Code usage hook matches
+  `Read|Grep|Glob|Bash|mcp__repolens__.*`); `repolens report --gate` prints
   one advisory line and exits 0 (the factory's `signal` stage relies on both)
 - The usage log `<state>/usage.jsonl` (one JSON event per line, fields documented in `repolens/usage.py`)
 - The wheel built from `pyproject.toml` (version from `repolens/__init__.py`, tags `repolens-v*`)

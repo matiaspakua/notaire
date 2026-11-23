@@ -33,7 +33,7 @@ from pathlib import Path
 from .paths import CONFIG_NAME, STATE_DIR, find_config, git_root, home, project_root, usage_log
 
 TARGETS = ("claude", "codex", "opencode", "cursor", "junie", "git", "gitignore")
-HOOK_MATCHER = "Read|Grep|Glob|mcp__repolens__.*"
+HOOK_MATCHER = "Read|Grep|Glob|Bash|mcp__repolens__.*"
 DEPENDENCIES = ("numpy", "scipy", "tree_sitter", "tree_sitter_language_pack", "yaml", "fastembed", "mcp")
 MODULE_DIR = Path(__file__).resolve().parent.parent
 
@@ -106,7 +106,8 @@ def setup_claude(root: Path, dry_run: bool) -> list[str]:
         allow.append("mcp__repolens")
     post = settings.setdefault("hooks", {}).setdefault("PostToolUse", [])
     hook_cmd = shell_command(root, "hook")
-    entry = next((h for h in post if h.get("matcher") == HOOK_MATCHER), None)
+    entry = next((h for h in post if h.get("matcher") == HOOK_MATCHER
+                  or any(x.get("command") == hook_cmd for x in h.get("hooks", []))), None)
     wanted = {"matcher": HOOK_MATCHER, "hooks": [{"type": "command", "command": hook_cmd, "timeout": 5}]}
     if entry is None:
         post.append(wanted)

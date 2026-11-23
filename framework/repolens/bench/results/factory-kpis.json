@@ -434,5 +434,57 @@
         "recorded_miss": true
       }
     }
+  },
+  "release_0_7_0": {
+    "issue": 2452,
+    "source": "retrieval_bench.py before/after on corpus 073e9776; repolens report on the main checkout's usage log",
+    "retrieval_graph_arm": {
+      "tuning_recall10_mrr": [
+        [
+          0.904,
+          0.788
+        ],
+        [
+          0.904,
+          0.788
+        ]
+      ],
+      "holdout_recall10_mrr": [
+        [
+          0.786,
+          0.882
+        ],
+        [
+          0.786,
+          0.896
+        ]
+      ],
+      "holdout_seed_weighting_rejected": {
+        "recall10": 0.765,
+        "mrr": 0.896
+      },
+      "doc_factor": 0.3
+    },
+    "recorded_miss_2435": {
+      "query": "the station detail panel component",
+      "component_rank": [
+        3,
+        1
+      ]
+    },
+    "usage_log_reclassified": {
+      "reads_after_repolens": [
+        52,
+        7
+      ],
+      "hit_rate": [
+        0.0,
+        0.0
+      ],
+      "cli_calls_without_session": 76,
+      "reads_outside_repository": 46,
+      "note": "Old Bash calls cannot be attributed after the fact; the hook records them from 0.7.0."
+    },
+    "hook_cost_ms_per_bash_call": 40
   }
 }

@@ -197,6 +197,72 @@ def test_hook_and_report_measure_hit_rate_fallbacks_and_adoption(tmp_path, monke
     assert cli.main(["report", "--gate"]) == 0
 
 
+def test_hook_records_queries_and_searches_run_through_the_shell(tmp_path):
+    """Agents run `repolens search` and `rg` through Bash: those calls belong to the session (#2452)."""
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".repolens").mkdir()
+
+    def bash(command, stdout):
+        payload = {"session_id": "s1", "cwd": str(tmp_path), "tool_name": "Bash", "tool_input": {"command": command},
+                   "tool_response": {"stdout": stdout, "stderr": "", "interrupted": False}}
+        assert hook_main(stdin=_stdin(payload)) == 0
+
+    answer = ("1. [method] src/a.py:3-9  A.run  (1.00)\n   via: calls -> B.go\n2. [file] src/b.py:1-20  (0.50)\n"
+              "also relevant:\n3. src/c.py:4  helper\n")
+    bash('bash "$(git rev-parse --show-toplevel)/framework/repolens/bin/repolens" search "who runs a"', answer)
+    bash("cd src && rg -n 'def run' .", "a.py:3:def run")
+    bash("git grep -n run origin/main -- src", "origin/main:src/a.py:3:def run")
+    bash("find src -name '*.py' | head", "src/a.py")
+    bash("npm test -- --grep=run", "ok")
+    events = [json.loads(line) for line in (tmp_path / ".repolens" / "usage.jsonl").read_text().splitlines()]
+    assert [e["tool"] for e in events] == ["repolens:search", "grep", "grep", "glob"]
+    assert events[0]["files"] == ["src/a.py", "src/b.py", "src/c.py"]
+    assert {e["session"] for e in events} == {"s1"} and events[0]["input"].endswith('search "who runs a"')
+
+
+def test_reads_outside_the_repository_are_not_navigation(tmp_path):
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".repolens").mkdir()
+
+    def call(tool, params, response=""):
+        payload = {"session_id": "s1", "cwd": str(tmp_path), "tool_name": tool, "tool_input": params,
+                   "tool_response": response}
+        assert hook_main(stdin=_stdin(payload)) == 0
+
+    call("mcp__repolens__search", {"query": "a"}, [{"type": "text", "text": "1. [file] src/a.py:1-9  (0.9)"}])
+    call("Read", {"file_path": "/private/tmp/scratchpad/shot.png"}, "png")
+    call("Read", {"file_path": str(tmp_path / "src" / "a.py")}, "code")
+    s = build(tmp_path / ".repolens" / "usage.jsonl")["sessions"]
+    assert s["reads_after_repolens"] == 1 and s["hit_rate"] == 1.0
+
+
+def test_report_leaves_reads_already_logged_outside_the_repository_out_of_the_hit_rate(tmp_path):
+    log = tmp_path / ".repolens" / "usage.jsonl"
+    _events(log, [
+        {"src": "harness", "session": "s", "tool": "repolens:search", "files": ["src/a.py"]},
+        {"src": "harness", "session": "s", "tool": "read", "files": ["/private/tmp/scratchpad/shot.png"]},
+        {"src": "harness", "session": "s", "tool": "read", "files": ["src/a.py"]},
+    ])
+    s = build(log)["sessions"]
+    assert s["reads_after_repolens"] == 1 and s["hit_rate"] == 1.0
+
+
+def test_setup_moves_an_older_hook_registration_to_the_shell_matcher(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git(repo, "init", "-q")
+    monkeypatch.setattr(setup_mod, "MODULE_DIR", repo / "framework" / "repolens")
+    hook = setup_mod.shell_command(repo, "hook")
+    (repo / ".claude").mkdir()
+    (repo / ".claude" / "settings.json").write_text(json.dumps({"hooks": {"PostToolUse": [
+        {"matcher": "Edit", "hooks": [{"type": "command", "command": "lint"}]},
+        {"matcher": "Read|Grep|Glob|mcp__repolens__.*", "hooks": [{"type": "command", "command": hook}]}]}}))
+    setup_mod.setup(["claude"], start=repo)
+    post = json.loads((repo / ".claude" / "settings.json").read_text())["hooks"]["PostToolUse"]
+    assert [h["matcher"] for h in post] == ["Edit", setup_mod.HOOK_MATCHER]
+    assert "Bash" in setup_mod.HOOK_MATCHER.split("|")
+
+
 def test_setup_registers_every_harness_once_and_keeps_existing_entries(tmp_path, monkeypatch):
     repo = tmp_path / "repo"
     repo.mkdir()
