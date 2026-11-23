@@ -78,7 +78,7 @@ class FactoryMetricsTest(unittest.TestCase):
         path = self.repo.root / ".aisdlc" / "evidence" / "cost.jsonl"
         return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
-    def junie_log(self, at: datetime, tokens_in: int, tokens_out: int, cache_read: int) -> None:
+    def junie_log(self, at: datetime, tokens_in: int, tokens_out: int, cache_read: int, issue: int | None = None) -> None:
         local = at.astimezone()
         name = f"junie/log-{local:%Y-%m-%d_%H%M%S}-pid-{tokens_in}.log"
         snapshot = {"schemaVersion": 1, "totals": {"rowCount": 3, "successCount": 3, "inputTokens": tokens_in,
@@ -88,6 +88,7 @@ class FactoryMetricsTest(unittest.TestCase):
         early = {**snapshot, "totals": {**snapshot["totals"], "inputTokens": 1, "outputTokens": 1, "cacheReadTokens": 0}}
         self.repo.write(name, "\n".join([
             f"{stamp} [main] INFO  JunieRunner - Startup: Junie 26.11.2",
+            f"{stamp} [main] INFO  Task - You are a Worker implementing GitHub issue #{issue}." if issue else stamp,
             f"{stamp} [main] INFO  Analytics - [ANALYTICS:EVENT] type=llm_cost_trajectory_snapshot properties="
             f"schema_version=1, total_cost=0.0, snapshot={json.dumps(early)}",
             f"{stamp} [main] INFO  Analytics - [ANALYTICS:EVENT] type=llm_cost_trajectory_snapshot properties="
@@ -126,6 +127,20 @@ class FactoryMetricsTest(unittest.TestCase):
         self.assertEqual("reported", row["usd_source"])
         again = self.ok("usage", "import", "--source", "junie", "--path", "junie", "--run", "r1", "--json")
         self.assertEqual(0, json.loads(again.stdout)["recorded"])
+
+    def test_a_session_naming_another_issue_is_not_attributed(self):
+        self.ok("run", "start", "--project", "web", "--workflow", "feature", "--id", "issue-7")
+        for event in (("--event", "run.started"), ("--event", "step.started", "--step", "red"),
+                      ("--event", "step.finished", "--step", "red", "--step-status", "pass")):
+            self.ok("harness", "report", "--run", "issue-7", "--adapter", "local-worker", *event)
+        events = json.loads(self.ok("run", "events", "--id", "issue-7", "--json").stdout)["events"]
+        start = _parse(next(e["ts"] for e in events if e["kind"] == "step.started"))
+        self.junie_log(start, 111, 1, 0, issue=8)
+        other = self.ok("usage", "import", "--source", "junie", "--path", "junie", "--run", "issue-7", "--json")
+        self.assertEqual(0, json.loads(other.stdout)["recorded"])
+        self.junie_log(start, 222, 2, 0, issue=7)
+        mine = self.ok("usage", "import", "--source", "junie", "--path", "junie", "--run", "issue-7", "--json")
+        self.assertEqual([222], [r["input"] for r in json.loads(mine.stdout)["rows"]])
 
     def test_claude_code_usage_is_counted_once_per_request_and_priced(self):
         start, end = self.window("green")
