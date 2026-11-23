@@ -68,6 +68,26 @@ Reviewed against the 0.2.0 release-please pull request and the live releases:
 - The foreman does not implement on a release-please branch. Process fixes
   land on their own issue branch, then release-please opens the next cut.
 
+## Worked example: the 0.8.0 / 0.9.0 cuts (#2408)
+
+The two clocks diverged in November 2026 and show why they are separate:
+
+- `0.8.0` was cut (`18428a4d`) but release-please published no tag or Release.
+  The fix commits that added the `v0.8` train and the Pages history came later
+  while the tree still said `0.8.0`; that coherent tree is the valid place to
+  tag `v0.8.0`. Tagging the original release commit would fail the coherence
+  gate because its tree has no `v0.8` train.
+- `0.9.0` was cut and tagged, but no `v0.9 · …` train existed. CD stopped at
+  `release-identity` (`no milestone titled v0.9 · … for 0.9.0`), so no images
+  or Release assets were published. Adding the train to the three mirrors
+  (`RELEASE_TRAINS`, `milestone_policy.py`, the nomenclature table) restores
+  coherence; the existing tag and Release are repaired additively, never
+  recreated or moved.
+
+The rule that matters: a tag is valid only when the *tagged tree* is coherent.
+A train fix that lands after a cut belongs to the fix's release, not retroactively
+to the cut it describes.
+
 ## Where the version is visible
 
 | Surface | What it shows |
