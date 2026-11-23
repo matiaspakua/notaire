@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a fresh worktree reaches the server-backed suites | test_preflight_e2e_deps.py | pending |
-| the generated types are stale | test_preflight_e2e_deps.py | pending |
+| a fresh worktree reaches the server-backed suites | test_preflight_e2e_deps.py | passing |
+| the generated types are stale | test_preflight_e2e_deps.py | passing |
 
 ## Permanent documentation updated
 

@@ -139,6 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* **sdlc:** preflight installs the e2e suite before the server-backed Playwright run, and `openapi:types:check` no longer leaves `api.generated.check.ts` behind for the API reachability scan to misread (Refs #2442)
 * **frontend:** pin `@xyflow/react` to 12 (13 removed `applyNodeChanges` and broke the workflow editor build and every Pages deploy); Dependabot skips its majors until the migration (#2441) (Refs #2440)
 * **ci:** main health fetches `origin/main` on tag runs; RepoLens wiring drift ignores machine-local `.git/hooks`; the Pages deploy builds coverage without the reactor-root JaCoCo call (Refs #2440)
 * **api:** the committed OpenAPI matches the running API again (MFA endpoints and typed responses); the 67 breaks it documents are recorded as accepted (Refs #2440)
