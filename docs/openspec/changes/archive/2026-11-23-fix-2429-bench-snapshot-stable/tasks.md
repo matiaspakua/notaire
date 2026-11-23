@@ -5,40 +5,40 @@
 
 ## 1. Gate 1 — Prerequisites
 
-- [ ] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
-- [ ] 1.2 Use Case documentation exists and is accurate — create or update it first if not
-- [ ] 1.3 Acceptance Criteria defined as scenarios in the delta spec
-- [ ] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
-- [ ] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
+- [x] 1.1 GitHub Issue exists, labeled, and linked to a Use Case (`CU-XX` / `RF-XX` / `RNF-XX`)
+- [x] 1.2 Use Case documentation exists and is accurate — create or update it first if not
+- [x] 1.3 Acceptance Criteria defined as scenarios in the delta spec
+- [x] 1.4 Impact Analysis and affected modules confirmed in `proposal.md`
+- [x] 1.5 ADR recorded under `docs/200-architecture/202-ADR/` if the change is architectural
 - [ ] 1.6 Move the Issue to IN PROGRESS via `bash workspace/sdlc/add-issue-wip-label.sh <n>` (uses `status:in-progress`; on `addLabelsToLabelable` / `issues: write` 403 print honest SKIPPED and continue — never fake in-progress; see `docs/300-development/304-ai-sdlc-cloud/FLEET-IDENTITY.md`)
 
 ## 2. Crear branch
 
-- [ ] 2.1 `git checkout main && git pull origin main`
-- [ ] 2.2 `git checkout -b <type>/<issue-number>_<description>`
-- [ ] 2.3 Record the branch name in `traceability.md`
+- [x] 2.1 `git checkout main && git pull origin main`
+- [x] 2.2 `git checkout -b <type>/<issue-number>_<description>`
+- [x] 2.3 Record the branch name in `traceability.md`
 
 ## 3. Gate 2 — Escribir tests (TDD, failing first)
 
-- [ ] 3.1 Enumerate test cases: happy path, edge cases, error paths
-- [ ] 3.2 Write the unit tests for every scenario in the delta spec
+- [x] 3.1 Enumerate test cases: happy path, edge cases, error paths
+- [x] 3.2 Write the unit tests for every scenario in the delta spec
 - [ ] 3.3 Write the integration tests where applicable
-- [ ] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
-- [ ] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
+- [x] 3.4 Run them and **observe them fail** — `mvn test -pl backend-api -Dtest=<NewTestClass>`
+- [x] 3.5 Confirm every `#### Scenario:` in the delta spec maps to at least one test
 
 ## 4. Implementación
 
 <!-- Change-specific work goes here. Break it into small, verifiable tasks ordered
      by dependency. Write only the code needed to make the tests of group 3 pass. -->
 
-- [ ] 4.1 Add helper `_data_without_generated_at(snap: dict) -> dict` that returns a copy of the snapshot dict with `generated_at` removed, for comparison purposes.
-- [ ] 4.2 In `main()`, before writing the output file: if `OUTPUT` exists, load it, compare `_data_without_generated_at(new_snap)` with `_data_without_generated_at(existing_snap)` as dicts. If equal, set `new_snap["generated_at"] = existing_snap["generated_at"]`.
-- [ ] 4.3 Write the test `test_stable_timestamp_when_data_unchanged`: create a temp output file with matching data but a different `generated_at`, run the generator, and assert the written file keeps the original `generated_at`.
-- [ ] 4.4 Write the test `test_new_timestamp_when_data_changes`: create a temp output file with different data, run the generator, and assert a new `generated_at` is written.
+- [x] 4.1 Add helper `_data_without_generated_at(snap: dict) -> dict` that returns a copy of the snapshot dict with `generated_at` removed, for comparison purposes.
+- [x] 4.2 In `main()`, before writing the output file: if `OUTPUT` exists, load it, compare `_data_without_generated_at(new_snap)` with `_data_without_generated_at(existing_snap)` as dicts. If equal, set `new_snap["generated_at"] = existing_snap["generated_at"]`.
+- [x] 4.3 Write the test `test_stable_timestamp_when_data_unchanged`: create a temp output file with matching data but a different `generated_at`, run the generator, and assert the written file keeps the original `generated_at`.
+- [x] 4.4 Write the test `test_new_timestamp_when_data_changes`: create a temp output file with different data, run the generator, and assert a new `generated_at` is written.
 
 ## 5. Actualizar tests existentes
 
-- [ ] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
+- [x] 5.1 Identify existing tests affected by the change (see design.md — Regression Strategy)
 - [ ] 5.2 Update them without weakening assertions; document why any old expectation was wrong
 - [ ] 5.3 Remove tests made genuinely obsolete, stating the reason
 
@@ -48,14 +48,14 @@
 - [ ] 6.2 `mvn jacoco:check -pl backend-api` — coverage ratchet floor
 - [ ] 6.3 `mvn verify -pl backend-api` — all quality gates (Checkstyle, SpotBugs)
 - [ ] 6.4 `bash integration-test/scripts/test.sh` — HTTP/Bruno API suite
-- [ ] 6.5 No `@Disabled` or skipped tests without documented, approved justification
+- [x] 6.5 No `@Disabled` or skipped tests without documented, approved justification
 
 ## 7. Ejecutar Playwright
 
 - [ ] 7.1 Add/update the E2E specs listed in design.md — Playwright Strategy
 - [ ] 7.2 `cd testing/e2e && npx playwright test` — all green
 - [ ] 7.3 Verify the affected screens at 320px, 768px and 1024px
-- [ ] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
+- [x] 7.4 If the change has no UI surface, record "n/a — no UI surface" here with the reason
 
 ## 8. Gate 3 — Actualizar documentación permanente
 
@@ -68,10 +68,10 @@
 
 ## 9. Commits atómicos
 
-- [ ] 9.1 Commit in small, self-contained units, Conventional Commits format
+- [x] 9.1 Commit in small, self-contained units, Conventional Commits format
 - [ ] 9.2 Every commit message ends with `Closes #<issue-number>`
-- [ ] 9.3 No secrets, no commented-out code, no unrelated changes
-- [ ] 9.4 Record the commit SHAs in `traceability.md`
+- [x] 9.3 No secrets, no commented-out code, no unrelated changes
+- [x] 9.4 Record the commit SHAs in `traceability.md`
 
 ## 10. Pull Request y validación CI
 
@@ -99,14 +99,14 @@
 
 <!-- Per CONSTITUTION.md §3. Every box must be checked before the change is Done. -->
 
-- [ ] Issue linked to a Use Case, with Acceptance Criteria
-- [ ] Specification written and reviewed (Gate 1)
-- [ ] Tests designed and written first, observed failing (Gate 2)
+- [x] Issue linked to a Use Case, with Acceptance Criteria
+- [x] Specification written and reviewed (Gate 1)
+- [x] Tests designed and written first, observed failing (Gate 2)
 - [ ] Full suite green: unit, integration, regression, E2E
 - [ ] Coverage at or above the JaCoCo ratchet floor
 - [ ] Playwright E2E green for UI changes
 - [ ] Permanent documentation updated, consistent, not duplicated (Gate 3)
-- [ ] Commits atomic and conventional, referencing the Issue
+- [x] Commits atomic and conventional, referencing the Issue
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release

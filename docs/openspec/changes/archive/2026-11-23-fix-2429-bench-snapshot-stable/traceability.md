@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/fix-2429-bench-snapshot-stable/` | complete |
 | Branch | `fix/2429_bench_snapshot_stable` | created |
-| Tasks | `tasks.md` | 0/12 complete |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Tasks | `tasks.md` | 5/12 complete (implementation done; Gates 3–5 pending PR merge) |
+| Commits | 326ec843, b0bccb89, 02316065, 328ea09d, 7da84dc5 | complete |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,7 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| <!-- scenario name --> | <!-- test class / spec file --> | <!-- pending / passing --> |
+| Stable timestamp when data unchanged | `workspace/tests/test_generate_repolens_bench.py::test_stable_timestamp_when_data_unchanged` | passing |
+| New timestamp when data changes | `workspace/tests/test_generate_repolens_bench.py::test_new_timestamp_when_data_changes` | passing |
 
 ## Permanent documentation updated
 
