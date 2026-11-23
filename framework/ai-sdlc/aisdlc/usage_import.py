@@ -92,6 +92,9 @@ def claude_messages(path: Path) -> list[dict]:
             if not usage or not request or request in seen or not record.get("timestamp"):
                 continue
             seen.add(request)
+            if not any(usage.get(k) for k in ("input_tokens", "output_tokens", "cache_read_input_tokens",
+                                               "cache_creation_input_tokens")):
+                continue
             split = usage.get("cache_creation") or {}
             messages.append({
                 "request": request, "ts": parse_ts(record["timestamp"]), "model": message.get("model") or "claude",

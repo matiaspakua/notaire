@@ -103,7 +103,10 @@ class FactoryMetricsTest(unittest.TestCase):
         line = {"type": "assistant", "timestamp": at.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
                 "requestId": "req_1", "message": {"id": "msg_1", "model": "claude-test", "usage": usage}}
         outside = {**line, "timestamp": "2020-01-01T00:00:00Z", "requestId": "req_old"}
-        self.repo.write("claude/session.jsonl", "\n".join(json.dumps(x) for x in (line, line, outside)) + "\n")
+        synthetic = {**line, "requestId": "req_syn", "message": {"id": "msg_syn", "model": "<synthetic>",
+                     "usage": {"input_tokens": 0, "output_tokens": 0}}}
+        self.repo.write("claude/session.jsonl",
+                        "\n".join(json.dumps(x) for x in (line, line, outside, synthetic)) + "\n")
 
     def test_a_cost_row_carries_run_step_and_cache_tokens(self):
         self.ok("cost", "--agent", "foreman", "--model", "claude-test", "--input", "1000000", "--output", "0",
