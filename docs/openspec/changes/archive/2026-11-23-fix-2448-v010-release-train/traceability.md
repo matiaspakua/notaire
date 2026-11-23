@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| release 0.10.0 | test_release_branch_at_0_10_0_passes_for_its_tag | pending |
-| an unmapped minor still fails closed | test_release_branch_at_0_10_0_passes_for_its_tag | pending |
-| next cut has no train | test_release_branch_at_0_10_0_passes_for_its_tag | pending |
+| release 0.10.0 | test_release_branch_at_0_10_0_passes_for_its_tag | passing |
+| an unmapped minor still fails closed | test_release_branch_at_0_10_0_passes_for_its_tag | passing |
+| next cut has no train | test_release_branch_at_0_10_0_passes_for_its_tag | passing |
 
 ## Permanent documentation updated
 
