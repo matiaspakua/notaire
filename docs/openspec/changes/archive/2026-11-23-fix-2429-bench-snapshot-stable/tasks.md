@@ -110,3 +110,12 @@
 - [ ] PR created, CI green, review approved (Gate 4)
 - [ ] Merged, deployed, smoke test passed, Issue closed (Gate 5)
 - [ ] `traceability.md` complete from Issue through Release
+
+## Deviations
+
+- *Mechanical* (Foreman correction of the red and green steps, 2026-11-23): the first red tests wrote the
+  snapshot themselves, so the changed-data case could not pass, and the worker's green made `build()` read
+  the tracked output file. The tests now call `write(snap, path)` on a temporary file, and `write()` holds the
+  compare-and-keep rule while `build()` stays pure. This applies the design's decision 1 unchanged; it does not
+  change scope, contract, data or permissions.
+

@@ -34,8 +34,9 @@
 | New timestamp when data changes | unit | `workspace/tests/test_generate_repolens_bench.py` |
 
 - New unit tests in `workspace/tests/test_generate_repolens_bench.py`:
-  - `test_stable_timestamp_when_data_unchanged`: mock the existing snapshot with data matching the build output but a different `generated_at`; verify the written file keeps the old timestamp.
-  - `test_new_timestamp_when_data_changes`: mock the existing snapshot with different data; verify a new `generated_at` is written.
+  - `test_writing_unchanged_data_keeps_the_file_byte_identical`: `write()` into a temporary file twice with the same data and different timestamps; the second call returns False and the bytes are unchanged.
+  - `test_changed_data_refreshes_generated_at`: `write()` with changed data refreshes `generated_at`.
+  - `test_the_committed_snapshot_is_up_to_date`: regenerating into a copy of the committed snapshot changes nothing.
 - Coverage impact: Python tests, not covered by JaCoCo; Vitest floors unaffected.
 
 ## Regression Strategy
