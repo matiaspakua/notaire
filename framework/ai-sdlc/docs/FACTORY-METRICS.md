@@ -78,3 +78,6 @@ python3 workspace/ci/generate-factory-metrics.py   # writes github-page/lib/fact
 ```
 
 Commit the snapshot. The file changes only when the data does.
+
+`python3 workspace/ci/refresh-factory-evidence.py` runs this together with the Junie usage import and the
+RepoLens bench refresh, reading the evidence from the main worktree even when it runs in a linked one (#2469).
