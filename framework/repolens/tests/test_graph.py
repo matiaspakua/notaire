@@ -311,3 +311,17 @@ def test_a_question_that_names_documentation_keeps_its_weight(kg):
     query = "one-time codes verification function ADR"
     unweighted = [(h.id, h.score) for h in _search_without_doc_factor(kg, query)]
     assert [(h.id, h.score) for h in kg.engine.search(query, k=8)] == unweighted
+
+
+def test_warming_and_reloading_wait_for_a_running_query(kg):
+    """The MCP server warms the embedder on a thread while the first tool call reloads the engine: both used the
+    store's connection at once (sqlite3 'bad parameter or other API misuse' under load). They take the query lock."""
+    import threading
+
+    engine = kg.engine
+    done = threading.Event()
+    with engine._lock:
+        worker = threading.Thread(target=lambda: (engine.refresh(), engine.warm(), done.set()), daemon=True)
+        worker.start()
+        assert not done.wait(0.3)
+    assert done.wait(30)
