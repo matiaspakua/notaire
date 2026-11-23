@@ -24,3 +24,12 @@ def test_retrieval_results_are_stamped_with_the_repolens_version(tmp_path: Path)
     assert meta["repolens_version"] == repolens.__version__
     assert meta["tasks"] == 2
     assert meta["corpus"] == "tiny"
+
+
+def test_a_task_set_chart_tag_is_carried_into_the_result(tmp_path: Path) -> None:
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "-c", "user.email=t@e", "-c", "user.name=t",
+                    "commit", "-q", "--allow-empty", "-m", "root"], check=True)
+    spec = {"name": "tiny", "clone": tmp_path, "tasks": [], "chart_tag": ""}
+
+    assert retrieval_bench.result_meta(spec, k=10, taskset="tiny")["chart_tag"] == ""
