@@ -5,6 +5,22 @@ All notable changes to repolens. Versions follow [SemVer](https://semver.org); t
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-23
+
+### Added
+
+- The usage hook records Bash commands: `repolens <query>` as a repolens call of that session, with the files its answer printed; `rg`, `grep`, `git grep` as grep; `find`, `fd`, `git ls-files` as glob. `repolens setup` registers the hook for `Bash` and moves an older registration instead of adding a second one (#2452).
+- `doc_factor` (`[ranking.tuning]`, default 0.3): a question that names a code construct and no documentation word ranks docs and stylesheets lower. Only the final rank moves; docs still seed the walk. Notaire graph arm: tuning recall@10 0.904 -> 0.904, MRR 0.788 -> 0.788; held-out recall@10 0.786 -> 0.786, MRR 0.882 -> 0.896.
+- The explorer has a How it works view (pipeline with the store's counts, measured benchmarks at a glance and per run, live usage report) and explains every search: matched or reached through a relation, the time of each stage, and the exact answer an agent receives with its tokens.
+- `repolens serve --bench <folder>` names the benchmark results the explorer shows. `/api/subgraph?q=` returns `timings` and `answer`; `/api/metrics` classifies each benchmark as `agent`, `retrieval` or `other`.
+
+### Fixed
+
+- Reads of files outside the repository are not recorded, and the report leaves those already logged out of the hit rate. On the 2026-11-23 log, reads counted after a repolens call fell from 52 to 7.
+- Benchmark task files resolve the repository from the module's new location; since the move the retrieval benchmark could not start.
+- `bench/report.py` skips an agent result with no session instead of dividing by zero.
+- The explorer's graph labels follow the theme toggle, and the page says when Cytoscape cannot load.
+
 ### Changed
 
 - RepoLens lives at `framework/repolens`, beside the AI SDLC kit instead of inside it. The kit reaches it only as a command, an MCP server and the HTTP API. `repolens setup` rewrites a repository's wiring for the new launcher path.
