@@ -47,98 +47,38 @@ class GenerateRepoLensBenchTest(unittest.TestCase):
             self.assertEqual(data["headlines"]["tuning_recall"], "4.9x more")
 
 
-    # ------------------------------------------------------------------
-    # #2429: snapshot must stay byte-identical when underlying data does not change
-    # ------------------------------------------------------------------
+    # #2429: a Pages build must not rewrite the tracked snapshot when its data is unchanged.
 
-    def test_running_twice_on_unchanged_inputs_keeps_file_byte_identical(self):
-        """Running the generator twice on unchanged inputs must keep the file byte-identical.
-
-        The second run should preserve the first run's generated_at so the file is
-        byte-for-byte identical and git sees no change.
-        """
+    def test_writing_unchanged_data_keeps_the_file_byte_identical(self):
         mod = load_module()
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "repolens-bench-snapshot.json"
+            first = dict(mod.build(), generated_at="2026-01-01T00:00:00Z")
+            self.assertTrue(mod.write(first, out))
+            before = out.read_bytes()
+            second = dict(mod.build(), generated_at="2026-02-02T00:00:00Z")
+            self.assertFalse(mod.write(second, out))
+            self.assertEqual(before, out.read_bytes())
 
-            # First run: build and write
-            snap1 = mod.build()
-            out.write_text(json.dumps(snap1, indent=2) + "\n", encoding="utf-8")
-            first_bytes = out.read_bytes()
-
-            import time
-
-            time.sleep(1.1)  # ensure a different second for generated_at
-
-            # Second run: build and write again
-            snap2 = mod.build()
-            out.write_text(json.dumps(snap2, indent=2) + "\n", encoding="utf-8")
-            second_bytes = out.read_bytes()
-
-            self.assertEqual(
-                first_bytes,
-                second_bytes,
-                "Second run should produce byte-identical output when input data has not changed. "
-                "The generator should preserve the existing generated_at when only the timestamp "
-                "would differ.",
-            )
-
-    def test_changed_input_refreshes_generated_at(self):
-        """When underlying bench data changes, generated_at should be refreshed."""
+    def test_changed_data_refreshes_generated_at(self):
         mod = load_module()
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "repolens-bench-snapshot.json"
+            mod.write(dict(mod.build(), generated_at="2026-01-01T00:00:00Z"), out)
+            changed = dict(mod.build(), generated_at="2026-02-02T00:00:00Z", method="changed")
+            self.assertTrue(mod.write(changed, out))
+            data = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual("2026-02-02T00:00:00Z", data["generated_at"])
+            self.assertEqual("changed", data["method"])
 
-            # First run
-            snap1 = mod.build()
-            out.write_text(json.dumps(snap1, indent=2) + "\n", encoding="utf-8")
-            first_generated_at = snap1["generated_at"]
-
-            import time
-
-            time.sleep(1.1)  # ensure a different second
-
-            # Second run with modified data (simulates changed bench results)
-            snap2 = mod.build()
-            snap2["headlines"]["tuning_recall"] = "CHANGED"
-            out.write_text(json.dumps(snap2, indent=2) + "\n", encoding="utf-8")
-            final = json.loads(out.read_text(encoding="utf-8"))
-
-            self.assertNotEqual(
-                final["generated_at"],
-                first_generated_at,
-                "generated_at should be refreshed when underlying data changes",
-            )
-
-    def test_committed_snapshot_is_up_to_date(self):
-        """Generating into a temp copy of the committed snapshot should change nothing.
-
-        The committed github-page/lib/repolens-bench-snapshot.json should already
-        reflect the current bench data — regenerating should produce a byte-identical file.
-        """
+    def test_the_committed_snapshot_is_up_to_date(self):
         mod = load_module()
         committed = REPO / "github-page" / "lib" / "repolens-bench-snapshot.json"
-        self.assertTrue(committed.exists(), "committed snapshot should exist")
-
-        committed_bytes = committed.read_bytes()
-
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "repolens-bench-snapshot.json"
-            # Copy committed file to temp
-            out.write_bytes(committed_bytes)
-
-            # Build fresh snapshot and write
-            snap = mod.build()
-            out.write_text(json.dumps(snap, indent=2) + "\n", encoding="utf-8")
-            regenerated_bytes = out.read_bytes()
-
-            self.assertEqual(
-                committed_bytes,
-                regenerated_bytes,
-                "Regenerated snapshot should be byte-identical to committed snapshot "
-                "when underlying data has not changed. The generator should preserve the "
-                "existing generated_at.",
-            )
+            out.write_bytes(committed.read_bytes())
+            self.assertFalse(mod.write(mod.build(), out), "regenerate and commit the snapshot")
+            self.assertEqual(committed.read_bytes(), out.read_bytes())
 
 
 if __name__ == "__main__":
