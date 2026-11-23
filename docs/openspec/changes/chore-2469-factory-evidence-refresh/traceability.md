@@ -35,7 +35,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a retrieval run is stamped | `workspace/tests/test_refresh_factory_evidence.py::test_retrieval_results_are_stamped_with_the_repolens_version` | pending |
+| a retrieval run is stamped | `framework/repolens/tests/test_bench_meta.py::test_retrieval_results_are_stamped_with_the_repolens_version` | pending |
 | the default refresh is free | `test_refresh_factory_evidence.py::test_default_steps_are_free_and_ordered` | pending |
 | agent benches are opt-in | `test_refresh_factory_evidence.py::test_agent_and_history_are_opt_in` | pending |
 | results from an older RepoLens are stale | `test_refresh_factory_evidence.py::test_result_from_another_version_is_stale` | pending |
