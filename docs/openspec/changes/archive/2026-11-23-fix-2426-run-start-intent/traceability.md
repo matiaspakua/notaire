@@ -19,7 +19,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Specification | `docs/openspec/changes/fix-2426-run-start-intent/` | <!-- --> |
 | Branch | `fix/2426_run_start_intent` | <!-- --> |
 | Tasks | `tasks.md` | <!-- n/N complete --> |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Commits | acc1116b, 0df2aa79, 73f04013, 454d63d4 | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| The run records its intent | `framework/ai-sdlc/tests/test_run_start_intent.py` | pending |
-| An unknown intent is refused | `framework/ai-sdlc/tests/test_run_start_intent.py` | pending |
+| The run records its intent | `framework/ai-sdlc/tests/test_run_start_intent.py` | passing |
+| An unknown intent is refused | `framework/ai-sdlc/tests/test_run_start_intent.py` | passing |
 
 ## Permanent documentation updated
 
