@@ -65,7 +65,7 @@ slide. By Owner decision (#2407) that language is scoped to this diagram, in
   error color.
 - **Kinds.** Markers are drawn in CSS: an AI agent is a circle in `--line-agent` (#ee5a1b), a
   deterministic step a square in `--line-det` (#2b3139), and a human decision a diamond in
-  `--line-human` (#2453c2), with dark values. The kind is derived until the kit declares it (#2411).
+  `--line-human` (#2453c2), with dark values. The kind comes from the kit's `[[stages]]` `kind` (#2411); with an older kit the dashboard falls back to agents present, or merge.
 - **Token.** It sits on the rail over the running station and glides to the next one (600ms,
   `--ease-out`). The running lamp pulses. Nothing loops: motion only explains a state change, and
   reduced motion removes both.
