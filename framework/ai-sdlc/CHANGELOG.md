@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- `open_store` also git-ignores the SQLite side files `factory.db-wal`, `factory.db-shm` and `factory.db-journal`, so a live store never shows up as untracked files (#2439).
 - `aisdlc run start --intent ID` records the intent on the run and attaches the run to it, like `POST /factory/runs`; before, CLI runs never carried their intent (#2426).
 - `aisdlc line` and `GET /factory/line` stages always carry `agents`, `skills`, `mcp`, `tools`, `model`, `effort` and `guardrails` (grants of the stage), with empty values when nothing is configured; contract `factory-control` 1.4.0 (additive) (#2404).
 - Factory dashboard SSE events stream now carries the same security headers (CSP, X-Content-Type-Options, Referrer-Policy, Cache-Control) as other responses — previously skipped by `reply.hijack()` (#2405).
