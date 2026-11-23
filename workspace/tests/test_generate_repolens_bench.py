@@ -47,5 +47,39 @@ class GenerateRepoLensBenchTest(unittest.TestCase):
             self.assertEqual(data["headlines"]["tuning_recall"], "4.9x more")
 
 
+    # #2429: a Pages build must not rewrite the tracked snapshot when its data is unchanged.
+
+    def test_writing_unchanged_data_keeps_the_file_byte_identical(self):
+        mod = load_module()
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "repolens-bench-snapshot.json"
+            first = dict(mod.build(), generated_at="2026-01-01T00:00:00Z")
+            self.assertTrue(mod.write(first, out))
+            before = out.read_bytes()
+            second = dict(mod.build(), generated_at="2026-02-02T00:00:00Z")
+            self.assertFalse(mod.write(second, out))
+            self.assertEqual(before, out.read_bytes())
+
+    def test_changed_data_refreshes_generated_at(self):
+        mod = load_module()
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "repolens-bench-snapshot.json"
+            mod.write(dict(mod.build(), generated_at="2026-01-01T00:00:00Z"), out)
+            changed = dict(mod.build(), generated_at="2026-02-02T00:00:00Z", method="changed")
+            self.assertTrue(mod.write(changed, out))
+            data = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual("2026-02-02T00:00:00Z", data["generated_at"])
+            self.assertEqual("changed", data["method"])
+
+    def test_the_committed_snapshot_is_up_to_date(self):
+        mod = load_module()
+        committed = REPO / "github-page" / "lib" / "repolens-bench-snapshot.json"
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "repolens-bench-snapshot.json"
+            out.write_bytes(committed.read_bytes())
+            self.assertFalse(mod.write(mod.build(), out), "regenerate and commit the snapshot")
+            self.assertEqual(committed.read_bytes(), out.read_bytes())
+
+
 if __name__ == "__main__":
     unittest.main()

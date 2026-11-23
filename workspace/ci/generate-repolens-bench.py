@@ -8,6 +8,11 @@ factory-loop A/B table without inventing numbers. This script copies summaries f
 framework/repolens/bench/results/ into a typed snapshot the Next app can import
 offline. Headline factor labels reuse the same rounding as bench/report.py::_factor.
 
+The ``generated_at`` timestamp only changes when the underlying data changes (#2429).
+When the snapshot the script would write is identical to the existing file apart from
+the timestamp, the existing ``generated_at`` is preserved so the tracked file remains
+byte-identical and a Pages build does not dirty the git tree.
+
 USAGE
   python3 workspace/ci/generate-repolens-bench.py
   python3 workspace/ci/generate-repolens-bench.py --check   # validate existing snapshot
@@ -224,6 +229,25 @@ def validate(snap: dict) -> None:
         raise SystemExit(f"unexpected sonnet tool-call label: {snap['headlines']['sonnet_tool_calls']}")
 
 
+def write(snap: dict, path: Path) -> bool:
+    """Write *snap* to *path*; return False when the file already holds the same data.
+
+    The timestamp follows the data (#2429): when only `generated_at` would differ, the
+    existing file is left untouched, so a Pages build does not dirty the git tree.
+    """
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            existing = None
+        if isinstance(existing, dict) and "generated_at" in existing:
+            if {**snap, "generated_at": existing["generated_at"]} == existing:
+                return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(snap, indent=2) + "\n", encoding="utf-8")
+    return True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
@@ -236,9 +260,10 @@ def main() -> int:
         return 0
     snap = build()
     validate(snap)
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(snap, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {OUTPUT} ({len(snap['sources'])} sources)")
+    if write(snap, OUTPUT):
+        print(f"wrote {OUTPUT} ({len(snap['sources'])} sources)")
+    else:
+        print(f"unchanged {OUTPUT}")
     return 0
 
 
