@@ -119,5 +119,14 @@ class EnginesBehindTest(unittest.TestCase):
         self.assertEqual([], module.stale_results(folder, "0.7.0"))
 
 
+class SessionStartTest(unittest.TestCase):
+    def test_session_start_reports_evidence_freshness_and_never_blocks(self):
+        hook = REPO_ROOT / ".claude" / "hooks" / "session-start-openspec-status.sh"
+        result = subprocess.run(["bash", str(hook)], capture_output=True, text=True,
+                                env={**os.environ, "CLAUDE_PROJECT_DIR": str(REPO_ROOT)})
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("evidence:", result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
