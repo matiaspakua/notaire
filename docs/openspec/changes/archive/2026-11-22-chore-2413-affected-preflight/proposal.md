@@ -7,7 +7,7 @@
 |-------|-------|
 | GitHub Issue | #2413 |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure |
-| Branch | `chore/2413_affected_preflight` |
+| Branch | `chore/2413_change_aware_gate` |
 | Gate 1 status | passed |
 
 ## Objetivo

@@ -17,7 +17,7 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Issue | #2413 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/chore-2413-affected-preflight/` | written |
-| Branch | `chore/2413_affected_preflight` | created |
+| Branch | `chore/2413_change_aware_gate` | created |
 | Tasks | `tasks.md` | groups 1-8 complete |
 | Commits | 1cab9ea5, f54e928d, 42b21df5, c15e33a6, ef5ff310 | done |
 | Pull Request | #<!-- number --> | pending |
