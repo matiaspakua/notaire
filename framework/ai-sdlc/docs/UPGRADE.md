@@ -17,6 +17,12 @@ Breaking profile or CLI behaviour is deprecated for **one minor version** before
 Example: a field removed in `1.2.0` must have been warned as deprecated since at least `1.1.0`.
 Document removals in this file and in `CHANGELOG.md`.
 
+## Renamed files
+
+- **Unreleased (#2457):** `openapi/factory-control.openapi.yaml` → `openapi/aisdlc-factory.openapi.yaml`
+  (packaged as `aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml`). Paths and schemas are unchanged. A tool
+  that reads the file by path updates the path; `aisdlc contract show` always prints the current one.
+
 ## PyPI
 
 Publishing `aisdlc` to PyPI is an **Owner decision / non-goal** until explicitly asked

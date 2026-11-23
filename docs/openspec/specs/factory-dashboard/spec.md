@@ -2,29 +2,10 @@
 
 ## Purpose
 
-The factory dashboard is a client of the AI SDLC factory-control contract that serves several workspaces, users and
+The factory dashboard (AI SDLC Factory) is a client of the aisdlc factory contract that serves several workspaces, users and
 AI providers, coaches the local agent harnesses, and reaches a detached RepoLens.
+
 ## Requirements
-### Requirement: The dashboard reads and writes only through the factory-control contract
-
-The dashboard MUST obtain projects, runs, events, catalogs and capabilities from `aisdlc serve` and MUST send every
-write there with the signed-in user's token, the CSRF header and `If-Match`. It MUST NOT write profile files itself
-and MUST NOT show a run as running unless the kit reports it.
-
-#### Scenario: a catalog edit
-
-- **WHEN** a signed-in user saves an agent
-- **THEN** the dashboard sends `PUT /factory/catalogs/agents/{id}` with the user's bearer token, `X-AISDLC-CSRF` and `If-Match`, and writes no file
-
-#### Scenario: the kit is not reachable
-
-- **WHEN** the workspace's `aisdlc serve` does not answer
-- **THEN** the dashboard answers a problem with code `kit_unreachable` and the start command, and the UI shows the error state
-
-#### Scenario: no fabricated run
-
-- **WHEN** the kit reports no run
-- **THEN** the runs list is empty and the production line shows its empty state
 
 ### Requirement: One dashboard serves several workspaces
 
@@ -135,3 +116,33 @@ the toggle SHALL be hidden and the layout unchanged.
 - **WHEN** the page renders
 - **THEN** the collapse toggle is not visible
 
+### Requirement: The dashboard reads and writes only through the aisdlc factory contract
+
+The dashboard MUST obtain projects, runs, events, catalogs and capabilities from `aisdlc serve` and MUST send every
+write there with the signed-in user's token, the CSRF header and `If-Match`. It MUST NOT write profile files itself
+and MUST NOT show a run as running unless the kit reports it.
+
+#### Scenario: a catalog edit
+
+- **WHEN** a signed-in user saves an agent
+- **THEN** the dashboard sends `PUT /factory/catalogs/agents/{id}` with the user's bearer token, `X-AISDLC-CSRF` and `If-Match`, and writes no file
+
+#### Scenario: the kit is not reachable
+
+- **WHEN** the workspace's `aisdlc serve` does not answer
+- **THEN** the dashboard answers a problem with code `kit_unreachable` and the start command, and the UI shows the error state
+
+#### Scenario: no fabricated run
+
+- **WHEN** the kit reports no run
+- **THEN** the runs list is empty and the production line shows its empty state
+
+### Requirement: The dashboard is branded AI SDLC Factory
+
+The dashboard SHALL name itself **AI SDLC Factory** in the page title, the app name of every locale and its server
+start message. It SHALL NOT use the name of another factory product.
+
+#### Scenario: the app name in both locales
+
+- **WHEN** the UI renders in English or Spanish
+- **THEN** the app name is `AI SDLC Factory`

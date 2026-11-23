@@ -105,7 +105,7 @@ Made `intent_id` the unifying tracker across all factory data:
 
 ---
 
-## 5. Bidirectional Factory Control
+## 5. Bidirectional factory controls
 
 ### 5.1. Control Bar Component
 `ControlBar.tsx` (96 lines) — transport-agnostic control surface with:

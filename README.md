@@ -196,7 +196,7 @@ plan, failing tests first, gates and evidence:
 
 - **Kit** — [`framework/ai-sdlc/`](framework/ai-sdlc/README.md): stack-agnostic `aisdlc` CLI and
   HTTP contract, with intents, runs, workflows, catalogs, gates and a hash-chained evidence ledger.
-- **Factory Control** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
+- **AI SDLC Factory** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
   the factory drawn as a production line. Each station shows its gates and cost, plus what the
   run's steps received and produced.
 - **RepoLens** — [`framework/repolens/`](framework/repolens/): the code knowledge graph agents use to

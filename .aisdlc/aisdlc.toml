@@ -106,7 +106,7 @@ file = ".aisdlc/flags.json"
 
 # Owner-only paths: the policy, the gates, the merge path and the harness. Agents may propose a
 # change to them; the Owner merges it (CONSTITUTION §5 step 21, §10 Roles). The merge gate below
-# turns that sentence into an exit code (agentic-os C14-004; factory-control protectedPaths).
+# turns that sentence into an exit code: agents cannot change their own rules.
 [protected]
 owner = "the Owner (CODEOWNERS)"
 paths = [
@@ -136,7 +136,7 @@ exclude = [
   "frontend/eslint-suppressions.json",
 ]
 
-# Write set (Notaire audit S2; agentic-os C15-006): the proposal's "### Write set" lists the paths
+# Write set (Notaire audit S2): the proposal's "### Write set" lists the paths
 # the change may touch. The archive folds deltas into docs/openspec/specs/, so those always pass.
 [scope]
 heading = "Write set"

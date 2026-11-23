@@ -80,7 +80,7 @@ flowchart TD
 
 ## 3. Production Output & Technology Stack
 
-The official **AI Engineer Coach** analyzer evaluated local code generation across workspaces (notaire, factory-control, hand2notes, sk3, etc.):
+The official **AI Engineer Coach** analyzer evaluated local code generation across workspaces (notaire, hand2notes, sk3, etc.):
 
 ```mermaid
 xychart-beta

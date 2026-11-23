@@ -1,4 +1,4 @@
-"""Factory control OpenAPI 3.1.0 contract (#2136)."""
+"""aisdlc factory OpenAPI 3.1.0 contract (#2136)."""
 from __future__ import annotations
 
 import sys
@@ -17,6 +17,11 @@ class FactoryContractTest(unittest.TestCase):
     def test_contract_is_openapi_3_1_0_with_required_paths(self):
         errors = self.contract.validate_contract(KIT)
         self.assertEqual([], errors)
+
+    def test_contract_lives_under_the_kit_name(self):
+        self.assertEqual("openapi/aisdlc-factory.openapi.yaml", self.contract.CONTRACT_REL)
+        self.assertTrue((KIT / self.contract.CONTRACT_REL).is_file())
+        self.assertEqual([], [p.name for p in (KIT / "openapi").glob("*.yaml") if p.name.startswith("factory-")])
 
     def test_contract_does_not_import_product_openapi(self):
         text = self.contract.load_contract_text(KIT)

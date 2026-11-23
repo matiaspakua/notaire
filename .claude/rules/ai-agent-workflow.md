@@ -53,7 +53,7 @@ If an open PR shows `CONFLICTING`/`DIRTY`, fix it before starting other work.
 
 ## Decisions, deviations, corrections and risk
 
-Adopted from the cross-repo assessment (2026-11, `docs/300-development/306-ai-sdlc-framework/CROSS-ASSESSMENT-2026-11.md`).
+Adopted from the cross-repo assessment (2026-11, `docs/000-archive/300-development/306-ai-sdlc-framework/CROSS-ASSESSMENT-2026-11.md`).
 
 **Decision packet.** When you need the Owner, stop and send one packet, not a chat thread:
 

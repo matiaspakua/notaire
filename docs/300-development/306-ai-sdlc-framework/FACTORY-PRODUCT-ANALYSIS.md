@@ -26,7 +26,7 @@ more block reuse outside Notaire:
 
 1. **The UIs have no host.** `framework/ai-sdlc/aisdlc/contract.py` states the kit hosts no
    server, and the CLI has no `serve` command. Phases B-D say "adapters over CLI/OpenAPI", but
-   nothing implements the HTTP paths that `openapi/factory-control.openapi.yaml` declares.
+   nothing implements the HTTP paths that `openapi/aisdlc-factory.openapi.yaml` declares.
 2. **Runs and projects do not exist as entities.** Phase D asks to "create project", "start run"
    and "monitor progress". The contract has no Project, Run or RunRequest schema, and
    `aisdlc foreman plan|route` is routing-only by design (`aisdlc/adopt.py`, #2196). Nothing
@@ -67,7 +67,7 @@ at lines 293 and 324.
 | F1 | No HTTP/UI host in the kit | `contract.py` docstring; no `serve` in the `cli.py` subparsers | Phase B cannot start without an invented host; two agents will invent two |
 | F2 | Logic and IO are mixed | `workflows.create`, `list_workflows` and `show` print and return an exit code (`-> int`); `catalogs.list_entries`, `show` and `history` already return dicts | A UI/HTTP adapter would have to scrape stdout. The service layer must return data; the CLI formats |
 | F3 | Workflow body is thin and unpinned | `workflows.py` `body = {...}` id lists; `_resolve_refs` checks existence only | An `approved` workflow silently changes meaning when a skill or agent gets a new version |
-| F4 | No Project/Run/RunRequest | `openapi/factory-control.openapi.yaml` paths: config, plugins, harness, report, catalogs (`{kind}`, `{kind}/{id}`, `{kind}/{id}/versions`), workflows (`/`, `{id}`, `{id}/transitions`) | Phase D has no contract to implement |
+| F4 | No Project/Run/RunRequest | `openapi/aisdlc-factory.openapi.yaml` paths: config, plugins, harness, report, catalogs (`{kind}`, `{kind}/{id}`, `{kind}/{id}/versions`), workflows (`/`, `{id}`, `{id}/transitions`) | Phase D has no contract to implement |
 | F5 | Concurrent writers | Catalogs are files; version allocation is `version + 1` (`catalogs.py:293`, `:324`). UI, CLI and agents can write the same entity | Lost update unless writes carry the expected version or digest (verify with a two-writer test) |
 | F6 | Actor identity on writes | Axiom 4: authority comes from token and channel, never the body | The HTTP host must derive the actor from a token scope; no `actor` field in any request body |
 | F7 | Packaging | No `pyproject.toml`; `__version__ = "1.0.0"`; `install` copies the directory | No semver pinning, no upgrade notes, no provenance |

@@ -76,7 +76,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("doctor", help="validate the profile and report what its level still lacks")
 
-    p = sub.add_parser("contract", help="factory control OpenAPI 3.1.0 contract (#2136)")
+    p = sub.add_parser("contract", help="aisdlc factory OpenAPI 3.1.0 contract (#2136)")
     contract_sub = p.add_subparsers(dest="action", required=True)
     contract_sub.add_parser("show", help="print the path of the factory OpenAPI document")
     contract_sub.add_parser("check", help="validate OpenAPI 3.1.0 structure and required paths")

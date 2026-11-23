@@ -1,4 +1,4 @@
-/** HTTP clients for the two contracts the dashboard speaks: `aisdlc serve` (factory control) and RepoLens. */
+/** HTTP clients for the two contracts the dashboard speaks: `aisdlc serve` (the factory contract) and RepoLens. */
 
 export interface Problem {
   type: string;

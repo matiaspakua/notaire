@@ -6,7 +6,7 @@ try {
   const app = buildApp({ config });
   await app.listen({ host: config.host, port: config.port });
   const names = config.workspaces.map((ws) => ws.label).join(", ");
-  console.log(`Factory Control on http://${config.host}:${config.port} (workspaces: ${names})`);
+  console.log(`AI SDLC Factory on http://${config.host}:${config.port} (workspaces: ${names})`);
 } catch (error) {
   if (error instanceof ConfigError) {
     console.error(`factory-dashboard: ${error.message}`);

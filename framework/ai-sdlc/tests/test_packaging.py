@@ -102,7 +102,7 @@ class PackagingTest(unittest.TestCase):
     def test_wheel_carries_kit_data_and_no_tests_or_adopter_paths(self):
         names = zipfile.ZipFile(self.wheel).namelist()
         for expected in ("aisdlc/_kit/templates/project/aisdlc.toml", "aisdlc/_kit/profiles/java-maven.toml",
-                         "aisdlc/_kit/openapi/factory-control.openapi.yaml", "aisdlc/_kit/bin/aisdlc",
+                         "aisdlc/_kit/openapi/aisdlc-factory.openapi.yaml", "aisdlc/_kit/bin/aisdlc",
                          "aisdlc/cli.py"):
             self.assertIn(expected, names)
         self.assertEqual([], [n for n in names if "/tests/" in n or n.startswith("tests/")])

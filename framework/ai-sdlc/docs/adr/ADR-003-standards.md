@@ -13,7 +13,7 @@ OFREP and the numeric error-code list are not verified against a pinned OpenFeat
 ## OpenAPI
 
 This CLI has no HTTP server. The factory still publishes an **OpenAPI 3.1.0** control
-description at `openapi/factory-control.openapi.yaml` (#2136) so CLI JSON payloads and any
+description at `openapi/aisdlc-factory.openapi.yaml` (#2136) so CLI JSON payloads and any
 future HTTP adapter share one contract. OAS 3.2 is not used. The adopter application API
 description stays outside the kit and is never imported.
 

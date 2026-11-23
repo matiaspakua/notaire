@@ -3,7 +3,7 @@ import { createContext, useContext } from "react";
 export type Lang = "en" | "es";
 
 const en = {
-  "app.name": "Factory Control",
+  "app.name": "AI SDLC Factory",
   "nav.overview": "Production line",
   "nav.metrics": "Metrics",
   "nav.views": "Views",
@@ -375,7 +375,7 @@ const en = {
 export type Key = keyof typeof en;
 
 const es: Record<Key, string> = {
-  "app.name": "Factory Control",
+  "app.name": "AI SDLC Factory",
   "nav.overview": "Línea de producción",
   "nav.metrics": "Métricas",
   "nav.views": "Vistas",

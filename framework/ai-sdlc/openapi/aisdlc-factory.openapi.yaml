@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: AI SDLC factory control surface
+  title: AI SDLC factory surface
   version: 1.8.0
   description: |
-    Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
+    Contract for factory operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
     application API description. One OpenAPI tree only.
     Phase A (#2239) adds immutable entity revisions and workflow governance.

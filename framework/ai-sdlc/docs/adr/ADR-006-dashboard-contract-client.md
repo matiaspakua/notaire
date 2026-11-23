@@ -28,7 +28,7 @@ nothing else:
 
 | Contract | What the dashboard uses |
 |----------|-------------------------|
-| `openapi/factory-control.openapi.yaml` (`aisdlc serve`) | every `/factory/*` read and write |
+| `openapi/aisdlc-factory.openapi.yaml` (`aisdlc serve`) | every `/factory/*` read and write |
 | RepoLens HTTP API (`repolens serve`) | `search`, `orphans`, `metrics`, `stats`, `usage` (read only) |
 
 It never opens a file of a workspace. The kit stays the system of record and enforces scope,
