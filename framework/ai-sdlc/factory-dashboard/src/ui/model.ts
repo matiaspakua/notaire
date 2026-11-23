@@ -359,3 +359,9 @@ export function isSafeLink(url: string): boolean {
     return false;
   }
 }
+
+/** The intent the bar shows: the current run's, else the most recently submitted one (#2447). */
+export function pickIntent(intentId: string | null | undefined, entries: Intent[]): Intent | null {
+  if (intentId) return entries.find((i) => i.id === intentId) ?? null;
+  return [...entries].sort((x, y) => (y.created_at ?? "").localeCompare(x.created_at ?? ""))[0] ?? null;
+}
