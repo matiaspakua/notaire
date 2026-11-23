@@ -1,4 +1,4 @@
-"""Factory control OpenAPI 3.1.0 contract (#2136)."""
+"""aisdlc factory OpenAPI 3.1.0 contract (#2136)."""
 from __future__ import annotations
 
 import sys

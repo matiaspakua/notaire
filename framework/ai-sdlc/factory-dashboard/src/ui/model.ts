@@ -1,4 +1,4 @@
-/** Shapes of the aisdlc serve contract (openapi/factory-control.openapi.yaml) the UI reads. */
+/** Shapes of the aisdlc serve contract (openapi/aisdlc-factory.openapi.yaml) the UI reads. */
 
 export interface Capabilities {
   approvals_live: boolean;

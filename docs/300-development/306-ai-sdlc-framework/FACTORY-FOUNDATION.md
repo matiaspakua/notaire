@@ -138,7 +138,7 @@ Lifecycle (#2135): `aisdlc install|update|uninstall` copies the kit, scaffolds a
 idempotently, and uninstalls kit-managed paths only (`--purge` for scaffold/evidence). Never writes
 `frontend/`, `backend-api/`, or product OpenAPI paths.
 
-TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort (`aisdlc/flags.py`, #2137) loads JSON/flagd flags in-process; required gates and PR ceilings stay fail-closed. Factory control OpenAPI 3.1.0 lives under `framework/ai-sdlc/openapi/` (#2136); no HTTP server was added. A manifest path check is not a sandbox.
+TelemetryPort (`aisdlc/telemetry.py`, #2125): off by default; optional OpenTelemetry NoOp path when enabled with `exporter = "none"`; prompts/diffs/secrets redacted; lead-time/cost hooks on stage and cost records. FeatureFlagPort (`aisdlc/flags.py`, #2137) loads JSON/flagd flags in-process; required gates and PR ceilings stay fail-closed. The aisdlc factory OpenAPI 3.1.0 contract lives under `framework/ai-sdlc/openapi/` (#2136); no HTTP server was added. A manifest path check is not a sandbox.
 
 Catalogs CRUD (#2139): `aisdlc catalog` manages skills/MCP/agents/memory JSON entries under `[catalogs] dir` with digests; list/validate never execute. Memory packs may be referenced from `[context].memory` and participate in `aisdlc budget` (#2186); unknown packs fail closed.
 

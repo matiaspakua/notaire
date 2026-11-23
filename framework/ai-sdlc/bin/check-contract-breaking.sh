@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Compare factory-control.openapi.yaml to a base file with oasdiff (#2136).
+# Compare aisdlc-factory.openapi.yaml to a base file with oasdiff (#2136).
 # Usage: check-contract-breaking.sh <base.yaml> [head.yaml]
 set -euo pipefail
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BASE="${1:?base OpenAPI file required}"
-HEAD="${2:-$KIT/openapi/factory-control.openapi.yaml}"
+HEAD="${2:-$KIT/openapi/aisdlc-factory.openapi.yaml}"
 ACCEPT="$KIT/openapi/accepted-breaking-changes.d"
 
 if ! command -v oasdiff >/dev/null 2>&1; then

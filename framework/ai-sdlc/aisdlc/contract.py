@@ -1,6 +1,6 @@
-"""Factory control OpenAPI 3.1.0 contract (#2136).
+"""aisdlc factory OpenAPI 3.1.0 contract (#2136).
 
-The document under `openapi/factory-control.openapi.yaml` describes CLI JSON payloads
+The document under `openapi/aisdlc-factory.openapi.yaml` describes CLI JSON payloads
 and the ``aisdlc serve`` HTTP adapter (#2253). The kit does not import the adopter's
 product OpenAPI. Breaking changes are checked with oasdiff when installed; accepted
 breaks live in `openapi/accepted-breaking-changes.d/`.
@@ -13,7 +13,7 @@ from pathlib import Path
 from aisdlc.kitroot import kit_root
 
 KIT_ROOT = kit_root()
-CONTRACT_REL = "openapi/factory-control.openapi.yaml"
+CONTRACT_REL = "openapi/aisdlc-factory.openapi.yaml"
 ACCEPT_DIR_REL = "openapi/accepted-breaking-changes.d"
 REQUIRED_PATHS = (
     "/factory/capabilities",
