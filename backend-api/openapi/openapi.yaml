@@ -234,6 +234,14 @@ components:
       - name
       - value
       type: object
+    ConfirmRequest:
+      properties:
+        code:
+          minLength: 1
+          type: string
+      required:
+      - code
+      type: object
     CopyRequest:
       properties:
         datePrinting:
@@ -405,6 +413,13 @@ components:
           format: int32
           type: integer
       type: object
+    DisableRequest:
+      properties:
+        code:
+          type: string
+        recoveryCode:
+          type: string
+      type: object
     DocumentTypeRef:
       properties:
         deliveredBy:
@@ -445,6 +460,16 @@ components:
           type: integer
       required:
       - name
+      type: object
+    DtoArchivedManagement:
+      properties:
+        idManagement:
+          format: int32
+          type: integer
+        pendingBalance:
+          type: number
+        pendingDebtAtArchiving:
+          type: boolean
       type: object
     DtoAuditRecord:
       properties:
@@ -943,6 +968,22 @@ components:
           format: int32
           type: integer
       type: object
+    DtoHistoryEntry:
+      properties:
+        date:
+          format: date-time
+          type: string
+        idHistory:
+          format: int32
+          type: integer
+        notes:
+          type: string
+        statusManagementId:
+          format: int32
+          type: integer
+        statusManagementName:
+          type: string
+      type: object
     DtoHistorySummary:
       properties:
         date:
@@ -1122,6 +1163,44 @@ components:
         procedureCount:
           format: int32
           type: integer
+      type: object
+    DtoManagementWorkflowTrace:
+      properties:
+        currentStatus:
+          type: string
+        dateStart:
+          format: date-time
+          type: string
+        heading:
+          type: string
+        history:
+          items:
+            $ref: '#/components/schemas/DtoHistoryEntry'
+          type: array
+        managementId:
+          format: int32
+          type: integer
+        nodeStatuses:
+          additionalProperties:
+            type: string
+          type: object
+        nodes:
+          items:
+            $ref: '#/components/schemas/DtoWorkflowNode'
+          type: array
+        number:
+          format: int32
+          type: integer
+        testimonyMovements:
+          items:
+            $ref: '#/components/schemas/DtoTestimonyMovementEntry'
+          type: array
+        transitions:
+          items:
+            $ref: '#/components/schemas/DtoWorkflowTransition'
+          type: array
+        workflowDefinition:
+          $ref: '#/components/schemas/DtoWorkflowDefinition'
       type: object
     DtoPaymentResponse:
       properties:
@@ -1553,6 +1632,20 @@ components:
           format: int32
           type: integer
       type: object
+    DtoTestimonyMovementEntry:
+      properties:
+        dateEntry:
+          format: date-time
+          type: string
+        dateExit:
+          format: date-time
+          type: string
+        dateRegistration:
+          format: date-time
+          type: string
+        returnedObserved:
+          type: boolean
+      type: object
     DtoTransitionRequest:
       properties:
         statusDestination:
@@ -1692,6 +1785,13 @@ components:
         workflowDefinitionId:
           format: int32
           type: integer
+      type: object
+    EnrollmentStartResponse:
+      properties:
+        otpauthUri:
+          type: string
+        secret:
+          type: string
       type: object
     ErrorResponse:
       properties:
@@ -1914,6 +2014,28 @@ components:
           format: int32
           type: integer
       type: object
+    LoginMfaRequest:
+      properties:
+        code:
+          type: string
+        mfaToken:
+          minLength: 1
+          type: string
+        recoveryCode:
+          type: string
+      required:
+      - mfaToken
+      type: object
+    LoginPerson:
+      properties:
+        firstName:
+          type: string
+        idPerson:
+          format: int32
+          type: integer
+        lastName:
+          type: string
+      type: object
     LoginRequest:
       properties:
         name:
@@ -1925,6 +2047,35 @@ components:
       required:
       - name
       - password
+      type: object
+    LoginResponse: {}
+    LoginSuccessResponse:
+      allOf:
+      - $ref: '#/components/schemas/LoginResponse'
+      - properties:
+          idUser:
+            format: int32
+            type: integer
+          name:
+            type: string
+          person:
+            $ref: '#/components/schemas/LoginPerson'
+          status:
+            type: boolean
+          token:
+            type: string
+          type:
+            type: string
+          valid:
+            type: boolean
+          version:
+            format: int32
+            type: integer
+        type: object
+    LogoutResponse:
+      properties:
+        ok:
+          type: boolean
       type: object
     ManagementRef:
       properties:
@@ -2001,6 +2152,27 @@ components:
       required:
       - name
       type: object
+    ManagementSummaryDto:
+      properties:
+        currentStatus:
+          type: string
+        id:
+          format: int32
+          type: integer
+      type: object
+    MfaChallengeResponse:
+      allOf:
+      - $ref: '#/components/schemas/LoginResponse'
+      - properties:
+          mfaEnrollmentRequired:
+            type: boolean
+          mfaRequired:
+            type: boolean
+          mfaToken:
+            type: string
+          valid:
+            type: boolean
+        type: object
     NotaryRef:
       properties:
         firstName:
@@ -2053,6 +2225,38 @@ components:
         content:
           items:
             $ref: '#/components/schemas/BudgetResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    PageCopyResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/CopyResponse'
           type: array
         empty:
           type: boolean
@@ -2176,11 +2380,11 @@ components:
           format: int32
           type: integer
       type: object
-    PageSubmittedDocumentResponse:
+    PageDtoPaymentResponse:
       properties:
         content:
           items:
-            $ref: '#/components/schemas/SubmittedDocumentResponse'
+            $ref: '#/components/schemas/DtoPaymentResponse'
           type: array
         empty:
           type: boolean
@@ -2213,70 +2417,6 @@ components:
         content:
           items:
             $ref: '#/components/schemas/DtoTestimonyMovement'
-          type: array
-        empty:
-          type: boolean
-        first:
-          type: boolean
-        last:
-          type: boolean
-        number:
-          format: int32
-          type: integer
-        numberOfElements:
-          format: int32
-          type: integer
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        size:
-          format: int32
-          type: integer
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        totalElements:
-          format: int64
-          type: integer
-        totalPages:
-          format: int32
-          type: integer
-      type: object
-    PageCopyResponse:
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/CopyResponse'
-          type: array
-        empty:
-          type: boolean
-        first:
-          type: boolean
-        last:
-          type: boolean
-        number:
-          format: int32
-          type: integer
-        numberOfElements:
-          format: int32
-          type: integer
-        pageable:
-          $ref: '#/components/schemas/PageableObject'
-        size:
-          format: int32
-          type: integer
-        sort:
-          $ref: '#/components/schemas/SortObject'
-        totalElements:
-          format: int64
-          type: integer
-        totalPages:
-          format: int32
-          type: integer
-      type: object
-    PageDtoPaymentResponse:
-      properties:
-        content:
-          items:
-            $ref: '#/components/schemas/DtoPaymentResponse'
           type: array
         empty:
           type: boolean
@@ -2341,6 +2481,38 @@ components:
         content:
           items:
             $ref: '#/components/schemas/ProcedureResponse'
+          type: array
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          format: int32
+          type: integer
+        numberOfElements:
+          format: int32
+          type: integer
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        size:
+          format: int32
+          type: integer
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        totalElements:
+          format: int64
+          type: integer
+        totalPages:
+          format: int32
+          type: integer
+      type: object
+    PageSubmittedDocumentResponse:
+      properties:
+        content:
+          items:
+            $ref: '#/components/schemas/SubmittedDocumentResponse'
           type: array
         empty:
           type: boolean
@@ -2713,6 +2885,13 @@ components:
           type: integer
         volumeFolioLandRecord:
           type: string
+      type: object
+    RecoveryCodesResponse:
+      properties:
+        recoveryCodes:
+          items:
+            type: string
+          type: array
       type: object
     RegisterRequest:
       properties:
@@ -3137,6 +3316,15 @@ components:
       - destinationNodeId
       - originNodeId
       type: object
+    WorkflowValidationResponse:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+        valid:
+          type: boolean
+      type: object
 info:
   contact:
     email: info@licensis.com
@@ -3285,19 +3473,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DeedResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DeedResponse'
           description: Invalid request
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DeedResponse'
           description: Folio not found
       summary: Start an auxiliary-protocol deed on an available folio
       tags:
@@ -3330,18 +3518,27 @@ paths:
           content:
             '*/*':
               schema:
+                additionalProperties:
+                  format: int32
+                  type: integer
                 type: object
           description: Created
         '400':
           content:
             '*/*':
               schema:
+                additionalProperties:
+                  format: int32
+                  type: integer
                 type: object
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
+                additionalProperties:
+                  format: int32
+                  type: integer
                 type: object
           description: Conflict
       summary: Create budget template
@@ -3387,16 +3584,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete budget template
       tags:
@@ -3424,10 +3613,6 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
       summary: Update budget template
       tags:
@@ -3775,19 +3960,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoConcept'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoConcept'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoConcept'
           description: Conflict
       summary: Create concept
       tags:
@@ -3825,16 +4010,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete concept
       tags:
@@ -3881,28 +4058,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Invalid request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update concept
       tags:
@@ -3931,15 +4092,8 @@ paths:
       - Concepts
   /api/v1/copies:
     get:
+      description: 'Parameters: page (default 0), size (default 20), sort (for example idCopy,desc)'
       operationId: getAll_19
-      responses:
-        '200':
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PageCopyResponse'
-          description: OK
-      summary: Get copies, one page at a time
       parameters:
       - description: Zero-based page index (0..N)
         in: query
@@ -3957,16 +4111,25 @@ paths:
           default: 20
           minimum: 1
           type: integer
-      - description: 'Sorting criteria in the format: property,(asc|desc). Default is idCopy,desc.'
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
         in: query
         name: sort
         required: false
         schema:
           default:
-          - idCopy,desc
+          - idCopy,DESC
           items:
             type: string
           type: array
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageCopyResponse'
+          description: OK
+      summary: Get copies, one page at a time
       tags:
       - Copy
     post:
@@ -3982,19 +4145,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CopyResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CopyResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CopyResponse'
           description: Conflict
       summary: Create copy
       tags:
@@ -4310,19 +4473,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CostTemplateResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CostTemplateResponse'
           description: Invalid request
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/CostTemplateResponse'
           description: Procedure type or document not found
       summary: Define the fixed or variable cost of a document type in a procedure type template
       tags:
@@ -4377,19 +4540,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoDocumentType'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoDocumentType'
           description: Bad request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoDocumentType'
           description: Conflict
       summary: Create a new document type
       tags:
@@ -4427,16 +4590,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete document type
       tags:
@@ -4483,28 +4638,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Bad request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update document type
       tags:
@@ -4559,19 +4698,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoFolioType'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoFolioType'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoFolioType'
           description: Conflict
       summary: Create folio type
       tags:
@@ -4609,16 +4748,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete folio type
       tags:
@@ -4665,28 +4796,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Invalid request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update folio type
       tags:
@@ -4791,16 +4906,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete folio
       tags:
@@ -4850,19 +4957,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/FolioResponse'
           description: OK
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/FolioResponse'
           description: Not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/FolioResponse'
           description: Conflict
       summary: Update folio
       tags:
@@ -4945,19 +5052,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoHistorySummary'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoHistorySummary'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoHistorySummary'
           description: Conflict
       summary: Create a history record
       tags:
@@ -5086,19 +5193,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/IdentificationTypeResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/IdentificationTypeResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/IdentificationTypeResponse'
           description: Conflict
       summary: Create identification type
       tags:
@@ -5203,19 +5310,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ItemResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ItemResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ItemResponse'
           description: Conflict
       summary: Create item
       tags:
@@ -5368,19 +5475,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementStatus'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementStatus'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementStatus'
           description: Conflict
       summary: Create management status
       tags:
@@ -5418,16 +5525,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete management status
       tags:
@@ -5474,28 +5573,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Invalid request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update management status
       tags:
@@ -5577,19 +5660,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementResponse'
           description: Bad request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementResponse'
           description: Conflict
       summary: CU02 - Create a new management
       tags:
@@ -5633,7 +5716,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementSummary'
           description: OK
       summary: CU02 - Create a management with its required dependencies
       tags:
@@ -5727,6 +5810,8 @@ paths:
           description: Status mutation rejected — use POST /{id}/transition
         '404':
           description: Not found
+        '500':
+          description: Unexpected server error
       summary: CU53 - Update a management
       tags:
       - Managements
@@ -5751,19 +5836,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoArchivedManagement'
           description: Management archived
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoArchivedManagement'
           description: Management not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoArchivedManagement'
           description: Unresolved waiting procedure folders (CU85); confirm to archive
       summary: CU16 - Archive a management, warning and recording pending debt (RF-22, RF-37); cascades to CU85 procedure
         folders
@@ -5847,7 +5932,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementSummary'
           description: OK
       summary: CU02/CU53 - Update a management with its required dependencies
       tags:
@@ -6122,19 +6207,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementSummaryDto'
           description: Transition applied
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementSummaryDto'
           description: Transition not valid for the procedure-type workflow
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ManagementSummaryDto'
           description: Management not found
       summary: CU83 - Transition management status validating the defined workflow
       tags:
@@ -6157,23 +6242,120 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementWorkflowTrace'
           description: OK
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementWorkflowTrace'
           description: Management has no procedures or workflow definition
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoManagementWorkflowTrace'
           description: Management not found
       summary: Get workflow trace for a management (nodes, transitions, history, node statuses)
       tags:
       - Managements
+  /api/v1/mfa/disable:
+    post:
+      operationId: disable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisableRequest'
+        required: true
+      responses:
+        '204':
+          description: MFA disabled
+        '400':
+          description: Wrong code (counts toward lockout)
+        '401':
+          description: Not authenticated
+        '404':
+          description: No confirmed enrolment
+        '429':
+          description: Account temporarily locked
+      summary: Disable TOTP; requires a current TOTP or an unused recovery code
+      tags:
+      - MFA
+  /api/v1/mfa/enrollment:
+    post:
+      operationId: begin
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EnrollmentStartResponse'
+          description: Secret and otpauth URI, shown once
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EnrollmentStartResponse'
+          description: Not authenticated
+        '409':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EnrollmentStartResponse'
+          description: Already enrolled
+        '429':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EnrollmentStartResponse'
+          description: Account temporarily locked
+      summary: Begin TOTP enrolment (also reachable with the enrolment-scoped login token)
+      tags:
+      - MFA
+  /api/v1/mfa/enrollment/confirm:
+    post:
+      operationId: confirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecoveryCodesResponse'
+          description: Enrolment confirmed; recovery codes shown once
+        '400':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecoveryCodesResponse'
+          description: Wrong code (counts toward lockout)
+        '401':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecoveryCodesResponse'
+          description: Not authenticated
+        '404':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecoveryCodesResponse'
+          description: Enrolment not begun
+        '429':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecoveryCodesResponse'
+          description: Account temporarily locked
+      summary: Confirm TOTP enrolment with a current code
+      tags:
+      - MFA
   /api/v1/notebooks:
     get:
       operationId: getAllNotebooks
@@ -6202,25 +6384,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/NotebookResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/NotebookResponse'
           description: Invalid request
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/NotebookResponse'
           description: Notary or folio not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/NotebookResponse'
           description: A notebook already exists with that number for the year and notary
       summary: Create a notebook from ten consecutive folios
       tags:
@@ -6281,6 +6463,7 @@ paths:
       - Notebooks
   /api/v1/payments:
     get:
+      description: 'Parameters: page (default 0), size (default 20), sort (for example idPayment,desc)'
       operationId: getAll_9
       parameters:
       - description: Zero-based page index (0..N)
@@ -6299,13 +6482,14 @@ paths:
           default: 20
           minimum: 1
           type: integer
-      - description: 'Sorting criteria in the format: property,(asc|desc). Default is idPayment,desc.'
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
         in: query
         name: sort
         required: false
         schema:
           default:
-          - idPayment,desc
+          - idPayment,DESC
           items:
             type: string
           type: array
@@ -6597,19 +6781,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Conflict
       summary: Create new person
       tags:
@@ -6668,16 +6852,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete person
       tags:
@@ -6727,25 +6903,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: OK
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Invalid request
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PersonResponse'
           description: Conflict
       summary: Update person
       tags:
@@ -6825,19 +7001,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureFolder'
           description: Folder put on hold
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureFolder'
           description: Reason not provided
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureFolder'
           description: Folder not found
       summary: CU85 - Put a procedure folder on hold; a reason is required
       tags:
@@ -7029,19 +7205,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: Conflict
       summary: Create procedure type
       tags:
@@ -7079,16 +7255,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete procedure type
       tags:
@@ -7135,28 +7303,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Invalid request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update procedure type
       tags:
@@ -7204,25 +7356,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: OK
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: 'Empty or invalid body: workflowDefinitionId is required (an integer, or null to unassign)'
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: Procedure type or workflow not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoProcedureType'
           description: The selected workflow is not active
       summary: Assign or unassign a workflow on a procedure type
       tags:
@@ -7279,25 +7431,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: 'Invalid request: idProcedureType is required'
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: Reference not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: Conflict
       summary: Create procedure
       tags:
@@ -7367,20 +7519,26 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: OK
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: 'Empty or incomplete body: idProcedureType is required'
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/ProcedureResponse'
           description: Procedure or reference not found
+        '500':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProcedureResponse'
+          description: Unexpected server error
       summary: Update procedure
       tags:
       - Procedures
@@ -7412,19 +7570,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PropertyResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PropertyResponse'
           description: Invalid request (the cadastral designation is missing)
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/PropertyResponse'
           description: Conflict
       summary: Create property
       tags:
@@ -7511,25 +7669,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Registration draft generated
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Incomplete cadastral or registry data, or the deed is not signed
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Deed not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: The deed already has a registration draft
       summary: CU82 - Generate the registration draft for a deed on a property
       tags:
@@ -7581,19 +7739,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Observation recorded
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: The registration draft is not submitted
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Registration draft not found
       summary: CU82 - Record an observation issued by the registry
       tags:
@@ -7619,19 +7777,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Final registration recorded
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: The registration draft is not submitted
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Registration draft not found
       summary: CU82 - Record the final registration of the registration draft
       tags:
@@ -7657,19 +7815,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Submission recorded
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: The registration draft is not in status Generada
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoRegistrationDraft'
           description: Registration draft not found
       summary: CU82 - Record the registration draft submission to the registry
       tags:
@@ -8212,19 +8370,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/RoleResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/RoleResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/RoleResponse'
           description: Conflict
       summary: Create role
       tags:
@@ -8268,8 +8426,20 @@ paths:
           content:
             '*/*':
               schema:
+                additionalProperties:
+                  format: int32
+                  type: integer
                 type: object
-          description: OK
+          description: Assigned
+        '404':
+          content:
+            '*/*':
+              schema:
+                additionalProperties:
+                  format: int32
+                  type: integer
+                type: object
+          description: Role or user not found
       summary: Assign role to a user
       tags:
       - Roles
@@ -8361,15 +8531,8 @@ paths:
       - Roles
   /api/v1/submitted-documents:
     get:
+      description: 'Parameters: page (default 0), size (default 20), sort (for example idSubmittedDocument,desc)'
       operationId: getAll_4
-      responses:
-        '200':
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/PageSubmittedDocumentResponse'
-          description: OK
-      summary: Get submitted documents, one page at a time
       parameters:
       - description: Zero-based page index (0..N)
         in: query
@@ -8387,16 +8550,25 @@ paths:
           default: 20
           minimum: 1
           type: integer
-      - description: 'Sorting criteria in the format: property,(asc|desc). Default is idSubmittedDocument,desc.'
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
         in: query
         name: sort
         required: false
         schema:
           default:
-          - idSubmittedDocument,desc
+          - idSubmittedDocument,DESC
           items:
             type: string
           type: array
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageSubmittedDocumentResponse'
+          description: OK
+      summary: Get submitted documents, one page at a time
       tags:
       - SubmittedDocument
     post:
@@ -8412,25 +8584,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubmittedDocumentResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubmittedDocumentResponse'
           description: Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day)
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubmittedDocumentResponse'
           description: Document type or procedure not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubmittedDocumentResponse'
           description: Conflict
       summary: Create submitted document
       tags:
@@ -8563,19 +8735,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubstitutionResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubstitutionResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/SubstitutionResponse'
           description: Conflict
       summary: Create substitution
       tags:
@@ -8674,25 +8846,25 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimony'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimony'
           description: Invalid request (the deed or its idDeed is missing)
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimony'
           description: Deed not found
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimony'
           description: Conflict
       summary: Create testimony
       tags:
@@ -8744,22 +8916,10 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'The testimony has registry movements or issued copies (issue #1364)'
       summary: Delete testimony
       tags:
@@ -8809,28 +8969,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'Empty or incomplete body: number, flagged, verified, and version are required'
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the testimony'
       summary: Update testimony
       tags:
@@ -8870,6 +9014,7 @@ paths:
       - Testimony
   /api/v1/testimony-movements:
     get:
+      description: 'Parameters: page (default 0), size (default 20), sort (for example idTestimonyMovement,desc)'
       operationId: getAll_1
       parameters:
       - description: Zero-based page index (0..N)
@@ -8888,13 +9033,14 @@ paths:
           default: 20
           minimum: 1
           type: integer
-      - description: 'Sorting criteria in the format: property,(asc|desc). Default is idTestimonyMovement,desc. Allowed: idTestimonyMovement, dateEntry, dateExit, dateRegistration.'
+      - description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort
+          criteria are supported.'
         in: query
         name: sort
         required: false
         schema:
           default:
-          - idTestimonyMovement,desc
+          - idTestimonyMovement,DESC
           items:
             type: string
           type: array
@@ -8921,19 +9067,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimonyMovement'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimonyMovement'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoTestimonyMovement'
           description: Conflict
       summary: Create testimony movement
       tags:
@@ -9094,16 +9240,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete testimony movement
       tags:
@@ -9150,28 +9288,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Invalid request
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update testimony movement
       tags:
@@ -9204,19 +9326,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/UserResponse'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/UserResponse'
           description: Invalid request
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/UserResponse'
           description: Conflict
       summary: Create user
       tags:
@@ -9235,15 +9357,51 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
-          description: OK (see the 'valid' field for the result)
+                oneOf:
+                - $ref: '#/components/schemas/LoginSuccessResponse'
+                - $ref: '#/components/schemas/MfaChallengeResponse'
+          description: OK (see 'valid'); when 'mfaRequired' or 'mfaEnrollmentRequired' is true no session is issued and 'mfaToken'
+            is a short-lived scoped token
         '429':
           content:
             '*/*':
               schema:
-                type: object
+                oneOf:
+                - $ref: '#/components/schemas/LoginSuccessResponse'
+                - $ref: '#/components/schemas/MfaChallengeResponse'
           description: Account temporarily locked after failed attempts
       summary: Authenticate user
+      tags:
+      - Users
+  /api/v1/users/login/mfa:
+    post:
+      description: Takes the 'mfaToken' returned by /login and either 'code' (TOTP) or 'recoveryCode'. Wrong codes count toward
+        the same lockout as wrong passwords.
+      operationId: loginMfa
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginMfaRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/LoginSuccessResponse'
+                - $ref: '#/components/schemas/MfaChallengeResponse'
+          description: OK (see 'valid'); the session is issued only when true
+        '429':
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/LoginSuccessResponse'
+                - $ref: '#/components/schemas/MfaChallengeResponse'
+          description: Account temporarily locked after failed attempts
+      summary: Complete a login with a TOTP or recovery code
       tags:
       - Users
   /api/v1/users/logout:
@@ -9256,8 +9414,7 @@ paths:
           content:
             '*/*':
               schema:
-                additionalProperties: {}
-                type: object
+                $ref: '#/components/schemas/LogoutResponse'
           description: Token revoked (if any) and auth cookie cleared
       summary: Sign out (revokes the presented token and clears the HttpOnly cookie)
       tags:
@@ -9376,19 +9533,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowDefinition'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowDefinition'
           description: 'Invalid request: name is required'
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowDefinition'
           description: Conflict
       summary: Create workflow
       tags:
@@ -9405,17 +9562,11 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
+        '409':
+          description: Workflow has associated nodes
       summary: Delete workflow
       tags:
       - Workflow Definition
@@ -9461,28 +9612,12 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'Invalid request: name is required'
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
         '409':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'version is not the stored one: another user modified the record'
       summary: Update workflow
       tags:
@@ -9502,8 +9637,7 @@ paths:
           content:
             '*/*':
               schema:
-                additionalProperties: {}
-                type: object
+                $ref: '#/components/schemas/WorkflowValidationResponse'
           description: OK
       summary: Validate the consistency of a workflow
       tags:
@@ -9522,20 +9656,20 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowNode'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowNode'
           description: 'Invalid request: workflowDefinitionId, statusManagementId and type (INITIAL, INTERMEDIATE or FINAL)
             are required'
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowNode'
           description: Conflict
       summary: Create node in a workflow
       tags:
@@ -9574,17 +9708,11 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
+        '409':
+          description: Node has associated transitions
       summary: Delete node
       tags:
       - Workflow Node
@@ -9630,23 +9758,11 @@ paths:
         required: true
       responses:
         '200':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: OK
         '400':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: 'Invalid request: provide at least type, positionX, or positionY; type must be INITIAL, INTERMEDIATE,
             or FINAL'
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Update node
       tags:
@@ -9665,19 +9781,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: Created
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: 'Invalid request: workflowDefinitionId, originNodeId and destinationNodeId are required'
         '409':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: Conflict
       summary: Create a transition between two nodes
       tags:
@@ -9716,16 +9832,8 @@ paths:
           type: integer
       responses:
         '204':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Deleted
         '404':
-          content:
-            '*/*':
-              schema:
-                type: object
           description: Not found
       summary: Delete transition
       tags:
@@ -9775,19 +9883,19 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: OK
         '400':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: 'Invalid request: originNodeId and destinationNodeId are required'
         '404':
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/DtoWorkflowTransition'
           description: Not found
       summary: Update transition
       tags:
@@ -9800,6 +9908,8 @@ servers:
 tags:
 - description: API for generating PDF reports
   name: Reports
+- description: TOTP second-factor enrolment for the signed-in user
+  name: MFA
 - description: API to manage document types
   name: DocumentType
 - description: API for managing folio

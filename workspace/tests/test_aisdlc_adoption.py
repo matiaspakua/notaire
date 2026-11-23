@@ -113,6 +113,14 @@ class WiringTest(unittest.TestCase):
         self.assertIn("aisdlc --profile .aisdlc/aisdlc.toml skills", runs)
         self.assertIn("python3 -m unittest discover -s framework/ai-sdlc/tests", runs)
 
+    def test_main_health_has_origin_main_for_base_scoped_tests(self):
+        """#2440: on a tag run the checkout had no origin/main, so the signal and committer tests failed."""
+        steps = process_steps("main-health")
+        checkout = next(step for step in steps if str(step.get("uses", "")).startswith("actions/checkout"))
+        self.assertEqual(0, (checkout.get("with") or {}).get("fetch-depth"))
+        runs = "\n".join(step.get("run", "") for step in steps)
+        self.assertIn("refs/remotes/origin/main", runs)
+
     def test_main_health_runs_kit_tests_and_skills_lint(self):
         runs = "\n".join(step.get("run", "") for step in process_steps("main-health"))
         self.assertIn("aisdlc --profile .aisdlc/aisdlc.toml skills", runs)

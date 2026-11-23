@@ -50,7 +50,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           echo "Running tests to generate JaCoCo reports..."
-          if ! mvn clean test jacoco:report -pl backend-api -am -q; then
+          if ! mvn clean test -pl backend-api -q; then
             echo "::warning::mvn test failed -- coverage snapshot will fall back to last deployed values"
           fi
 
