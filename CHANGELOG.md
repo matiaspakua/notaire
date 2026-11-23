@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0](https://github.com/matiaspakua/notaire/compare/v0.10.0...v0.11.0) (2026-11-23)
+
+
+### Features
+
+* **aisdlc:** tdd checks test-before-code order and honours waiver labels (Refs [#2458](https://github.com/matiaspakua/notaire/issues/2458)) ([ca53b2f](https://github.com/matiaspakua/notaire/commit/ca53b2f9a564f7c389c28f60417b9504e5335574))
+* **factory:** one command refreshes RepoLens benches, Pages snapshots and factory metrics; --check names stale evidence (Refs [#2469](https://github.com/matiaspakua/notaire/issues/2469)) ([7e7002d](https://github.com/matiaspakua/notaire/commit/7e7002d8f4007604da9f4a9b521313a51067f38c))
+* **factory:** session start says when RepoLens, aisdlc or their evidence are stale (Refs [#2469](https://github.com/matiaspakua/notaire/issues/2469)) ([c550f45](https://github.com/matiaspakua/notaire/commit/c550f45c0eab8d00b4e152d8a48ca8ac4debd354))
+* **repolens:** doc_factor ranks docs and styles lower when a question asks for code ([93bbebd](https://github.com/matiaspakua/notaire/commit/93bbebd51d31f02a04650a6515939d19d0ecfb6e)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** retrieval bench results record the RepoLens version that produced them (Refs [#2469](https://github.com/matiaspakua/notaire/issues/2469)) ([b76441a](https://github.com/matiaspakua/notaire/commit/b76441a53aa47c23f3ebb4986c1ec61629595152))
+* **repolens:** the explorer API returns stage timings, the agent's answer and classified benchmarks ([de68659](https://github.com/matiaspakua/notaire/commit/de68659e3ae1cad46347efb31c25b9d16755cf22)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** the explorer explains each answer and shows what repolens changes ([66e1537](https://github.com/matiaspakua/notaire/commit/66e1537805baf956f4e0b610d000e640fbbf472f)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** the usage hook sees Bash queries and searches and skips reads outside the repository ([e46b49a](https://github.com/matiaspakua/notaire/commit/e46b49ab96f02acc7b73333026cc0836c8f9b67a)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+
+
+### Bug Fixes
+
+* **aisdlc:** size counts a renamed file by its edits ([d5417f1](https://github.com/matiaspakua/notaire/commit/d5417f1166fdc19d217fd71e158a6a6164f0fb99)), closes [#2466](https://github.com/matiaspakua/notaire/issues/2466)
+* **factory:** re-measured bench headlines validate by form, and the tuning set keeps its chart names (Refs [#2469](https://github.com/matiaspakua/notaire/issues/2469)) ([32efd2d](https://github.com/matiaspakua/notaire/commit/32efd2d41df97a896cadc2f15fdc8d25c093d9d4))
+* **pages:** release history shows the 0.10.0 release ([ff659a2](https://github.com/matiaspakua/notaire/commit/ff659a271408dcebef569e5f1e8cee59293de4e3)), closes [#2464](https://github.com/matiaspakua/notaire/issues/2464)
+* **repolens:** benchmark task paths follow the module's new location ([1b13659](https://github.com/matiaspakua/notaire/commit/1b136595c293e652626b574156bd97aadfa69e2f)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** the bench report skips an agent run that recorded no session ([b853454](https://github.com/matiaspakua/notaire/commit/b8534547579481ebb95b9203ceb556772001bd56)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** the bench summary has one blank line after the headline chart (MD012) ([dc3fd8f](https://github.com/matiaspakua/notaire/commit/dc3fd8fbc253c44df48e714dc4ae1041968c3749)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **repolens:** warming the query model and reloading the engine take the query lock ([0f547a4](https://github.com/matiaspakua/notaire/commit/0f547a43d7d4ae3d114a8c68e46efc751528b8f6)), closes [#2452](https://github.com/matiaspakua/notaire/issues/2452)
+* **test:** check the live repository against its own release tag ([986ffe0](https://github.com/matiaspakua/notaire/commit/986ffe0bd111840357710f438e59dab23c14c339)), closes [#2453](https://github.com/matiaspakua/notaire/issues/2453)
+
 ## [0.10.0](https://github.com/matiaspakua/notaire/compare/v0.9.0...v0.10.0) (2026-11-23)
 
 
