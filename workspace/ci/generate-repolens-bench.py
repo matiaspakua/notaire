@@ -212,17 +212,18 @@ def build() -> dict:
     }
 
 
+# report.py::_factor labels: "5.0x more", "41x faster", "+12%", "same".
+HEADLINE_LABEL = re.compile(r"same|[+-]\d+%|\d+(\.\d)?x (more|faster|less|fewer|worse)")
+
 def validate(snap: dict) -> None:
     required = ("generated_at", "method", "sources", "headlines", "retrieval", "agents", "factoryLoop")
     for key in required:
         if key not in snap:
             raise SystemExit(f"snapshot missing {key}")
-    if snap["headlines"]["tuning_recall"] != "5.0x more":
-        raise SystemExit(f"unexpected tuning_recall label: {snap['headlines']['tuning_recall']}")
-    if snap["headlines"]["holdout_recall"] != "2.6x more":
-        raise SystemExit(f"unexpected holdout_recall label: {snap['headlines']['holdout_recall']}")
-    if snap["headlines"]["latency"] != "41x faster":
-        raise SystemExit(f"unexpected latency label: {snap['headlines']['latency']}")
+    # Re-measuring changes the numbers (#2469): check each headline is a factor label, not a fixed value.
+    for key in ("tuning_recall", "holdout_recall", "latency"):
+        if not HEADLINE_LABEL.fullmatch(snap["headlines"][key]):
+            raise SystemExit(f"unexpected {key} label: {snap['headlines'][key]}")
     if snap["headlines"]["bytes"] != "89x less":
         raise SystemExit(f"unexpected bytes label: {snap['headlines']['bytes']}")
     if snap["headlines"]["sonnet_tool_calls"] != "2.0x fewer":

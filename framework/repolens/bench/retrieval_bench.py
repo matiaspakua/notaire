@@ -106,8 +106,11 @@ def score(files: list[str], expected: list[str]) -> dict:
 
 def result_meta(spec: dict, k: int, taskset: str) -> dict:
     """What produced a result: the corpus commit and the RepoLens version, so stale results can be found."""
-    return {"k": k, "corpus": spec.get("name"), "commit": head(spec), "repolens_version": REPOLENS_VERSION,
+    meta = {"k": k, "corpus": spec.get("name"), "commit": head(spec), "repolens_version": REPOLENS_VERSION,
             "tasks": len(spec["tasks"]), "taskset": taskset}
+    if "chart_tag" in spec:  # keeps a task set's historical chart file names (report.py::_chart_tag)
+        meta["chart_tag"] = spec["chart_tag"]
+    return meta
 
 def main() -> int:
     ap = argparse.ArgumentParser()
