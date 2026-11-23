@@ -153,6 +153,36 @@ class FactoryMetricsTest(unittest.TestCase):
         # 1h cache writes cost 2x input: 10*4 + 100*20 + 1000*0.2 + 200*8 per million.
         self.assertAlmostEqual((40 + 2000 + 200 + 1600) / 1e6, row["usd"])
 
+    def test_foreman_usage_across_runs_is_split_and_overhead_is_kept(self):
+        self.ok("run", "start", "--project", "web", "--workflow", "feature", "--id", "r2")
+        for event in (("--event", "run.started"), ("--event", "step.started", "--step", "red"),
+                      ("--event", "step.finished", "--step", "red", "--step-status", "pass"),
+                      ("--event", "run.finished", "--ok", "true")):
+            self.ok("harness", "report", "--run", "r2", "--adapter", "local-worker", *event)
+        events = {r: json.loads(self.ok("run", "events", "--id", r, "--json").stdout)["events"] for r in ("r1", "r2")}
+        span = {r: (_parse(e[0]["ts"]), _parse(e[-1]["ts"])) for r, e in events.items()}
+        lines = []
+        def message(request: str, at: datetime) -> dict:
+            usage = {"input_tokens": 100, "output_tokens": 10, "cache_read_input_tokens": 0,
+                     "cache_creation_input_tokens": 0}
+            return {"timestamp": at.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                    "requestId": request, "message": {"id": request, "model": "claude-test", "usage": usage}}
+        lines.append(message("only-r1", span["r1"][0] + (span["r1"][1] - span["r1"][0]) / 2))
+        lines.append(message("between", span["r1"][1] + (span["r2"][0] - span["r1"][1]) / 2))
+        self.repo.write("claude/s.jsonl", "\n".join(json.dumps(x) for x in lines) + "\n")
+        imported = json.loads(self.ok("usage", "import", "--source", "claude-code", "--path", "claude",
+                                      "--all-runs", "--json").stdout)
+        by_run = {(r["run"], r["step"]): r for r in imported["rows"]}
+        self.assertEqual(100, by_run[("r1", "foreman")]["input"])
+        self.assertEqual(100, by_run[(None, "overhead")]["input"])
+        report = json.loads(self.ok("metrics", "factory", "--usage", "none.jsonl", "--bench-dir", "none",
+                                    "--json").stdout)
+        self.assertEqual(100, report["overall"]["overhead"]["tokens"]["input"])
+        self.assertEqual(200, report["overall"]["tokens"]["input"])
+        again = json.loads(self.ok("usage", "import", "--source", "claude-code", "--path", "claude",
+                                   "--all-runs", "--json").stdout)
+        self.assertEqual(0, again["recorded"])
+
     def test_factory_metrics_answer_time_cost_and_repolens_per_intent(self):
         start, end = self.window("red")
         self.junie_log(start, 1000, 200, 5000)
