@@ -25,12 +25,6 @@ public class ApiRateWindow {
     protected ApiRateWindow() {
     }
 
-    public ApiRateWindow(String bucketKey, Instant windowStart) {
-        this.bucketKey = bucketKey;
-        this.windowStart = windowStart;
-        this.requestCount = 1;
-    }
-
     public Instant getWindowStart() {
         return windowStart;
     }

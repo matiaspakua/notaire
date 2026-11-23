@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,6 +23,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class ApiRateLimitFilter extends OncePerRequestFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(ApiRateLimitFilter.class);
+
     private final ApiRequestQuota quota;
     private final Supplier<Instant> clock;
 
@@ -35,6 +39,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         Instant now = clock.get();
         String key = key(request);
         if (!quota.allow(key, now)) {
+            String keyType = key.contains(":") ? key.substring(0, key.indexOf(':')) : key;
+            log.warn("API rate limit exceeded: keyType={} path={}", keyType, request.getRequestURI());
             response.setStatus(429);
             response.setHeader("Retry-After", Long.toString(quota.retryAfterSeconds(key, now)));
             return;
