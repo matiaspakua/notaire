@@ -40,6 +40,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | agent benches are opt-in | `test_refresh_factory_evidence.py::test_agent_and_history_are_opt_in` | pending |
 | results from an older RepoLens are stale | `test_refresh_factory_evidence.py::test_result_from_another_version_is_stale` | pending |
 | an engine behind origin/main is stale | `test_refresh_factory_evidence.py::test_engine_behind_origin_main_is_stale` | pending |
+| a new latency factor validates | `workspace/tests/test_generate_repolens_bench.py::test_validate_accepts_any_well_formed_headline_label` | passing |
+| a malformed headline is rejected | `test_generate_repolens_bench.py::test_validate_rejects_a_malformed_headline_label` | passing |
+| the tuning set keeps its chart names | `framework/repolens/tests/test_bench_meta.py::test_a_task_set_chart_tag_is_carried_into_the_result` | passing |
+| (session start) | `workspace/tests/test_refresh_factory_evidence.py::SessionStartTest` | passing |
 | everything current | `test_refresh_factory_evidence.py::test_current_engines_and_results_pass` | pending |
 
 ## Permanent documentation updated

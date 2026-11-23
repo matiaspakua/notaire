@@ -57,6 +57,8 @@ Stamp bench results with `repolens_version`. Add `workspace/ci/refresh-factory-e
 
 - `workspace/ci/refresh-factory-evidence.py`
 - `workspace/tests/test_refresh_factory_evidence.py`
+- `workspace/ci/generate-repolens-bench.py`
+- `workspace/tests/test_generate_repolens_bench.py`
 - `framework/repolens/bench/**`
 - `framework/repolens/tests/**`
 - `framework/repolens/CHANGELOG.md`

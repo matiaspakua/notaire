@@ -51,3 +51,25 @@ report and never block.
 - **GIVEN** stamped results at the current version and engines level with `origin/main`
 - **WHEN** `--check` runs
 - **THEN** it exits 0
+
+### Requirement: A re-measured bench refreshes without manual edits
+
+The Pages bench snapshot SHALL accept any headline that is a factor label (`5.0x more`, `41x faster`, `+12%`,
+`same`) and reject anything else. A task set that declares `chart_tag` SHALL pass it into its results, so the bench
+report keeps the task set's chart file names.
+
+#### Scenario: a new latency factor validates
+
+- **WHEN** the latency headline changes from `41x faster` to `42x faster` after a refresh
+- **THEN** the snapshot validates
+
+#### Scenario: a malformed headline is rejected
+
+- **WHEN** a headline reads `fast!`
+- **THEN** validation fails
+
+#### Scenario: the tuning set keeps its chart names
+
+- **GIVEN** a task set with `chart_tag: ""`
+- **WHEN** its retrieval bench runs
+- **THEN** the result carries `chart_tag` and the report writes `retrieval-*.svg`
