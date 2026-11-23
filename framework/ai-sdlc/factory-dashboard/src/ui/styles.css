@@ -170,6 +170,7 @@ p code, li code {
   color: var(--text);
 }
 .num { font-variant-numeric: tabular-nums; }
+.table td.num { white-space: nowrap; }
 .muted { color: var(--text-secondary); }
 .faint { color: var(--text-faint); }
 .small { font-size: var(--text-xs); }
