@@ -8,11 +8,10 @@ import {
   Background,
   Controls,
   MiniMap,
-  applyNodeChanges,
   type Node,
   type Edge,
   type Connection,
-  type NodeChange,
+  type NodeChangeset,
   type ReactFlowInstance,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -144,8 +143,8 @@ export default function WorkflowEditorPage() {
   }, [flow, fitTick, nodes.length]);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      const next = applyNodeChanges(changes, nodes);
+    (changes: NodeChangeset) => {
+      const next = changes.applyTo(nodes);
       setLocal((prev) => {
         const out = { ...prev };
         for (const n of next) out[n.id] = { position: n.position, dragging: n.dragging, measured: n.measured };
