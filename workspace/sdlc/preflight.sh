@@ -181,6 +181,13 @@ fi
 echo "affected suite groups: $AFFECTED"
 touches() { [ "$AFFECTED" = "all" ] || [[ " $AFFECTED " == *" $1 "* ]]; }
 not_affected() { skip "$1" "not affected by this branch; preflight.sh --all runs it"; }
+# A fresh worktree has no testing/e2e/node_modules; install before any e2e binary runs (#2442).
+ensure_e2e_deps() {
+    if [ ! -d testing/e2e/node_modules ]; then
+        echo "installing E2E suite deps (npm ci)…"
+        (cd testing/e2e && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
+    fi
+}
 
 # Mirrors: Branch Naming Convention Check (pr-validation.yml) — warn-only there too.
 if [[ "$BRANCH" =~ ^(main|develop|feature/|bugfix/|hotfix/|release/|cursor/|[0-9]+/(feat|fix|docs|refactor|ci|chore|perf|test|build|revert)/) ]] \
@@ -441,10 +448,7 @@ section "E2E suite (testing/e2e)"
 if ! touches testing; then
     not_affected "e2e typecheck / eslint"
 else
-if [ ! -d testing/e2e/node_modules ]; then
-    echo "installing E2E suite deps (npm ci)…"
-    (cd testing/e2e && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
-fi
+ensure_e2e_deps
 run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
 run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
 fi
@@ -529,6 +533,7 @@ if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
         run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
+        ensure_e2e_deps
         # Cursor (and some sandboxes) set PLAYWRIGHT_BROWSERS_PATH to an empty
         # cache dir; Chromium then fails to launch even when the user cache has
         # browsers. Drop an unusable override so Playwright uses its default.

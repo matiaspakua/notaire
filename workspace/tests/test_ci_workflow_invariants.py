@@ -137,6 +137,18 @@ class PageDeployWorkflowInvariantsTest(unittest.TestCase):
     def setUp(self):
         self.page = load_workflow(PAGE_WORKFLOW)
 
+    def test_page_deploy_coverage_build_does_not_call_jacoco_on_the_reactor_root(self):
+        """#2440: `jacoco:report -am` ran the goal on the root pom, which has no JaCoCo plugin.
+
+        backend-api binds `report` to the test phase, so `mvn test -pl backend-api` writes jacoco.xml.
+        """
+        runs = "\n".join(step.get("run", "") or "" for job in self.page["jobs"].values() for step in job["steps"])
+        mvn = [line for line in runs.splitlines() if "mvn " in line and "backend-api" in line]
+        self.assertTrue(mvn, "the deploy builds backend coverage")
+        for line in mvn:
+            self.assertNotIn("jacoco:report", line)
+            self.assertNotIn(" -am", line)
+
     def test_page_deploy_workflow_has_workflow_dispatch_trigger(self):
         self.assertIn("workflow_dispatch", trigger_types(self.page))
 

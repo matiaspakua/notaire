@@ -1,0 +1,71 @@
+# #2440: the committed spec was stale. These breaks describe behaviour already on main since the MFA
+# (#1640) and typed-response slices: the controllers no longer declare */* bodies for errors and empty
+# responses, and loose object bodies became typed schemas. The frontend reads the typed shapes through
+# src/types/api.generated.ts (regenerated in the same pull request); no working client changes.
+DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/folios/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/folios/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/people/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/people/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `409`
+DELETE /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/workflow-node/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/workflow-node/{id} removed the media type `*/*` for the response with the status `404`
+DELETE /api/v1/workflow-transition/{id} removed the media type `*/*` for the response with the status `204`
+DELETE /api/v1/workflow-transition/{id} removed the media type `*/*` for the response with the status `404`
+POST /api/v1/users/login added `#/components/schemas/LoginSuccessResponse, #/components/schemas/MfaChallengeResponse` to the response body `oneOf` list for the response status `200`
+POST /api/v1/users/login added `#/components/schemas/LoginSuccessResponse, #/components/schemas/MfaChallengeResponse` to the response body `oneOf` list for the response status `429`
+POST /api/v1/users/login the response's body `type` changed from `object` to `any` for status `200`
+POST /api/v1/users/login the response's body `type` changed from `object` to `any` for status `429`
+PUT /api/v1/budget-templates/procedure-types/{idProcedureType}/concept/{idConcept} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/concepts/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/document-types/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/folio-types/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/management-statuses/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/procedure-types/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/testimonies/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/testimony-movements/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `404`
+PUT /api/v1/workflow-definition/{id} removed the media type `*/*` for the response with the status `409`
+PUT /api/v1/workflow-node/{id} removed the media type `*/*` for the response with the status `200`
+PUT /api/v1/workflow-node/{id} removed the media type `*/*` for the response with the status `400`
+PUT /api/v1/workflow-node/{id} removed the media type `*/*` for the response with the status `404`
