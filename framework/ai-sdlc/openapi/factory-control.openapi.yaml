@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.6.0
+  version: 1.7.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -1532,6 +1532,41 @@ components:
         status:
           type: string
           description: pending|running|pass|fail|skip|todo — skip is never pass
+        stage:
+          type: string
+          description: Production-line stage of the step, from the workflow (#2410)
+        inputs:
+          $ref: "#/components/schemas/StepIO"
+        outputs:
+          $ref: "#/components/schemas/StepIO"
+    StepIO:
+      type: object
+      additionalProperties: false
+      description: >-
+        What a step received (inputs) or produced (outputs), recorded by `aisdlc harness report --io-file`
+        on step events and merged per step (#2435). Validated before it reaches the evidence ledger.
+      properties:
+        request: { type: string, maxLength: 4000 }
+        prompt: { type: string, maxLength: 20000 }
+        summary: { type: string, maxLength: 4000 }
+        files:
+          type: array
+          maxItems: 200
+          items: { type: string, maxLength: 512, description: Repository-relative path, no `..` }
+        commits:
+          type: array
+          maxItems: 200
+          items: { type: string, pattern: "^[0-9a-f]{7,40}$" }
+        links:
+          type: array
+          maxItems: 200
+          items:
+            type: object
+            additionalProperties: false
+            required: [url]
+            properties:
+              label: { type: string, maxLength: 200 }
+              url: { type: string, format: uri, pattern: "^https?://" }
     Run:
       type: object
       additionalProperties: true

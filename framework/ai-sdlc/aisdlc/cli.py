@@ -160,6 +160,8 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--budget-overrun", action="store_true")
     report.add_argument("--cancelled", action="store_true")
     report.add_argument("--blocked", action="store_true")
+    report.add_argument("--io-file", dest="io_file",
+                        help="JSON with the step's inputs and/or outputs (request, prompt, summary, files, commits, links)")
     report.add_argument("--json", action="store_true")
 
     p = sub.add_parser("gate", help="run every gate of a stage")
@@ -1881,6 +1883,16 @@ def _knowledge_cmd(ctx: Context, args: argparse.Namespace) -> int:
     return code
 
 
+def _read_io_file(root: Path, name: str) -> object:
+    path = Path(name)
+    if not path.is_absolute() and not path.is_file():
+        path = root / name
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise KitError("invalid_body", f"cannot read step io from {name}: {exc}") from exc
+
+
 def _harness(ctx: Context, args: argparse.Namespace) -> int:
     if args.action == "list":
         rows = harness.list_adapters(ctx.root, ctx.profile)
@@ -1899,6 +1911,7 @@ def _harness(ctx: Context, args: argparse.Namespace) -> int:
         if ok_raw is not None:
             ok = str(ok_raw).casefold() in {"1", "true", "yes"}
         try:
+            io = _read_io_file(ctx.root, args.io_file) if getattr(args, "io_file", None) else None
             view = harness.report_event(
                 ctx,
                 run_id=args.run,
@@ -1910,6 +1923,7 @@ def _harness(ctx: Context, args: argparse.Namespace) -> int:
                 budget_overrun=bool(getattr(args, "budget_overrun", False)),
                 cancelled=bool(getattr(args, "cancelled", False)),
                 blocked=bool(getattr(args, "blocked", False)),
+                io=io,
             )
         except KitError as exc:
             print(f"error: {exc.code}: {exc.detail}")

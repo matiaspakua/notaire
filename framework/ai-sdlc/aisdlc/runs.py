@@ -12,7 +12,7 @@ import json
 import secrets
 from pathlib import Path
 
-from aisdlc import evidence, projects, workflows
+from aisdlc import evidence, projects, step_io, workflows
 from aisdlc.actor import from_env
 from aisdlc.context import Context
 from aisdlc.errors import KitError
@@ -106,7 +106,8 @@ def derive_status(events: list[dict], steps: list[dict] | None = None) -> tuple[
         elif kind == "step.started":
             step_id = str(event.get("step") or "").strip()
             if step_id:
-                step_map[step_id] = {**step_map.get(step_id, {}), "id": step_id, "status": "running"}
+                step_map[step_id] = step_io.merge(
+                    {**step_map.get(step_id, {}), "id": step_id, "status": "running"}, event)
         elif kind == "step.finished":
             step_id = str(event.get("step") or "").strip()
             step_status = str(event.get("step_status") or "fail").strip().casefold()
@@ -114,7 +115,8 @@ def derive_status(events: list[dict], steps: list[dict] | None = None) -> tuple[
             if step_status == "pass" and event.get("skip"):
                 step_status = "skip"
             if step_id:
-                step_map[step_id] = {**step_map.get(step_id, {}), "id": step_id, "status": step_status}
+                step_map[step_id] = step_io.merge(
+                    {**step_map.get(step_id, {}), "id": step_id, "status": step_status}, event)
             if event.get("budget_overrun"):
                 blocked = True
         elif kind == "run.finished":
@@ -254,6 +256,7 @@ def append_harness_event(
     budget_overrun: bool = False,
     cancelled: bool = False,
     blocked: bool = False,
+    io: dict | None = None,
 ) -> dict:
     """Reference harness adapter: hash-chain-append a run lifecycle event."""
     if event not in RUN_KINDS or event == "run.request":
@@ -261,6 +264,9 @@ def append_harness_event(
             "invalid_body",
             f"harness event must be one of {', '.join(k for k in RUN_KINDS if k != 'run.request')}",
         )
+    clean_io = step_io.normalize(io) if io is not None else {}
+    if clean_io and (not event.startswith("step.") or not step):
+        raise KitError("invalid_body", "inputs and outputs belong to a step.started or step.finished event with --step")
     payload = show(ctx, run_id)
     record: dict = {
         "kind": event,
@@ -284,6 +290,7 @@ def append_harness_event(
         record["cancelled"] = True
     if blocked:
         record["blocked"] = True
+    record.update(clean_io)
     if event == "run.finished" and ok is None and not cancelled and not blocked:
         record["ok"] = True
 
