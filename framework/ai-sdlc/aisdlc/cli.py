@@ -568,6 +568,7 @@ def build_parser() -> argparse.ArgumentParser:
     rstart.add_argument("--project", required=True)
     rstart.add_argument("--workflow", required=True)
     rstart.add_argument("--id", help="optional run id")
+    rstart.add_argument("--intent", help="intent id the run delivers (#2426)")
     rstart.add_argument("--json", action="store_true")
     rlist = run_sub.add_parser("list", help="list runs with evidence-derived status")
     rlist.add_argument("--json", action="store_true")
@@ -1994,13 +1995,26 @@ def _run(ctx: Context, args: argparse.Namespace) -> int:
     as_json = bool(getattr(args, "json", False))
     try:
         if args.action == "start":
+            intent = getattr(args, "intent", None)
+            if intent:
+                from aisdlc import intent_model
+
+                try:
+                    intent_model.show_intent(ctx, intent)
+                except KitError as exc:
+                    if exc.code == "not_found":
+                        raise KitError("not_found", f"intent not found: {intent}") from exc
+                    raise
             view = runs.start(
                 ctx,
                 project_id=args.project,
                 workflow_id=args.workflow,
                 actor=from_env(channel="cli"),
                 run_id=getattr(args, "id", None),
+                intent=intent or None,
             )
+            if intent:
+                intent_model.attach_run(ctx, intent, view["id"])
         elif args.action == "list":
             view = runs.list_runs(ctx)
         elif args.action == "show":
