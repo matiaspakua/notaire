@@ -12,7 +12,7 @@
 
 ## Objetivo
 
-# 2440 pinned @xyflow/react 12 because 13 removed applyNodeChanges; the editor must move to the v13 change API so the dependency can be upgraded.
+Issue #2440 pinned @xyflow/react 12 because 13 removed applyNodeChanges; the editor must move to the v13 change API so the dependency can be upgraded.
 
 ## What Changes
 
