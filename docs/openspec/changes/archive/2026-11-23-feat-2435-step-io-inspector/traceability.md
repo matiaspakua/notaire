@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| a step records what it received and produced | test_step_io.py | pending |
-| an unsafe link is refused | test_step_io.py | pending |
-| inspecting a stage | test_step_io.py | pending |
+| a step records what it received and produced | test_step_io.py | passing |
+| an unsafe link is refused | test_step_io.py | passing |
+| inspecting a stage | test_step_io.py | passing |
 
 ## Permanent documentation updated
 

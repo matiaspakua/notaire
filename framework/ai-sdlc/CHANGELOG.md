@@ -18,6 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `aisdlc harness report --io-file` records what a step received and produced (`request`, `prompt`, `summary`, `files`, `commits`, `links`), validated before it reaches the ledger; run steps expose them and the dashboard's station detail shows them with repository links; contract `factory-control` 1.7.0 (additive) (#2435).
 - `aisdlc workflow edit --steps-file` and `PUT /factory/workflows/{id}` write a workflow's v2 steps, each with its line stage; runs keep each step's stage and `aisdlc status` reports it; contract `factory-control` 1.6.0 (additive) (#2410).
 - Factory dashboard Overview renders the line as a production-line diagram with station kinds, gate evidence states, correction loop, throughput, cost and an intent progress strip (#2407).
 - `[[stages]]` accepts `kind = "agent" | "deterministic" | "human"`; `aisdlc line` and `GET /factory/line` return `kind` for every stage, defaulting from the stage's agents and `merge`; contract `factory-control` 1.5.0 (additive) (#2411).
