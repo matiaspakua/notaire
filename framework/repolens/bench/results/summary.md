@@ -5,9 +5,9 @@
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 1,088 | 230.4 | n/a |
-| repolens hybrid (no graph) | 0.61 | 0.80 | 0.83 | 0.79 | 21 | 2.3 | 3.2 |
-| repolens graph | 0.63 | 0.77 | 0.96 | 0.84 | 28 | 2.4 | 3.3 |
+| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 1,034 | 230.4 | n/a |
+| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 25 | 2.4 | 3.3 |
+| repolens graph | 0.63 | 0.79 | 0.96 | 0.90 | 32 | 2.4 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
@@ -15,24 +15,24 @@
 | docs | 0.00 | 0.50 | 0.50 |
 | impact | 0.00 | 0.20 | 0.60 |
 | lexical | 0.78 | 0.89 | 0.89 |
-| multi-hop | 0.21 | 0.81 | 0.81 |
+| multi-hop | 0.21 | 0.81 | 0.88 |
 | tests | 0.50 | 1.00 | 1.00 |
 
 ### Retrieval, task set `notaire` (top-10 files, 11 tasks, commit 073e9776)
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,280 | 204.3 | n/a |
-| repolens hybrid (no graph) | 0.59 | 0.79 | 0.90 | 0.72 | 23 | 2.3 | 3.3 |
-| repolens graph | 0.67 | 0.89 | 0.94 | 0.79 | 30 | 2.3 | 3.2 |
+| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,147 | 204.3 | n/a |
+| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 26 | 2.3 | 3.3 |
+| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 28 | 2.3 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
 | cross-stack | 0.00 | 0.88 | 0.88 |
 | docs | 0.50 | 0.83 | 0.83 |
-| impact | 0.00 | 0.71 | 0.71 |
+| impact | 0.00 | 0.71 | 0.86 |
 | lexical | 0.00 | 0.83 | 1.00 |
-| multi-hop | 0.00 | 0.46 | 0.83 |
+| multi-hop | 0.00 | 0.58 | 0.83 |
 | tests | 0.50 | 1.00 | 1.00 |
 
 ### Agent: haiku, task set `notaire-holdout` (72 runs, 3 rep., $0.20 total)
