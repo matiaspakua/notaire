@@ -460,6 +460,11 @@ if [ ! -d github-page/node_modules ]; then
     echo "installing github-page deps (npm ci)…"
     (cd github-page && npm ci) >/dev/null 2>&1 || warn "npm ci failed (github-page)"
 fi
+# The demo build compiles the product frontend, so it needs frontend deps even when the frontend group is skipped.
+if [ ! -d frontend/node_modules ]; then
+    echo "installing frontend deps for the pages demo (npm ci)…"
+    (cd frontend && npm ci) >/dev/null 2>&1 || warn "npm ci failed (frontend, for the pages demo)"
+fi
 run "pages typecheck" bash -c "cd github-page && ./node_modules/.bin/tsc --noEmit"
 run "pages eslint" bash -c "cd github-page && ./node_modules/.bin/eslint ."
 if [ "$MODE_FAST" = "0" ]; then
@@ -481,9 +486,31 @@ fi
 # ---------------------------------------------------------------------------
 section "Server-backed suites"
 # ---------------------------------------------------------------------------
+STACK_READY=0
 if [ "$MODE_FULL" = "1" ] && ! touches stack; then
     not_affected "http integration / playwright e2e / bruno api / database v&v / docker build"
 elif [ "$MODE_FULL" = "1" ]; then
+    # One stack-backed run at a time: the lock belongs to this preflight run ($$) (#2414).
+    STACK_READY=1
+    if bash workspace/sdlc/stack_lock.sh acquire "$$"; then
+        trap 'bash workspace/sdlc/stack_lock.sh release "$$" >/dev/null 2>&1' EXIT
+    else
+        fail "server-backed suites: the shared Docker stack is busy (holder above); retry when it is free"
+        STACK_READY=0
+    fi
+    # A linked worktree has no .env (git-ignored); compose needs it, so borrow the main checkout's.
+    if [ "$STACK_READY" = "1" ] && [ ! -f "$REPO_ROOT/.env" ]; then
+        MAIN_ROOT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+        if [ -f "$MAIN_ROOT/.env" ]; then
+            cp "$MAIN_ROOT/.env" "$REPO_ROOT/.env"
+            echo "server-backed suites: copied .env from $MAIN_ROOT"
+        else
+            fail "server-backed suites: no .env here or in $MAIN_ROOT; create one from .env.example"
+            STACK_READY=0
+        fi
+    fi
+fi
+if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
     # A full run that reaches this point has already paid for Maven, Vitest and
     # the Pages build. Failing here because nothing is listening throws that
     # work away (registration-draft, 2026-11-18; #2374, 2026-11-20). Start the
@@ -540,16 +567,20 @@ elif [ "$MODE_FULL" = "1" ]; then
         run "docker compose build" docker compose build --no-cache
         # Server-backed suites above need workspace/stack/start.sh (same container
         # names as compose). Tear that stack down before smoke or `up -d` conflicts.
+        # Always run `docker compose down`, even when `up` fails (#2414).
         run "docker compose smoke test" bash -c \
             'docker compose down --remove-orphans 2>/dev/null || true
              for c in notary-postgres notary-backend notary-pgadmin notaire-frontend; do
                docker rm -f "$c" 2>/dev/null || true
              done
-             docker compose up -d && sleep 10 && docker compose ps && docker compose down'
+             _smoke_rc=0
+             docker compose up -d && sleep 10 && docker compose ps || _smoke_rc=$?
+             docker compose down
+             exit $_smoke_rc'
     else
         fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
-else
+elif [ "$MODE_FULL" = "0" ]; then
     skip "playwright e2e / bruno api / docker build" "not --full; this run is not sufficient to open a pull request"
 fi
 

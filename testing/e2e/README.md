@@ -23,3 +23,8 @@ NOTAIRE_API_RATE_LIMIT_MAX=20000 bash workspace/stack/start.sh --no-admin
 
 When running through `preflight.sh`, this is done automatically — the script
 exports `NOTAIRE_API_RATE_LIMIT_MAX=20000` before starting the stack.
+
+The server-backed section of `preflight.sh` uses an exclusive lock
+(`workspace/sdlc/stack_lock.sh`) so that only one run touches the shared Docker
+stack at a time.  If the worktree is missing a `.env` file, it is copied from
+the main checkout automatically.

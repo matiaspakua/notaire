@@ -76,5 +76,13 @@ class AffectedGroupsTest(unittest.TestCase):
         self.assertEqual("none", self.mod.render(set()))
 
 
+class PagesSectionTest(unittest.TestCase):
+    def test_the_pages_build_installs_the_frontend_deps_its_demo_needs(self):
+        text = (Path(__file__).resolve().parents[2] / "workspace" / "sdlc" / "preflight.sh").read_text(encoding="utf-8")
+        pages = text[text.index('section "GitHub Pages app (github-page)"'):text.index('section "Server-backed suites"')]
+        self.assertIn("frontend/node_modules", pages)
+        self.assertLess(pages.index("frontend/node_modules"), pages.index("npm run build:demo"))
+
+
 if __name__ == "__main__":
     unittest.main()
