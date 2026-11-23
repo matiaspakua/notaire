@@ -74,7 +74,9 @@ The production-line diagram marks each station as an AI agent, a deterministic s
 - `framework/ai-sdlc/factory-dashboard/src/ui/model.ts`
 - `framework/ai-sdlc/factory-dashboard/src/ui/line-model.ts`
 - `framework/ai-sdlc/factory-dashboard/tests/line-model.test.ts`
+- `framework/ai-sdlc/factory-dashboard/DESIGN.md`
 - `docs/openspec/changes/feat-2411-stage-kind/**`
+- `docs/openspec/changes/archive/**feat-2411-stage-kind/**`
 - `docs/openspec/specs/aisdlc-production-line/spec.md`
 
 ### Architecture review

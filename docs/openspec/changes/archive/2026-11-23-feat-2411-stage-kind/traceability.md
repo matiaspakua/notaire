@@ -16,10 +16,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 |------|-----------|--------|
 | Issue | #2411 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
-| Specification | `docs/openspec/changes/feat-2411-stage-kind/` | drafted |
-| Branch | `feat/2411_stage_kind` | created |
-| Tasks | `tasks.md` | 0/10 complete |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Specification | `docs/openspec/changes/feat-2411-stage-kind/` | written |
+| Branch | `feat/2411_line_stage_kind` | created |
+| Tasks | `tasks.md` | groups 1-8 complete |
+| Commits | 1b648557, e2644063, 5d7b23cf, 7eb16b7c, f936343f, 1feef790, 994a41e6, f852a5da | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -35,7 +35,13 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| <!-- scenario name --> | <!-- test class / spec file --> | <!-- pending / passing --> |
+| declared kind is returned in the line | `framework/ai-sdlc/tests/test_stage_kind.py` `test_declared_kind_is_returned_in_line` | passing |
+| default kind is "agent" when stage has agents | `framework/ai-sdlc/tests/test_stage_kind.py` `test_default_kind_agent_when_agents_present` | passing |
+| default kind is "human" when stage id is "merge" | `framework/ai-sdlc/tests/test_stage_kind.py` `test_default_kind_human_for_merge` | passing |
+| default kind is "deterministic" for other stages | `framework/ai-sdlc/tests/test_stage_kind.py` `test_default_kind_deterministic_for_other_stages` | passing |
+| invalid kind is a profile error | `framework/ai-sdlc/tests/test_stage_kind.py` `test_invalid_kind_raises_profile_error` | passing |
+| stage_dicts includes kind | `framework/ai-sdlc/tests/test_stage_kind.py` `test_stage_dicts_includes_kind` | passing |
+| gate-only stage with no agents gets deterministic default | `framework/ai-sdlc/tests/test_stage_kind.py` `test_gate_only_stage_gets_deterministic` | passing |
 
 ## Permanent documentation updated
 
