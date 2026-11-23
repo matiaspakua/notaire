@@ -9,6 +9,7 @@ permission:
     "git *": allow
     "grep *": allow
     "mvn *": allow
+model: sonnet
 ---
 
 # Security Auditor Agent — Notaire

@@ -3,6 +3,7 @@ name: efficiency_config_agent
 description: Primary coding agent for Notaire. Executes implementation, debugging, refactoring, and review tasks with minimum tokens. Enforces the mandatory CONSTITUTION.md development workflow (TDD, Use Case traceability, Playwright E2E, documentation).
 argument-hint: concrete coding task, bug fix, or refactor with issue number
 tools: ['read', 'edit', 'search', 'execute', 'todo']
+model: sonnet
 ---
 
 # Notaire — Primary Coding Agent
