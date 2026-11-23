@@ -1,6 +1,6 @@
 # factory-dashboard
 
-**Purpose:** Factory Control, an optional web dashboard over one or more AI SDLC factories. A Node companion
+**Purpose:** AI SDLC Factory, an optional web dashboard over one or more AI SDLC factories. A Node companion
 of the kit, outside its stdlib-only core: it speaks only the `aisdlc serve` contract and the RepoLens HTTP API
 (ADR-006), for many workspaces, users and repositories.
 
@@ -15,7 +15,7 @@ of the kit, outside its stdlib-only core: it speaks only the `aisdlc serve` cont
 
 ## Seams (what this module reads from outside)
 
-- Only HTTP: `aisdlc serve` (`openapi/factory-control.openapi.yaml`) and `repolens serve`
+- Only HTTP: `aisdlc serve` (`openapi/aisdlc-factory.openapi.yaml`) and `repolens serve`
 
 ## Must not
 

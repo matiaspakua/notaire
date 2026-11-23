@@ -2,7 +2,7 @@
   "name": "@aisdlc/factory-dashboard",
   "version": "0.2.0",
   "private": true,
-  "description": "Factory Control: an optional, multi-workspace dashboard over the aisdlc serve contract and RepoLens",
+  "description": "AI SDLC Factory: an optional, multi-workspace dashboard over the aisdlc serve contract and RepoLens",
   "type": "module",
   "engines": {
     "node": ">=22"

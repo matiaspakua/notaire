@@ -1,4 +1,4 @@
-# Factory Control design
+# AI SDLC Factory design
 
 Mode: Operate. A manufacturing control room where engineers track, inspect and intervene in an
 agentic production line, often for hours, next to an editor. The look is the one iterated on the
