@@ -4,6 +4,7 @@
 name: notaire
 output_name: retrieval.json
 output_suffix: ""
+chart_tag: ""                         # charts keep their historical names (retrieval-*.svg)
 corpus:
   repo: ../../../..                    # repository under test
   clone: "{bench}/corpus/notaire"           # clean clone of HEAD, outside the repository, without this module

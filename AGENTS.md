@@ -61,7 +61,7 @@ Route the lookup. Do not send every question to RepoLens.
 - You need callers of a known symbol: `repolens impact <symbol>`. If it returns no production file, `rg` and `repolens miss "<symbol> callers"`.
 - After a merge or pull, run `bash framework/repolens/bin/repolens refresh --background` if the git hooks are not installed. A query that still sees a stale index starts that same refresh and answers immediately. It does not wait for the refresh.
 
-Sample a paired grep-vs-repolens locate every third implemented issue, and on every miss. Do not pair them on every issue. Numbers: `framework/repolens/bench/results/factory-kpis.json` and `factory-loop-comparison.md`. Health: `bash framework/repolens/bin/repolens doctor`. Usage: `… report` (#2298).
+Sample a paired grep-vs-repolens locate every third implemented issue, and on every miss. Do not pair them on every issue. Numbers: `framework/repolens/bench/results/factory-kpis.json` and `factory-loop-comparison.md`. Health: `bash framework/repolens/bin/repolens doctor`. Usage: `… report` (#2298). Refresh benches, snapshots and factory metrics: `python3 workspace/ci/refresh-factory-evidence.py` (`--check` for staleness, #2469).
 
 ## Modules
 

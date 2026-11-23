@@ -47,6 +47,20 @@ class GenerateRepoLensBenchTest(unittest.TestCase):
             self.assertEqual(data["headlines"]["tuning_recall"], "5.0x more")
 
 
+    def test_validate_accepts_any_well_formed_headline_label(self):
+        """#2469: a refresh re-measures latency, so the label changes; validation checks its form, not its value."""
+        mod = load_module()
+        snap = mod.build()
+        snap["headlines"] = dict(snap["headlines"], latency="42x faster", holdout_recall="+12%")
+        mod.validate(snap)
+
+    def test_validate_rejects_a_malformed_headline_label(self):
+        mod = load_module()
+        snap = mod.build()
+        snap["headlines"] = dict(snap["headlines"], latency="fast!")
+        with self.assertRaises(SystemExit):
+            mod.validate(snap)
+
     # #2429: a Pages build must not rewrite the tracked snapshot when its data is unchanged.
 
     def test_writing_unchanged_data_keeps_the_file_byte_identical(self):

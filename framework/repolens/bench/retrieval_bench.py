@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE.parent))
 
 from corpus import ensure_corpus, ensure_index, head, load_spec  # noqa: E402
 
+from repolens import __version__ as REPOLENS_VERSION  # noqa: E402
 from repolens import render  # noqa: E402
 from repolens.engine import STOPWORDS  # noqa: E402
 from repolens.service import KnowledgeGraph  # noqa: E402
@@ -102,6 +103,15 @@ def score(files: list[str], expected: list[str]) -> dict:
             "mrr": 1.0 / (min(hits) + 1) if hits else 0.0}
 
 
+
+def result_meta(spec: dict, k: int, taskset: str) -> dict:
+    """What produced a result: the corpus commit and the RepoLens version, so stale results can be found."""
+    meta = {"k": k, "corpus": spec.get("name"), "commit": head(spec), "repolens_version": REPOLENS_VERSION,
+            "tasks": len(spec["tasks"]), "taskset": taskset}
+    if "chart_tag" in spec:  # keeps a task set's historical chart file names (report.py::_chart_tag)
+        meta["chart_tag"] = spec["chart_tag"]
+    return meta
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("tasks", type=Path)
@@ -141,8 +151,7 @@ def main() -> int:
                                   "output_bytes_tail")}
     print(json.dumps(summary, indent=1))
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    meta = {"k": args.k, "corpus": spec.get("name"), "commit": head(spec), "tasks": len(spec["tasks"]),
-            "taskset": taskset}
+    meta = result_meta(spec, args.k, taskset)
     args.out.write_text(json.dumps({**meta, "summary": summary, "rows": rows}, indent=1), encoding="utf-8")
     print(f"wrote {args.out}")
     return 0

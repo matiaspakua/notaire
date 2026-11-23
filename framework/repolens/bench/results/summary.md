@@ -4,9 +4,9 @@
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 1,034 | 230.4 | n/a |
-| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 25 | 2.4 | 3.3 |
-| repolens graph | 0.63 | 0.79 | 0.96 | 0.90 | 32 | 2.4 | 3.3 |
+| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 976 | 230.4 | n/a |
+| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 22 | 2.4 | 3.3 |
+| repolens graph | 0.63 | 0.79 | 0.96 | 0.90 | 26 | 2.4 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
@@ -21,9 +21,9 @@
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,147 | 204.3 | n/a |
-| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 26 | 2.3 | 3.3 |
-| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 28 | 2.3 | 3.3 |
+| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,132 | 204.3 | n/a |
+| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 24 | 2.3 | 3.3 |
+| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 27 | 2.3 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|
@@ -68,14 +68,15 @@
 
 ### Performance iteration
 
-| metric | 0.2.0 | 0.3.0 | change |
+| metric | 0.1.0 | 0.2.0 | change |
 |---|---|---|---|
-| Store size, MB | 121 | 122 |  |
-| Server memory, MB | 501 | 437 | 1.1x lower |
-| Re-index, no changes, s | 0.46 | 0.43 | 1.1x lower |
-| Re-index, one file changed, s | 1.8 | 1.8 | 1.0x lower |
-| Full re-extract, s | 5.2 | 5.2 |  |
-| Query latency p50, ms | 23 | 25 |  |
-| Query latency p95, ms | 38 | 38 | 1.0x lower |
-| Tuning set recall@10 / MRR | 0.86 / 0.79 | 0.89 / 0.79 |  |
-| Held-out set recall@10 / MRR | 0.77 / 0.84 | 0.77 / 0.84 |  |
+| Store size, MB | 606 | 121 | 5.0x lower |
+| Server memory, MB | 788 | 501 | 1.6x lower |
+| Re-index, no changes, s | 5.02 | 0.46 | 10.9x lower |
+| Re-index, one file changed, s | 5.0 | 1.8 | 2.8x lower |
+| Full re-extract, s | 14.5 | 5.2 | 2.8x lower |
+| First embedding pass, min | 10.5 | 4.2 | 2.5x lower |
+| Query latency p50, ms | 41 | 23 | 1.8x lower |
+| Query latency p95, ms | 75 | 38 | 2.0x lower |
+| Tuning set recall@10 / MRR | 0.83 / 0.71 | 0.86 / 0.79 |  |
+| Held-out set recall@10 / MRR | 0.72 / 0.80 | 0.77 / 0.84 |  |

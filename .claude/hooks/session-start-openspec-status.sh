@@ -44,6 +44,14 @@ if [ -n "$unpushed" ]; then
     printf '%s' "$unpushed" | head -15
 fi
 
+# Every agent in this checkout uses its RepoLens and aisdlc; say when they or their evidence are stale (#2469).
+if [ -f "${CLAUDE_PROJECT_DIR:-.}/workspace/ci/refresh-factory-evidence.py" ]; then
+    echo
+    echo "## Factory engines and evidence"
+    (cd "${CLAUDE_PROJECT_DIR:-.}" && $timeout_cmd python3 workspace/ci/refresh-factory-evidence.py --check --brief) 2>&1 \
+        || true
+fi
+
 echo
 echo "Reminder: CONSTITUTION.md at repo root governs every change. No code change"
 echo "without a linked GitHub Issue + Use Case + OpenSpec change (Gate 1)."

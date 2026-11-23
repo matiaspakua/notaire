@@ -622,7 +622,8 @@ Each of these was measured on both task sets and not adopted:
 
 Everything to reproduce is in [`bench/`](bench); `bench/run_all.sh` runs all of it and writes
 [`bench/results/report.html`](bench/results/report.html) (charts) and
-[`bench/results/summary.md`](bench/results/summary.md).
+[`bench/results/summary.md`](bench/results/summary.md). Each retrieval result records `repolens_version`, the
+RepoLens that produced it, next to the corpus `commit`, so a result from an older version is detectable.
 
 - **Tasks** — two sets of questions with grep-verified expected files, in six categories (lexical,
   cross-stack, multi-hop, impact, tests, docs):
