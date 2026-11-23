@@ -34,6 +34,26 @@ export interface Step {
   status: string;
 }
 
+export interface StepIoLink {
+  label?: string;
+  url: string;
+}
+
+export interface StepIo {
+  request?: string;
+  prompt?: string;
+  summary?: string;
+  files?: string[];
+  commits?: string[];
+  links?: StepIoLink[];
+}
+
+export interface RunStep extends Step {
+  stage?: string | null;
+  inputs?: StepIo;
+  outputs?: StepIo;
+}
+
 export interface Run {
   id: string;
   project: string;
@@ -41,8 +61,9 @@ export interface Run {
   status: string;
   requested_by?: string;
   requested_at?: string;
-  steps?: Step[];
+  steps?: RunStep[];
   evidence_head?: string;
+  intent?: string;
 }
 
 export interface RunEvent {

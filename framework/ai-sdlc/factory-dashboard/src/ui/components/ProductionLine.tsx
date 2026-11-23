@@ -1,4 +1,4 @@
-import { type CSSProperties, type KeyboardEvent, useRef, useState } from "react";
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 
 import { factory } from "../api.ts";
 import { useWorkspace } from "../context.ts";
@@ -17,9 +17,11 @@ import {
   type Throughput,
   type WorkflowStep,
 } from "../line-model.ts";
-import type { FactoryStatus, Gate, Intent, LinePayload, LineStage, Report, TelemetryResponse } from "../model.ts";
+import type { FactoryStatus, Gate, Intent, LinePayload, LineStage, Project, Report, Run, TelemetryResponse } from "../model.ts";
+import { repoBase } from "../step-io.ts";
 import { formatDuration } from "../model.ts";
 import { EmptyState, Loaded } from "./State.tsx";
+import { StepIoPanel } from "./StepIo.tsx";
 import "../production-line.css";
 
 interface WorkflowPayload {
@@ -145,7 +147,13 @@ function Legend() {
   );
 }
 
-function Detail({ stage, kind, state, report }: { stage: LineStage; kind: StationKind; state: StationState; report: Report | undefined }) {
+function Detail({ stage, kind, state, report, children }: {
+  stage: LineStage;
+  kind: StationKind;
+  state: StationState;
+  report: Report | undefined;
+  children?: ReactNode;
+}) {
   const t = useT();
   const lang = useLang();
   const list = (items: string[]) => (items.length ? items.join(", ") : t("line.none"));
@@ -203,6 +211,7 @@ function Detail({ stage, kind, state, report }: { stage: LineStage; kind: Statio
           </table>
         </div>
       </div>
+      {children}
     </section>
   );
 }
@@ -216,6 +225,9 @@ export function ProductionLine() {
   const telemetryRes = useResource<TelemetryResponse>(factory(workspace.id, "/telemetry?group=stage"), 30_000);
   const workflowRes = useResource<WorkflowPayload>(factory(workspace.id, "/workflows/factory-feature"));
   const intentsRes = useResource<{ entries: Intent[] }>(factory(workspace.id, "/intents"), 30_000);
+  const runId = statusRes.data?.run;
+  const runRes = useResource<Run>(runId ? factory(workspace.id, `/runs/${encodeURIComponent(runId)}`) : null, 5_000);
+  const projectsRes = useResource<{ entries: Project[] }>(factory(workspace.id, "/projects"), 60_000);
   const [selected, setSelected] = useState<string | null>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -317,7 +329,16 @@ export function ProductionLine() {
           })}
         </div>
       </div>
-      <Detail stage={activeStage} kind={stationKind(activeStage)} state={states[active]!} report={reportRes.data} />
+      <Detail stage={activeStage} kind={stationKind(activeStage)} state={states[active]!} report={reportRes.data}>
+        <StepIoPanel
+          stage={activeStage}
+          steps={runRes.data?.id === runId ? runRes.data?.steps ?? [] : []}
+          workflow={steps}
+          stages={stages}
+          repo={repoBase(projectsRes.data?.entries.find((p) => p.id === runRes.data?.project)?.repos[0]?.url)}
+          hasRun={Boolean(runId)}
+        />
+      </Detail>
     </div>
   );
 }
