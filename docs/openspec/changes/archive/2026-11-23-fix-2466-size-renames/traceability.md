@@ -18,8 +18,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/fix-2466-size-renames/` | in-progress |
 | Branch | `fix/2466_size_renames` | created |
-| Tasks | `tasks.md` | 0/12 complete |
-| Commits | <!-- SHAs, one per line --> | pending |
+| Tasks | `tasks.md` | 9/12 complete |
+| Commits | 31d18d07, 5b0bbd31, 6655144f, d5417f11, 1e9a33ca, 6ea200ee | done |
 | Pull Request | #<!-- number --> | pending |
 | CI run | <!-- workflow run URL --> | pending |
 | Merge commit | <!-- SHA --> | pending |
@@ -30,10 +30,10 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Pure rename counts 0 lines | `test_diffchecks.py` | pending |
-| Rename with edits counts only edited lines | `test_diffchecks.py` | pending |
-| Over the budget (existing) | `test_diffchecks.py` | pending |
-| Excluded files do not count (existing) | `test_diffchecks.py` | pending |
+| Pure rename counts 0 lines | `ReviewSizeRenameTest.test_pure_rename_counts_zero_lines` | passing |
+| Rename with edits counts only edited lines | `ReviewSizeRenameTest.test_rename_with_edits_counts_only_edited_lines` | passing |
+| Over the budget (existing) | `ReviewSizeTest.test_diff_over_the_budget_fails_and_lists_the_largest_files` | passing |
+| Excluded files do not count (existing) | `ReviewSizeTest.test_excluded_paths_do_not_count` | passing |
 
 ## Permanent documentation updated
 
