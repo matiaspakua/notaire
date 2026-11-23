@@ -18,6 +18,7 @@ PLATFORM = "v0.6 · Platform & operability (2027-02)"
 AI_FACTORY = "v0.7 · AI Factory & repo knowledge (2027-03)"
 OBSERVABLE_FACTORY = "v0.8 · Observable self-managing factory (2027-03)"
 CONTROL_PLANE = "v0.9 · Factory control plane (2027-03)"
+PRODUCTION_LINE = "v0.10 · Factory production line & delivery gates (2027-03)"
 GA = "v1.0 · GA: legacy-free (2027-04)"
 BACKLOG = "Backlog · Unscheduled"
 CATALOG = "Catalog · Requirements & use cases"
@@ -39,7 +40,7 @@ HISTORY_Q2 = "H · 2026 Q2 cohort: foundations & API"
 HISTORY_Q3 = "H · 2026 Q3 cohort: product build & UI/UX"
 HISTORY_Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
 
-SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, OBSERVABLE_FACTORY, CONTROL_PLANE, GA)
+SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, OBSERVABLE_FACTORY, CONTROL_PLANE, PRODUCTION_LINE, GA)
 CONTINUOUS = (BACKLOG, CATALOG)
 SHIPPED = (V01, V02)
 HISTORY_STAGES = (H0, H1, H2, H3, H4, H5, H6, H7, H8)
@@ -178,6 +179,7 @@ MILESTONE_WINDOW = {
     AI_FACTORY: ("2027-03-01", "2027-03-31"),
     OBSERVABLE_FACTORY: ("2027-03-01", "2027-03-31"),
     CONTROL_PLANE: ("2027-03-01", "2027-03-31"),
+    PRODUCTION_LINE: ("2027-03-01", "2027-03-31"),
     GA: ("2027-04-01", "2027-04-30"),
 }
 ROADMAP_WINDOW = {title: MILESTONE_WINDOW[title] for title in SCHEDULED}
@@ -210,7 +212,11 @@ MILESTONE_DESCRIPTION = {
                                   "factory self-manages and reports its own state", CONTROL_PLANE),
     CONTROL_PLANE: _describe("factory control plane: intents, live status, telemetry and configuration as code", "v0.9.z cuts, 2027-03-01 → 2027-03-31",
                              "#2393–#2400 one intent entry point, production line, store, event stream, catalog-owned AI config",
-                             "factory control plane observable and manageable from the dashboard", GA),
+                             "factory control plane observable and manageable from the dashboard", PRODUCTION_LINE),
+    PRODUCTION_LINE: _describe("factory production line and delivery gates: station diagram, step inputs and outputs, change-aware preflight",
+                               "v0.10.z cuts, 2027-03-01 → 2027-03-31",
+                               "#2407, #2410, #2411, #2413, #2414, #2434, #2435 production-line dashboard, step I/O, stack lock, change-aware gate",
+                               "every station's work and gate is visible and the preflight runs only what a branch touches", GA),
     GA: _describe("general availability with no legacy code", "v1.0.z cuts, 2027-04-01 → 2027-04-30",
                   "#899 Phase 6 deprecation, legacy packages removed, Owner GA decision",
                   "Owner tags v1.0.0", "next minor train"),
