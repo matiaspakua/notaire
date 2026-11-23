@@ -422,5 +422,18 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
         self.assertNotIn("apiEndpointsStale", coverage)
 
 
+class DeployWorkflowWiringTest(unittest.TestCase):
+    """#760: the Pages deploy hands the script the fresh Playwright and Bruno results."""
+
+    def test_the_deploy_workflow_passes_both_result_files(self):
+        workflow = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "deploy-github-page.yml")
+        text = workflow.read_text(encoding="utf-8")
+        step = text[text.index("- name: Generate metrics.json"):]
+        step = step[:step.index("\n      - name:", 1)]
+        self.assertIn("PLAYWRIGHT_RESULTS_JSON", step)
+        self.assertIn("BRUNO_RESULTS_JSON", step)
+        self.assertIn("api-test-report", text)
+
+
 if __name__ == "__main__":
     unittest.main()
