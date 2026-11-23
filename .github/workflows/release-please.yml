@@ -59,6 +59,16 @@ jobs:
           git commit -m "fix(api): record $VERSION as the OpenAPI info version" -- backend-api/openapi/openapi.yaml
           git push origin HEAD:release-please--branches--main--components--notaire
 
+      # #2448: no CI runs on the bot release PR (#2001), and CD only checks
+      # coherence once the tag exists, too late to fix the tagged tree (0.9.0
+      # shipped without images). Fail here while the cut can still be fixed.
+      - name: Release branch passes product version coherence for its tag
+        if: steps.release.outputs.pr
+        run: |
+          set -euo pipefail
+          VERSION="$(jq -r '."."' .release-please-manifest.json)"
+          python3 workspace/sdlc/check-product-version-coherence.py --tag "v$VERSION"
+
       - name: Dispatch CD on release tag
         if: steps.release.outputs.release_created == 'true'
         env:
