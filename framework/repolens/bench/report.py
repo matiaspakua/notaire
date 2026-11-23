@@ -213,6 +213,8 @@ def agent_section(data: dict, out: Path) -> tuple[str, str, list[str]]:
     s, model = summarize(data["rows"]), data["model"]
     tag = _chart_tag(data, model=model)
     arms = [a for a in ("baseline", "graph") if a in s]
+    if not arms:
+        return "", "", []
     label = {"baseline": ARM_LABEL["baseline"], "graph": ARM_LABEL["graph_agent"]}
     metrics = [("recall", "Answer recall", lambda v: f"{v:.2f}"),
                ("tool_calls", "Tool calls per task", lambda v: f"{v:.1f}"),
@@ -442,8 +444,9 @@ def main() -> int:
         md_parts.append(m)
     for path in sorted(out.glob("agent-*.json")):
         h, m, _ = agent_section(json.loads(path.read_text()), charts_dir)
-        sections.append(h)
-        md_parts.append(m)
+        if h:
+            sections.append(h)
+            md_parts.append(m)
     perf = [out / "perf" / f"{label}.json" for label in args.perf]
     if all(p.exists() for p in perf):
         runs = [{**json.loads(p.read_text()), "label": name} for p, name in zip(perf, args.perf_names, strict=True)]
