@@ -31,6 +31,7 @@ STAGES = {
 STAGE_NAME = re.compile(r"^[a-z][a-z0-9-]*$")
 RATCHET_KINDS = ("baseline", "floor")
 TIERS = ("human", "top", "mid", "low")
+STAGE_KINDS = ("agent", "deterministic", "human")
 
 DEFAULT_COMMIT_PATTERN = (
     r"^(\[#[0-9]+\] )?((feat|fix|docs|chore|test|refactor|ci|build|perf|style|revert)"
@@ -170,6 +171,7 @@ class StageProfile:
     effort: StageEffort = StageEffort()
     inputs: tuple[str, ...] = ()
     outputs: tuple[str, ...] = ()
+    kind: str | None = None
 
 
 @dataclass(frozen=True)
@@ -743,6 +745,18 @@ def _stage_profiles(raw: list, gate_stages: set[str], errors: list[str]) -> tupl
         if model is not None and (not isinstance(model, str) or not model.strip()):
             errors.append(f"{label} model must be a non-empty string when set")
             model = None
+        kind = item.get("kind")
+        if kind is not None:
+            if not isinstance(kind, str) or not kind.strip():
+                errors.append(f"{label} kind must be a non-empty string when set")
+                kind = None
+            else:
+                kind = kind.strip()
+                if kind not in STAGE_KINDS:
+                    errors.append(
+                        f"{label} kind must be one of {', '.join(STAGE_KINDS)}, got {kind!r}"
+                    )
+                    kind = None
         found.append(
             StageProfile(
                 id=stage_id,
@@ -753,6 +767,7 @@ def _stage_profiles(raw: list, gate_stages: set[str], errors: list[str]) -> tupl
                 effort=_effort(item.get("effort"), f"{label} effort", errors),
                 inputs=_string_list(item.get("inputs"), f"{label} inputs", errors),
                 outputs=_string_list(item.get("outputs"), f"{label} outputs", errors),
+                kind=kind,
             )
         )
     return tuple(found)

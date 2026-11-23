@@ -11,7 +11,7 @@ import re
 
 from aisdlc import catalogs, grants, isolator
 from aisdlc.context import Context
-from aisdlc.stages import stage_dicts
+from aisdlc.stages import resolve_stage_kind, stage_dicts
 
 # Default I/O per canonical stage id (design D3).
 DEFAULT_IO: dict[str, dict[str, list[str]]] = {
@@ -154,6 +154,8 @@ def build_line(ctx: Context) -> dict:
         # tools = mcp ids (profile has no other tool source).
         tools = list(mcp)
 
+        kind = resolve_stage_kind(sp, sid)
+
         # Per-stage guardrails: grants whose stage == sid, serialized with kind="grant".
         stage_guardrails: list[dict] = []
         for g in profile.grants:
@@ -176,6 +178,7 @@ def build_line(ctx: Context) -> dict:
                 "model": model,
                 "effort": effort,
                 "guardrails": stage_guardrails,
+                "kind": kind,
             }
         )
 

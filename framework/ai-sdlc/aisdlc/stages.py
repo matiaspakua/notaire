@@ -7,7 +7,24 @@ from __future__ import annotations
 
 from aisdlc.catalogs import KINDS, list_entries
 from aisdlc.context import Context
-from aisdlc.profile import Profile, ProfileError
+from aisdlc.profile import Profile, ProfileError, StageProfile
+
+
+def resolve_stage_kind(stage_profile: StageProfile | None, stage_id: str) -> str:
+    """Return the kind for a stage: declared value or default heuristic.
+
+    Default rule (matches current dashboard):
+    - "agent" when the stage lists agents
+    - "human" when the stage id is "merge"
+    - "deterministic" otherwise
+    """
+    if stage_profile is not None and stage_profile.kind is not None:
+        return stage_profile.kind
+    if stage_profile is not None and stage_profile.agents:
+        return "agent"
+    if stage_id == "merge":
+        return "human"
+    return "deterministic"
 
 
 def stage_dicts(profile: Profile) -> list[dict]:
@@ -34,6 +51,7 @@ def stage_dicts(profile: Profile) -> list[dict]:
                 "effort": effort,
                 "inputs": list(stage.inputs),
                 "outputs": list(stage.outputs),
+                "kind": resolve_stage_kind(stage, stage.id),
             }
         )
     return rows
