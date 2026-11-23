@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate github-page/lib/factory-metrics.json from `aisdlc metrics factory --json` (#2447).
+"""Generate github-page/lib/factory-metrics-snapshot.json from `aisdlc metrics factory --json` (#2447).
 
 The evidence ledger, the cost rows and the RepoLens usage log are local (git-ignored), so the Pages
 build cannot compute these numbers on GitHub. Run this on the factory's machine and commit the
@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OUTPUT = ROOT / "github-page" / "lib" / "factory-metrics.json"
+OUTPUT = ROOT / "github-page" / "lib" / "factory-metrics-snapshot.json"
 KIT = [sys.executable, str(ROOT / "framework/ai-sdlc/bin/aisdlc"), "--profile", ".aisdlc/aisdlc.toml",
        "metrics", "factory", "--json"]
 

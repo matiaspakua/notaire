@@ -77,7 +77,7 @@ class GenerateFactoryMetricsTest(unittest.TestCase):
 
     def test_the_committed_snapshot_is_valid(self):
         mod = load()
-        mod.validate(json.loads((REPO / "github-page" / "lib" / "factory-metrics.json").read_text(encoding="utf-8")))
+        mod.validate(json.loads((REPO / "github-page" / "lib" / "factory-metrics-snapshot.json").read_text(encoding="utf-8")))
 
 
 if __name__ == "__main__":
