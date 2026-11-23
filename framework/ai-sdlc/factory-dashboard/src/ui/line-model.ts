@@ -24,7 +24,7 @@ export interface IntentProgress {
   usd: number | null;
 }
 
-// The kit does not declare station kinds yet; merge is where the Foreman or the Owner decides.
+// Older kits do not send a kind (#2411); merge is where the Foreman or the Owner decides.
 const HUMAN_STAGES = new Set(["merge"]);
 const ACTIVE_RUN = new Set(["running", "queued", "requested", "waiting"]);
 
@@ -42,10 +42,12 @@ export function normalizeStage(stage: Partial<LineStage> & { id: string }): Line
     model: stage.model ?? null,
     effort: stage.effort ?? {},
     guardrails: stage.guardrails ?? [],
+    kind: stage.kind,
   };
 }
 
 export function stationKind(stage: LineStage): StationKind {
+  if (stage.kind) return stage.kind;
   if (stage.agents.length > 0) return "agent";
   if (HUMAN_STAGES.has(stage.id)) return "human";
   return "deterministic";

@@ -161,6 +161,7 @@ export interface LineStage {
   model?: string | null;
   effort: Record<string, number>;
   guardrails: LineStageGuardrail[];
+  kind?: "agent" | "deterministic" | "human";
 }
 
 export interface LineGuardrails {
