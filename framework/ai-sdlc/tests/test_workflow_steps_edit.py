@@ -75,25 +75,24 @@ class WorkflowStepsEditTest(unittest.TestCase):
         before = self.show()["version"]
         edited = self.edit([{"id": "spec", "agent": "agents:implementer@1"}])
         self.assertNotEqual(0, edited.returncode)
-        self.assertIn("invalid_body", output(edited))
-        self.assertIn("spec", output(edited))
+        self.assertIn("step 'spec' needs a stage", output(edited))
         self.assertEqual(before, self.show()["version"])
 
     def test_duplicate_step_ids_are_refused(self):
         edited = self.edit([{"id": "red", "stage": "red"}, {"id": "red", "stage": "red"}])
         self.assertNotEqual(0, edited.returncode)
-        self.assertIn("invalid_body", output(edited))
+        self.assertIn("repeated", output(edited))
 
     def test_an_unknown_on_fail_is_refused(self):
         edited = self.edit([{"id": "red", "stage": "red", "on_fail": "retry"}])
         self.assertNotEqual(0, edited.returncode)
-        self.assertIn("invalid_body", output(edited))
+        self.assertIn("on_fail must be one of stop, continue", output(edited))
 
     def test_an_approved_workflow_is_immutable(self):
         self.approve()
         edited = self.edit(STEPS)
         self.assertNotEqual(0, edited.returncode)
-        self.assertIn("immutable_approved", output(edited))
+        self.assertIn("approved workflows are immutable", output(edited))
 
     def test_status_reports_the_steps_stage(self):
         self.assertEqual(0, self.edit(STEPS).returncode)
@@ -164,6 +163,11 @@ class WorkflowStepsApiTest(unittest.TestCase):
         status, problem = self.put(self.reader, self.version(), [{"id": "red", "stage": "red"}])
         self.assertEqual(403, status)
         self.assertEqual("forbidden", problem["code"])
+
+    def test_put_refuses_a_step_without_a_stage(self):
+        status, problem = self.put(self.writer, self.version(), [{"id": "red"}])
+        self.assertEqual(400, status, problem)
+        self.assertEqual("invalid_body", problem["code"])
 
     def test_the_contract_lists_the_route(self):
         from aisdlc import contract
