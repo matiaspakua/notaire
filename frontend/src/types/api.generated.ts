@@ -345,7 +345,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get copies, one page at a time */
+        /**
+         * Get copies, one page at a time
+         * @description Parameters: page (default 0), size (default 20), sort (for example idCopy,desc)
+         */
         get: operations["getAll_19"];
         put?: never;
         /** Create copy */
@@ -1270,6 +1273,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/mfa/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Disable TOTP; requires a current TOTP or an unused recovery code */
+        post: operations["disable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/mfa/enrollment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Begin TOTP enrolment (also reachable with the enrolment-scoped login token) */
+        post: operations["begin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/mfa/enrollment/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Confirm TOTP enrolment with a current code */
+        post: operations["confirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notebooks": {
         parameters: {
             query?: never;
@@ -1329,7 +1383,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get payments, one page at a time */
+        /**
+         * Get payments, one page at a time
+         * @description Parameters: page (default 0), size (default 20), sort (for example idPayment,desc)
+         */
         get: operations["getAll_9"];
         put?: never;
         /** CU15 - Process a payment (JSON body) */
@@ -2154,7 +2211,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get submitted documents, one page at a time */
+        /**
+         * Get submitted documents, one page at a time
+         * @description Parameters: page (default 0), size (default 20), sort (for example idSubmittedDocument,desc)
+         */
         get: operations["getAll_4"];
         put?: never;
         /** Create submitted document */
@@ -2331,7 +2391,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get testimony movements, one page at a time */
+        /**
+         * Get testimony movements, one page at a time
+         * @description Parameters: page (default 0), size (default 20), sort (for example idTestimonyMovement,desc)
+         */
         get: operations["getAll_1"];
         put?: never;
         /** Create testimony movement */
@@ -2470,6 +2533,26 @@ export interface paths {
         put?: never;
         /** Authenticate user */
         post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/login/mfa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete a login with a TOTP or recovery code
+         * @description Takes the 'mfaToken' returned by /login and either 'code' (TOTP) or 'recoveryCode'. Wrong codes count toward the same lockout as wrong passwords.
+         */
+        post: operations["loginMfa"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2802,6 +2885,9 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        ConfirmRequest: {
+            code: string;
+        };
         CopyRequest: {
             /**
              * Format: date-time
@@ -2906,6 +2992,10 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        DisableRequest: {
+            code?: string;
+            recoveryCode?: string;
+        };
         DocumentTypeRef: {
             deliveredBy?: string;
             /** Format: int32 */
@@ -2927,6 +3017,12 @@ export interface components {
             returned?: boolean;
             /** Format: int32 */
             version?: number;
+        };
+        DtoArchivedManagement: {
+            /** Format: int32 */
+            idManagement?: number;
+            pendingBalance?: number;
+            pendingDebtAtArchiving?: boolean;
         };
         DtoAuditRecord: {
             /** Format: date-time */
@@ -3209,6 +3305,16 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        DtoHistoryEntry: {
+            /** Format: date-time */
+            date?: string;
+            /** Format: int32 */
+            idHistory?: number;
+            notes?: string;
+            /** Format: int32 */
+            statusManagementId?: number;
+            statusManagementName?: string;
+        };
         DtoHistorySummary: {
             /** Format: date-time */
             date?: string;
@@ -3309,6 +3415,24 @@ export interface components {
             number?: number;
             /** Format: int32 */
             procedureCount?: number;
+        };
+        DtoManagementWorkflowTrace: {
+            currentStatus?: string;
+            /** Format: date-time */
+            dateStart?: string;
+            heading?: string;
+            history?: components["schemas"]["DtoHistoryEntry"][];
+            /** Format: int32 */
+            managementId?: number;
+            nodeStatuses?: {
+                [key: string]: string;
+            };
+            nodes?: components["schemas"]["DtoWorkflowNode"][];
+            /** Format: int32 */
+            number?: number;
+            testimonyMovements?: components["schemas"]["DtoTestimonyMovementEntry"][];
+            transitions?: components["schemas"]["DtoWorkflowTransition"][];
+            workflowDefinition?: components["schemas"]["DtoWorkflowDefinition"];
         };
         DtoPaymentResponse: {
             amount?: number;
@@ -3534,6 +3658,15 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        DtoTestimonyMovementEntry: {
+            /** Format: date-time */
+            dateEntry?: string;
+            /** Format: date-time */
+            dateExit?: string;
+            /** Format: date-time */
+            dateRegistration?: string;
+            returnedObserved?: boolean;
+        };
         DtoTransitionRequest: {
             statusDestination: string;
         };
@@ -3617,6 +3750,10 @@ export interface components {
             version?: number;
             /** Format: int32 */
             workflowDefinitionId?: number;
+        };
+        EnrollmentStartResponse: {
+            otpauthUri?: string;
+            secret?: string;
         };
         ErrorResponse: {
             details?: {
@@ -3742,9 +3879,36 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        LoginMfaRequest: {
+            code?: string;
+            mfaToken: string;
+            recoveryCode?: string;
+        };
+        LoginPerson: {
+            firstName?: string;
+            /** Format: int32 */
+            idPerson?: number;
+            lastName?: string;
+        };
         LoginRequest: {
             name: string;
             password: string;
+        };
+        LoginResponse: unknown;
+        LoginSuccessResponse: components["schemas"]["LoginResponse"] & {
+            /** Format: int32 */
+            idUser?: number;
+            name?: string;
+            person?: components["schemas"]["LoginPerson"];
+            status?: boolean;
+            token?: string;
+            type?: string;
+            valid?: boolean;
+            /** Format: int32 */
+            version?: number;
+        };
+        LogoutResponse: {
+            ok?: boolean;
         };
         ManagementRef: {
             heading?: string;
@@ -3789,6 +3953,17 @@ export interface components {
             /** Format: int32 */
             version?: number;
         };
+        ManagementSummaryDto: {
+            currentStatus?: string;
+            /** Format: int32 */
+            id?: number;
+        };
+        MfaChallengeResponse: components["schemas"]["LoginResponse"] & {
+            mfaEnrollmentRequired?: boolean;
+            mfaRequired?: boolean;
+            mfaToken?: string;
+            valid?: boolean;
+        };
         NotaryRef: {
             firstName?: string;
             identificationNumber: string;
@@ -3817,6 +3992,24 @@ export interface components {
         };
         PageBudgetResponse: {
             content?: components["schemas"]["BudgetResponse"][];
+            empty?: boolean;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            size?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageCopyResponse: {
+            content?: components["schemas"]["CopyResponse"][];
             empty?: boolean;
             first?: boolean;
             last?: boolean;
@@ -3887,8 +4080,8 @@ export interface components {
             /** Format: int32 */
             totalPages?: number;
         };
-        PageSubmittedDocumentResponse: {
-            content?: components["schemas"]["SubmittedDocumentResponse"][];
+        PageDtoPaymentResponse: {
+            content?: components["schemas"]["DtoPaymentResponse"][];
             empty?: boolean;
             first?: boolean;
             last?: boolean;
@@ -3907,42 +4100,6 @@ export interface components {
         };
         PageDtoTestimonyMovement: {
             content?: components["schemas"]["DtoTestimonyMovement"][];
-            empty?: boolean;
-            first?: boolean;
-            last?: boolean;
-            /** Format: int32 */
-            number?: number;
-            /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            size?: number;
-            sort?: components["schemas"]["SortObject"];
-            /** Format: int64 */
-            totalElements?: number;
-            /** Format: int32 */
-            totalPages?: number;
-        };
-        PageCopyResponse: {
-            content?: components["schemas"]["CopyResponse"][];
-            empty?: boolean;
-            first?: boolean;
-            last?: boolean;
-            /** Format: int32 */
-            number?: number;
-            /** Format: int32 */
-            numberOfElements?: number;
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            size?: number;
-            sort?: components["schemas"]["SortObject"];
-            /** Format: int64 */
-            totalElements?: number;
-            /** Format: int32 */
-            totalPages?: number;
-        };
-        PageDtoPaymentResponse: {
-            content?: components["schemas"]["DtoPaymentResponse"][];
             empty?: boolean;
             first?: boolean;
             last?: boolean;
@@ -3979,6 +4136,24 @@ export interface components {
         };
         PageProcedureResponse: {
             content?: components["schemas"]["ProcedureResponse"][];
+            empty?: boolean;
+            first?: boolean;
+            last?: boolean;
+            /** Format: int32 */
+            number?: number;
+            /** Format: int32 */
+            numberOfElements?: number;
+            pageable?: components["schemas"]["PageableObject"];
+            /** Format: int32 */
+            size?: number;
+            sort?: components["schemas"]["SortObject"];
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageSubmittedDocumentResponse: {
+            content?: components["schemas"]["SubmittedDocumentResponse"][];
             empty?: boolean;
             first?: boolean;
             last?: boolean;
@@ -4187,6 +4362,9 @@ export interface components {
             /** Format: int32 */
             version?: number;
             volumeFolioLandRecord?: string;
+        };
+        RecoveryCodesResponse: {
+            recoveryCodes?: string[];
         };
         RegisterRequest: {
             /** Format: date-time */
@@ -4424,6 +4602,10 @@ export interface components {
             /** Format: int32 */
             originNodeId: number;
         };
+        WorkflowValidationResponse: {
+            errors?: string[];
+            valid?: boolean;
+        };
     };
     responses: {
         /** @description Invalid request — malformed parameters or body */
@@ -4616,7 +4798,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DeedResponse"];
                 };
             };
             /** @description Invalid request */
@@ -4625,7 +4807,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DeedResponse"];
                 };
             };
             /** @description Folio not found */
@@ -4634,7 +4816,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DeedResponse"];
                 };
             };
         };
@@ -4678,7 +4860,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": {
+                        [key: string]: number;
+                    };
                 };
             };
             /** @description Invalid request */
@@ -4687,7 +4871,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": {
+                        [key: string]: number;
+                    };
                 };
             };
             /** @description Conflict */
@@ -4696,7 +4882,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": {
+                        [key: string]: number;
+                    };
                 };
             };
         };
@@ -4744,9 +4932,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -4767,18 +4953,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -5155,7 +5337,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoConcept"];
                 };
             };
             /** @description Invalid request */
@@ -5164,7 +5346,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoConcept"];
                 };
             };
             /** @description Conflict */
@@ -5173,7 +5355,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoConcept"];
                 };
             };
         };
@@ -5251,36 +5433,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -5300,18 +5474,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -5346,7 +5516,7 @@ export interface operations {
                 page?: number;
                 /** @description The size of the page to be returned */
                 size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default is idCopy,desc. */
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
                 sort?: string[];
             };
             header?: never;
@@ -5385,7 +5555,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CopyResponse"];
                 };
             };
             /** @description Invalid request */
@@ -5394,7 +5564,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CopyResponse"];
                 };
             };
             /** @description Conflict */
@@ -5403,7 +5573,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CopyResponse"];
                 };
             };
         };
@@ -5771,7 +5941,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CostTemplateResponse"];
                 };
             };
             /** @description Invalid request */
@@ -5780,7 +5950,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CostTemplateResponse"];
                 };
             };
             /** @description Procedure type or document not found */
@@ -5789,7 +5959,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["CostTemplateResponse"];
                 };
             };
         };
@@ -5855,7 +6025,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoDocumentType"];
                 };
             };
             /** @description Bad request */
@@ -5864,7 +6034,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoDocumentType"];
                 };
             };
             /** @description Conflict */
@@ -5873,7 +6043,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoDocumentType"];
                 };
             };
         };
@@ -5951,36 +6121,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Bad request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -6000,18 +6162,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -6078,7 +6236,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
             /** @description Invalid request */
@@ -6087,7 +6245,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
             /** @description Conflict */
@@ -6096,7 +6254,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoFolioType"];
                 };
             };
         };
@@ -6174,36 +6332,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -6223,18 +6373,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -6398,7 +6544,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["FolioResponse"];
                 };
             };
             /** @description Not found */
@@ -6407,7 +6553,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["FolioResponse"];
                 };
             };
             /** @description Conflict */
@@ -6416,7 +6562,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["FolioResponse"];
                 };
             };
         };
@@ -6437,18 +6583,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -6522,7 +6664,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoHistorySummary"];
                 };
             };
             /** @description Invalid request */
@@ -6531,7 +6673,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoHistorySummary"];
                 };
             };
             /** @description Conflict */
@@ -6540,7 +6682,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoHistorySummary"];
                 };
             };
         };
@@ -6709,7 +6851,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["IdentificationTypeResponse"];
                 };
             };
             /** @description Invalid request */
@@ -6718,7 +6860,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["IdentificationTypeResponse"];
                 };
             };
             /** @description Conflict */
@@ -6727,7 +6869,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["IdentificationTypeResponse"];
                 };
             };
         };
@@ -6881,7 +7023,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ItemResponse"];
                 };
             };
             /** @description Invalid request */
@@ -6890,7 +7032,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ItemResponse"];
                 };
             };
             /** @description Conflict */
@@ -6899,7 +7041,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ItemResponse"];
                 };
             };
         };
@@ -7092,7 +7234,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementStatus"];
                 };
             };
             /** @description Invalid request */
@@ -7101,7 +7243,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementStatus"];
                 };
             };
             /** @description Conflict */
@@ -7110,7 +7252,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementStatus"];
                 };
             };
         };
@@ -7188,36 +7330,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -7237,18 +7371,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -7322,7 +7452,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementResponse"];
                 };
             };
             /** @description Bad request */
@@ -7331,7 +7461,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementResponse"];
                 };
             };
             /** @description Conflict */
@@ -7340,7 +7470,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementResponse"];
                 };
             };
         };
@@ -7386,7 +7516,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementSummary"];
                 };
             };
         };
@@ -7480,6 +7610,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     delete_12: {
@@ -7528,7 +7665,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoArchivedManagement"];
                 };
             };
             /** @description Management not found */
@@ -7537,7 +7674,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoArchivedManagement"];
                 };
             };
             /** @description Unresolved waiting procedure folders (CU85); confirm to archive */
@@ -7546,7 +7683,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoArchivedManagement"];
                 };
             };
         };
@@ -7634,7 +7771,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementSummary"];
                 };
             };
         };
@@ -7944,7 +8081,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementSummaryDto"];
                 };
             };
             /** @description Transition not valid for the procedure-type workflow */
@@ -7953,7 +8090,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementSummaryDto"];
                 };
             };
             /** @description Management not found */
@@ -7962,7 +8099,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ManagementSummaryDto"];
                 };
             };
         };
@@ -7984,7 +8121,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementWorkflowTrace"];
                 };
             };
             /** @description Management has no procedures or workflow definition */
@@ -7993,7 +8130,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementWorkflowTrace"];
                 };
             };
             /** @description Management not found */
@@ -8002,7 +8139,164 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoManagementWorkflowTrace"];
+                };
+            };
+        };
+    };
+    disable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisableRequest"];
+            };
+        };
+        responses: {
+            /** @description MFA disabled */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Wrong code (counts toward lockout) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No confirmed enrolment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Account temporarily locked */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    begin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Secret and otpauth URI, shown once */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EnrollmentStartResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EnrollmentStartResponse"];
+                };
+            };
+            /** @description Already enrolled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EnrollmentStartResponse"];
+                };
+            };
+            /** @description Account temporarily locked */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EnrollmentStartResponse"];
+                };
+            };
+        };
+    };
+    confirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmRequest"];
+            };
+        };
+        responses: {
+            /** @description Enrolment confirmed; recovery codes shown once */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RecoveryCodesResponse"];
+                };
+            };
+            /** @description Wrong code (counts toward lockout) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RecoveryCodesResponse"];
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RecoveryCodesResponse"];
+                };
+            };
+            /** @description Enrolment not begun */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RecoveryCodesResponse"];
+                };
+            };
+            /** @description Account temporarily locked */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["RecoveryCodesResponse"];
                 };
             };
         };
@@ -8046,7 +8340,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
             /** @description Invalid request */
@@ -8055,7 +8349,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
             /** @description Notary or folio not found */
@@ -8064,7 +8358,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
             /** @description A notebook already exists with that number for the year and notary */
@@ -8073,7 +8367,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["NotebookResponse"];
                 };
             };
         };
@@ -8147,7 +8441,7 @@ export interface operations {
                 page?: number;
                 /** @description The size of the page to be returned */
                 size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default is idPayment,desc. */
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
                 sort?: string[];
             };
             header?: never;
@@ -8466,7 +8760,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
             /** @description Invalid request */
@@ -8475,7 +8769,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
             /** @description Conflict */
@@ -8484,7 +8778,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
         };
@@ -8567,7 +8861,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
             /** @description Invalid request */
@@ -8576,7 +8870,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
             /** @description Not found */
@@ -8585,7 +8879,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
             /** @description Conflict */
@@ -8594,7 +8888,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PersonResponse"];
                 };
             };
         };
@@ -8615,18 +8909,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -8705,7 +8995,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureFolder"];
                 };
             };
             /** @description Reason not provided */
@@ -8714,7 +9004,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureFolder"];
                 };
             };
             /** @description Folder not found */
@@ -8723,7 +9013,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureFolder"];
                 };
             };
         };
@@ -8947,7 +9237,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
             /** @description Invalid request */
@@ -8956,7 +9246,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
             /** @description Conflict */
@@ -8965,7 +9255,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
         };
@@ -9043,36 +9333,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -9092,18 +9374,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -9152,7 +9430,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
             /** @description Empty or invalid body: workflowDefinitionId is required (an integer, or null to unassign) */
@@ -9161,7 +9439,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
             /** @description Procedure type or workflow not found */
@@ -9170,7 +9448,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
             /** @description The selected workflow is not active */
@@ -9179,7 +9457,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoProcedureType"];
                 };
             };
         };
@@ -9230,7 +9508,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
             /** @description Invalid request: idProcedureType is required */
@@ -9239,7 +9517,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
             /** @description Reference not found */
@@ -9248,7 +9526,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
             /** @description Conflict */
@@ -9257,7 +9535,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
         };
@@ -9314,7 +9592,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
             /** @description Empty or incomplete body: idProcedureType is required */
@@ -9323,7 +9601,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
             /** @description Procedure or reference not found */
@@ -9332,7 +9610,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["ProcedureResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProcedureResponse"];
                 };
             };
         };
@@ -9403,7 +9690,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PropertyResponse"];
                 };
             };
             /** @description Invalid request (the cadastral designation is missing) */
@@ -9412,7 +9699,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PropertyResponse"];
                 };
             };
             /** @description Conflict */
@@ -9421,7 +9708,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["PropertyResponse"];
                 };
             };
         };
@@ -9541,7 +9828,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description Incomplete cadastral or registry data, or the deed is not signed */
@@ -9550,7 +9837,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description Deed not found */
@@ -9559,7 +9846,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description The deed already has a registration draft */
@@ -9568,7 +9855,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
         };
@@ -9625,7 +9912,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description The registration draft is not submitted */
@@ -9634,7 +9921,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description Registration draft not found */
@@ -9643,7 +9930,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
         };
@@ -9669,7 +9956,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description The registration draft is not submitted */
@@ -9678,7 +9965,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description Registration draft not found */
@@ -9687,7 +9974,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
         };
@@ -9713,7 +10000,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description The registration draft is not in status Generada */
@@ -9722,7 +10009,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
             /** @description Registration draft not found */
@@ -9731,7 +10018,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoRegistrationDraft"];
                 };
             };
         };
@@ -10283,7 +10570,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["RoleResponse"];
                 };
             };
             /** @description Invalid request */
@@ -10292,7 +10579,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["RoleResponse"];
                 };
             };
             /** @description Conflict */
@@ -10301,7 +10588,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["RoleResponse"];
                 };
             };
         };
@@ -10345,13 +10632,26 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
+            /** @description Assigned */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Role or user not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": {
+                        [key: string]: number;
+                    };
                 };
             };
         };
@@ -10474,7 +10774,7 @@ export interface operations {
                 page?: number;
                 /** @description The size of the page to be returned */
                 size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default is idSubmittedDocument,desc. */
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
                 sort?: string[];
             };
             header?: never;
@@ -10513,7 +10813,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
                 };
             };
             /** @description Invalid request (typeId or procedureId is missing, or the date is not a yyyy-MM-dd day) */
@@ -10522,7 +10822,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
                 };
             };
             /** @description Document type or procedure not found */
@@ -10531,7 +10831,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
                 };
             };
             /** @description Conflict */
@@ -10540,7 +10840,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubmittedDocumentResponse"];
                 };
             };
         };
@@ -10711,7 +11011,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubstitutionResponse"];
                 };
             };
             /** @description Invalid request */
@@ -10720,7 +11020,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubstitutionResponse"];
                 };
             };
             /** @description Conflict */
@@ -10729,7 +11029,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["SubstitutionResponse"];
                 };
             };
         };
@@ -10862,7 +11162,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
             /** @description Invalid request (the deed or its idDeed is missing) */
@@ -10871,7 +11171,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
             /** @description Deed not found */
@@ -10880,7 +11180,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
             /** @description Conflict */
@@ -10889,7 +11189,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimony"];
                 };
             };
         };
@@ -10985,36 +11285,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Empty or incomplete body: number, flagged, verified, and version are required */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the testimony */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -11034,27 +11326,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description The testimony has registry movements or issued copies (issue #1364) */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -11100,7 +11386,7 @@ export interface operations {
                 page?: number;
                 /** @description The size of the page to be returned */
                 size?: number;
-                /** @description Sorting criteria in the format: property,(asc|desc). Default is idTestimonyMovement,desc. Allowed: idTestimonyMovement, dateEntry, dateExit, dateRegistration. */
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
                 sort?: string[];
             };
             header?: never;
@@ -11139,7 +11425,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
             /** @description Invalid request */
@@ -11148,7 +11434,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
             /** @description Conflict */
@@ -11157,7 +11443,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoTestimonyMovement"];
                 };
             };
         };
@@ -11381,36 +11667,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -11430,18 +11708,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -11484,7 +11758,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["UserResponse"];
                 };
             };
             /** @description Invalid request */
@@ -11493,7 +11767,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["UserResponse"];
                 };
             };
             /** @description Conflict */
@@ -11502,7 +11776,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["UserResponse"];
                 };
             };
         };
@@ -11520,13 +11794,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK (see the 'valid' field for the result) */
+            /** @description OK (see 'valid'); when 'mfaRequired' or 'mfaEnrollmentRequired' is true no session is issued and 'mfaToken' is a short-lived scoped token */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["LoginSuccessResponse"] | components["schemas"]["MfaChallengeResponse"];
                 };
             };
             /** @description Account temporarily locked after failed attempts */
@@ -11535,7 +11809,40 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["LoginSuccessResponse"] | components["schemas"]["MfaChallengeResponse"];
+                };
+            };
+        };
+    };
+    loginMfa: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginMfaRequest"];
+            };
+        };
+        responses: {
+            /** @description OK (see 'valid'); the session is issued only when true */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginSuccessResponse"] | components["schemas"]["MfaChallengeResponse"];
+                };
+            };
+            /** @description Account temporarily locked after failed attempts */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginSuccessResponse"] | components["schemas"]["MfaChallengeResponse"];
                 };
             };
         };
@@ -11555,9 +11862,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: unknown;
-                    };
+                    "*/*": components["schemas"]["LogoutResponse"];
                 };
             };
         };
@@ -11712,7 +12017,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowDefinition"];
                 };
             };
             /** @description Invalid request: name is required */
@@ -11721,7 +12026,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowDefinition"];
                 };
             };
             /** @description Conflict */
@@ -11730,7 +12035,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowDefinition"];
                 };
             };
         };
@@ -11786,36 +12091,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request: name is required */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description version is not the stored one: another user modified the record */
             409: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -11835,18 +12132,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
+                content?: never;
+            };
+            /** @description Workflow has associated nodes */
+            409: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
             };
         };
     };
@@ -11867,9 +12167,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: unknown;
-                    };
+                    "*/*": components["schemas"]["WorkflowValidationResponse"];
                 };
             };
         };
@@ -11893,7 +12191,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowNode"];
                 };
             };
             /** @description Invalid request: workflowDefinitionId, statusManagementId and type (INITIAL, INTERMEDIATE or FINAL) are required */
@@ -11902,7 +12200,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowNode"];
                 };
             };
             /** @description Conflict */
@@ -11911,7 +12209,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowNode"];
                 };
             };
         };
@@ -11989,27 +12287,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Invalid request: provide at least type, positionX, or positionY; type must be INITIAL, INTERMEDIATE, or FINAL */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
@@ -12029,18 +12321,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
+                content?: never;
+            };
+            /** @description Node has associated transitions */
+            409: {
+                headers: {
+                    [name: string]: unknown;
                 };
+                content?: never;
             };
         };
     };
@@ -12063,7 +12358,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
             /** @description Invalid request: workflowDefinitionId, originNodeId and destinationNodeId are required */
@@ -12072,7 +12367,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
             /** @description Conflict */
@@ -12081,7 +12376,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
         };
@@ -12160,7 +12455,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
             /** @description Invalid request: originNodeId and destinationNodeId are required */
@@ -12169,7 +12464,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
             /** @description Not found */
@@ -12178,7 +12473,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "*/*": components["schemas"]["DtoWorkflowTransition"];
                 };
             };
         };
@@ -12199,18 +12494,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
             /** @description Not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": Record<string, never>;
-                };
+                content?: never;
             };
         };
     };
