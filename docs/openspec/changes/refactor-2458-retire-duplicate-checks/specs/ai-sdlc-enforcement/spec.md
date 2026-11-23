@@ -5,8 +5,8 @@
 Preflight and `sdlc-process.yml` SHALL run `aisdlc commits`, `aisdlc tdd` and `aisdlc budget` with Notaire's profile,
 which carries Notaire's commit types (including `design`, the `[#n]` squash prefix and `Revert "…"`), its test paths
 (including `docs/tests/` and `infra/tests/`), test-before-code order and the `sdlc-exception` waiver.
-`workspace/sdlc/check-commit-messages.sh`, `workspace/sdlc/check-tdd-evidence.sh` and
-`workspace/ci/agent-context-budget.py` SHALL NOT exist.
+The standalone scripts that duplicated these checks SHALL NOT exist; `workspace/tests/test_scripts_layout.py`
+lists them as removed.
 
 #### Scenario: Notaire's commit forms pass
 

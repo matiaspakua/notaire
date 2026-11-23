@@ -83,7 +83,7 @@ frontend/src/**/*.test.*              ← component automation
 | CU-API matrix | `python3 workspace/sdlc/validate-cu-api-matrix.py` | Stale controllers / Bruno paths |
 | Testing inventory | `python3 workspace/sdlc/validate-testing-inventory.py` | Unprefixed E2E / unreadable suite trees (no committed count-table diff) |
 | OpenSpec plan | `bash workspace/sdlc/validate-sdlc-plan.sh` | Incomplete Gate 1 |
-| TDD evidence | `bash workspace/sdlc/check-tdd-evidence.sh` | Prod change without tests |
+| TDD evidence | `python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml tdd --base origin/main` | Prod change without tests |
 | Doc traceability | `python3 workspace/sdlc/check-doc-traceability.py` | Claimed docs not in diff |
 
 All of the above (except heavy suite runners) run in `preflight.sh`.

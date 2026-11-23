@@ -119,7 +119,7 @@ export default function AgentsPage() {
         <Code>.claude/skills/</Code> and <Code>.claude/agents/</Code> are the only catalogs; no per-tool copy may exist. The
         always-loaded context (CLAUDE.md, slim AGENTS.md, the Constitution card, the workflow rule) stays under 8,000 tokens.
       </p>
-      <Sources items={[{ label: "AGENTS.md", href: src("AGENTS.md") }, { label: "agent-context-budget.py", href: src("workspace/ci/agent-context-budget.py") }]} />
+      <Sources items={[{ label: "AGENTS.md", href: src("AGENTS.md") }, { label: "aisdlc budget ([context])", href: src(".aisdlc/aisdlc.toml") }]} />
     </div>
   );
 }

@@ -214,7 +214,7 @@ run "testing inventory validation" python3 workspace/sdlc/validate-testing-inven
 # PR, if there is one: the sdlc-exception label is a human decision.
 PR_LABELS="$(gh pr view --json labels -q '[.labels[].name] | join(",")' 2>/dev/null || true)"
 export PR_LABELS
-run "commit messages" bash workspace/sdlc/check-commit-messages.sh origin/main
+run "commit messages" python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml commits --base origin/main
 run "doc traceability" python3 workspace/sdlc/check-doc-traceability.py origin/main
 run "openspec archive hygiene" python3 workspace/sdlc/check-openspec-archive-hygiene.py origin/main
 # Board Status ↔ issue state ↔ labels (#1550). Skips clearly without gh auth.
@@ -231,7 +231,7 @@ else
 fi
 run "Owner scripts bash -n" bash -c \
     'for s in workspace/sdlc/owner/*.sh; do [ -f "$s" ] || continue; bash -n "$s"; done'
-run "tdd evidence" bash workspace/sdlc/check-tdd-evidence.sh origin/main
+run "tdd evidence" python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml tdd --base origin/main --labels "$PR_LABELS"
 if gh pr view >/dev/null 2>&1; then
     run "sdlc exception label" bash workspace/sdlc/check-sdlc-exception.sh origin/main
 else

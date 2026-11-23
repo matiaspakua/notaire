@@ -144,7 +144,7 @@ export const STATIONS: Station[] = [
     gate: {
       number: 2,
       name: "Do not implement without",
-      check: "check-tdd-evidence.sh: production code needs test changes",
+      check: "aisdlc tdd: production code needs test changes",
       items: ["Test cases designed", "Unit tests written and observed failing", "Integration tests where applicable"],
     },
     integration: ["cli"],
@@ -157,7 +157,7 @@ export const STATIONS: Station[] = [
     phase: "Prove",
     agent: "backend-implementer",
     skills: ["backend", "java", "programming", "maven-build"],
-    tools: ["mvn test", "vitest", "check-tdd-evidence.sh"],
+    tools: ["mvn test", "vitest", "aisdlc tdd"],
     inputs: ["Test cases", "Empty implementation"],
     outputs: ["Failing test output", "Red proof in ledger"],
     integration: ["cli"],
@@ -217,7 +217,7 @@ export const STATIONS: Station[] = [
     phase: "Publish",
     agent: "backend-implementer",
     skills: ["openspec-apply-change"],
-    tools: ["git commit", "check-commit-messages.sh"],
+    tools: ["git commit", "aisdlc commits"],
     inputs: ["Working code", "Updated docs"],
     outputs: ["Atomic commits", "Conventional commit messages"],
     integration: ["cli", "github"],
@@ -485,7 +485,7 @@ sequenceDiagram
   W->>W: Architecture + design
   W->>GH: Branch + push
   W->>W: Test design + failing tests
-  W->>G: Gate 2 — check-tdd-evidence.sh
+  W->>G: Gate 2 — aisdlc tdd
   G-->>W: PASS
   W->>W: Implement
   W->>W: Full suite + E2E

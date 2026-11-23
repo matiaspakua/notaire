@@ -164,7 +164,7 @@ timeline
 |----------|----------|
 | One authority above all agent files | `CONSTITUTION.md` "prevails"; every runtime entry point (`AGENTS.md`, `opencode.json`, OpenSpec config) points at it (§10). |
 | Context injected by a tool every agent uses | The Constitution reaches agents through the OpenSpec schema and `config.yaml`, not through one vendor's feature (CONSTITUTION §10). |
-| Gates as commands | `validate-sdlc-plan.sh` (Gate 1), `check-tdd-evidence.sh`, `preflight.sh` (pre-push hook), `run_pipeline.sh`, `check-heavy-ci.sh`. |
+| Gates as commands | `validate-sdlc-plan.sh` (Gate 1), `aisdlc tdd`, `preflight.sh` (pre-push hook), `run_pipeline.sh`, `check-heavy-ci.sh`. |
 | Live verification of references | Gate 1 resolves the issue on GitHub; an invented number fails (#793). |
 | Ratchets for legacy debt | ArchUnit hexagon baseline 512 → 0 and ESLint suppressions 66 → 0, each PR shrinking and committing the smaller file (#1693). |
 | Harness-owned truth for weak models | The local harness owns the ledger, the pushes and the frozen test command; the worker cannot write them (`local-ai/sdlc/AI-SDLC.md`, "Guardrails"). |
@@ -406,7 +406,7 @@ A rule that keeps being violated is a candidate for a gate.
 | Layer | Guardrail | Notaire implementation |
 |-------|-----------|------------------------|
 | 1 Policy | One authority, never-list | `CONSTITUTION.md` |
-| 2 Context | Card ≤3 KB, on-demand rules | `CONSTITUTION-AGENT-CARD.md`, `agent-context-budget.py` |
+| 2 Context | Card ≤3 KB, on-demand rules | `CONSTITUTION-AGENT-CARD.md`, `aisdlc budget` |
 | 3 Catalog | Skills and agents in one place, linted | `.claude/skills`, `.claude/agents`, `aisdlc skills` |
 | 4 Agent harness | Hooks, scope and ref guards, frozen test command | `.claude/hooks/`, `local-ai/sdlc/` |
 | 5 Local gates | Pre-push and pre-PR stages | `preflight.sh`, `run_pipeline.sh` |

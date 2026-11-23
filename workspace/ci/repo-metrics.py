@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tomllib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,13 +23,8 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-# Keep in sync with workspace/ci/agent-context-budget.py (#1259 / #1197 P0.4).
-ALWAYS_LOADED = [
-    "CLAUDE.md",
-    "AGENTS.md",
-    "CONSTITUTION-AGENT-CARD.md",
-    ".claude/rules/ai-agent-workflow.md",
-]
+# The always-loaded set is declared once, in the profile's [context] files (#1259, #2458).
+ALWAYS_LOADED = tomllib.loads((REPO_ROOT / ".aisdlc" / "aisdlc.toml").read_text(encoding="utf-8"))["context"]["files"]
 
 
 def _dir_size_bytes(path: Path) -> int:
