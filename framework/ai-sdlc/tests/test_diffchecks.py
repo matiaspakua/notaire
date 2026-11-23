@@ -164,46 +164,51 @@ class ReviewSizeRenameTest(unittest.TestCase):
         repo = Repo(self, "[size]\nlimit = 400\n")
         file_content = "line\n" * 600
         repo.write("src/old_name.py", file_content)
-        repo.commit("feat: add file")
+        base = repo.commit("feat: add file")
         git(repo.root, "mv", "src/old_name.py", "src/new_name.py")
         repo.commit("refactor: rename file")
-        result = repo.run("size", "--base", repo.base)
+        result = repo.run("size", "--base", base)
         out = output(result)
         self.assertEqual(0, result.returncode, out)
         self.assertIn("0 changed lines", out)
 
     def test_rename_with_edits_counts_only_edited_lines(self):
-        """A commit that renames a 600-line file and edits 3 lines counts only those edits and reports the NEW path."""
-        repo = Repo(self, "[size]\nlimit = 400\n")
+        """A commit that renames a 600-line file and edits 30 lines counts only those edits and reports the NEW path.
+
+        The budget is set low on purpose so the size check fails and the file list is printed.
+        """
+        repo = Repo(self, "[size]\nlimit = 10\n")
         file_content = "line\n" * 600
         repo.write("src/old_name.py", file_content)
-        repo.commit("feat: add file")
+        base = repo.commit("feat: add file")
         git(repo.root, "mv", "src/old_name.py", "src/new_name.py")
-        edited_content = "line\n" * 598 + "edited_line_1\n" + "edited_line_2\n" + "edited_line_3\n"
+        edited_content = "line\n" * 570 + "edited\n" * 30
         (repo.root / "src/new_name.py").write_text(edited_content)
         repo.commit("refactor: rename and edit file")
-        result = repo.run("size", "--base", repo.base)
+        result = repo.run("size", "--base", base)
         out = output(result)
-        self.assertEqual(0, result.returncode, out)
+        self.assertEqual(1, result.returncode, out)
         self.assertIn("src/new_name.py", out)
+        self.assertNotIn("src/old_name.py", out)
+        self.assertIn("60 changed lines counted", out)
 
     def test_renamed_file_new_path_matched_against_exclude(self):
         """The NEW path of a renamed file is the one matched against [size] exclude.
 
-        A file is renamed from an excluded directory to a non-excluded one.
-        With rename detection the change is a pure rename (0 lines) — the new path
-        is reported but there are no lines to exclude.  Without rename detection the
-        new file appears as 600 additions at the non-excluded path and blows past
-        the budget.
+        Rename src/data.py INTO generated/data.py and change 30 lines.
+        With [size] limit = 10 and exclude = ["generated/**"], the edited lines are
+        excluded because the new path matches — the check passes.
         """
         repo = Repo(self, '[size]\nlimit = 10\nexclude = ["generated/**"]\n')
         file_content = "line\n" * 600
-        repo.write("generated/data.py", file_content)
-        repo.commit("feat: add file")
-        (repo.root / "src").mkdir(exist_ok=True)
-        git(repo.root, "mv", "generated/data.py", "src/data.py")
-        repo.commit("refactor: move out of generated")
-        result = repo.run("size", "--base", repo.base)
+        repo.write("src/data.py", file_content)
+        base = repo.commit("feat: add file")
+        (repo.root / "generated").mkdir(exist_ok=True)
+        git(repo.root, "mv", "src/data.py", "generated/data.py")
+        edited_content = "line\n" * 570 + "edited\n" * 30
+        (repo.root / "generated/data.py").write_text(edited_content)
+        repo.commit("refactor: move to generated and edit")
+        result = repo.run("size", "--base", base)
         out = output(result)
         self.assertEqual(0, result.returncode, out)
 
