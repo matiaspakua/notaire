@@ -70,6 +70,10 @@ updates:
       # (peer typescript ^5) and eslint-config-next need it. Drop when they support TS7 (#1883, #1871).
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # 13 removed applyNodeChanges and changed onNodesChange to a NodeChangeset; the workflow editor
+      # needs its own migration before the major lands (#2440).
+      - dependency-name: "@xyflow/react"
+        update-types: ["version-update:semver-major"]
     reviewers:
       - matiaspakua
 
