@@ -81,6 +81,11 @@ slide. By Owner decision (#2407) that language is scoped to this diagram, in
   progress bar with an accessible name, and the elapsed time, cost and current step in tabular
   mono. The detail panel is a polite live region: the facts on the left, the gates table on the
   right.
+- **What the run did there (#2435).** Below the facts, each step of the current run mapped to the
+  station is a bordered card with two columns, *Received* and *Produced*. The prompt is an
+  expandable block; files link to `<repo>/blob/<ref>/<path>` (the step's first output commit, else
+  `HEAD`), commits to `<repo>/commit/<sha>`, and links open in a new tab. Only http(s) URLs become
+  links. A side with nothing recorded says so; the columns stack under 768px.
 - **Small screens.** Under 768px the rail turns vertical on the left, the token becomes the
   running node and the loop becomes a dashed bracket note. The line's own region scrolls sideways
   when stations do not fit; the page never does.

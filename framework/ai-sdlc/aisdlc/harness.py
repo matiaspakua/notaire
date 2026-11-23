@@ -118,6 +118,7 @@ def report_event(
     budget_overrun: bool = False,
     cancelled: bool = False,
     blocked: bool = False,
+    io: dict | None = None,
 ) -> dict:
     """Local-worker reference adapter: append a harness run event (#2255).
 
@@ -144,6 +145,7 @@ def report_event(
         budget_overrun=budget_overrun,
         cancelled=cancelled,
         blocked=blocked,
+        io=io,
     )
 
 

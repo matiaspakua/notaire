@@ -30,6 +30,31 @@ aisdlc harness report --run <id> --event run.finished --ok true
 
 `step_status` values: `pass` | `fail` | `skip` | `todo`. **Skip is never pass.**
 
+## Step inputs and outputs (#2435)
+
+A `step.started` or `step.finished` event may carry what the step **received** (`inputs`) and what
+it **produced** (`outputs`), so anyone can inspect a stage afterwards from the dashboard or
+`aisdlc run show`. Pass them as a JSON file:
+
+```bash
+aisdlc harness report --run <id> --event step.started --step red --io-file in.json
+aisdlc harness report --run <id> --event step.finished --step red --step-status pass --io-file out.json
+```
+
+```json
+{"inputs": {"request": "Fix the pages metrics", "prompt": "Write the failing tests first.",
+            "files": ["workspace/ci/generate.sh"],
+            "links": [{"label": "Issue #760", "url": "https://github.com/org/repo/issues/760"}]},
+ "outputs": {"summary": "8 failing tests", "commits": ["0123abcd"], "files": ["workspace/tests/test_generate.py"]}}
+```
+
+Both sides share one shape: `request`, `prompt`, `summary` (text; 4,000, 20,000 and 4,000
+characters at most), `files` (repository-relative paths, no `..`), `commits` (7 to 40 lowercase hex)
+and `links` (`label` plus an `http` or `https` `url`); lists hold 200 items at most. Anything else is
+refused with `invalid_body` and nothing is appended. Later events overwrite only the keys they
+carry. The values are evidence in the hash-chained ledger, not a secret store: never put a
+credential in a prompt.
+
 ## Hash-chain append rule
 
 Every event is written with `evidence.append_record` into `ledger.jsonl`. Each
