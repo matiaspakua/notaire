@@ -164,7 +164,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-        run: bash workspace/ci/generate-github-page-metrics.sh
+        run: |
+          # Fresh e2e and API coverage (#760): the merged Playwright results come with the playwright-report
+          # artifact downloaded above; the Bruno report is the api-test-report artifact.
+          gh run download --repo "${{ github.repository }}" --name api-test-report \
+            --dir api-test-report-dl 2>/dev/null || echo "No Bruno API test report available"
+          PLAYWRIGHT_RESULTS_JSON="$(find playwright-report-dl -path '*test-results*' -name results.json 2>/dev/null | head -1)"
+          BRUNO_RESULTS_JSON="$(find api-test-report-dl -name bruno-results.json 2>/dev/null | head -1)"
+          export PLAYWRIGHT_RESULTS_JSON BRUNO_RESULTS_JSON
+          bash workspace/ci/generate-github-page-metrics.sh
 
       # ── Refresh the delivery-outcomes snapshot (#1985) ──
       # Read-only: the committed lib/delivery-metrics.json is overwritten in the runner only, so the

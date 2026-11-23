@@ -102,20 +102,52 @@ else
   FRONTEND_COMPONENT=$(coverage_fallback frontendComponent)
 fi
 
-# Not recomputed fresh this pass (tracked as a scoped follow-up per issue
-# #758 / #760) -- carry the last *measured* deployed value forward rather than
-# a hardcoded zero.
-E2E_TESTS=$(coverage_fallback e2eTests)
-API_ENDPOINTS=$(coverage_fallback apiEndpoints)
+# -----------------------------------------------------------------------
+# Issue #760 — compute e2eTests from Playwright results, apiEndpoints from
+# Bruno report.  Fall back to last live value only when the artefact is
+# missing, and visibly mark the fallback stale.
+# -----------------------------------------------------------------------
 
+# Sets VALUE to the fresh count read from JSON file $1 with jq filter $3, or else to the last live
+# value of key $2; STALE is true only when it fell back to a live value (#760).
+fresh_or_live() {
+  local file="$1" key="$2" filter="$3" fresh=""
+  if [ -n "$file" ] && [ -f "$file" ]; then
+    fresh=$(jq -r "$filter" "$file" 2>/dev/null || true)
+  fi
+  if [ -n "$fresh" ] && [ "$fresh" != "null" ] && [ "$fresh" != "0" ]; then
+    VALUE="$fresh"; STALE=false
+    return
+  fi
+  VALUE=$(coverage_fallback "$key")
+  case "$VALUE" in ""|null) VALUE=null; STALE=false ;; *) STALE=true ;; esac
+}
+
+fresh_or_live "${PLAYWRIGHT_RESULTS_JSON:-}" e2eTests '.stats.total // empty'
+E2E_TESTS="$VALUE"; E2E_TESTS_STALE="$STALE"
+# Bruno CLI --reporter-json writes a list of per-iteration objects, each with summary.totalRequests (#658).
+fresh_or_live "${BRUNO_RESULTS_JSON:-}" apiEndpoints \
+  'if type == "array" then (map(.summary.totalRequests // 0) | add // 0) else (.summary.totalRequests // empty) end'
+API_ENDPOINTS="$VALUE"; API_ENDPOINTS_STALE="$STALE"
+
+# Build the coverage JSON object.  Stale flags are only emitted when the
+# value is a non-null fallback (issue #760).
+_COVERAGE_BUILD='
+  {backendInstruction:$bi, backendBranch:$bb, frontendComponent:$fc,
+   e2eTests:$et, apiEndpoints:$ae, lastUpdated:$lu}
+  | (if $et_stale == "true" then . + {e2eTestsStale: true} else . end)
+  | (if $ae_stale == "true" then . + {apiEndpointsStale: true} else . end)
+'
 COVERAGE_JSON=$(jq -n \
-  --argjson backendInstruction "$BACKEND_INSTRUCTION" \
-  --argjson backendBranch "$BACKEND_BRANCH" \
-  --argjson frontendComponent "$FRONTEND_COMPONENT" \
-  --argjson e2eTests "$E2E_TESTS" \
-  --argjson apiEndpoints "$API_ENDPOINTS" \
-  --arg lastUpdated "$COVERAGE_UPDATED" \
-  '{backendInstruction:$backendInstruction, backendBranch:$backendBranch, frontendComponent:$frontendComponent, e2eTests:$e2eTests, apiEndpoints:$apiEndpoints, lastUpdated:$lastUpdated}')
+  --argjson bi "$BACKEND_INSTRUCTION" \
+  --argjson bb "$BACKEND_BRANCH" \
+  --argjson fc "$FRONTEND_COMPONENT" \
+  --argjson et "$E2E_TESTS" \
+  --argjson ae "$API_ENDPOINTS" \
+  --arg lu "$COVERAGE_UPDATED" \
+  --arg et_stale "$E2E_TESTS_STALE" \
+  --arg ae_stale "$API_ENDPOINTS_STALE" \
+  "$_COVERAGE_BUILD")
 
 mkdir -p "$(dirname "$OUTPUT_FILE")"
 GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)

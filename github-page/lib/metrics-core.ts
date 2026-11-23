@@ -7,6 +7,10 @@ export interface CoverageSnapshot {
   frontendComponent: number | null;
   e2eTests: number | null;
   apiEndpoints: number | null;
+  /** True when e2eTests is a fallback from the last live deploy (#760). */
+  e2eTestsStale?: boolean;
+  /** True when apiEndpoints is a fallback from the last live deploy (#760). */
+  apiEndpointsStale?: boolean;
   lastUpdated: string;
 }
 
