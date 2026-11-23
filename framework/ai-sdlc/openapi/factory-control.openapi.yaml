@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI SDLC factory control surface
-  version: 1.5.0
+  version: 1.6.0
   description: |
     Contract for factory control operations shared by the `aisdlc` CLI JSON payloads
     and the `aisdlc serve` HTTP adapter (#2253 / ADR-003). Separate from any adopter
@@ -644,6 +644,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Workflow"
+    put:
+      tags: [workflows]
+      operationId: editWorkflow
+      summary: Replace a draft workflow's v2 steps, each with its line stage; returns it to draft (#2410)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: If-Match
+          in: header
+          required: true
+          description: Expected current workflow version; mismatch yields 409
+          schema:
+            type: string
+        - name: X-AISDLC-CSRF
+          in: header
+          required: true
+          description: Must equal the Bearer token value (double-submit CSRF)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkflowStepsEdit"
+      responses:
+        "200":
+          description: New current revision, governance draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+        "400":
+          description: Invalid steps (`invalid_body`) or approved workflow (`immutable_approved`)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: Version conflict (If-Match mismatch)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "428":
+          description: If-Match required
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /factory/workflows/{id}/transitions:
     post:
       tags: [workflows]
@@ -1689,6 +1742,34 @@ components:
         paths:
           type: array
           items: { type: string }
+    WorkflowStepsEdit:
+      type: object
+      additionalProperties: false
+      required: [steps]
+      properties:
+        summary: { type: string }
+        steps:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, stage]
+            properties:
+              id: { type: string }
+              stage: { type: string, description: Line stage this step runs at }
+              agent: { type: [string, "null"], description: "Pinned ref, e.g. agents:implementer@1" }
+              skills: { type: array, items: { type: string } }
+              mcp: { type: array, items: { type: string } }
+              provider: { type: [string, "null"] }
+              gates: { type: array, items: { type: string } }
+              budget:
+                type: object
+                properties:
+                  tokens: { type: [integer, "null"] }
+                  time_seconds: { type: [integer, "null"] }
+                  usd: { type: [number, "null"] }
+              on_fail: { type: string, enum: [stop, continue] }
     LineStage:
       type: object
       additionalProperties: true

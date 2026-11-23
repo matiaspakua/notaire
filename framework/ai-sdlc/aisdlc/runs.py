@@ -106,7 +106,7 @@ def derive_status(events: list[dict], steps: list[dict] | None = None) -> tuple[
         elif kind == "step.started":
             step_id = str(event.get("step") or "").strip()
             if step_id:
-                step_map[step_id] = {"id": step_id, "status": "running"}
+                step_map[step_id] = {**step_map.get(step_id, {}), "id": step_id, "status": "running"}
         elif kind == "step.finished":
             step_id = str(event.get("step") or "").strip()
             step_status = str(event.get("step_status") or "fail").strip().casefold()
@@ -114,7 +114,7 @@ def derive_status(events: list[dict], steps: list[dict] | None = None) -> tuple[
             if step_status == "pass" and event.get("skip"):
                 step_status = "skip"
             if step_id:
-                step_map[step_id] = {"id": step_id, "status": step_status}
+                step_map[step_id] = {**step_map.get(step_id, {}), "id": step_id, "status": step_status}
             if event.get("budget_overrun"):
                 blocked = True
         elif kind == "run.finished":
@@ -128,9 +128,7 @@ def derive_status(events: list[dict], steps: list[dict] | None = None) -> tuple[
             else:
                 status = "failed"
 
-    if blocked and status == "running":
-        status = "blocked"
-    elif blocked and status not in ("succeeded", "failed", "cancelled", "blocked"):
+    if blocked and status == "running" or blocked and status not in ("succeeded", "failed", "cancelled", "blocked"):
         status = "blocked"
 
     return status, list(step_map.values())
@@ -183,7 +181,10 @@ def start(
     seed_steps: list[dict] = []
     for step in body.get("steps") or []:
         if isinstance(step, dict) and step.get("id"):
-            seed_steps.append({"id": str(step["id"]), "status": "pending"})
+            seed = {"id": str(step["id"]), "status": "pending"}
+            if step.get("stage"):
+                seed["stage"] = str(step["stage"])
+            seed_steps.append(seed)
 
     evidence.append_record(
         ctx,

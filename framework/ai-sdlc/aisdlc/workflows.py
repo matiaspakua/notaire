@@ -189,6 +189,50 @@ def show(ctx: Context, workflow_id: str) -> dict:
     return redact("", catalogs.show(ctx, KIND, workflow_id, redacted=True))
 
 
+ON_FAIL = ("stop", "continue")
+
+
+def normalize_steps(steps: object) -> list[dict]:
+    """Validate v2 steps; every step names its line stage (#2410)."""
+    if not isinstance(steps, list) or not steps:
+        raise KitError("invalid_body", "steps must be a non-empty list")
+    seen: set[str] = set()
+    normalized = []
+    for index, step in enumerate(steps):
+        if not isinstance(step, dict):
+            raise KitError("invalid_body", f"step #{index + 1} must be an object")
+        step_id = step.get("id")
+        if not isinstance(step_id, str) or not step_id.strip():
+            raise KitError("invalid_body", f"step #{index + 1} needs an id")
+        if step_id in seen:
+            raise KitError("invalid_body", f"step id {step_id!r} is repeated")
+        seen.add(step_id)
+        stage = step.get("stage")
+        if not isinstance(stage, str) or not stage.strip():
+            raise KitError("invalid_body", f"step {step_id!r} needs a stage")
+        on_fail = step.get("on_fail", "stop")
+        if on_fail not in ON_FAIL:
+            raise KitError("invalid_body", f"step {step_id!r} on_fail must be one of {', '.join(ON_FAIL)}")
+        for key in ("skills", "mcp", "gates"):
+            if not isinstance(step.get(key, []), list):
+                raise KitError("invalid_body", f"step {step_id!r} {key} must be a list")
+        budget = step.get("budget") or {}
+        if not isinstance(budget, dict):
+            raise KitError("invalid_body", f"step {step_id!r} budget must be an object")
+        normalized.append({
+            "id": step_id,
+            "stage": stage,
+            "agent": step.get("agent"),
+            "skills": list(step.get("skills", [])),
+            "mcp": list(step.get("mcp", [])),
+            "provider": step.get("provider"),
+            "gates": list(step.get("gates", [])),
+            "budget": {key: budget.get(key) for key in ("tokens", "time_seconds", "usd")},
+            "on_fail": on_fail,
+        })
+    return normalized
+
+
 def new_version(
     ctx: Context,
     workflow_id: str,
@@ -198,12 +242,18 @@ def new_version(
     skills: list[str] | None = None,
     mcp: list[str] | None = None,
     providers: list[str] | None = None,
+    steps: list[dict] | None = None,
+    expected_version: int | None = None,
     actor: str | None = None,
 ) -> dict:
     data = catalogs.load_entry(ctx, KIND, workflow_id)
     if data.get("governance") == "approved":
         raise KitError("immutable_approved", "approved workflows are immutable; demote before editing body")
     body = dict(data.get("body") or {})
+    if steps is not None:
+        body["steps"] = normalize_steps(steps)
+        body.setdefault("inputs", [])
+        body.setdefault("outputs", [])
     if agents is not None:
         body["agents"] = list(agents)
     if skills is not None:
@@ -214,6 +264,8 @@ def new_version(
         body["providers"] = list(providers)
     payload = dict(data)
     payload["body"] = body
+    if steps is not None:
+        payload["schema_version"] = 2
     if summary is not None:
         payload["summary"] = summary
     # Body edits allocate a new revision and return to draft (#2254).
@@ -226,6 +278,7 @@ def new_version(
             workflow_id,
             payload,
             actor=_actor(actor),
+            expected_version=expected_version,
         ),
     )
 
