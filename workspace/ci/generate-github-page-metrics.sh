@@ -108,53 +108,27 @@ fi
 # missing, and visibly mark the fallback stale.
 # -----------------------------------------------------------------------
 
-# -- e2eTests -----------------------------------------------------------
-E2E_TESTS="null"
-E2E_TESTS_STALE="false"
-PW_JSON="${PLAYWRIGHT_RESULTS_JSON:-}"
-if [ -n "$PW_JSON" ] && [ -f "$PW_JSON" ]; then
-  _pw_total=$(jq -r '.stats.total // empty' "$PW_JSON" 2>/dev/null || true)
-  if [ -n "$_pw_total" ] && [ "$_pw_total" != "null" ]; then
-    E2E_TESTS="$_pw_total"
-  else
-    # Fallback to live
-    E2E_TESTS=$(coverage_fallback e2eTests)
-    if [ "$E2E_TESTS" != "null" ]; then
-      E2E_TESTS_STALE="true"
-    fi
+# Sets VALUE to the fresh count read from JSON file $1 with jq filter $3, or else to the last live
+# value of key $2; STALE is true only when it fell back to a live value (#760).
+fresh_or_live() {
+  local file="$1" key="$2" filter="$3" fresh=""
+  if [ -n "$file" ] && [ -f "$file" ]; then
+    fresh=$(jq -r "$filter" "$file" 2>/dev/null || true)
   fi
-else
-  # No Playwright artefact — fall back to live
-  E2E_TESTS=$(coverage_fallback e2eTests)
-  if [ "$E2E_TESTS" != "null" ]; then
-    E2E_TESTS_STALE="true"
+  if [ -n "$fresh" ] && [ "$fresh" != "null" ] && [ "$fresh" != "0" ]; then
+    VALUE="$fresh"; STALE=false
+    return
   fi
-fi
+  VALUE=$(coverage_fallback "$key")
+  case "$VALUE" in ""|null) VALUE=null; STALE=false ;; *) STALE=true ;; esac
+}
 
-# -- apiEndpoints -------------------------------------------------------
-API_ENDPOINTS="null"
-API_ENDPOINTS_STALE="false"
-BR_JSON="${BRUNO_RESULTS_JSON:-}"
-if [ -n "$BR_JSON" ] && [ -f "$BR_JSON" ]; then
-  # Bruno CLI --reporter-json writes a LIST of per-iteration objects;
-  # each carries its own "summary" with "totalRequests" (issue #658).
-  _br_total=$(jq -r 'if type == "array" then (map(.summary.totalRequests // 0) | add // 0) else (.summary.totalRequests // empty) end' "$BR_JSON" 2>/dev/null || true)
-  if [ -n "$_br_total" ] && [ "$_br_total" != "null" ] && [ "$_br_total" != "0" ]; then
-    API_ENDPOINTS="$_br_total"
-  else
-    # Fallback to live
-    API_ENDPOINTS=$(coverage_fallback apiEndpoints)
-    if [ "$API_ENDPOINTS" != "null" ]; then
-      API_ENDPOINTS_STALE="true"
-    fi
-  fi
-else
-  # No Bruno artefact — fall back to live
-  API_ENDPOINTS=$(coverage_fallback apiEndpoints)
-  if [ "$API_ENDPOINTS" != "null" ]; then
-    API_ENDPOINTS_STALE="true"
-  fi
-fi
+fresh_or_live "${PLAYWRIGHT_RESULTS_JSON:-}" e2eTests '.stats.total // empty'
+E2E_TESTS="$VALUE"; E2E_TESTS_STALE="$STALE"
+# Bruno CLI --reporter-json writes a list of per-iteration objects, each with summary.totalRequests (#658).
+fresh_or_live "${BRUNO_RESULTS_JSON:-}" apiEndpoints \
+  'if type == "array" then (map(.summary.totalRequests // 0) | add // 0) else (.summary.totalRequests // empty) end'
+API_ENDPOINTS="$VALUE"; API_ENDPOINTS_STALE="$STALE"
 
 # Build the coverage JSON object.  Stale flags are only emitted when the
 # value is a non-null fallback (issue #760).
