@@ -26,6 +26,9 @@ from aisdlc.errors import KitError
 SOURCES = ("junie", "claude-code")
 _LINE_TS = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})")
 _TOTAL_COST = re.compile(r"total_cost=([0-9.]+)")
+# The task text names the issue a worker was given; a run id like issue-760 or issue-2395-r2 names it too.
+_TASK_ISSUE = re.compile(r"(?:GitHub issue #|gh issue view )(\d+)")
+_RUN_ISSUE = re.compile(r"(?:^|-)issue-(\d+)(?:-|$)")
 _SLACK = timedelta(seconds=5)
 
 
@@ -44,7 +47,11 @@ def junie_sessions(directory: Path) -> list[dict]:
         start = end = None
         snapshot: dict | None = None
         reported: float | None = None
+        issue: str | None = None
         for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+            named = issue is None and _TASK_ISSUE.search(line)
+            if named:
+                issue = named.group(1)
             stamp = _LINE_TS.match(line)
             if stamp:
                 end = _local(stamp.group(1))
@@ -63,7 +70,7 @@ def junie_sessions(directory: Path) -> list[dict]:
         sessions.append({
             "key": f"junie:{log.name}", "start": start, "end": end, "model": groups[0].get("modelName") or "junie",
             "input": int(totals.get("inputTokens") or 0), "output": int(totals.get("outputTokens") or 0),
-            "cache_read": int(totals.get("cacheReadTokens") or 0), "usd": reported,
+            "cache_read": int(totals.get("cacheReadTokens") or 0), "usd": reported, "issue": issue,
         })
     return sessions
 
@@ -124,9 +131,12 @@ def _existing_keys(ctx: Context) -> set[str]:
 
 def _import_junie(ctx: Context, path: Path, run_id: str, known: set[str]) -> list[dict]:
     windows = step_windows(ctx, run_id)
+    run_issue = _RUN_ISSUE.search(run_id)
     rows = []
     for session in junie_sessions(path):
         if session["key"] in known:
+            continue
+        if session["issue"] and session["issue"] != (run_issue.group(1) if run_issue else None):
             continue
         step = next((w["step"] for w in windows if w["start"] - _SLACK <= session["start"] <= w["end"]), None)
         if step is None:
