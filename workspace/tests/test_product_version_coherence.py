@@ -137,6 +137,13 @@ class CoherentTreeTest(unittest.TestCase):
         errors = mod.coherence_errors(REPO_ROOT, tag="v0.9.0")
         self.assertEqual(errors, [])
 
+    def test_release_branch_at_0_10_0_passes_for_its_tag(self):
+        mod = load_module()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_minimal_tree(root, "0.10.0")
+            self.assertEqual(mod.coherence_errors(root, tag="v0.10.0"), [])
+
     def test_minimal_temp_tree_passes(self):
         mod = load_module()
         with tempfile.TemporaryDirectory() as directory:

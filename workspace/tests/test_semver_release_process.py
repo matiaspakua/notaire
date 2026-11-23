@@ -206,6 +206,17 @@ class ReleasePleaseCanOpenPrTest(unittest.TestCase):
         sha = cfg.get("bootstrap-sha", "")
         self.assertRegex(sha, r"^[0-9a-f]{40}$")
 
+    def test_release_branch_runs_the_coherence_gate_for_its_tag(self):
+        """#2448: the bot release PR runs no CI, so the job checks the next tag's train itself."""
+        wf = load_yaml(os.path.join(WORKFLOWS_DIR, "release-please.yml"))
+        steps = wf["jobs"]["release-please"]["steps"]
+        names = [s.get("name", "") for s in steps]
+        sync = names.index("Sync OpenAPI info.version on the release branch")
+        gate = next(i for i, s in enumerate(steps) if "check-product-version-coherence.py" in s.get("run", ""))
+        self.assertGreater(gate, sync)
+        self.assertEqual("steps.release.outputs.pr", steps[gate].get("if"))
+        self.assertIn('--tag "v$VERSION"', steps[gate]["run"])
+
     def test_runbook_documents_actions_pr_setting(self):
         text = read_text(os.path.join(REPO_ROOT, "docs", "300-development", "RELEASE.md"))
         self.assertIn("Allow GitHub", text)
