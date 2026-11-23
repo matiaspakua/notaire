@@ -1,0 +1,653 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI Agentic Factory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: 1920x1080 scaled stage; an engineered production floor — steel-grey drafting ground, graphite machinery, safety orange for agents, signal blue for humans. Single light look by choice. */
+:root{
+  --bg:#E4E7EA;--bg2:#DADEE2;--panel:#F3F4F5;--line:#C2C8CF;--fg:#14181D;--mute:#4F5864;--dim:#7B8490;
+  --orange:#EE5A1B;--orange-ink:#B23F0C;--blue:#2453C2;--graphite:#2B3139;--green:#1B7A4A;--red:#C2303A;
+  --accent:var(--orange);--on-accent:#fff;--focus:#2453C2;
+  --chip-bg:#F3F4F5;--chip-line:#C9CED5;--chip-on-bg:#FFFFFF;--nav-bg:rgba(243,244,245,.88);
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden;background:var(--bg)}
+.slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .5s ease,visibility 0s linear .5s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .5s ease}
+.slide.on .a{animation:rise .85s cubic-bezier(.2,.75,.2,1) both;animation-delay:calc(var(--d,0) * 1ms)}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.slide.on .af{animation:fadein 1s ease both;animation-delay:calc(var(--d,0) * 1ms)}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+h1,h2,h3,p{margin:0}
+h1,h2{text-wrap:balance}
+ul,ol{margin:0;padding:0;list-style:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+/* module map */
+.mm{display:flex;flex-direction:column;gap:22px}
+.mm-cols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:14px}
+.mm-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.mm-h{font-family:var(--f-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--g,var(--mute));padding-bottom:8px;border-bottom:2px solid var(--g,var(--line));margin-bottom:2px}
+.mm-trans{display:flex;gap:14px}
+.mm-tg{flex:var(--n,1) 1 0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.mm-tg .mm-row{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+.mm-chip{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:3px;padding:10px 12px 11px;border-radius:var(--chip-r,10px);background:var(--chip-bg);border:1px solid var(--chip-line);position:relative;transition:background .25s,border-color .25s,transform .25s;min-width:0}
+.mm-chip:hover{border-color:var(--g,var(--accent));transform:translateY(-2px)}
+.mm-chip[aria-pressed="true"]{background:var(--chip-on-bg);border-color:var(--g,var(--accent));box-shadow:inset 3px 0 0 var(--g,var(--accent))}
+.mm-chip:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.mm-id{font-family:var(--f-mono);font-size:13px;color:var(--g,var(--mute));letter-spacing:.04em}
+.mm-n{font-size:16px;font-weight:600;line-height:1.2;color:var(--fg)}
+.mp{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:hidden}
+.mp-top{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-mono);font-size:14px;color:var(--mute);letter-spacing:.06em}
+.mp-id{font-size:18px;color:var(--mp-accent,var(--accent));font-weight:600}
+.mp-name{font-family:var(--f-display);font-size:30px;line-height:1.1;font-weight:700}
+.mp-obj{font-size:17px;line-height:1.4;color:var(--mute)}
+.mp-list{display:flex;flex-direction:column;gap:9px;overflow-y:auto;padding-right:8px;scrollbar-width:thin}
+.mp-list li{display:grid;grid-template-columns:34px 1fr;gap:8px;font-size:15.5px;line-height:1.36}
+.mp-list li span{font-family:var(--f-mono);font-size:13px;color:var(--dim);padding-top:3px}
+.mp.swap .mp-list li{animation:fadein .5s ease both}
+
+/* nav */
+.deck-nav{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:4px;align-items:center;z-index:5;font-family:var(--f-mono);font-size:12px;background:var(--nav-bg);border:1px solid var(--line);border-radius:999px;padding:4px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.deck-nav button{all:unset;cursor:pointer;min-width:30px;height:30px;display:grid;place-items:center;border-radius:999px;color:var(--fg)}
+.deck-nav button:hover{background:var(--chip-bg)}
+.deck-nav button:focus-visible{outline:2px solid var(--focus)}
+.deck-nav .dot{min-width:0;width:26px;font-size:11px;color:var(--mute)}
+.deck-nav .dot[aria-current="step"]{background:var(--accent);color:var(--on-accent)}
+@media (prefers-reduced-motion:reduce){
+  .slide.on .a,.slide.on .af{animation:none}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
+.slide{padding:84px 104px 96px;background:
+  linear-gradient(rgba(20,24,29,.055) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg,rgba(20,24,29,.055) 1px,transparent 1px) 0 0/40px 40px,var(--bg)}
+.slide>*{position:relative;z-index:1}
+.mm-chip{--chip-r:4px}
+.mm-trans .mm-n{font-size:14.5px}
+.mm-chip[aria-pressed="true"]{box-shadow:inset 4px 0 0 var(--g),0 6px 18px rgba(20,24,29,.12)}
+.mp-name{font-stretch:112%;font-weight:800}
+.eyebrow{font-family:var(--f-mono);font-size:16px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);display:flex;gap:14px;align-items:center}
+.eyebrow::before{content:"";width:46px;height:14px;background:repeating-linear-gradient(-45deg,var(--orange) 0 7px,var(--fg) 7px 14px)}
+.eyebrow i{font-style:normal;color:var(--dim)}
+.h2{font-family:var(--f-display);font-stretch:108%;font-size:56px;line-height:1.02;font-weight:850;letter-spacing:-.02em;margin-top:16px}
+.h2 em{font-style:normal;color:var(--orange-ink)}
+.label{font-family:var(--f-mono);font-size:14px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.brand{position:absolute;left:104px;bottom:40px;font-family:var(--f-mono);font-size:14px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.brand b{color:var(--mute);font-weight:500}
+.kind{display:inline-flex;align-items:center;gap:8px}
+.kind i{width:14px;height:14px;flex:none}
+.k-ag i{background:var(--orange);border-radius:50%}
+.k-de i{background:var(--graphite)}
+.k-hu i{background:var(--blue);transform:rotate(45deg) scale(.86)}
+.legend{display:flex;gap:22px;font-family:var(--f-mono);font-size:15px;color:var(--mute)}
+
+/* ---------- F1 ---------- */
+.f1-left{position:absolute;left:104px;top:96px;width:900px;display:flex;flex-direction:column;gap:30px}
+.f1 h1{font-family:var(--f-display);font-stretch:122%;font-size:80px;line-height:.96;font-weight:880;letter-spacing:-.035em}
+.f1 h1 em{font-style:normal;color:var(--orange-ink)}
+.lead{font-size:24px;line-height:1.45;color:var(--mute);max-width:860px}
+.lead b{color:var(--fg);font-weight:650}
+.scope{display:flex;gap:0;font-family:var(--f-mono);font-size:15px;border:1.5px solid var(--fg);width:max-content}
+.scope span{padding:10px 16px;border-right:1.5px solid var(--fg)}
+.scope span:last-child{border-right:0;color:var(--dim)}
+.scope b{font-weight:700}
+.probs{position:absolute;left:1100px;top:100px;width:716px;background:var(--panel);border:1.5px solid var(--fg);padding:22px 26px 20px}
+.probs h3{font-family:var(--f-display);font-stretch:115%;font-size:24px;font-weight:800;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
+.probs h3 span{font-family:var(--f-mono);font-size:13px;font-weight:500;color:var(--dim);letter-spacing:.1em}
+.probs li{position:relative;font-size:17.5px;line-height:1.25;padding:7px 0 7px 30px;border-top:1px solid var(--line);color:var(--fg)}
+.probs li::before{content:"";position:absolute;left:0;top:11px;width:16px;height:16px;border:1.5px solid var(--dim)}
+.probs li::after{content:"";position:absolute;left:30px;right:auto;top:50%;height:2px;width:calc(100% - 30px);background:var(--orange);transform-origin:left;transform:scaleX(0)}
+.slide.on .probs li::after{animation:strike .5s cubic-bezier(.6,0,.2,1) forwards;animation-delay:calc(1.4s + var(--k)*.22s)}
+.slide.on .probs li{animation:dimtext .4s ease forwards;animation-delay:calc(1.6s + var(--k)*.22s)}
+.slide.on .probs li::before{animation:tick .3s ease forwards;animation-delay:calc(1.5s + var(--k)*.22s)}
+@keyframes strike{to{transform:scaleX(var(--w,1))}}
+@keyframes dimtext{to{color:var(--mute)}}
+@keyframes tick{to{background:var(--orange);border-color:var(--orange)}}
+.line{position:absolute;left:104px;top:640px;width:1712px;height:350px}
+.line svg{position:absolute;inset:0;overflow:visible}
+.ins{position:absolute;left:0;top:14px;display:flex;flex-direction:column;gap:8px;width:150px}
+.ins span{font-family:var(--f-mono);font-size:14px;font-weight:500;padding:8px 10px;background:var(--panel);border:1.5px solid var(--fg);text-align:center}
+.cv-wire{fill:none;stroke:var(--fg);stroke-width:1.5}
+.line .pulse{fill:var(--orange)}
+.hopper{position:absolute;left:198px;top:150px;width:70px;height:96px;background:var(--fg);color:var(--bg);font-family:var(--f-mono);font-size:12px;writing-mode:vertical-rl;transform:rotate(180deg);display:grid;place-items:center;letter-spacing:.2em}
+.belt{position:absolute;left:268px;width:1150px;top:236px;height:34px;background:repeating-linear-gradient(90deg,#2B3139 0 22px,#3A414B 22px 44px);border-top:3px solid var(--fg);border-bottom:3px solid var(--fg)}
+.slide.on .belt{animation:beltmove 1.1s linear infinite}
+@keyframes beltmove{to{background-position:44px 0}}
+.rollers{position:absolute;left:268px;width:1150px;top:276px;height:24px;display:flex;justify-content:space-between;padding:0 6px}
+.rollers i{width:22px;height:22px;border-radius:50%;border:3px solid var(--fg);background:var(--bg2)}
+.stations{position:absolute;left:268px;top:30px;width:1150px;display:grid;grid-template-columns:repeat(5,1fr);gap:26px}
+.st{background:var(--panel);border:1.5px solid var(--fg);padding:14px 14px 12px;height:170px;display:flex;flex-direction:column;gap:8px;position:relative}
+.st::after{content:"";position:absolute;left:50%;bottom:-36px;width:2px;height:34px;background:var(--fg)}
+.st h4{margin:0;font-family:var(--f-display);font-stretch:115%;font-size:21px;font-weight:800;line-height:1.05}
+.st p{font-size:15.5px;line-height:1.3;color:var(--mute)}
+.st .kind{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);margin-top:auto}
+.st .lamp{position:absolute;right:12px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--line)}
+.slide.on .st .lamp{animation:lamp 3s linear infinite;animation-delay:var(--lt)}
+@keyframes lamp{0%{background:var(--orange);box-shadow:0 0 0 5px rgba(238,90,27,.25)}22%,100%{background:var(--line);box-shadow:none}}
+.tok{position:absolute;left:240px;top:239px;height:28px;padding:0 10px;display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:700;background:var(--orange);color:#fff;border:1.5px solid var(--fg)}
+.slide.on .tok{animation:ride 9s linear infinite;animation-delay:var(--td)}
+@keyframes ride{0%{transform:translateX(0);opacity:0}4%{opacity:1}96%{opacity:1}100%{transform:translateX(1170px);opacity:0}}
+.outs{position:absolute;right:0;top:20px;width:270px;display:flex;flex-direction:column;gap:10px}
+.out{background:var(--panel);border:1.5px solid var(--fg);padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.out b{font-family:var(--f-mono);font-size:12.5px;color:var(--orange-ink);letter-spacing:.08em}
+.out span{font-size:18px;font-weight:700}
+
+/* ---------- F2 ---------- */
+.arch{position:absolute;left:104px;top:230px;width:1712px;height:700px}
+.arch svg{position:absolute;inset:0;overflow:visible}
+.arch .wire{fill:none;stroke:var(--fg);stroke-width:1.5;stroke-dasharray:5 5}
+.arch .pulse{fill:var(--orange)}
+.clients{position:absolute;left:0;top:0;width:1316px;display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.cl{height:62px;border:1.5px solid var(--fg);background:var(--panel);display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:18px;transition:all .4s}
+.cl small{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--dim)}
+.cl .sd{width:10px;height:10px;border-radius:50%;background:var(--green);transition:background .4s}
+.cl.off{border-style:dashed;color:var(--dim);background:transparent}
+.cl.off .sd{background:var(--dim)}
+.plane{position:absolute;left:0;width:1316px;border:2px solid var(--fg);background:var(--panel);padding:18px 22px}
+.plane-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.plane-h h3{font-family:var(--f-display);font-stretch:118%;font-size:26px;font-weight:850;text-transform:uppercase;letter-spacing:.01em}
+.plane-h span{font-family:var(--f-mono);font-size:14px;color:var(--mute)}
+.ctrl{top:110px;height:236px}
+.cgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.cgrid div{border:1.5px solid var(--line);background:var(--bg);padding:9px 11px;font-size:15.5px;font-weight:650;line-height:1.2}
+.klab{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:-4px 0 6px}
+.klab::before{content:"";width:34px;height:10px;background:repeating-linear-gradient(-45deg,var(--orange) 0 6px,var(--fg) 6px 12px)}
+.kern{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:10px}
+.kern div{background:var(--fg);color:#fff;padding:9px 11px 10px;font-size:15.5px;font-weight:750;line-height:1.15;box-shadow:inset 0 3px 0 var(--orange)}
+.kern small{display:block;font-family:var(--f-mono);font-size:11.5px;font-weight:400;color:#B9C0C9;margin-top:5px;line-height:1.3}
+.cgrid div small{display:block;font-family:var(--f-mono);font-size:12.5px;font-weight:400;color:var(--mute);margin-top:4px;line-height:1.3}
+.banner{position:absolute;right:22px;top:-15px;font-family:var(--f-mono);font-size:13.5px;padding:5px 10px;background:var(--blue);color:#fff;opacity:0;transform:translateY(-6px);transition:all .4s}
+.banner.show{opacity:1;transform:none}
+.exec{top:396px;height:270px;background:repeating-linear-gradient(-45deg,transparent 0 14px,rgba(20,24,29,.035) 14px 28px),var(--panel)}
+.workers{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.wk{background:var(--bg);border:1.5px solid var(--fg);padding:10px 12px;height:180px;display:flex;flex-direction:column;gap:7px;transition:all .45s;position:relative;overflow:hidden}
+.wk .id{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between}
+.wk .tk{font-size:17px;font-weight:750;line-height:1.15}
+.wk .kd{font-family:var(--f-mono);font-size:12.5px;color:var(--mute)}
+.wk .pb{height:6px;background:var(--line);margin-top:auto;position:relative;overflow:hidden}
+.wk .pb::after{content:"";position:absolute;inset:0;background:var(--c,var(--orange));transform-origin:left;transform:scaleX(.1)}
+.slide.on .wk .pb::after{animation:prog var(--pd,4s) ease-in-out infinite alternate}
+@keyframes prog{to{transform:scaleX(.95)}}
+.wk .lim{font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.wk .stt{font-family:var(--f-mono);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
+.wk.deny{border-color:var(--red);border-style:dashed}
+.wk.deny .stt{color:var(--red)}
+.wk.dead{border-color:var(--red);background:#F6E3E4}
+.wk.dead .stt{color:var(--red)}
+.wk.dead .pb::after{animation:none;background:var(--red)}
+.wk.new{border-color:var(--green);box-shadow:0 0 0 4px rgba(27,122,74,.18)}
+.wk.idle{border-style:dashed;background:transparent}
+.wk.idle .stt{color:var(--blue)}
+.wk.idle .pb::after{animation:none;background:var(--blue);transform:scaleX(1)}
+.store{position:absolute;left:1356px;top:110px;width:356px;height:556px;border:2px solid var(--fg);background:var(--fg);color:var(--bg);padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.store h3{font-family:var(--f-display);font-stretch:118%;font-size:24px;font-weight:850;text-transform:uppercase;color:#fff}
+.store .items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.store .items span{font-family:var(--f-mono);font-size:13px;padding:7px 8px;border:1px solid #4A525D;color:#D9DEE4}
+.store .log{flex:1;font-family:var(--f-mono);font-size:13px;line-height:1.5;color:#AEB6C0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;border-top:1px solid #4A525D;padding-top:10px}
+.store .log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:fadein .4s ease both}
+.store .log b{color:#FFB08A;font-weight:500}
+.store .log em{font-style:normal;color:#8FD3AE}
+.store .log u{text-decoration:none;color:#F59A9F}
+.port{position:absolute;left:0;top:700px;width:1712px;display:flex;gap:0;font-family:var(--f-mono);font-size:14.5px;border:1.5px solid var(--fg);background:var(--panel)}
+.port span{padding:11px 16px;border-right:1.5px solid var(--line)}
+.port span:first-child{background:var(--fg);color:#fff;font-weight:700}
+.port span:last-child{border-right:0;margin-left:auto;color:var(--mute)}
+.hdr-right{position:absolute;right:104px;top:92px;width:600px;font-size:19px;line-height:1.45;color:var(--mute);text-align:right}
+.hdr-right b{color:var(--fg)}
+
+/* ---------- F3 ---------- */
+.tl{position:absolute;left:104px;top:250px;width:1712px;height:190px}
+.tl svg{position:absolute;inset:0;overflow:visible}
+.tl .rail{fill:none;stroke:var(--fg);stroke-width:2.5}
+.tl .loop{fill:none;stroke:var(--orange);stroke-width:2;stroke-dasharray:6 5}
+.tl .pulse{fill:var(--orange);stroke:var(--fg);stroke-width:2}
+.tl .pulse.l{fill:#fff;stroke:var(--orange)}
+.stg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(14,1fr)}
+.sg{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-top:86px}
+.sg i{width:24px;height:24px;background:var(--panel);border:2.5px solid var(--fg);box-shadow:0 0 0 5px var(--bg)}
+.sg.ag i{border-radius:50%;background:var(--orange)}
+.sg.de i{background:var(--graphite)}
+.sg.hu i{background:var(--blue);transform:rotate(45deg) scale(.9)}
+.sg span{font-size:16px;font-weight:650;line-height:1.2;max-width:118px}
+.slide.on .sg i{animation:stagehit 9s linear infinite;animation-delay:calc(var(--k) * .643s)}
+@keyframes stagehit{0%{box-shadow:0 0 0 5px var(--bg),0 0 0 11px rgba(238,90,27,.35)}6%,100%{box-shadow:0 0 0 5px var(--bg)}}
+.looplab{position:absolute;font-family:var(--f-mono);font-size:13px;line-height:1.5;color:var(--orange-ink);text-align:left;width:640px;white-space:nowrap}
+.f3-leg{position:absolute;left:104px;top:204px;display:flex;align-items:center;gap:28px}
+.rules{position:absolute;left:104px;top:458px;width:1712px;display:grid;grid-template-columns:1.75fr 1fr;gap:12px}
+.rules>div{border:1.5px solid var(--fg);background:var(--panel);display:flex;align-items:stretch}
+.rules b{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--fg);color:#fff;padding:0 12px;display:flex;align-items:center;width:118px;line-height:1.3}
+.rk span{flex:1;padding:8px 12px;font-size:14.5px;line-height:1.25;border-left:1.5px solid var(--line);transition:background .3s}
+.rk span i{display:block;font-style:normal;font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--orange-ink);text-transform:uppercase;letter-spacing:.08em}
+.rk span.cur{background:#fff;box-shadow:inset 0 -4px 0 var(--orange)}
+.rg{align-items:center!important;gap:8px;padding-right:10px}
+.rg span{white-space:nowrap;font-family:var(--f-mono);font-size:13px;font-weight:700;padding:5px 8px;border:1.5px solid currentColor;margin-left:4px;opacity:.45;transition:opacity .3s}
+.rg span.cur{opacity:1}
+.rg .ok{color:var(--green)}.rg .ko{color:var(--red)}.rg .ne{color:var(--mute)}
+.rg em{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--mute);line-height:1.3}
+.states{position:absolute;left:104px;top:462px;width:1712px;display:flex;gap:8px;align-items:center;font-family:var(--f-mono);font-size:14px}
+.states .label{margin-right:8px}
+.states span.s{padding:6px 11px;border:1.5px solid var(--fg);background:var(--panel);transition:all .3s}
+.states span.s.cur{background:var(--fg);color:#fff}
+.states em{margin-left:auto;font-style:normal;color:var(--mute);font-size:14px}
+.f3-map{position:absolute;left:104px;top:556px;width:1152px}
+.f3-panel{position:absolute;left:1296px;top:540px;width:520px;height:456px;background:var(--panel);border:2px solid var(--fg);padding:22px 24px 18px}
+
+/* ---------- F4 ---------- */
+.neq{position:absolute;left:104px;top:194px;font-family:var(--f-mono);font-size:16px;color:var(--mute);line-height:1.7}
+.neq b{color:var(--orange-ink);padding:0 8px}
+.stairs{position:absolute;left:104px;top:250px;width:1712px;height:512px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:end}
+.lv{position:relative;background:var(--panel);border:2px solid var(--fg);padding:20px 22px 22px;display:flex;flex-direction:column;gap:12px;transition:background .4s,box-shadow .4s}
+.lv:nth-child(1){height:356px}.lv:nth-child(2){height:408px}.lv:nth-child(3){height:460px}.lv:nth-child(4){height:512px}
+.lv .n{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:14px;color:var(--dim);letter-spacing:.1em}
+.lv .n b{font-family:var(--f-display);font-stretch:125%;font-size:46px;font-weight:900;color:var(--fg);letter-spacing:-.02em;line-height:1}
+.lv h3{font-family:var(--f-display);font-stretch:112%;font-size:25px;font-weight:850;line-height:1.08}
+.lv ul{display:flex;flex-direction:column;gap:9px}
+.lv li{font-size:17px;line-height:1.32;color:var(--mute);padding-left:22px;position:relative}
+.lv li::before{content:"";position:absolute;left:0;top:6px;width:11px;height:11px;border:1.5px solid var(--dim);transition:all .3s}
+.lv.done li::before{background:var(--green);border-color:var(--green)}
+.lv.done{box-shadow:inset 0 6px 0 var(--green)}
+.lv.pend{box-shadow:inset 0 6px 0 var(--orange)}
+.lv.pend li.p::before{background:var(--orange);border-color:var(--orange)}
+.lv .lvst{margin-top:auto;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.lv.done .lvst{color:var(--green)}
+.lv.pend .lvst{color:var(--orange-ink)}
+.stamp{position:absolute;left:124px;top:276px;border:4px solid var(--orange-ink);color:var(--orange-ink);font-family:var(--f-mono);font-weight:700;font-size:22px;letter-spacing:.1em;padding:10px 18px;transform:rotate(-6deg) scale(1.4);opacity:0;transition:all .45s cubic-bezier(.2,1.6,.4,1);background:rgba(243,244,245,.92);z-index:3;text-transform:uppercase;text-align:center;line-height:1.25}
+.stamp small{display:block;font-size:13px;letter-spacing:.06em;font-weight:500}
+.stamp.show{opacity:1;transform:rotate(-6deg) scale(1)}
+.gov{position:absolute;left:104px;top:776px;width:1712px;display:grid;grid-template-columns:1fr 1.25fr;gap:16px}
+.gov>div{border:2px solid var(--fg);background:var(--fg);color:#E6EAEE;padding:12px 18px;display:flex;flex-direction:column;gap:6px}
+.gov h4{margin:0;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#FFB08A}
+.gov p{font-size:15.5px;line-height:1.35;color:#C9D0D8}
+.gov p b{color:#fff}
+.ladder{display:flex;gap:6px;align-items:center}
+.ladder span{font-family:var(--f-mono);font-size:13px;font-weight:700;padding:4px 9px;border:1.5px solid #4A525D;color:#9AA3AE;transition:all .35s}
+.ladder span.on{background:var(--orange);border-color:var(--orange);color:#fff}
+.ladder span.drop{background:var(--red);border-color:var(--red);color:#fff}
+.ladder em{font-style:normal;font-family:var(--f-mono);font-size:12.5px;color:#FFB08A;margin-left:8px;min-width:250px}
+.io{position:absolute;left:104px;top:890px;width:1712px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.io div{border:1.5px solid var(--fg);background:var(--panel);padding:10px 18px;display:flex;flex-direction:column;gap:6px}
+.io h4{margin:0;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-ink)}
+.io p{font-size:15.5px;line-height:1.45;color:var(--fg)}
+.io p i{font-style:normal;color:var(--dim);padding:0 4px}
+/* ---------- F4 · INTENT → EJECUCIÓN ---------- */
+.ix{position:absolute;left:104px;top:226px;width:1712px;height:668px}
+.ix-l{position:absolute;left:0;top:0;width:520px;height:100%;background:var(--fg);color:#D9DEE4;display:flex;flex-direction:column}
+.ix-l .hd{display:flex;justify-content:space-between;align-items:baseline;padding:10px 16px 9px;border-bottom:1px solid #3A424D;font-family:var(--f-mono);font-size:12.5px;color:#9AA3AE;letter-spacing:.06em}
+.ix-l .hd b{color:#fff;font-weight:700}
+.ix-r{position:absolute;left:640px;top:0;width:1072px;height:100%;border:2px solid var(--fg);background:var(--panel);display:flex;flex-direction:column}
+.ix-r .hd{display:grid;grid-template-columns:236px 1fr 300px;padding:10px 0 9px;border-bottom:1.5px solid var(--fg);font-family:var(--f-mono);font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.ix-r .hd span{padding:0 14px}
+.ixr{flex:1;display:flex;flex-direction:column}
+.ixl{flex:1;display:flex;flex-direction:column}
+.ixl button,.ixr button{all:unset;box-sizing:border-box;cursor:pointer;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;transition:background .25s,box-shadow .25s}
+.ixl button{padding:0 16px;border-bottom:1px solid #2C333C;gap:1px}
+.ixl button:last-child{border-bottom:0}
+.ixl .k{font-family:var(--f-mono);font-size:13.5px;color:#FFB08A;font-weight:500}
+.ixl .v{font-family:var(--f-mono);font-size:12px;color:#9AA3AE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ixl button[aria-pressed="true"]{background:#232A33;box-shadow:inset 5px 0 0 var(--orange)}
+.ixl button[aria-pressed="true"] .v{color:#E6EAEE}
+.ixr button{display:grid;grid-template-columns:236px 1fr 300px;align-items:center;border-bottom:1px solid var(--line)}
+.ixr button:last-child{border-bottom:0}
+.ixr button>*{padding:0 14px}
+.ixr .m{display:flex;flex-direction:column;gap:1px}
+.ixr .m b{font-size:15.5px;font-weight:800;line-height:1.1}
+.ixr .m small{font-family:var(--f-mono);font-size:11.5px;color:var(--dim)}
+.ixr .d{font-size:14.5px;line-height:1.28;color:var(--mute)}
+.ixr .t{display:flex;flex-wrap:wrap;gap:4px}
+.ixr .t span{font-family:var(--f-mono);font-size:11.5px;padding:2px 6px;border:1px solid var(--chip-line);background:var(--bg);white-space:nowrap}
+.ixr .t span.no{border-style:dashed;color:var(--dim)}
+.ixr button[aria-pressed="true"]{background:#fff;box-shadow:inset 0 0 0 2px var(--orange)}
+.ixr button[aria-pressed="true"] .d{color:var(--fg)}
+.ixr button[aria-pressed="true"] .t span{border-color:var(--orange);background:#FFF3EC}
+.ixl button:focus-visible,.ixr button:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+.ix svg.wires{position:absolute;left:520px;top:0;width:120px;height:100%;overflow:visible}
+.ix .wr{fill:none;stroke:var(--line);stroke-width:1.5;transition:stroke .25s,stroke-width .25s}
+.ix .wr.on{stroke:var(--orange);stroke-width:3}
+.ix .pulse{fill:var(--orange);stroke:var(--fg);stroke-width:1.5}
+.ix-b{position:absolute;left:104px;top:908px;width:1712px;display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+.ix-b>div{border:1.5px solid var(--fg);background:var(--panel);padding:10px 16px;display:flex;flex-direction:column;gap:6px}
+.ix-b h4{margin:0;font-family:var(--f-mono);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange-ink)}
+.ix-b p{font-size:14.5px;line-height:1.35;color:var(--fg)}
+.ix-b p i{font-style:normal;color:var(--dim);padding:0 4px}
+.ix-b .ret{background:var(--fg);border-color:var(--fg)}
+.ix-b .ret h4{color:#8FD3AE}.ix-b .ret p{color:#D9DEE4}
+</style>
+</head><body>
+
+<div class="stage" id="stage">
+
+<!-- ============ F1 · QUÉ ============ -->
+<section class="slide f1" data-title="Qué es">
+  <div class="f1-left">
+    <div class="eyebrow a">AI Agentic Factory <i>· propuesta funcional</i></div>
+    <h1 class="a" style="--d:120">Recibe un intent. Entrega <em>software verificado</em>.</h1>
+    <p class="lead a" style="--d:260">Plataforma de ejecución que convierte un intent en cambios <b>implementados, probados y entregables</b>. Combina agentes de IA, automatización determinista y decisiones humanas en workflows durables. <b>El IDE es solo un cliente</b>: la ejecución sigue aunque se cierre.</p>
+    <div class="scope a" style="--d:400"><span>Empieza · <b>intent 1.4 del Brain u otro origen</b></span><span>Termina · <b>nivel de entrega acordado</b></span><span>Sistema independiente del Brain</span></div>
+  </div>
+  <div class="probs a" style="--d:300">
+    <h3>Lo que deja de pasar <span>11 PROBLEMAS</span></h3>
+    <ul id="probs"></ul>
+  </div>
+  <div class="line a" style="--d:520" aria-label="Línea de producción: intents entran, pasan por estaciones y salen como entregables verificados">
+    <svg viewBox="0 0 1712 350" preserveAspectRatio="none" aria-hidden="true">
+      <path class="cv-wire" d="M150 32 C180 32 180 198 198 198" data-flow data-dur="2200" data-r="4"/>
+      <path class="cv-wire" d="M150 80 C180 80 180 198 198 198"/>
+      <path class="cv-wire" d="M150 128 C178 128 178 198 198 198" data-flow data-dur="2600" data-r="4"/>
+      <path class="cv-wire" d="M150 176 C175 176 175 198 198 198"/>
+      <path class="cv-wire" d="M150 224 C175 224 175 198 198 198" data-flow data-dur="2400" data-r="4"/>
+      <path class="cv-wire" d="M150 272 C180 272 180 198 198 198"/>
+      <path class="cv-wire" d="M1420 252 C1430 252 1430 66 1442 66"/>
+      <path class="cv-wire" d="M1420 252 H1442"/>
+      <path class="cv-wire" d="M1420 252 C1430 252 1430 300 1442 300"/>
+    </svg>
+    <div class="ins"><span>IDE</span><span>API</span><span>MCP</span><span>CLI</span><span>Webhook</span><span>Pipeline</span></div>
+    <div class="hopper">INTENT</div>
+    <div class="stations" id="stations"></div>
+    <div class="belt"></div>
+    <div class="rollers"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="tok" style="--td:0s">INT-2026-0533</div><div class="tok" style="--td:-3s">INT-2026-0534</div><div class="tok" style="--td:-6s">INT-2026-0535</div>
+    <div class="outs">
+      <div class="out"><b>NIVEL 1</b><span>PR verificadas</span></div>
+      <div class="out"><b>NIVEL 2 · 3</b><span>Producto en validación · publicado</span></div>
+      <div class="out"><b>NIVEL 4</b><span>Desplegado y validado</span></div>
+    </div>
+  </div>
+  <div class="brand">Capacidades objetivo <b>· no un inventario de lo ya implementado</b></div>
+</section>
+
+<!-- ============ F2 · CÓMO: ARQUITECTURA ============ -->
+<section class="slide f2" data-title="Arquitectura">
+  <div class="eyebrow a">Cómo funciona <i>· arquitectura</i></div>
+  <h2 class="h2 a" style="--d:100">Control durable. <em>Ejecución desechable.</em></h2>
+  <p class="hdr-right a" style="--d:200">El estado vive fuera de los workers. <b>Si un worker cae, otro reanuda desde el último checkpoint</b> sin repetir efectos externos.</p>
+  <div class="arch">
+    <svg viewBox="0 0 1712 700" preserveAspectRatio="none" aria-hidden="true">
+      <path class="wire" d="M105 62 V110" data-flow data-dur="1500" data-r="4"/>
+      <path class="wire" d="M325 62 V110" data-flow data-dur="1700" data-r="4"/>
+      <path class="wire" d="M545 62 V110" data-flow data-dur="1400" data-r="4"/>
+      <path class="wire" d="M765 62 V110" data-flow data-dur="1900" data-r="4"/>
+      <path class="wire" d="M985 62 V110" data-flow data-dur="1600" data-r="4"/>
+      <path class="wire" d="M1205 62 V110" data-flow data-dur="1800" data-r="4"/>
+      <path class="wire" d="M330 346 V396" data-flow data-dur="1300" data-r="5"/>
+      <path class="wire" d="M658 346 V396" data-flow data-dur="1500" data-r="5"/>
+      <path class="wire" d="M986 346 V396" data-flow data-dur="1400" data-r="5"/>
+      <path class="wire" d="M1316 220 H1356" data-flow data-dur="1000" data-r="4"/>
+      <path class="wire" d="M1316 540 H1356" data-flow data-dur="1100" data-r="4"/>
+    </svg>
+    <div class="clients a" style="--d:240" id="clients">
+      <div class="cl" id="ide"><span class="sd"></span>IDE local <small id="idest">conectado</small></div>
+      <div class="cl">CLI</div><div class="cl">Web</div><div class="cl">API <small>OpenAPI</small></div><div class="cl">MCP</div><div class="cl">Webhooks</div>
+    </div>
+    <div class="plane ctrl a" style="--d:340">
+      <div class="plane-h"><h3>Plano de control</h3><span>un único servicio de aplicación para todas las interfaces</span></div>
+      <div class="banner" id="banner">cliente desconectado · la ejecución continúa</div>
+      <div class="klab">Núcleo de confianza · no se desactiva por flag ni por plugin</div>
+      <div class="kern">
+        <div>Aislamiento I0–I3<small>el agente corre contenido</small></div>
+        <div>Token con alcance<small>identidad del token, no del cuerpo</small></div>
+        <div>Aprobación sobre digest<small>firmada; cambia un byte, caduca</small></div>
+        <div>El agente no hace commit<small>lo hace el runtime tras validar</small></div>
+        <div>Ledger encadenado<small>hash por hecho · efecto no confirmado</small></div>
+        <div>Compuerta de 3 estados<small>omitir ≠ pasar · autoprueba</small></div>
+      </div>
+      <div class="cgrid">
+        <div>Intents versionados</div><div>Workflows y perfiles</div><div>Orquestación durable</div><div>Catálogo firmado</div><div>Políticas como código</div><div>Presupuestos</div>
+      </div>
+    </div>
+    <div class="plane exec a" style="--d:440">
+      <div class="plane-h"><h3>Plano de ejecución</h3><span>workers aislados · sandboxes efímeros · egress restringido</span></div>
+      <div class="workers" id="workers"></div>
+    </div>
+    <div class="store a" style="--d:540">
+      <h3>Estado duradero</h3>
+      <div class="items"><span>checkpoints</span><span>evidencias</span><span>memoria técnica</span><span>artefactos</span><span>ledger encadenado</span><span>manifiestos</span></div>
+      <div class="log" id="log" aria-live="off"></div>
+    </div>
+    <div class="port a" style="--d:640"><span>PORTABLE</span><span>imágenes OCI</span><span>Kubernetes de referencia</span><span>cloud público · privado · on-prem · local</span><span>cada adaptador declara lo que soporta</span></div>
+  </div>
+</section>
+
+<!-- ============ F3 · CÓMO: WORKFLOW ============ -->
+<section class="slide f3" data-title="Workflow">
+  <div class="eyebrow a">Cómo trabaja <i>· workflow y módulos</i></div>
+  <h2 class="h2 a" style="--d:100">Agentes, máquinas y personas <em>en una línea</em>.</h2>
+  <div class="f3-leg a" style="--d:200">
+    <div class="legend"><span class="kind k-ag"><i></i>agente IA</span><span class="kind k-de"><i></i>paso determinista</span><span class="kind k-hu"><i></i>decisión humana</span></div>
+    <span class="label">las etapas dependen del workflow y del nivel de entrega</span>
+  </div>
+  <div class="tl a" style="--d:280">
+    <svg viewBox="0 0 1712 190" preserveAspectRatio="none" aria-hidden="true">
+      <path class="rail" d="M61 98 H1651"/>
+      <path d="M61 98 H1651" fill="none" stroke="none" data-flow data-dur="9000" data-off="0" data-r="9"/>
+      <path class="loop" d="M917 84 C917 18 795 18 795 84" data-flow data-dur="1800" data-cls="l" data-r="6"/>
+    </svg>
+    <div class="looplab" style="left:940px;top:4px">↺ una corrección por bloqueador; si persiste, decisión humana<br>bucle sin progreso → agent.stalled · máx. 3 preguntas</div>
+    <div class="stg" id="stg"></div>
+  </div>
+  <div class="rules a" style="--d:380">
+    <div class="rk" id="risk"><b>Ceremonia por riesgo</b><span><i>bajo</i>brief de una pantalla · revisor automático</span><span><i>medio</i>criterios ejecutables · verificador independiente</span><span><i>alto</i>spec + holdout + amenazas · firma de persona</span></div>
+    <div class="rg" id="gst"><b>Compuerta</b><span class="ok">pasó</span><span class="ko">falló</span><span class="ne">no evaluable</span><em>omitir ≠ pasar<br>autoprueba</em></div>
+  </div>
+  <div class="f3-map mm a" id="fmap" style="--d:460"></div>
+  <div class="f3-panel mp a" id="fpanel" style="--d:560" aria-live="polite"></div>
+</section>
+
+<!-- ============ F4 · INTENT → EJECUCIÓN ============ -->
+<section class="slide f4i" data-title="Del intent a la ejecución">
+  <div class="eyebrow a">Cómo consume el intent <i>· Enterprise Brain → Factory</i></div>
+  <h2 class="h2 a" style="--d:100">Cada campo, <em>un consumidor</em>.</h2>
+  <p class="hdr-right a" style="--d:200">Brain y factory son sistemas independientes unidos por un contrato: el <b>intent 1.4</b>. La factory lo valida, lo resuelve con herramientas por MCP y devuelve evidencia. <b>El intent informa; no concede permisos.</b></p>
+  <div class="ix a" style="--d:280">
+    <div class="ix-l"><div class="hd"><span><b>INT-2026-0533</b> · rev 1 · del Brain</span><span>intent 1.4</span></div><div class="ixl" id="ixl"></div></div>
+    <svg class="wires" id="ixw" viewBox="0 0 120 668" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="ix-r"><div class="hd"><span>módulo y etapa</span><span>qué hace la factory con ese campo</span><span>herramientas · MCP y tools</span></div><div class="ixr" id="ixr"></div></div>
+  </div>
+  <div class="ix-b a" style="--d:480">
+    <div><h4>Herramientas por etapa · allowlist del catálogo firmado</h4><p>Cada etapa recibe solo sus servidores MCP y tools, con la identidad de la factory y alcance por intent<i>·</i>lectura del Brain, Confluence y SharePoint<i>·</i>escritura solo en Git, Jira y entornos autorizados<i>·</i>los secretos nunca llegan al agente</p></div>
+    <div class="ret"><h4>Vuelve al Brain · evidencia y métricas</h4><p>Nivel alcanzado, criterios verificados, PR y commits, coste frente al tope, datos para medir el KPI y ADR nuevos propuestos. El Brain los convierte en afirmaciones con procedencia.</p></div>
+  </div>
+  <div class="brand">Sin Brain, la factory acepta intents de otros orígenes <b>· con Brain llegan completos y verificables</b></div>
+</section>
+
+<!-- ============ F4 · RESULTADO ============ -->
+<section class="slide f4" data-title="Niveles de entrega">
+  <div class="eyebrow a">Qué entrega <i>· definición de terminado</i></div>
+  <h2 class="h2 a" style="--d:100">Cuatro niveles. <em>Solo se declara el alcanzado.</em></h2>
+  <div class="neq a" style="--d:200">PR creada<b>≠</b>PR funcional<b>≠</b>software integrado<i style="font-style:normal;padding:0 14px;color:var(--dim)">·</i>despliegue correcto<b>≠</b>requisitos cumplidos</div>
+  <div class="stairs" id="stairs">
+    <div class="lv a" style="--d:280"><div class="n">NIVEL<b>01</b></div><h3>PR verificadas</h3><ul><li>Implementación completa del alcance, sin placeholders</li><li>Build, calidad y seguridad superados en el SHA actual</li><li>Criterios de aceptación con ejecución real</li><li>Dependencias entre PR y dossier de revisión</li></ul><span class="lvst">pendiente</span></div>
+    <div class="lv a" style="--d:380"><div class="n">NIVEL<b>02</b></div><h3>Producto ejecutable en validación</h3><ul><li>Todo el nivel 1</li><li>Los cambios funcionan juntos entre repos y servicios</li><li>Preview accesible para revisores autorizados</li><li>Smoke y aceptación contra lo desplegado; mocks y caducidad declarados</li></ul><span class="lvst">pendiente</span></div>
+    <div class="lv a" style="--d:480"><div class="n">NIVEL<b>03</b></div><h3>Integrado y publicado</h3><ul><li>PR aprobadas e integradas en el orden definido</li><li>El commit integrado vuelve a pasar los controles</li><li>Entregables publicados con versión, procedencia, SBOM y firma</li></ul><span class="lvst">pendiente</span></div>
+    <div class="lv a" style="--d:580"><div class="n">NIVEL<b>04</b></div><h3>Desplegado y validado</h3><ul><li>Artefacto autorizado en el entorno objetivo</li><li>Aprobaciones técnicas, de negocio e ITSM</li><li class="p">Verificación post-despliegue y ventana de observación</li><li>Runbook, responsable y recuperación acordados</li></ul><span class="lvst">pendiente</span></div>
+  </div>
+  <div class="stamp" id="stamp">nivel declarado · 03<small>observación de producción en curso</small></div>
+  <div class="gov a" style="--d:640">
+    <div><h4>factory/gate · el único check requerido</h4><p><b>Merge solo con atestaciones firmadas sobre el SHA exacto</b>, producidas por un runner externo. Ningún agente tiene credencial de merge; cambios en políticas o compuertas exigen firma de persona.</p></div>
+    <div><h4>Autonomía ganada · por operación</h4><div class="ladder" id="ladder"><span>L0</span><span>L1</span><span>L2</span><span>L3</span><span>L4</span><em id="ladt">merge · riesgo bajo</em></div><p>Sube con datos (≥ 80 % sin notas, muestra mínima) · <b>baja al primer incidente</b> · techo de la política</p></div>
+  </div>
+  <div class="io a" style="--d:700">
+    <div><h4>Entrada · intent</h4><p>intent 1.4 firmado<i>·</i>objetivo y valor de negocio<i>·</i>alcance y criterios<i>·</i>obligaciones → checks<i>·</i>ADR y decisiones<i>·</i>backlog Jira<i>·</i>repos y preparación<i>·</i>2 paquetes de contexto<i>·</i>nivel, riesgo y presupuesto</p></div>
+    <div><h4>Salida · resultado de ejecución</h4><p>estado o motivo de espera<i>·</i>commits y PR por historia<i>·</i>matriz de aceptación con evidencias<i>·</i>ADR propuestos<i>·</i>artefactos y procedencia<i>·</i>coste frente al tope<i>·</i>datos de KPI<i>·</i>atestación → Brain</p></div>
+  </div>
+  <div class="brand">Los permisos salen del sistema de identidad <b>· nunca de campos que declara el cliente</b></div>
+</section>
+</div>
+
+<script>
+const MODS=[{"id": "F01", "name": "Recepción y gestión de intents", "obj": "Convertir una solicitud externa en una unidad de trabajo explícita y controlada.", "items": [["F01.01", "Recibir intents desde API, MCP, CLI, interfaz web, webhooks y pipelines mediante el mismo servicio de aplicación."], ["F01.02", "Validar un contrato versionado de intent: identificador externo, objetivo, alcance, criterios de aceptación, restricciones, referencias de contexto y nivel de entrega solicitado."], ["F01.03", "Asociar identidad del solicitante, organización, equipo, producto, prioridad, presupuesto y permisos efectivos."], ["F01.04", "Aceptar referencias a tickets, repositorios, documentación y artefactos sin exigir un gestor de trabajo específico."], ["F01.05", "Detectar campos ausentes, ambigüedades y contradicciones; devolver solicitudes de aclaración estructuradas en lugar de inventar requisitos."], ["F01.06", "Versionar el intent y conservar la relación entre solicitud original, revisiones y ejecuciones derivadas."], ["F01.07", "Aplicar claves de idempotencia para que reintentos de envío no creen ejecuciones duplicadas."], ["F01.08", "Admitir features, correcciones, refactorizaciones, mantenimiento, actualizaciones de dependencias y cambios de infraestructura mediante perfiles de trabajo."], ["F01.09", "Aceptar como entrada principal el intent del Enterprise Brain (contrato 1.4): verificar esquema, firmas sobre el digest, idempotencia y que el estado sea «listo para implementación»; devolverlo con motivo si no lo es."]]}, {"id": "F02", "name": "API, MCP y experiencia de uso", "obj": "Permitir que personas y sistemas operen la misma factory sin duplicar la lógica.", "items": [["F02.01", "Publicar una API versionada, documentada con OpenAPI y esquemas de entradas, salidas y errores."], ["F02.02", "Exponer por MCP operaciones autorizadas para crear, consultar, pausar, cancelar y reanudar ejecuciones, responder aclaraciones y recuperar resultados."], ["F02.03", "Ofrecer operaciones asíncronas con identificadores de trabajo, progreso, estado terminal y referencias a artefactos."], ["F02.04", "Publicar eventos, webhooks y actualizaciones en streaming para consumidores externos, con reintentos y deduplicación."], ["F02.05", "Proporcionar un cliente ligero para IDE locales sin instalar el runtime completo de ejecución."], ["F02.06", "Ofrecer una CLI multiplataforma y una interfaz web compartida para seguimiento y administración."], ["F02.07", "Permitir operación no interactiva: una aclaración pendiente se representa como estado persistido, no como un prompt bloqueante de terminal."], ["F02.08", "Mostrar errores accionables, capacidades disponibles y limitaciones reales del entorno o adaptador."]]}, {"id": "F03", "name": "Contexto técnico y preparación del trabajo", "obj": "Disponer del contexto mínimo correcto sin convertir la factory en un Brain empresarial.", "items": [["F03.01", "Recuperar las referencias de contexto suministradas, aplicando permisos, clasificación de datos y límites de acceso."], ["F03.02", "Identificar repositorios candidatos, componentes afectados, lenguajes, frameworks, dependencias y comandos de verificación."], ["F03.03", "Utilizar metadatos de producto y ownership para explicar la selección de repositorios, sin tratarlos como concesiones de acceso."], ["F03.04", "Solicitar confirmación o selección explícita cuando el repositorio o el alcance no estén determinados por una política autorizada."], ["F03.05", "Fijar versiones de código, documentación, configuración y recursos usados en la ejecución."], ["F03.06", "Crear un manifiesto de contexto con origen, revisión o digest, permisos y momento de recuperación."], ["F03.07", "Recuperar decisiones y artefactos de ejecuciones previas compatibles con el mismo producto o trabajo."], ["F03.08", "Cargar contexto por necesidad y etapa, con límites de tamaño, evitando instalar indiscriminadamente todas las reglas y skills."], ["F03.09", "Recuperar los paquetes de contexto del Brain por MCP o API con la identidad de la factory, fijar su digest y entregar al verificador su paquete propio sin que el constructor lo vea."], ["F03.10", "Usar la evaluación de preparación de cada repositorio (AGENTS.md, README, tests, changelog, CI) para planificar tareas de preparación y limitar la autonomía cuando sea baja."]]}, {"id": "F04", "name": "Especificación y criterios de aceptación", "obj": "Convertir el intent en una definición verificable del cambio.", "items": [["F04.01", "Elaborar requisitos funcionales, no funcionales, exclusiones y supuestos explícitos."], ["F04.02", "Transformar los criterios de aceptación en escenarios comprobables y casos de prueba."], ["F04.03", "Detectar requisitos incompletos, incompatibles o no verificables y abrir aclaraciones antes de implementar."], ["F04.04", "Definir contratos de API, eventos, datos y comportamiento de interfaz cuando correspondan."], ["F04.05", "Establecer la definición de terminado y el nivel de entrega de la ejecución."], ["F04.06", "Mantener trazabilidad entre intent, requisitos, decisiones, tareas, pruebas y cambios de código."], ["F04.07", "Versionar la especificación y someter cambios de alcance a los controles y aprobaciones definidos."]]}, {"id": "F05", "name": "Diseño técnico y planificación", "obj": "Hacer explícito cómo se construirá y validará el resultado antes de ejecutar cambios.", "items": [["F05.01", "Proponer el diseño técnico y registrar decisiones relevantes, alternativas y justificación."], ["F05.02", "Evaluar impacto sobre arquitectura, compatibilidad, seguridad, datos, operación y dependencias."], ["F05.03", "Descomponer el intent en unidades de implementación con dependencias y resultados esperados."], ["F05.04", "Planificar cambios coordinados entre repositorios y contratos compartidos."], ["F05.05", "Identificar trabajo paralelizable y puntos de integración para evitar modificaciones concurrentes incompatibles."], ["F05.06", "Estimar esfuerzo de ejecución, consumo y riesgo, distinguiendo estimaciones de datos medidos."], ["F05.07", "Mostrar un plan efectivo con etapas, agentes, herramientas, modelos, permisos, gates y verificaciones."], ["F05.08", "Ofrecer dry-run sin ejecutar cambios externos; no afirmar resultados de pruebas que no se han ejecutado."], ["F05.09", "Respetar los ADR y estándares referenciados en el intent; si el diseño necesita desviarse, proponer un ADR nuevo y abrir una decisión humana."]]}, {"id": "F06", "name": "Workflows y líneas de producción", "obj": "Adaptar el proceso sin perder consistencia, control ni trazabilidad.", "items": [["F06.01", "Definir workflows versionados como datos, con etapas, dependencias, entradas, salidas y condiciones de terminación."], ["F06.02", "Combinar pasos deterministas, pasos de agentes y pasos humanos en una misma ejecución."], ["F06.03", "Incorporar métodos como AI-DLC, Spec Kit u OpenSpec mediante adaptadores, manteniendo sus archivos originales protegidos."], ["F06.04", "Extender un workflow estándar mediante overlays que muestren únicamente sus diferencias."], ["F06.05", "Crear workflows propios utilizando una biblioteca de etapas y componentes reutilizables."], ["F06.06", "Soportar secuencias, paralelismo, dependencias condicionales y ciclos de corrección con límites explícitos."], ["F06.07", "Validar compatibilidad de entradas y salidas entre etapas, incluidos componentes de distintos métodos."], ["F06.08", "Bloquear etapas, controles y componentes obligatorios para impedir que una personalización los elimine."], ["F06.09", "Ejecutar el mismo plan aprobado y detectar desviaciones o modificaciones no autorizadas."], ["F06.10", "Promover workflows desde proyecto a equipo y organización mediante revisión, pruebas y versionado."]]}, {"id": "F07", "name": "Orquestación duradera", "obj": "Completar trabajos prolongados aunque fallen procesos, conexiones o infraestructura.", "items": [["F07.01", "Gestionar estados explícitos de ejecución y etapa: en cola, en ejecución, esperando información, esperando aprobación, pausada, fallida, cancelada y completada."], ["F07.02", "Persistir transiciones, checkpoints y resultados fuera de los workers."], ["F07.03", "Reanudar una ejecución en otro worker desde un punto consistente, sin depender de una sesión viva."], ["F07.04", "Gestionar colas, prioridades, concurrencia, cuotas y reparto de capacidad entre equipos."], ["F07.05", "Aplicar timeouts, reintentos acotados, backoff y políticas de recuperación por tipo de fallo."], ["F07.06", "Deduplicar operaciones y reconciliar efectos externos antes de repetir acciones como crear una PR o desplegar."], ["F07.07", "Controlar modificaciones concurrentes mediante leases, bloqueos o escrituras condicionales según el recurso."], ["F07.08", "Permitir pausa, cancelación, intervención y recuperación administrativa con semántica explícita y registro de efectos ya realizados."], ["F07.09", "Distinguir fallo técnico, incumplimiento de calidad, falta de información y rechazo humano."], ["F07.10", "No mantener workers consumiendo recursos mientras esperan una decisión humana."]]}, {"id": "F08", "name": "Ejecución de agentes y modelos", "obj": "Ejecutar razonamiento y herramientas en servidores bajo controles verificables.", "items": [["F08.01", "Ejecutar agentes headless en workers de la factory sin depender de un IDE abierto."], ["F08.02", "Asignar agentes especializados de especificación, arquitectura, desarrollo, calidad, seguridad, infraestructura y operación."], ["F08.03", "Configurar por agente y etapa el proveedor, modelo, nivel de razonamiento soportado, cuenta, reglas, skills y herramientas."], ["F08.04", "Resolver valores efectivos mediante herencia y mostrar de qué configuración procede cada valor."], ["F08.05", "Integrar distintos runtimes o harnesses mediante contratos reemplazables."], ["F08.06", "Declarar si cada control está impuesto, es orientativo o no está soportado; rechazar combinaciones que no puedan satisfacer un requisito obligatorio."], ["F08.07", "Limitar iteraciones, llamadas, tiempo, tokens y herramientas disponibles por agente."], ["F08.08", "Coordinar handoffs entre agentes mediante artefactos y contratos explícitos, no solo mediante conversaciones libres."], ["F08.09", "Registrar entradas relevantes, salidas, versiones y acciones para investigación, respetando las políticas de datos."], ["F08.10", "Permitir fallback de modelo o runtime únicamente entre opciones autorizadas y registrar el cambio efectivo."], ["F08.11", "Conceder herramientas MCP por etapa y por intent (Brain, gestor de trabajo, repositorios, catálogo, plataforma de datos, observabilidad) desde una allowlist; el intent no concede permisos."]]}, {"id": "F09", "name": "Catálogo de componentes reutilizables", "obj": "Convertir el conocimiento operativo de la factory en activos compartidos y gobernados.", "items": [["F09.01", "Mantener un catálogo de agentes, skills, reglas, prompts, herramientas, servidores MCP, runtimes, jobs, etapas, workflows y presets."], ["F09.02", "Definir contratos, dependencias, compatibilidad y metadatos de ownership para cada componente."], ["F09.03", "Fijar versiones y digests de los componentes usados en cada ejecución."], ["F09.04", "Distribuir componentes desde fuentes permitidas mediante adaptadores, incluyendo repositorios y servicios MCP autorizados."], ["F09.05", "Verificar integridad, procedencia y firmas cuando estén disponibles o sean obligatorias por política."], ["F09.06", "Analizar skills, herramientas y componentes antes de publicarlos o habilitarlos, asignando una clasificación de riesgo."], ["F09.07", "Probar componentes con evaluaciones y tests de conformidad antes de promoverlos a un catálogo compartido."], ["F09.08", "Permitir deprecación, revocación y rollback de componentes con análisis de ejecuciones afectadas."]]}, {"id": "F10", "name": "Workspaces y sandboxes", "obj": "Ejecutar código generado de forma aislada y reproducible dentro de límites definidos.", "items": [["F10.01", "Crear workspaces aislados por ejecución, etapa o rama según el nivel de riesgo."], ["F10.02", "Preparar checkouts en commits registrados y restaurar únicamente artefactos y memoria permitidos."], ["F10.03", "Proveer imágenes de ejecución versionadas con toolchains, SDK y dependencias adecuados al producto."], ["F10.04", "Admitir runners especializados para requisitos que no caben en un contenedor genérico, declarando su disponibilidad y límites."], ["F10.05", "Aplicar cuotas de CPU, memoria, almacenamiento, duración y acceso de red."], ["F10.06", "Restringir privilegios del sistema operativo, acceso al host y montajes de volúmenes."], ["F10.07", "Inyectar credenciales temporales solo al proceso y recurso que las necesita."], ["F10.08", "Verificar capacidad y compatibilidad del sandbox antes de iniciar builds o pruebas."], ["F10.09", "Conservar artefactos necesarios, limpiar recursos transitorios y comprobar su eliminación al finalizar."]]}, {"id": "F11", "name": "Construcción e implementación", "obj": "Producir cambios reales y mantenibles, no únicamente propuestas o fragmentos de código.", "items": [["F11.01", "Crear o modificar código de aplicación, servicios, interfaces, integraciones y configuración según el plan."], ["F11.02", "Trabajar sobre productos existentes o crear un producto nuevo mediante plantillas aprobadas y permisos explícitos."], ["F11.03", "Generar y actualizar pruebas junto con la implementación."], ["F11.04", "Aplicar estándares de arquitectura, estilo, accesibilidad y seguridad del producto."], ["F11.05", "Gestionar dependencias y lockfiles usando versiones compatibles y fuentes autorizadas."], ["F11.06", "Preparar migraciones de datos o esquema con validaciones de compatibilidad y estrategia de recuperación."], ["F11.07", "Actualizar documentación técnica, instrucciones de ejecución, contratos y decisiones de arquitectura."], ["F11.08", "Materializar parches y artefactos entre etapas sobre una línea de código identificable y consistente."], ["F11.09", "Limitar el diff al alcance autorizado y detectar cambios accidentales, archivos sensibles o modificaciones no relacionadas."], ["F11.10", "Preparar cambios de IaC cuando formen parte del intent, separando su generación de su aplicación autorizada."]]}, {"id": "F12", "name": "Validación funcional y de calidad", "obj": "Demostrar que el cambio satisface criterios verificables sobre una revisión concreta del código.", "items": [["F12.01", "Ejecutar formato, lint, análisis de tipos, compilación y build mediante comandos deterministas."], ["F12.02", "Ejecutar pruebas unitarias, integración, contratos y end-to-end según el perfil del producto."], ["F12.03", "Validar criterios de aceptación mediante escenarios asociados a cada requisito."], ["F12.04", "Verificar regresiones, compatibilidad de API y eventos, y comportamiento de migraciones."], ["F12.05", "Aplicar pruebas de accesibilidad, rendimiento, resiliencia o carga cuando sean relevantes."], ["F12.06", "Aplicar cobertura, mutation testing u otras medidas de suficiencia cuando estén definidas, sin confundir cobertura con corrección."], ["F12.07", "Detectar y reportar pruebas inestables, pruebas omitidas, mocks y dependencias simuladas."], ["F12.08", "Vincular cada resultado al commit, entorno, comando, versión de herramienta y artefactos de ejecución."], ["F12.09", "Ejecutar ciclos acotados de diagnóstico, reparación y nueva validación; escalar si no convergen."], ["F12.10", "Separar la revisión del agente implementador de una verificación independiente; la opinión de otro agente no sustituye los checks ejecutables."]]}, {"id": "F13", "name": "Seguridad del software generado", "obj": "Impedir que un cambio avance sin los controles de seguridad exigidos por su riesgo.", "items": [["F13.01", "Ejecutar análisis estático de seguridad, análisis de dependencias, detección de secretos y escaneo de imágenes e IaC según el cambio."], ["F13.02", "Ejecutar análisis dinámico y revisión de autenticación, autorización y exposición de datos cuando corresponda."], ["F13.03", "Revisar licencias y políticas de uso de dependencias."], ["F13.04", "Realizar modelado de amenazas para cambios con impacto relevante en límites de confianza o superficie de ataque."], ["F13.05", "Aplicar umbrales y políticas de bloqueo definidos por la organización, no por el agente que genera código."], ["F13.06", "Registrar excepciones con justificación, responsable, aprobación, alcance y caducidad."], ["F13.07", "Comprobar que las correcciones no introducen nuevas vulnerabilidades o desactivan controles existentes."]]}, {"id": "F14", "name": "Gestión de Git y pull requests", "obj": "Entregar cambios revisables e integrables con evidencia completa.", "items": [["F14.01", "Crear ramas y commits con identidad técnica y vínculo al solicitante real."], ["F14.02", "Crear o actualizar PR mediante adaptadores de control de versiones sin duplicarlas en reintentos."], ["F14.03", "Incluir objetivo, alcance, decisiones, instrucciones de prueba, riesgos, evidencias y restricciones conocidas en la PR."], ["F14.04", "Vincular intent, tickets, especificaciones, ejecuciones y artefactos de validación."], ["F14.05", "Solicitar revisores y responsables según ownership, área afectada y políticas aplicables."], ["F14.06", "Atender comentarios mediante nuevas revisiones de código y reejecutar los controles afectados."], ["F14.07", "Detectar conflictos y cambios en la rama destino; reconciliar y volver a validar cuando sea necesario."], ["F14.08", "Coordinar PR dependientes en varios repositorios y mostrar orden de integración y compatibilidad."], ["F14.09", "Respetar branch protection, checks obligatorios y aprobaciones; no utilizar bypass como mecanismo normal de entrega."], ["F14.10", "Permitir merge automático únicamente cuando exista autorización explícita y se satisfagan todas las políticas."], ["F14.11", "Trabajar sobre las épicas e historias del intent: una rama y una PR por historia, estado sincronizado en el gestor de trabajo y enlaces a la evidencia."]]}, {"id": "F15", "name": "Builds, releases y suministro de artefactos", "obj": "Convertir código validado en entregables identificables y verificables.", "items": [["F15.01", "Integrarse con CI existente o ejecutar jobs de build mediante adaptadores, sin exigir sustituir el sistema corporativo."], ["F15.02", "Construir paquetes, imágenes u otros entregables desde el commit exacto que superó los controles."], ["F15.03", "Gestionar versionado, changelog, tags y release notes mediante un flujo definido y un único propietario de los metadatos generados."], ["F15.04", "Publicar artefactos en registros autorizados con hashes, manifiestos y trazabilidad al código fuente."], ["F15.05", "Generar SBOM, procedencia y attestations según el tipo de producto y la política."], ["F15.06", "Firmar y verificar entregables cuando sea obligatorio, rechazando publicaciones incompletas o inconsistentes."], ["F15.07", "Reintentar publicación de forma controlada, sin mover tags ni sustituir silenciosamente identidades de artefactos ya consumidos."]]}, {"id": "F16", "name": "Entornos, despliegue y validación operativa", "obj": "Demostrar software funcionando y, si está autorizado, llevarlo al entorno objetivo.", "items": [["F16.01", "Crear o solicitar entornos efímeros de preview con recursos, datos y duración limitados."], ["F16.02", "Desplegar mediante adaptadores a Kubernetes, infraestructura local o servicios cloud soportados."], ["F16.03", "Separar permisos, configuración y credenciales de desarrollo, pruebas, preproducción y producción."], ["F16.04", "Validar readiness, health checks, smoke tests y escenarios funcionales contra el entorno desplegado."], ["F16.05", "Registrar URL o punto de acceso cuando corresponda, versión desplegada, resultados y condiciones del entorno."], ["F16.06", "Promover el mismo artefacto validado entre entornos sin reconstrucciones silenciosas."], ["F16.07", "Aplicar estrategias de despliegue gradual y rollback cuando la plataforma y el producto las soporten."], ["F16.08", "Integrar aprobaciones y gestión de cambios ITSM si el entorno lo exige."], ["F16.09", "Prohibir que una solicitud de PR autorice implícitamente un despliegue a producción."], ["F16.10", "Verificar señales operativas posteriores al despliegue y generar un resultado de entrega diferenciado del resultado de build."], ["F16.11", "Informar de límites de rollback, especialmente ante migraciones irreversibles o cambios en sistemas externos."]]}, {"id": "F17", "name": "Supervisión humana y autonomía", "obj": "Automatizar el trabajo sin delegar decisiones de riesgo a los agentes.", "items": [["F17.01", "Configurar niveles de autonomía por tipo de intent, producto, entorno y riesgo."], ["F17.02", "Definir gates antes o después de etapas y antes de acciones sensibles."], ["F17.03", "Distinguir solicitudes de información, aprobación de negocio, revisión técnica, excepción de política y resolución de fallos."], ["F17.04", "Persistir cada gate con estado, responsables, evidencias, plazo y decisiones posibles."], ["F17.05", "Presentar un dossier de decisión con diff, riesgos, resultados, consumo y consecuencias de aprobar o rechazar."], ["F17.06", "Verificar identidad, rol y separación de funciones de quien decide; impedir que un agente apruebe sus propias acciones."], ["F17.07", "Notificar mediante canales configurables, con enlaces autenticados, recordatorios y escalado."], ["F17.08", "Permitir aprobar, rechazar, solicitar cambios o cancelar mediante API, MCP o interfaz web según permisos."], ["F17.09", "Invalidar o reevaluar aprobaciones si cambian el alcance, el diff, el commit o las condiciones que se aprobaron."], ["F17.10", "Reanudar desde el gate resuelto sin repetir efectos externos ya confirmados."]]}, {"id": "F18", "name": "Configuración, estándares y políticas", "obj": "Compartir una base común con variaciones explícitas y auditables.", "items": [["F18.01", "Definir configuración como código mediante formatos simples y esquemas tipados."], ["F18.02", "Resolver capas de organización, producto, equipo, proyecto, entorno y ejecución con precedencia documentada."], ["F18.03", "Bloquear valores o controles obligatorios para impedir su relajación desde capas inferiores."], ["F18.04", "Mostrar configuración efectiva, origen de cada valor y diferencias respecto al estándar."], ["F18.05", "Validar configuración, compatibilidad y fuentes confiables antes de ejecutar."], ["F18.06", "Aplicar políticas deterministas sobre hechos verificables: diff, entorno, identidad, datos, modelos, herramientas y resultados de checks."], ["F18.07", "Explicar cada decisión de política y conservar su versión y los hechos evaluados."], ["F18.08", "Proporcionar feature flags gobernadas, selección de proveedores y mecanismos de desactivación de capacidades."], ["F18.09", "Separar configuración declarativa de lógica ejecutable; las capacidades nuevas que requieren lógica se implementan como plugins."], ["F18.10", "Mantener valores empresariales y referencias de infraestructura fuera del núcleo del producto."], ["F18.11", "Convertir cada obligación del intent con referencia a un check en una compuerta obligatoria, y cada revisión humana exigida en un gate con su responsable."]]}, {"id": "F19", "name": "Identidad, aislamiento y acceso a herramientas", "obj": "Limitar el impacto de agentes, código y fuentes no confiables.", "items": [["F19.01", "Integrar autenticación corporativa para personas y autenticación de servicio para sistemas externos."], ["F19.02", "Separar identidad del solicitante, del aprobador, de la ejecución y de las cuentas técnicas utilizadas."], ["F19.03", "Aplicar autorización por organización, equipo, producto, ejecución, operación y recurso."], ["F19.04", "Utilizar identidades de workload y credenciales temporales; resolver secretos mediante referencias a gestores autorizados."], ["F19.05", "Evitar secretos en repositorios, prompts, logs, artefactos y configuración persistida."], ["F19.06", "Gobernar el acceso a MCP y otras herramientas con allowlists, permisos por operación y auditoría de invocaciones."], ["F19.07", "Restringir egress, endpoints, regiones y proveedores según clasificación y residencia de datos."], ["F19.08", "Tratar documentos, código y respuestas de herramientas como entradas no confiables; impedir que sus instrucciones amplíen permisos o desactiven políticas."], ["F19.09", "Limitar comandos y acciones destructivas mediante controles fuera del agente y aprobaciones cuando correspondan."], ["F19.10", "Aislar datos y ejecuciones entre tenants, equipos y productos; ofrecer despliegues separados cuando se requiera un límite de confianza más fuerte."], ["F19.11", "Permitir revocar sesiones, herramientas, modelos, componentes o credenciales y detener nuevas acciones afectadas."]]}, {"id": "F20", "name": "Memoria de ejecución y evidencias", "obj": "Conservar continuidad y poder demostrar qué se entregó y cómo.", "items": [["F20.01", "Mantener memoria técnica acotada al trabajo, producto y equipo: decisiones, planes, checkpoints y resultados."], ["F20.02", "Compartir y restaurar el contexto autorizado entre workers y personas sin depender del historial de un chat."], ["F20.03", "Guardar snapshots con manifiestos, versiones, hashes y reglas de compatibilidad."], ["F20.04", "Aplicar allowlists de contenido, clasificación, retención y control de acceso a los archivos de memoria."], ["F20.05", "Resolver o rechazar escrituras concurrentes para evitar pérdida silenciosa de contexto."], ["F20.06", "Mantener un registro append-only de eventos y decisiones con correlación entre intent, ejecución, etapa, agente, commit y artefacto."], ["F20.07", "Asociar evidencias de especificación, implementación, revisión, pruebas, aprobaciones, publicación y despliegue."], ["F20.08", "Aportar mecanismos de integridad verificable, sellado y almacenamiento inmutable cuando lo exija la política; append-only por sí solo no equivale a evidencia inviolable."], ["F20.09", "Separar evidencias sensibles de telemetría operativa y aplicar acceso y retención distintos."], ["F20.10", "Exportar un dossier de entrega legible y procesable por sistemas externos."]]}, {"id": "F21", "name": "Observabilidad y métricas de entrega", "obj": "Entender el comportamiento de la factory y medir resultados reales.", "items": [["F21.01", "Correlacionar logs, métricas y trazas mediante OpenTelemetry e identificadores estables."], ["F21.02", "Mostrar estado, etapa actual, actividad, bloqueos, fallos, gates y resultados desde una vista compartida."], ["F21.03", "Medir tiempo desde recepción del intent hasta cada nivel de entrega, separando trabajo activo, cola y espera."], ["F21.04", "Medir duración por etapa, bloqueos por tipo, tiempo de aprobación, reintentos y ciclos de reparación."], ["F21.05", "Medir volumen completado, porcentaje de éxito, intervención humana y retrabajo por tipo de trabajo y workflow."], ["F21.06", "Medir resultados de calidad y entrega: aceptación verificada, fallos de checks, regresiones, fallos de despliegue y rollback."], ["F21.07", "Agregar por producto, equipo, periodo y perfil de complejidad para evitar comparaciones engañosas."], ["F21.08", "Mostrar datos ausentes como no disponibles y conservar la fuente y definición de cada métrica."], ["F21.09", "Exportar metadatos a plataformas corporativas sin enviar por defecto prompts, código, texto de tickets o secretos."], ["F21.10", "Mantener el registro de ejecución aunque falle la exportación de telemetría."], ["F21.11", "Evaluar el proceso y sus resultados, no crear rankings de personas ni afirmar mejoras de productividad sin una línea base comparable."], ["F21.12", "Devolver al Brain nivel alcanzado, tiempos, criterios verificados, coste y datos para medir el KPI del intent, de modo que el valor se pueda comparar con lo prometido."]]}, {"id": "F22", "name": "Consumo, costes y presupuestos", "obj": "Evitar ejecuciones abiertas y permitir control económico por resultado.", "items": [["F22.01", "Registrar tokens, llamadas, duración de workers y otros consumos con una fuente verificable cuando el proveedor los exponga."], ["F22.02", "Distinguir consumo medido, coste calculado con tarifas identificadas, estimaciones y datos no disponibles."], ["F22.03", "Asignar presupuestos por organización, equipo, producto, intent, ejecución y etapa."], ["F22.04", "Aplicar límites de tiempo, tokens, llamadas, concurrencia e infraestructura además de límites monetarios cuando puedan calcularse."], ["F22.05", "Avisar antes del umbral y pausar o bloquear nuevas acciones al agotarse el presupuesto."], ["F22.06", "Autorizar ampliaciones mediante gates y conservar responsable y justificación."], ["F22.07", "Atribuir costes por proveedor, modelo, agente, workflow y resultado entregado."], ["F22.08", "Considerar consumo en curso y reservas para reducir sobrepasos por llamadas concurrentes o información de facturación retrasada."], ["F22.09", "Derivar prioridad y tope de coste del valor y del presupuesto declarados en el intent, sin tratar una estimación de negocio como compromiso."]]}, {"id": "F23", "name": "Integraciones y extensibilidad", "obj": "Incorporar sistemas y tecnologías sin acoplar el núcleo a un proveedor.", "items": [["F23.01", "Integrar gestores de trabajo, repositorios, CI/CD, registros, escáneres, identidad, secretos, almacenamiento, notificaciones e ITSM mediante adaptadores."], ["F23.02", "Permitir que sistemas externos envíen intents y reciban estados, solicitudes de decisión y resultados mediante contratos públicos."], ["F23.03", "Publicar contratos tipados, versionados y comprobados mediante tests de compatibilidad."], ["F23.04", "Añadir proveedores y plugins sin duplicar orquestación ni lógica en API, CLI, MCP o interfaz web."], ["F23.05", "Validar salud, capacidades, permisos y configuración de cada integración antes de usarla."], ["F23.06", "Aplicar timeouts, límites de llamadas y recuperación frente a fallos de terceros."], ["F23.07", "Usar eventos con esquemas y semántica documentados; gestionar duplicados, orden y fallos de entrega explícitamente."], ["F23.08", "Mantener compatibilidad de contratos y una política de deprecación para clientes y componentes."]]}, {"id": "F24", "name": "Plataforma cloud-native y portabilidad", "obj": "Ejecutar la misma factory en infraestructura elegida por la organización.", "items": [["F24.01", "Distribuir servicios y workers como imágenes OCI y configuraciones de despliegue versionadas."], ["F24.02", "Soportar Kubernetes como destino de referencia en cloud público, cloud privado o infraestructura local, incluida una instalación local de desarrollo."], ["F24.03", "Separar el núcleo de adaptadores de ejecución, colas, eventos, almacenamiento, identidad, secretos y acceso a modelos."], ["F24.04", "Ofrecer un perfil local de un solo tenant y perfiles compartidos con aislamiento y capacidad explícitos."], ["F24.05", "Escalar API y workers de forma independiente y ajustar capacidad según colas y límites de coste."], ["F24.06", "Mantener estado, artefactos y checkpoints en servicios duraderos externos a los workers."], ["F24.07", "Proporcionar instalación, configuración, actualización, rollback y desinstalación controlados de la plataforma y sus clientes."], ["F24.08", "Proporcionar plantillas de infraestructura sin aplicar cambios sobre cuentas o clusters sin autorización."], ["F24.09", "Validar requisitos, conectividad, proxies, certificados, permisos, toolchains y capacidad mediante diagnósticos automatizados."], ["F24.10", "Definir objetivos de disponibilidad, recuperación y capacidad; implementar copias de seguridad y pruebas de restauración."], ["F24.11", "Soportar actualización y migración de esquemas con compatibilidad explícita de ejecuciones en curso."], ["F24.12", "Probar contratos de portabilidad, pérdida de workers, reanudación y aislamiento en los entornos declarados como soportados."], ["F24.13", "Mostrar una matriz de capacidades por destino; no presentar un adaptador sin validación como soporte productivo equivalente."]]}, {"id": "F25", "name": "Evaluación y mejora controlada de la factory", "obj": "Mejorar agentes y workflows sin introducir cambios invisibles en el proceso productivo.", "items": [["F25.01", "Mantener suites de evaluación para agentes, skills, herramientas y workflows sobre casos representativos."], ["F25.02", "Comparar versiones mediante calidad, aceptación, coste, tiempo y necesidad de intervención."], ["F25.03", "Detectar patrones de fallos, bloqueos y reparaciones a partir de evidencias y métricas."], ["F25.04", "Proponer mejoras como cambios versionados de configuración, catálogo o código, sujetos a revisión."], ["F25.05", "Promover componentes de evaluación a piloto y producción con criterios de aceptación y rollback."], ["F25.06", "Impedir que una optimización automática modifique políticas bloqueadas, amplíe permisos o elimine aprobaciones obligatorias."]]}];
+const Deck=(function(){
+  const NS='http://www.w3.org/2000/svg';
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stage=document.querySelector('.stage');
+  const slides=[...stage.querySelectorAll('.slide')];
+  const hooks={};let cur=-1,token=0;
+  const nav=document.createElement('nav');nav.className='deck-nav';nav.setAttribute('aria-label','Navegación de diapositivas');
+  nav.innerHTML='<button class="prev" aria-label="Anterior">&#8592;</button>'+slides.map((s,i)=>`<button class="dot" aria-label="${s.dataset.title||('Diapositiva '+(i+1))}" title="${s.dataset.title||''}">${String(i+1).padStart(2,'0')}</button>`).join('')+'<button class="next" aria-label="Siguiente">&#8594;</button><button class="fs" aria-label="Pantalla completa" title="Pantalla completa">&#x26F6;</button>';
+  document.body.appendChild(nav);
+  const dots=[...nav.querySelectorAll('.dot')];
+  dots.forEach((d,i)=>d.onclick=()=>go(i));
+  nav.querySelector('.prev').onclick=()=>go(cur-1);
+  nav.querySelector('.next').onclick=()=>go(cur+1);
+  nav.querySelector('.fs').onclick=()=>{try{const p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();p&&p.catch&&p.catch(()=>{})}catch(e){}};
+  function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+  addEventListener('resize',fit);fit();
+  function go(i){
+    i=Math.max(0,Math.min(slides.length-1,i));if(i===cur)return;
+    if(cur>=0){slides[cur].classList.remove('on');slides[cur].setAttribute('aria-hidden','true');hooks[cur]&&hooks[cur].leave&&hooks[cur].leave(slides[cur])}
+    cur=i;const tok=++token;const s=slides[i];void s.offsetWidth;s.classList.add('on');s.removeAttribute('aria-hidden');
+    dots.forEach((d,k)=>d.setAttribute('aria-current',k===i?'step':'false'));
+    flows(s,tok);
+    hooks[i]&&hooks[i].enter&&hooks[i].enter(s,tok);
+    try{history.replaceState(null,'','#s'+(i+1))}catch(e){}
+  }
+  slides.forEach(s=>s.setAttribute('aria-hidden','true'));
+  addEventListener('keydown',e=>{
+    if(e.target.closest&&e.target.closest('input,textarea'))return;
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}
+    else if(e.key==='Home')go(0);else if(e.key==='End')go(slides.length-1);
+    else if(/^[1-9]$/.test(e.key))go(+e.key-1);
+  });
+  let tx=null;
+  addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+  addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)go(cur+(dx<0?1:-1));tx=null},{passive:true});
+  addEventListener('hashchange',()=>{const m=location.hash.match(/^#s(\d)$/);if(m)go(+m[1]-1)});
+  function alive(t){return t===token}
+  function wait(ms,t){return new Promise(r=>setTimeout(()=>r(t===token),reduced?Math.min(ms,30):ms))}
+  function flows(slide,tok){
+    if(reduced)return;
+    const paths=[...slide.querySelectorAll('path[data-flow]')];if(!paths.length)return;
+    const ds=paths.map(p=>{const c=document.createElementNS(NS,'circle');c.setAttribute('r',p.dataset.r||5);c.setAttribute('class','pulse '+(p.dataset.cls||''));p.parentNode.appendChild(c);
+      return{p,c,len:p.getTotalLength(),off:+(p.dataset.off||Math.random()),dur:+(p.dataset.dur||2800)}});
+    const t0=performance.now();
+    (function f(t){
+      if(!alive(tok)){ds.forEach(d=>d.c.remove());return}
+      ds.forEach(d=>{const u=(((t-t0)/d.dur)+d.off)%1;const pt=d.p.getPointAtLength(u*d.len);d.c.setAttribute('cx',pt.x);d.c.setAttribute('cy',pt.y);d.c.style.opacity=Math.min(1,Math.sin(u*Math.PI)*1.6)});
+      requestAnimationFrame(f)})(t0);
+  }
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function moduleMap(el,panel,mods,cfg){
+    const by=Object.fromEntries(mods.map(m=>[m.id,m]));
+    const color={};(cfg.groups||[]).forEach(g=>g.ids.forEach(id=>color[id]=g.color));(cfg.trans||[]).forEach(g=>g.ids.forEach(id=>color[id]=g.color||'var(--mute)'));(cfg.bands||[]).forEach(g=>g.ids.forEach(id=>color[id]=g.color));
+    const chip=id=>`<button class="mm-chip" data-id="${id}" aria-pressed="false" style="--g:${color[id]}"><span class="mm-id">${id}</span><span class="mm-n">${esc(cfg.short[id])}</span></button>`;
+    if(cfg.bands)el.innerHTML=cfg.bands.map(b=>`<div class="mb${b.cls?' '+b.cls:''}" style="--g:${b.color}"><div class="mb-l"><h4>${b.label}</h4><p>${b.desc}</p></div><div class="mb-row">${b.ids.map(chip).join('')}</div></div>`).join('');
+    else el.innerHTML=`<div class="mm-cols">${cfg.groups.map(g=>`<div class="mm-col" style="--g:${g.color}"><div class="mm-h">${g.label}</div>${g.ids.map(chip).join('')}</div>`).join('')}</div>`+
+      `<div class="mm-trans">${cfg.trans.map(g=>`<div class="mm-tg" style="--n:${g.ids.length};--g:${g.color||'var(--mute)'}"><div class="mm-h">${g.label}</div><div class="mm-row">${g.ids.map(chip).join('')}</div></div>`).join('')}</div>`;
+    const order=[...el.querySelectorAll('.mm-chip')].map(b=>b.dataset.id);
+    let sel=null,timer=null,touched=false;
+    function select(id){
+      const m=by[id];if(!m)return;sel=id;
+      el.querySelectorAll('.mm-chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===id?'true':'false'));
+      panel.style.setProperty('--mp-accent',color[id]);
+      panel.classList.remove('swap');void panel.offsetWidth;panel.classList.add('swap');
+      panel.innerHTML=`<div class="mp-top"><span class="mp-id">${m.id}</span><span>${m.items.length} funcionalidades</span></div><h3 class="mp-name">${esc(m.name)}</h3><p class="mp-obj">${esc(m.obj)}</p><ol class="mp-list">${m.items.map(([i,t])=>`<li><span>.${i.split('.')[1]}</span><div>${esc(t)}</div></li>`).join('')}</ol>`;
+    }
+    el.addEventListener('click',e=>{const b=e.target.closest('.mm-chip');if(b){touched=true;stop();select(b.dataset.id)}});
+    el.addEventListener('focusin',e=>{const b=e.target.closest('.mm-chip');if(b&&touched)select(b.dataset.id)});
+    function stop(){clearInterval(timer);timer=null}
+    select(cfg.initial||order[0]);
+    return{
+      tour(tok){stop();if(touched||reduced)return;let k=order.indexOf(sel);timer=setInterval(()=>{if(!alive(tok)||touched){stop();return}k=(k+1)%order.length;select(order[k])},cfg.every||3600)},
+      stop
+    };
+  }
+  function start(){const m=location.hash.match(/^#s(\d)$/);go(m?Math.min(+m[1]-1,slides.length-1):0)}
+  return{go,hooks,alive,wait,moduleMap,esc,NS,reduced,start,get cur(){return cur}};
+})();
+
+(function(){
+  /* F1 */
+  const P=['Trabajo manual entre petición, especificación, código, pruebas y entrega','Agentes, prompts, modelos y estándares distintos en cada equipo','Contexto perdido entre personas, sesiones y etapas','Automatizaciones que dependen del portátil del desarrollador','Código sin evidencia de que compila, funciona y cumple','Revisiones, seguridad y aprobaciones aplicadas a medias','Sin rastro de qué cambió, quién actuó y por qué','Costes, permisos y acceso a datos de agentes sin control','Procesos rígidos o personalizaciones sin gobierno','Dependencia de un cloud, modelo, IDE o herramienta','Sin medidas comparables de tiempo, calidad y bloqueos'];
+  const pl=document.getElementById('probs');pl.innerHTML=P.map((p,k)=>`<li style="--k:${k}"><span>${p}</span></li>`).join('');
+  requestAnimationFrame(()=>pl.querySelectorAll('li').forEach(li=>{const w=li.querySelector('span').offsetWidth;li.style.setProperty('--w',Math.min(1,(w+2)/(li.clientWidth-30)))}));
+  const S=[['Especificar','Requisitos, exclusiones y criterios verificables','ag','agente'],['Diseñar y planificar','Decisiones, impacto y plan efectivo con gates','ag','agente + gate'],['Implementar','Código, pruebas, docs, migraciones e IaC','ag','agente'],['Verificar','Build, tests y seguridad sobre el SHA exacto','de','determinista'],['Entregar','PR, release y despliegue autorizado','hu','humano + determinista']];
+  document.getElementById('stations').innerHTML=S.map(([h,p,k,l],i)=>{const cx=268+i*235.2+104.6; const t=((cx-285)/1170*9)%3;return `<div class="st" style="--lt:${t.toFixed(2)}s"><span class="lamp"></span><h4>${h}</h4><p>${p}</p><span class="kind k-${k}"><i></i>${l}</span></div>`}).join('');
+
+  /* F2 */
+  const W=[['w-a31','Especificación','agente · modelo A','var(--orange)','3.2s'],['w-b07','Implementación','agente · dev','var(--orange)','4.4s'],['w-c12','Build + tests','determinista','var(--graphite)','2.6s'],['w-d45','SAST · secretos','determinista','var(--graphite)','3.6s'],['w-e88','Revisión de PR','esperando persona','var(--blue)','5s'],['w-f02','Agente QA','agente · verificación','var(--orange)','3.9s']];
+  const wk=document.getElementById('workers');
+  const draw=()=>{wk.innerHTML=W.map(([id,t,k,c,d],i)=>{const lim=['40 iter · 30 min','60 iter · 2 h','25 min','15 min','sin coste en espera','30 iter · 45 min'][i];return `<div class="wk" style="--c:${c};--pd:${d}"><div class="id"><span>${id}</span><span>${['I1','I1','I2','I2','I1','I1'][i]}</span></div><div class="tk">${t}</div><div class="kd">${k}</div><div class="lim">límite · ${lim}</div><div class="stt">en ejecución</div><div class="pb"></div></div>`}).join('')};
+  const log=document.getElementById('log');
+  const L=(h)=>{const d=document.createElement('div');d.innerHTML=h;log.appendChild(d);while(log.children.length>14)log.firstChild.remove()};
+  const ide=document.getElementById('ide'),idest=document.getElementById('idest'),ban=document.getElementById('banner');
+  Deck.hooks[1]={enter:async(s,tok)=>{const w=Deck.wait;
+    while(Deck.alive(tok)){draw();log.innerHTML='';ide.classList.remove('off');idest.textContent='conectado';ban.classList.remove('show');
+      L('<b>run-2417</b> INT-2026-0533 rev 1 aceptado · firmas ✓');L('ctx_88/b vía MCP · workflow feature@3.1 · N2');
+      if(!await w(1600,tok))return;L('checkpoint <em>#12</em> · implementación');
+      if(!await w(1000,tok))return;const b=wk.children[1];b.classList.add('deny');b.querySelector('.stt').textContent='lectura denegada';L('<u>w-b07 lee runtime/token → denegado</u> · aislamiento I1');
+      if(!await w(1400,tok))return;b.classList.remove('deny');b.querySelector('.stt').textContent='en ejecución';L('runtime crea commit <em>a1f9c3</em> · write set ✓');
+      if(!await w(1200,tok))return;ide.classList.add('off');idest.textContent='cerrado';ban.classList.add('show');L('cliente IDE desconectado · sin impacto');
+      if(!await w(1800,tok))return;const c=wk.children[2];c.classList.add('dead');c.querySelector('.stt').textContent='worker perdido';L('<u>w-c12 perdido</u> · lease expirado');
+      if(!await w(1600,tok))return;L('reconcilia efectos externos · 0 duplicados');
+      if(!await w(1000,tok))return;c.classList.remove('dead');c.classList.add('new');c.querySelector('.id span').textContent='w-c19';c.querySelector('.stt').textContent='reanudado · checkpoint #14';L('<em>w-c19 reanuda</em> desde checkpoint #14');
+      if(!await w(1600,tok))return;const g=wk.children[4];g.classList.add('idle');g.querySelector('.stt').textContent='gate persistido';g.querySelector('.kd').textContent='worker liberado';L('gate revisión → <b>persistido</b> · worker liberado');
+      if(!await w(1800,tok))return;L('aprobado por revisor · separación de funciones OK');g.classList.remove('idle');g.classList.add('new');g.querySelector('.stt').textContent='reanudado desde gate';
+      if(!await w(1400,tok))return;ide.classList.remove('off');idest.textContent='conectado';ban.classList.remove('show');L('IDE reconectado · recupera rama y dossier');
+      if(!await w(3200,tok))return}}};
+
+  /* F3 */
+  const T=[['Intent','de'],['Validación','de'],['Especificación','ag'],['Diseño','ag'],['Plan','ag'],['Concesión','hu'],['Implementación','ag'],['Verificación','de'],['PR','de'],['Revisión','hu'],['Integración','de'],['Release','de'],['Despliegue','hu'],['Validación operativa','de']];
+  document.getElementById('stg').innerHTML=T.map(([t,k],i)=>`<div class="sg ${k}" style="--k:${i}"><i></i><span>${t}</span></div>`).join('');
+  const short={F01:'Intents',F02:'API · MCP · CLI',F03:'Contexto técnico',F04:'Especificación',F05:'Diseño y plan',F06:'Workflows',F07:'Orquestación durable',F08:'Agentes y modelos',F09:'Catálogo',F10:'Sandboxes',F11:'Construcción',F12:'Calidad',F13:'Seguridad',F14:'Git y PR',F15:'Releases',F16:'Despliegue',F17:'Supervisión humana',F18:'Políticas',F19:'Identidad y acceso',F20:'Evidencias',F21:'Métricas',F22:'Costes',F23:'Integraciones',F24:'Portabilidad',F25:'Mejora continua'};
+  const O='var(--orange-ink)',B='var(--blue)',Gp='var(--graphite)',Gr='var(--green)';
+  const map=Deck.moduleMap(document.getElementById('fmap'),document.getElementById('fpanel'),MODS,{short,initial:'F07',
+    groups:[{label:'Entrada',color:Gp,ids:['F01','F02','F03']},{label:'Definir',color:O,ids:['F04','F05']},{label:'Orquestar',color:Gp,ids:['F06','F07','F08','F09']},{label:'Construir',color:O,ids:['F10','F11']},{label:'Verificar',color:Gr,ids:['F12','F13']},{label:'Entregar',color:B,ids:['F14','F15','F16']}],
+    trans:[{label:'Gobernar',color:B,ids:['F17','F18','F19']},{label:'Demostrar y medir',color:Gr,ids:['F20','F21','F22']},{label:'Extender y portar',color:Gp,ids:['F23','F24','F25']}]});
+  const rs=[...document.querySelectorAll('#risk span')],gs=[...document.querySelectorAll('#gst span')];
+  Deck.hooks[2]={enter:async(s,tok)=>{map.tour(tok);let k=0;while(Deck.alive(tok)){rs.forEach((e,i)=>e.classList.toggle('cur',i===k%3));gs.forEach((e,i)=>e.classList.toggle('cur',i===[0,1,2,0][k%4]));if(!await Deck.wait(1800,tok))break;k++}},leave:()=>map.stop()};
+
+  /* F4 intent → execution */
+  const IX=[
+   ['intent_id · revision · schema · approvals','INT-2026-0533 r1 · 1.4 · 4 firmas sobre sha256:4ab1e0…','F01 · F19','Intents · Identidad','Valida esquema, firmas sobre el digest e idempotencia; si no está «listo», lo devuelve con motivo',['brain.intent.get','sigstore.verify']],
+   ['objective · expected_outcome · scope','previsión horaria 24 h · fuera: región, producto, datos personales','F04','Especificación','Escribe la especificación y las exclusiones; nada fuera de alcance entra en el plan',['brain.entity.read']],
+   ['business_value · kpis · estimate','KPI-DISP-PICO 99,1 → 99,95 % · 410.000 € (supuesto)','F22 · F21','Costes · Métricas','Fija prioridad y tope de coste; instrumenta el KPI para medirlo después',['finops.budget.set','observability.metric']],
+   ['alignment · roadmap · decisions','RM-2027 T1 · preview 18-dic · DEC-2026-341/342','F06','Workflows','Fecha objetivo → plan con gates; un cambio de fecha vuelve a decisión humana',['jira.version.get']],
+   ['acceptance_criteria[8]','AC-4 · MAPE de backtest ≤ 15 % · …','F12','Calidad','Cada criterio se vuelve test ejecutable; matriz de aceptación con evidencia',['ci.run','test.report']],
+   ['obligations[16] · rule → check','PRIV-POL-02 §4.1 · SEC-STD-030 §3 · AI-POL-01','F18 · F13','Políticas · Seguridad','Obligación con check → compuerta obligatoria; sin check → revisión humana con responsable',['policy.eval','sast.scan','secrets.scan']],
+   ['references · ADR · standards','ADR-071 MLOps en plataforma · arquitectura de datos','F05','Diseño y plan','Respeta los ADR citados; desviarse exige proponer un ADR nuevo y decisión',['github.file.read','confluence.page.read']],
+   ['risk · ceremony','medio · modelo en producción · Tier 1','F17','Supervisión humana','Ceremonia por riesgo: verificador independiente y confirmación de persona',['gate.request']],
+   ['delivery.level · environments','N2 · dev, preview · producción no autorizada','F15 · F16','Releases · Despliegue','Despliega hasta preview; producción bloqueada aunque el código lo permita',['deploy.preview','prod · denegado']],
+   ['backlog · epic · stories','SHOP-2201 · 7 historias · release 2027.1','F14','Git y PR','Una rama y una PR por historia; estado y enlaces sincronizados en Jira',['jira.issue.transition','github.pr.create']],
+   ['candidates · repos · datasets · platform','auth-service · checkout-api · mlops-pipelines (inferido 0,71)','F03','Contexto técnico','Confirma repos inferidos, lee su preparación (AGENTS.md, tests) y ajusta autonomía',['github.repo.read','catalog.dataset.schema']],
+   ['context · builder · verifier · digest','ctx_88/b · ctx_88/v (3 holdout) · caduca 31-ene','F03 · F12','Contexto · Verificación','El constructor recibe ctx_88/b; el verificador, ctx_88/v con escenarios ocultos',['brain.context.get','identidad factory']]];
+  const ixl=document.getElementById('ixl'),ixr=document.getElementById('ixr'),ixw=document.getElementById('ixw');
+  ixl.innerHTML=IX.map(([k,v],i)=>`<button type="button" data-i="${i}" aria-pressed="false"><span class="k">${k}</span><span class="v">${v}</span></button>`).join('');
+  ixr.innerHTML=IX.map(([k,v,id,mn,d,t],i)=>`<button type="button" data-i="${i}" aria-pressed="false"><span class="m"><b>${mn}</b><small>${id}</small></span><span class="d">${d}</span><span class="t">${t.map(x=>`<span class="${/denegado|identidad/.test(x)?'no':''}">${x}</span>`).join('')}</span></button>`).join('');
+  const rh=668/IX.length;let wg='';
+  IX.forEach((_,i)=>{const yl=26+(668-26)/IX.length*(i+.5),yr=38+(668-38)/IX.length*(i+.5);wg+=`<path class="wr" data-i="${i}" d="M0 ${yl} C60 ${yl} 60 ${yr} 120 ${yr}"/>`});
+  ixw.innerHTML=wg;
+  let ixs=-1,ixt=false,ixp=null;
+  function ixPick(i){ixs=i;[ixl,ixr].forEach(c=>c.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.i===i?'true':'false')));
+    ixw.querySelectorAll('.wr').forEach(w=>w.classList.toggle('on',+w.dataset.i===i));
+    if(ixp)ixp.remove();const w=ixw.querySelector(`.wr[data-i="${i}"]`);ixp=document.createElementNS(Deck.NS,'circle');ixp.setAttribute('r','6');ixp.setAttribute('class','pulse');
+    const am=document.createElementNS(Deck.NS,'animateMotion');am.setAttribute('dur','1.2s');am.setAttribute('repeatCount','indefinite');am.setAttribute('path',w.getAttribute('d'));ixp.appendChild(am);ixw.appendChild(ixp)}
+  [ixl,ixr].forEach(c=>c.addEventListener('click',e=>{const b=e.target.closest('button');if(b){ixt=true;ixPick(+b.dataset.i)}}));
+  ixPick(5);
+  Deck.hooks[3]={enter:async(s,tok)=>{if(ixt||Deck.reduced)return;if(!await Deck.wait(1200,tok))return;let k=0;
+    while(Deck.alive(tok)&&!ixt){ixPick(k%IX.length);if(!await Deck.wait(2600,tok))return;k++}}};
+
+  /* F5 levels */
+  const lv=[...document.querySelectorAll('#stairs .lv')],stamp=document.getElementById('stamp');
+  Deck.hooks[4]={enter:async(s,tok)=>{lv.forEach(l=>{l.className='lv a';l.querySelector('.lvst').textContent='pendiente'});stamp.classList.remove('show');
+    if(!await Deck.wait(1300,tok))return;
+    for(let i=0;i<3;i++){lv[i].classList.add('done');lv[i].querySelector('.lvst').textContent='✓ verificado con evidencia';if(!await Deck.wait(800,tok))return}
+    lv[3].classList.add('pend');lv[3].querySelector('.lvst').textContent='en curso · ventana de observación';
+    if(!await Deck.wait(900,tok))return;stamp.classList.add('show');
+    const ld=[...document.querySelectorAll('#ladder span')],lt=document.getElementById('ladt');
+    while(Deck.alive(tok)){ld.forEach(e=>e.className='');lt.textContent='merge · riesgo bajo';
+      for(let i=0;i<4;i++){ld[i].className='on';lt.textContent=['L0 · observa','L1 · guiado','L2 · con concesión','L3 · flota · 84 % sin notas'][i];if(!await Deck.wait(1100,tok))return}
+      ld[3].className='drop';lt.textContent='reversión detectada → baja a L1';if(!await Deck.wait(1300,tok))return;ld[2].className='';ld[3].className='';lt.textContent='L1 · degradado sin esperar aprobación';if(!await Deck.wait(3200,tok))return}}};
+
+  Deck.start();
+})();
+</script>
+</body></html>

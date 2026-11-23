@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-11-21T21:29:01+00:00",
+  "created_by": "ui:foreman",
+  "id": "notaire",
+  "profile_ref": "aisdlc.toml",
+  "repos": [
+    {
+      "default_branch": "main",
+      "forge": "",
+      "id": "notaire",
+      "mode": "dry_run",
+      "url": "https://github.com/matiaspakua/notaire"
+    }
+  ],
+  "updated_at": "2026-11-21T21:29:02+00:00",
+  "updated_by": "ui:foreman"
+}
