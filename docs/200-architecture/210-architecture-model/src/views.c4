@@ -1,0 +1,196 @@
+// Views of the Notaire architecture model. View ids are stable: docs, the Pages site and
+// scripts/generate.mjs refer to them.
+
+views {
+  style element.tag = #finding {
+    color red
+    border dashed
+  }
+  style element.tag = #debt {
+    color amber
+    border dashed
+  }
+  style element.tag = #planned {
+    color muted
+    border dotted
+  }
+
+  view index {
+    title "System context"
+    description "Who uses Notaire and which systems it depends on."
+    include
+      notary, clerk, admin, operator,
+      notaire, observability, github, localModel
+  }
+
+  view containers of notaire {
+    title "Containers"
+    description "Runtime building blocks of Notaire and the observability stack around them."
+    include
+      *,
+      notary, clerk, admin,
+      observability.otelCollector, observability.prometheus,
+      localModel
+    exclude notaire.pgadmin, delivery, github
+  }
+
+  view backend of notaire.backend {
+    title "Backend hexagon"
+    description "Ports and Adapters in backend-api (ADR-030). Amber and red boxes are measured debt with their Issues."
+    include
+      *,
+      notaire.backend.inbound.*,
+      notaire.backend.security.*,
+      notaire.backend.application.*,
+      notaire.backend.domain.*,
+      notaire.backend.outbound.*,
+      notaire.backend.crosscutting.*,
+      notaire.frontend, notaire.database
+    exclude
+      delivery,
+      notaire.backend.security.actuatorChain,
+      notaire.backend.security.credentialsGuard,
+      notaire.backend.security.tokenRevocation,
+      notaire.backend.outbound.crypto.*
+  }
+
+  view frontend of notaire.frontend {
+    title "Frontend hexagon"
+    description "Next.js UI, core, HTTP adapters and the server-side edge (ADR-030)."
+    include
+      *,
+      notaire.frontend.edge.*,
+      notaire.frontend.ui.*,
+      notaire.frontend.core.*,
+      notaire.frontend.adapters.*,
+      notaire.backend, observability.otelCollector,
+      notary
+    exclude delivery
+  }
+
+  view observability of observability {
+    title "Observability"
+    description "Metrics, logs, traces and alerts around the application (infra/observability)."
+    include
+      *,
+      notaire.backend, notaire.frontend, notaire.database,
+      operator
+    exclude notaire
+  }
+
+  view security {
+    title "Security controls"
+    description "Controls along the request path and on stored data (CU78). Red dashed arrows are open findings."
+    include
+      notary,
+      notaire.ingress,
+      notaire.frontend.edge.proxy,
+      notaire.frontend.edge.bff,
+      notaire.backend.security.*,
+      notaire.backend.outbound.crypto.totpCipher,
+      notaire.backend.crosscutting.audit,
+      notaire.database.*,
+      observability.prometheus, observability.exporters
+    style element.kind = control {
+      color red
+    }
+  }
+
+  view securityPipeline of delivery.securityScans {
+    title "Security scanning"
+    description "Local security gate (security/run_gates.py) and the release workflows that repeat it."
+    include
+      *,
+      delivery.gates.preflight,
+      delivery.workflows.ci, delivery.workflows.securityWf, delivery.workflows.cd,
+      github.ghcr
+  }
+
+  view testing of delivery.tests {
+    title "Test pyramid"
+    description "Which suite verifies which part of the system (CU76)."
+    include
+      *,
+      notaire.backend.application, notaire.backend.domain, notaire.backend.security,
+      notaire.backend.outbound, notaire.backend.inbound, notaire.backend,
+      notaire.frontend.core, notaire.frontend.adapters, notaire.frontend,
+      notaire.database
+  }
+
+  view delivery of delivery {
+    title "CI/CD and quality gates"
+    description "From Gate 1 to the release: the local preflight is the PR gate, the workflows run on release tags."
+    include
+      delivery.gates.*,
+      delivery.workflows.*,
+      delivery.tests,
+      delivery.securityScans,
+      github.ghcr, github.pages, github.actions
+  }
+
+  view findings {
+    title "Architecture findings"
+    description "Debt and gaps found while building this model (#2483), each with its Issue."
+    include
+      element.tag = #finding,
+      element.tag = #debt,
+      element.tag = #planned,
+      notaire.ingress,
+      notaire.backend.application.portsIn,
+      notaire.backend.outbound.persistence,
+      notaire.backend.security.actuatorChain,
+      notaire.backend.security.mfaGate
+  }
+
+  dynamic view apiRequest {
+    title "Request through both hexagons"
+    description "A clerk saves a payment: UI, core, BFF, security chain, use case, persistence."
+    notary -> notaire.frontend.ui.pages "Saves the form"
+    notaire.frontend.ui.pages -> notaire.frontend.ui.hooks "mutate()"
+    notaire.frontend.ui.hooks -> notaire.frontend.core.usecases "execute(command)"
+    notaire.frontend.adapters.http -> notaire.frontend.edge.bff "POST /api/v1/payments"
+    notaire.frontend.edge.bff -> notaire.backend.security.jwtFilter "Forwards with the httpOnly cookie"
+    notaire.backend.security.jwtFilter -> notaire.backend.security.rateLimit "Token valid"
+    notaire.backend.security.rateLimit -> notaire.backend.security.moduleAuthz "Within quota"
+    notaire.backend.security.moduleAuthz -> notaire.backend.inbound.web "Module granted"
+    notaire.backend.inbound.web -> notaire.backend.application.portsIn "Validated command"
+    notaire.backend.application.useCases -> notaire.backend.domain.model "Applies balance rules"
+    notaire.backend.application.useCases -> notaire.backend.application.portsOut "save(payment)"
+    notaire.backend.outbound.persistence -> notaire.backend.outbound.legacyJpa "Maps to the entity"
+    notaire.backend.outbound.legacyJpa -> notaire.database "INSERT"
+  }
+
+  dynamic view loginMfa {
+    variant sequence
+    title "Login with MFA"
+    description "POST /api/v1/users/login, then /login/mfa when the role requires TOTP (ADR-032, CU84)."
+    notary -> notaire.frontend.edge.bff "POST /api/v1/users/login"
+    notaire.frontend.edge.bff -> notaire.backend.security.mfaGate "Credentials"
+    notaire.backend.security.mfaGate -> notaire.backend.security.lockout "Check lockout and password"
+    notaire.backend.security.mfaGate <- notaire.backend.security.lockout "Password valid"
+    notaire.frontend.edge.bff <- notaire.backend.security.mfaGate "MFA challenge (no session yet)"
+    notary -> notaire.frontend.edge.bff "POST /api/v1/users/login/mfa with the TOTP code"
+    notaire.frontend.edge.bff -> notaire.backend.security.mfaGate "Challenge + code"
+    notaire.backend.security.mfaGate -> notaire.backend.outbound.crypto.totpCipher "Decrypt secret, verify code"
+    notaire.frontend.edge.bff <- notaire.backend.security.mfaGate "Set-Cookie: httpOnly JWT"
+    notary <- notaire.frontend.edge.bff "Dashboard"
+  }
+
+  deployment view dev {
+    title "Deployment: development"
+    description "docker-compose.yml plus the observability compose."
+    include dev.**
+  }
+
+  deployment view prod {
+    title "Deployment: production"
+    description "docker-compose.prod.yml: the proxy is the only published port."
+    include prod.**
+  }
+
+  deployment view staging {
+    title "Deployment: staging (Kubernetes)"
+    description "Kustomize base and staging overlay."
+    include staging.**
+  }
+}

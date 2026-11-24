@@ -315,7 +315,7 @@ pair("Bruno keeps API tests as plain files in the repository, so they are review
 pair("in 38 folders", "en 38 carpetas");
 pair("runs first: it logs in and stores the JWT that the other folders send. This is that first request, read from the repository:", "corre primero: inicia sesión y guarda el JWT que mandan las demás carpetas. Esta es esa primera request, leída del repositorio:");
 pair("); these Owner choices still block marking the work done. Agents must not invent answers. Evidence:", "); estas decisiones del Owner todavía impiden dar el trabajo por terminado. Los agentes no deben inventar respuestas. Evidencia:");
-pair(". New active diagrams must be Mermaid (ADR-027).", ". Los diagramas activos nuevos tienen que ser Mermaid (ADR-027).");
+pair(". Architecture views come from the LikeC4 model (ADR-033).", ". Las vistas de arquitectura salen del modelo LikeC4 (ADR-033).");
 pair("All decisions", "Todas las decisiones");
 pair("CI/CD pipeline with GitHub Actions", "Pipeline de CI/CD con GitHub Actions");
 pair("Configurable workflow engine for managements", "Motor de workflow configurable para las gestiones");

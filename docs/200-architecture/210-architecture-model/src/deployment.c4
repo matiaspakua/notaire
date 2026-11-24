@@ -1,0 +1,101 @@
+// Deployment topology. Sources: docker-compose.yml, docker-compose.prod.yml,
+// infra/deploy/kustomize (base + staging overlay), infra/observability/docker-compose.yml.
+
+deployment {
+  environment dev "Development (Docker Compose)" {
+    description "docker-compose.yml on a developer machine; COMPOSE_PROJECT_NAME isolates parallel stacks."
+
+    network appNet "notary-network" {
+      host frontendHost "notaire-frontend :3000" {
+        instanceOf notaire.frontend
+      }
+      host backendHost "notary-backend :8080" {
+        instanceOf notaire.backend
+      }
+      host dbHost "notary-postgres :5432" {
+        technology "postgres:16.15, volume postgres_data"
+        instanceOf notaire.database
+      }
+      host pgadminHost "notary-pgadmin :5050" {
+        instanceOf notaire.pgadmin
+      }
+    }
+
+    network opsNet "devsecops-network" {
+      description "infra/observability/docker-compose.yml; joins notaire-app-network to reach the app."
+
+      host collectorHost "otel-collector" {
+        instanceOf observability.otelCollector
+      }
+      host promHost "prometheus :9090" {
+        instanceOf observability.prometheus
+        instanceOf observability.alertmanager
+      }
+      host logsHost "loki :3100 + promtail" {
+        instanceOf observability.loki
+      }
+      host tracesHost "tempo" {
+        instanceOf observability.tempo
+      }
+      host grafanaHost "grafana" {
+        instanceOf observability.grafana
+      }
+      host exportersHost "exporters" {
+        instanceOf observability.exporters
+      }
+      host sonarHost "sonarqube + sonar-db" {
+        instanceOf observability.sonarqube
+      }
+      host homerHost "homer :8888" {
+        instanceOf observability.homer
+      }
+    }
+  }
+
+  environment prod "Production (docker-compose.prod.yml)" {
+    description "Single host. TLS terminates in front of the proxy (HTTPS-TLS-RUNBOOK); images from GHCR."
+
+    network edge "Public edge" {
+      host proxyHost "notary-reverse-proxy :80" {
+        technology "nginx:1.27.5-alpine"
+        instanceOf notaire.ingress
+      }
+    }
+    network private "notary-network (private)" {
+      host feHost "frontend" {
+        technology "ghcr.io/matiaspakua/notaire/frontend"
+        instanceOf notaire.frontend
+      }
+      host beHost "backend" {
+        technology "ghcr.io/matiaspakua/notaire/backend"
+        instanceOf notaire.backend
+      }
+      host pgHost "postgres" {
+        technology "postgres:16, volume postgres_data"
+        instanceOf notaire.database
+      }
+    }
+  }
+
+  environment staging "Staging (Kustomize)" {
+    description "infra/deploy/kustomize/overlays/staging, namespace notaire, one replica each, images pinned to the release tag."
+
+    network cluster "namespace notaire" {
+      pod proxyPod "reverse-proxy (Service LoadBalancer :80)" {
+        instanceOf notaire.ingress
+      }
+      pod fePod "frontend (ClusterIP :3000)" {
+        instanceOf notaire.frontend
+      }
+      pod bePod "backend (ClusterIP :8080)" {
+        instanceOf notaire.backend
+      }
+      pod pgPod "postgres (ClusterIP :5432)" {
+        #finding
+        description "Data on emptyDir: lost on every pod restart. #2489."
+        link https://github.com/matiaspakua/notaire/issues/2489
+        instanceOf notaire.database
+      }
+    }
+  }
+}

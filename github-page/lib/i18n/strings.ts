@@ -6,6 +6,7 @@ import "./strings-docs";
 import "./strings-anatomy";
 import "./strings-pages";
 import "./strings-mermaid";
+import "./strings-model";
 import "../repolens-content";
 
 // Demo shell

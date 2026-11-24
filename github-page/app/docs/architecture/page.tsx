@@ -1,5 +1,7 @@
-import { MermaidDiagram } from "@/components/MermaidDiagram";
-import { DOCS, SYSTEM_CONTEXT_CHART } from "@/lib/docs-content";
+import Link from "next/link";
+
+import { ModelView } from "@/components/docs/ModelView";
+import { DOCS } from "@/lib/docs-content";
 import { pageMetadata } from "@/lib/site";
 import { adrs, sadVersion } from "@/lib/tech-facts";
 
@@ -31,9 +33,17 @@ export default function DocsArchitecturePage() {
         </p>
       </header>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-neutral-900">System context</h2>
-        <MermaidDiagram chart={SYSTEM_CONTEXT_CHART} />
+      <section className="space-y-6">
+        <ModelView id="index" headingLevel={2} />
+        <ModelView id="containers" headingLevel={2} />
+        <p className="text-sm text-neutral-600">
+          <Link
+            href="/docs/architecture/model/"
+            className="font-semibold text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+          >
+            Every view of the architecture model, and its findings
+          </Link>
+        </p>
       </section>
 
       <section className="grid sm:grid-cols-2 gap-4">
@@ -52,7 +62,7 @@ export default function DocsArchitecturePage() {
         >
           <h3 className="font-semibold text-neutral-900">ADR index</h3>
           <p className="mt-2 text-sm text-neutral-600">
-            {list.length} decision records, ADR-{list[0]?.id} to ADR-{list.at(-1)?.id}. New active diagrams must be Mermaid (ADR-027).
+            {list.length} decision records, ADR-{list[0]?.id} to ADR-{list.at(-1)?.id}. Architecture views come from the LikeC4 model (ADR-033).
           </p>
         </a>
       </section>

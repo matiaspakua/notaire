@@ -1,0 +1,173 @@
+// Testing pyramid, quality gates and the CI/CD pipeline (CU76). Sources: docs/300-development/303-testing,
+// .claude/rules/code-quality.md, workspace/sdlc/preflight.sh, .github/workflows, security/cases/catalog.yml.
+// Counts measured on main @ 68321620.
+
+model {
+  delivery = system "Delivery and quality system" {
+    description "AI SDLC under CONSTITUTION.md: Issue, OpenSpec Gate 1, TDD, local preflight, PR, merge, release."
+
+    tests = layer "Test pyramid" {
+      description "Owner target above 90% across the pyramid (#2046); floors only rise."
+
+      unit = suite "Backend unit tests" {
+        technology "JUnit 5, Mockito, AssertJ"
+        description "Use cases, domain, mappers and adapters without Spring (430 test classes in backend-api)."
+      }
+      archunit = suite "Architecture tests" {
+        technology "ArchUnit"
+        description "R1-R6 hexagon rules, R7 use-case slice cycles (baselines empty) and R8 legacy-package dependents (652-line shrink-only baseline, #2484)."
+      }
+      integration = suite "Backend integration tests" {
+        technology "Spring Boot Test, Testcontainers PostgreSQL"
+        description "Controllers, security chains, Flyway and JPA against a real PostgreSQL (pg-integration)."
+      }
+      vitest = suite "Frontend unit tests" {
+        technology "Vitest, Testing Library"
+        description "148 test files: core use cases, adapters, hooks, components and architecture boundaries."
+      }
+      bruno = suite "API tests" {
+        technology "Bruno CLI"
+        description "423 requests in backend-api/api-test, checked against the CU/API matrix."
+      }
+      dbvv = suite "Database V&V" {
+        technology "psql checks"
+        description "testing/database: schema, roles, append-only audit, seeds."
+      }
+      e2e = suite "End-to-end tests" {
+        technology "Playwright, axe-core"
+        description "107 specs in testing/e2e at 320, 768 and 1024 px, light and dark, WCAG AA."
+      }
+      perf = suite "Load tests" {
+        technology "k6"
+        description "infra/performance/k6 on schedule."
+      }
+    }
+
+    gates = layer "Quality gates" {
+      description "Fail the build or block the merge."
+
+      openspecGate = gate "Gate 1: OpenSpec" {
+        technology "openspec validate --strict, validate-sdlc-plan.sh"
+        description "Issue, Use Case, proposal, specs, design and tasks before code."
+      }
+      coverage = gate "Coverage floors" {
+        technology "JaCoCo 85/70, Vitest 87/79/85/88"
+        description "Raise-only ratchet; never lowered without an ADR."
+      }
+      boundaries = gate "Architecture boundaries" {
+        technology "ArchUnit baselines, ESLint boundaries"
+        description "Shrink-only; both are empty today."
+      }
+      staticAnalysis = gate "Static analysis" {
+        technology "Checkstyle, SpotBugs, SonarQube new code"
+        description "No new blocker, critical or major issue."
+      }
+      contract = gate "API contract" {
+        technology "OpenAPI export diff"
+        description "contracts/ must match the running API."
+      }
+      preflight = gate "Local preflight" {
+        technology "workspace/sdlc/preflight.sh (PR), --all (release)"
+        description "The pre-push hook runs the fast PR gate; --all, with the server-backed suites, gates the release (#2001, #2493)."
+      }
+      ruleset = gate "protect-main ruleset" {
+        #finding
+        technology "GitHub ruleset 24128115"
+        description "Desired: active, PR-only merges, no deletion, no force-push, no required checks (#2001, #2493). Live: enforcement disabled, so main is unprotected, and it still lists the five retired product-CI checks. #2490."
+        link https://github.com/matiaspakua/notaire/issues/2490
+      }
+    }
+
+    securityScans = layer "Security scanning" {
+      #security
+      description "security/run_gates.py runs the case catalog locally (SEC-TM, SEC-SEC, SEC-SAST, SEC-SCA, SEC-DAST, SEC-POL, SEC-SDLC)."
+
+      secrets = gate "Secret scan" {
+        technology "security/scan_secrets.py"
+      }
+      sast = gate "SAST" {
+        technology "Semgrep, CodeQL"
+      }
+      sca = gate "SCA and images" {
+        technology "Trivy, Dependabot"
+      }
+      dast = gate "DAST" {
+        technology "OWASP ZAP baseline"
+      }
+      threatModel = gate "Threat model" {
+        technology "STRIDE register, Threat Dragon"
+        description "docs/200-architecture/206-security/threat-model"
+      }
+      supplyChain = gate "Signed images and SBOM" {
+        technology "cosign keyless, CycloneDX"
+      }
+    }
+
+    workflows = layer "GitHub Actions workflows" {
+      description "Release CI: run on a version tag and on dispatch. Deploy GitHub Page runs on push to main; CodeQL, ZAP, k6 and backup smoke also run weekly."
+
+      ci = pipeline "CI" {
+        technology "ci.yml"
+        description "Build, unit, integration, coverage, Trivy, Docker build, quality, reports."
+      }
+      frontendCi = pipeline "Frontend CI" {
+        technology "frontend-ci.yml"
+      }
+      e2eWf = pipeline "Playwright E2E" {
+        technology "playwright-e2e.yml"
+      }
+      prValidation = pipeline "PR Validation" {
+        technology "pr-validation.yml, sdlc-process.yml"
+      }
+      securityWf = pipeline "Security workflows" {
+        technology "codeql.yml, dast-zap.yml"
+      }
+      cd = pipeline "CD" {
+        technology "cd.yml"
+        description "Builds, signs and publishes backend and frontend images to GHCR."
+      }
+      pagesWf = pipeline "Pages" {
+        technology "pages-ci.yml, deploy-github-page.yml"
+        description "Builds the portfolio, reports and the LikeC4 model site."
+      }
+      scheduled = pipeline "Scheduled checks" {
+        technology "performance-test.yml, backup-restore-smoke.yml, database-vv.yml"
+      }
+    }
+  }
+
+  delivery.tests.unit -[verifies]-> notaire.backend.application "Use cases and ports"
+  delivery.tests.unit -[verifies]-> notaire.backend.domain "Domain rules"
+  delivery.tests.archunit -[verifies]-> notaire.backend "Package dependencies"
+  delivery.tests.integration -[verifies]-> notaire.backend.security "Filter chains"
+  delivery.tests.integration -[verifies]-> notaire.backend.outbound "Persistence and reports"
+  delivery.tests.vitest -[verifies]-> notaire.frontend.core "Use cases"
+  delivery.tests.vitest -[verifies]-> notaire.frontend.adapters "HTTP adapters"
+  delivery.tests.bruno -[verifies]-> notaire.backend.inbound "REST contract"
+  delivery.tests.dbvv -[verifies]-> notaire.database "Schema and roles"
+  delivery.tests.e2e -[verifies]-> notaire.frontend "User journeys"
+  delivery.tests.perf -[verifies]-> notaire.backend "Latency under load"
+
+  delivery.gates.preflight -> delivery.tests "Runs the suites the branch touches"
+  delivery.gates.preflight -> delivery.securityScans "Runs the local security gate"
+  delivery.gates.preflight -> delivery.gates.coverage "Enforces"
+  delivery.gates.preflight -> delivery.gates.boundaries "Enforces"
+  delivery.gates.openspecGate -> delivery.gates.preflight "Precedes"
+  delivery.gates.preflight -> delivery.gates.ruleset "Precedes the PR"
+
+  delivery.workflows.ci -[triggers]-> delivery.tests.unit "Runs"
+  delivery.workflows.ci -[triggers]-> delivery.tests.integration "Runs"
+  delivery.workflows.ci -[triggers]-> delivery.gates.staticAnalysis "Runs"
+  delivery.workflows.ci -[triggers]-> delivery.securityScans.sca "Runs"
+  delivery.workflows.frontendCi -[triggers]-> delivery.tests.vitest "Runs"
+  delivery.workflows.e2eWf -[triggers]-> delivery.tests.e2e "Runs"
+  delivery.workflows.prValidation -[triggers]-> delivery.gates.openspecGate "Checks"
+  delivery.workflows.securityWf -[triggers]-> delivery.securityScans.sast "Runs CodeQL"
+  delivery.workflows.securityWf -[triggers]-> delivery.securityScans.dast "Runs ZAP"
+  delivery.workflows.cd -[triggers]-> delivery.securityScans.supplyChain "Signs and attaches SBOM"
+  delivery.workflows.cd -> github.ghcr "Pushes images"
+  delivery.workflows.pagesWf -> github.pages "Deploys"
+  delivery.workflows.scheduled -[triggers]-> delivery.tests.perf "Runs"
+  delivery.workflows.scheduled -[triggers]-> delivery.tests.dbvv "Runs"
+  delivery.workflows -> github.actions "Run on"
+}

@@ -1,0 +1,140 @@
+// Vocabulary of the Notaire architecture model (ADR-033, #2483).
+// Every kind, tag and relationship kind used by the other files is declared here.
+
+specification {
+  element person {
+    notation "Person"
+    style {
+      shape person
+      color green
+    }
+  }
+  element system {
+    notation "Software system"
+    style {
+      color primary
+    }
+  }
+  element external {
+    notation "External system"
+    style {
+      color muted
+    }
+  }
+  element container {
+    notation "Container"
+    style {
+      color primary
+    }
+  }
+  element webapp {
+    notation "Web application"
+    style {
+      shape browser
+      color primary
+    }
+  }
+  element database {
+    notation "Database"
+    style {
+      shape storage
+      color indigo
+    }
+  }
+  element layer {
+    notation "Hexagon layer"
+    style {
+      color secondary
+    }
+  }
+  element component {
+    notation "Component"
+    style {
+      shape component
+      color sky
+    }
+  }
+  element control {
+    notation "Security control"
+    style {
+      shape rectangle
+      color red
+    }
+  }
+  element suite {
+    notation "Test suite"
+    style {
+      shape rectangle
+      color green
+    }
+  }
+  element gate {
+    notation "Quality gate"
+    style {
+      shape queue
+      color amber
+    }
+  }
+  element pipeline {
+    notation "CI/CD workflow"
+    style {
+      shape rectangle
+      color slate
+    }
+  }
+  element tool {
+    notation "Tool"
+    style {
+      shape rectangle
+      color gray
+    }
+  }
+
+  deploymentNode environment {
+    notation "Environment"
+    style {
+      color gray
+    }
+  }
+  deploymentNode network {
+    notation "Network / trust zone"
+    style {
+      color slate
+    }
+  }
+  deploymentNode host {
+    notation "Container host"
+  }
+  deploymentNode pod {
+    notation "Kubernetes workload"
+  }
+
+  relationship http {
+    technology "HTTP/JSON"
+  }
+  relationship sql {
+    technology "JDBC"
+    line dashed
+  }
+  relationship telemetry {
+    color amber
+    line dotted
+  }
+  relationship implements {
+    line dashed
+    head onormal
+  }
+  relationship verifies {
+    color green
+    line dotted
+  }
+  relationship triggers {
+    color slate
+  }
+
+  tag legacy
+  tag debt
+  tag security
+  tag finding
+  tag planned
+}

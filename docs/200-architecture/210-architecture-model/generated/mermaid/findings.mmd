@@ -1,0 +1,44 @@
+---
+title: "Architecture findings"
+---
+flowchart TB
+  subgraph notaire["Notaire"]
+    subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+      subgraph notaire_backend_outbound["Outbound adapters"]
+        notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+        notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
+      end
+      subgraph notaire_backend_security["Security filter chain"]
+        notaire_backend_security_actuatorChain["Actuator chain<br/><i>HTTP Basic, @Order(1)</i>"]
+        notaire_backend_security_mfaGate["MFA login gate<br/><i>TokenLoginMfaGate, TOTP</i>"]
+      end
+      subgraph notaire_backend_domain["Domain"]
+        notaire_backend_domain_missingDomain["Contexts without a domain model"]
+      end
+      subgraph notaire_backend_application["Application"]
+        notaire_backend_application_legacyDtoPorts["Ports speaking legacy web DTOs"]
+        notaire_backend_application_portsIn["Inbound ports"]
+      end
+    end
+    notaire_assistant["AI assistant<br/><i>Spring AI 2.0 + local model (oMLX)</i>"]
+    notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
+  localModel["Local model server"]
+  notaire_assistant -- "Prompts (planned)" --> localModel
+  notaire_backend_application_legacyDtoPorts -- "Part of" --> notaire_backend_application_portsIn
+  notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
+  notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
+  notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
+  notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class delivery_gates_ruleset,notaire_backend_outbound_legacyJpa,notaire_backend_domain_missingDomain,notaire_backend_application_legacyDtoPorts finding
+  class notaire_assistant,localModel planned
+  class notaire_ingress c_primary
+  class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
+  class notaire_backend_security_actuatorChain,notaire_backend_security_mfaGate c_red

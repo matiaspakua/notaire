@@ -1,0 +1,88 @@
+---
+title: "Backend hexagon"
+---
+flowchart TB
+  notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  observability["Observability and DevSecOps stack"]
+  subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    subgraph notaire_backend_inbound["Inbound adapters"]
+      notaire_backend_inbound_openapi["OpenAPI contract<br/><i>springdoc</i>"]
+      notaire_backend_inbound_web["REST controllers<br/><i>Spring MVC</i>"]
+      notaire_backend_inbound_errors["Global exception handler<br/><i>@RestControllerAdvice</i>"]
+    end
+    subgraph notaire_backend_security["Security filter chain"]
+      notaire_backend_security_csrf["CSRF double submit<br/><i>Spring Security CSRF</i>"]
+      notaire_backend_security_lockout["Login lockout<br/><i>LoginAttemptService</i>"]
+      notaire_backend_security_jwtFilter["JWT authentication filter<br/><i>JwtAuthenticationFilter, JwtTokenService</i>"]
+      notaire_backend_security_mfaGate["MFA login gate<br/><i>TokenLoginMfaGate, TOTP</i>"]
+      notaire_backend_security_rateLimit["API rate limit<br/><i>ApiRateLimitFilter</i>"]
+      notaire_backend_security_moduleAuthz["Role-module authorization<br/><i>RoleModuleAuthorizationFilter</i>"]
+    end
+    subgraph notaire_backend_crosscutting["Cross-cutting"]
+      notaire_backend_crosscutting_config["Composition root<br/><i>config.*</i>"]
+      notaire_backend_crosscutting_audit["Audit aspect<br/><i>Spring AOP</i>"]
+      notaire_backend_crosscutting_flyway["Flyway migrations<br/><i>Flyway</i>"]
+      notaire_backend_crosscutting_observe["Observability<br/><i>Micrometer, OTLP, logback JSON</i>"]
+    end
+    subgraph notaire_backend_outbound["Outbound adapters"]
+      notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+      notaire_backend_outbound_reports["PDF reports<br/><i>PDFBox</i>"]
+      notaire_backend_outbound_crypto["Security adapters<br/><i>AES-GCM, SecureRandom, Clock</i>"]
+      notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
+    end
+    subgraph notaire_backend_application["Application"]
+      notaire_backend_application_useCases["Use cases<br/><i>@Service @Transactional</i>"]
+      notaire_backend_application_legacyDtoPorts["Ports speaking legacy web DTOs"]
+      notaire_backend_application_portsOut["Outbound ports"]
+      notaire_backend_application_portsIn["Inbound ports"]
+    end
+    subgraph notaire_backend_domain["Domain"]
+      notaire_backend_domain_model["Domain model<br/><i>Java records and classes</i>"]
+      notaire_backend_domain_missingDomain["Contexts without a domain model"]
+    end
+  end
+  notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  notaire_backend_inbound_web -- "Exceptions mapped by" --> notaire_backend_inbound_errors
+  notaire_frontend -- "Every /api/v1 call" --> notaire_backend_security_jwtFilter
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
+  notaire_backend_security_moduleAuthz -- "Granted module" --> notaire_backend_inbound_web
+  notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
+  notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
+  notaire_backend_inbound_web -- "Calls" --> notaire_backend_application_portsIn
+  notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
+  notaire_backend_security_lockout -- "Records failed logins" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "Implements" --> notaire_backend_application_portsIn
+  notaire_backend_application_legacyDtoPorts -- "Part of" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "Uses" --> notaire_backend_application_portsOut
+  notaire_backend_application_useCases -- "Applies rules of" --> notaire_backend_domain_model
+  notaire_backend_outbound_persistence -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "Maps to and from" --> notaire_backend_domain_model
+  notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
+  notaire_backend_outbound_legacyJpa -- "Hibernate" --> notaire_database
+  notaire_backend_outbound_reports -- "Implements GenerateReportsUseCase (finding)" --> notaire_backend_application_portsIn
+  notaire_backend_outbound_reports -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_crypto -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
+  observability -. "Scrapes /actuator/prometheus" .-> notaire_backend_crosscutting_observe
+  notaire_backend_crosscutting_audit -- "Appends" --> notaire_database
+  notaire_backend_crosscutting_audit -- "Writes AuditRecord" --> notaire_backend_outbound_legacyJpa
+  notaire_backend_crosscutting_observe -. "Traces" .-> observability
+  notaire_backend_crosscutting_flyway -- "Migrates on start" --> notaire_database
+  observability -. "Scrapes /api/metrics" .-> notaire_frontend
+  notaire_ingress -- "Routes / (UI)" --> notaire_frontend
+  notaire_frontend -. "Browser traces via /api/otlp (+1)" .-> observability
+  observability -- "Reads pg_stat (+1)" --> notaire_database
+  notaire_backend_crosscutting_config -- "Builds" --> notaire_backend_security
+  notaire_frontend -- "Forwards the request and the httpOnly cookie" --> notaire_backend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  class notaire_ingress,observability,notaire_frontend c_primary
+  class notaire_backend_inbound_openapi,notaire_backend_crosscutting_config,notaire_backend_crosscutting_audit,notaire_backend_crosscutting_flyway,notaire_backend_crosscutting_observe,notaire_backend_outbound_persistence,notaire_backend_outbound_reports,notaire_backend_outbound_crypto,notaire_backend_inbound_web,notaire_backend_inbound_errors,notaire_backend_application_useCases,notaire_backend_application_portsOut,notaire_backend_application_portsIn,notaire_backend_domain_model c_sky
+  class notaire_backend_security_csrf,notaire_backend_security_lockout,notaire_backend_security_jwtFilter,notaire_backend_security_mfaGate,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
+  class notaire_backend_outbound_legacyJpa,notaire_backend_application_legacyDtoPorts,notaire_backend_domain_missingDomain finding
+  class notaire_database c_indigo
+  linkStyle 17 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

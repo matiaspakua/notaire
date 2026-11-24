@@ -1,0 +1,19 @@
+{
+  "name": "notaire-architecture-model",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LikeC4 architecture model of Notaire (ADR-033, #2483)",
+  "scripts": {
+    "validate": "likec4 validate .",
+    "dev": "likec4 start .",
+    "build": "likec4 build .",
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check"
+  },
+  "devDependencies": {
+    "likec4": "1.60.0"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  }
+}

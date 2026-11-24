@@ -1,0 +1,44 @@
+---
+title: "Request through both hexagons"
+---
+flowchart LR
+  notary(["Notary"])
+  notaire_frontend_ui_pages["Pages and components<br/><i>React 19, Tailwind, design tokens</i>"]
+  notaire_frontend_ui_hooks["Query hooks<br/><i>TanStack Query</i>"]
+  notaire_frontend_core_usecases["Use cases and ports<br/><i>TypeScript</i>"]
+  notaire_frontend_adapters_http["HTTP port adapters<br/><i>lib/api-client</i>"]
+  notaire_frontend_edge_bff["API route handlers<br/><i>app/api/*/route.ts</i>"]
+  notaire_backend_security_jwtFilter["JWT authentication filter<br/><i>JwtAuthenticationFilter, JwtTokenService</i>"]
+  notaire_backend_security_rateLimit["API rate limit<br/><i>ApiRateLimitFilter</i>"]
+  notaire_backend_security_moduleAuthz["Role-module authorization<br/><i>RoleModuleAuthorizationFilter</i>"]
+  notaire_backend_inbound_web["REST controllers<br/><i>Spring MVC</i>"]
+  notaire_backend_application_portsIn["Inbound ports"]
+  notaire_backend_application_useCases["Use cases<br/><i>@Service @Transactional</i>"]
+  notaire_backend_domain_model["Domain model<br/><i>Java records and classes</i>"]
+  notaire_backend_application_portsOut["Outbound ports"]
+  notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+  notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
+  notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  notary -- "1. Saves the form" --> notaire_frontend_ui_pages
+  notaire_frontend_ui_pages -- "2. mutate()" --> notaire_frontend_ui_hooks
+  notaire_frontend_ui_hooks -- "3. execute(command)" --> notaire_frontend_core_usecases
+  notaire_frontend_adapters_http -- "4. POST /api/v1/payments" --> notaire_frontend_edge_bff
+  notaire_frontend_edge_bff -- "5. Forwards with the httpOnly cookie" --> notaire_backend_security_jwtFilter
+  notaire_backend_security_jwtFilter -- "6. Token valid" --> notaire_backend_security_rateLimit
+  notaire_backend_security_rateLimit -- "7. Within quota" --> notaire_backend_security_moduleAuthz
+  notaire_backend_security_moduleAuthz -- "8. Module granted" --> notaire_backend_inbound_web
+  notaire_backend_inbound_web -- "9. Validated command" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "10. Applies balance rules" --> notaire_backend_domain_model
+  notaire_backend_application_useCases -- "11. save(payment)" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "12. Maps to the entity" --> notaire_backend_outbound_legacyJpa
+  notaire_backend_outbound_legacyJpa -- "13. INSERT" --> notaire_database
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  class notary c_green
+  class notaire_frontend_ui_pages,notaire_frontend_ui_hooks,notaire_frontend_core_usecases,notaire_frontend_adapters_http,notaire_frontend_edge_bff,notaire_backend_inbound_web,notaire_backend_application_portsIn,notaire_backend_application_useCases,notaire_backend_domain_model,notaire_backend_application_portsOut,notaire_backend_outbound_persistence c_sky
+  class notaire_backend_security_jwtFilter,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
+  class notaire_backend_outbound_legacyJpa finding
+  class notaire_database c_indigo

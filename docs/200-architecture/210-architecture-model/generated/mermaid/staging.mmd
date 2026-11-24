@@ -1,0 +1,24 @@
+---
+title: "Deployment: staging (Kubernetes)"
+---
+flowchart TB
+  subgraph staging_cluster_proxyPod["reverse-proxy (Service LoadBalancer :80)"]
+    staging_cluster_proxyPod_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph staging_cluster_fePod["frontend (ClusterIP :3000)"]
+    staging_cluster_fePod_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  end
+  subgraph staging_cluster_bePod["backend (ClusterIP :8080)"]
+    staging_cluster_bePod_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  end
+  subgraph staging_cluster_pgPod["postgres (ClusterIP :5432)"]
+    staging_cluster_pgPod_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  end
+  staging_cluster_proxyPod_ingress -- "Routes / (UI)" --> staging_cluster_fePod_frontend
+  staging_cluster_proxyPod_ingress -- "Routes /api (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_fePod_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_bePod_backend -- "Reads and writes, Flyway migrates on start (+3)" --> staging_cluster_pgPod_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class staging_cluster_proxyPod_ingress,staging_cluster_fePod_frontend,staging_cluster_bePod_backend c_primary
+  class staging_cluster_pgPod_database c_indigo

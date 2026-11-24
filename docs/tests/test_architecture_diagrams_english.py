@@ -15,25 +15,13 @@ class ArchitectureDiagramsEnglishTest(unittest.TestCase):
         for retired in ("GestionDeEscritura", "Escritura", "Presupuesto", "Persona", "RegistroAuditoria"):
             self.assertNotIn(retired, text, retired)
 
-    def test_package_diagram_uses_the_live_layout(self):
-        text = (DIAGRAMS / "backend-package-structure.puml").read_text(encoding="utf-8")
-        for live in ("adapter.in.web", "business", "ManagementController", "DeedManagement", "AuditAspect"):
-            self.assertIn(live, text, live)
-        for retired in ("negocio", "PersonaController", "GestionDeEscritura", "AuditoriaAspect"):
-            self.assertNotIn(retired, text, retired)
-
-    def test_target_and_legacy_diagrams_are_english(self):
-        target = (DIAGRAMS / "architecture-target.puml").read_text(encoding="utf-8")
-        self.assertIn("End user", target)
-        self.assertIn("Java 26", target)
-        self.assertIn("business", target)
-        self.assertNotIn("Usuario final", target)
-        self.assertNotIn("negocio", target)
-        legacy = (DIAGRAMS / "architecture-legacy.puml").read_text(encoding="utf-8")
-        self.assertIn("Desktop interaction", legacy)
-        self.assertIn("Escribano", legacy)
-        self.assertNotIn("Todo ejecuta", legacy)
-
+    def test_superseded_architecture_diagrams_are_archived(self):
+        """#2483: the LikeC4 model replaced these; a live copy would contradict it."""
+        archive = DIAGRAMS.parents[1] / "000-archive" / "200-architecture" / "204-diagrams"
+        for name in ("architecture-legacy", "architecture-target", "deployment-docker",
+                     "backend-package-structure", "migration-phases"):
+            self.assertFalse((DIAGRAMS / f"{name}.puml").exists(), name)
+            self.assertTrue((archive / f"{name}.puml").exists(), name)
 
 if __name__ == "__main__":
     unittest.main()

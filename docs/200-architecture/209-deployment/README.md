@@ -7,35 +7,147 @@ observability/quality infrastructure stack.
 
 ## Architecture
 
-```text
-┌─────────────────────────────────────────────────────────────────────┐
-│                 Dev stack (docker-compose.yml)                       │
-│  PostgreSQL :5432 · Backend :8080 · Frontend :3000 · pgAdmin :5050 │
-└────────────────────────────┬───────────────────────────────────────┘
-                              │ (shared network: notary-network)
-┌────────────────────────────┴───────────────────────────────────────┐
-│                          Infra Stack                                 │
-│                    (infra/observability/docker-compose.yml)                        │
-│  Prometheus :9090 · Grafana :3001 · Loki · SonarQube · Homer …     │
-└───────────────────────────────────────────────────────────────────────┘
+Generated from the [LikeC4 model](../210-architecture-model/README.md) (ADR-033); interactive on
+[GitHub Pages](https://matiaspakua.github.io/notaire/architecture-model/#/view/dev/).
 
-┌─────────────────────────────────────────────────────────────────────┐
-│           Production stack (docker-compose.prod.yml)                 │
-│                                                                      │
-│   Host :80 → reverse-proxy → frontend (/) + backend (/api, health)  │
-│   postgres / backend / frontend: internal only (no host ports)       │
-│   No pgAdmin · ENVIRONMENT=production · Flyway baseline off          │
-└───────────────────────────────────────────────────────────────────────┘
+### Development (`docker-compose.yml` + `infra/observability/docker-compose.yml`)
 
-┌─────────────────────────────────────────────────────────────────────┐
-│     Staging Kustomize (infra/deploy/kustomize/overlays/staging — #901)     │
-│                                                                      │
-│   Same four services as prod compose (no pgAdmin)                    │
-│   postgres/backend/frontend: ClusterIP · reverse-proxy: LoadBalancer │
-│   Images: GHCR SHA tags · Secrets: placeholders only                 │
-│   CD remains publish-only — apply manifests manually to a cluster    │
-└───────────────────────────────────────────────────────────────────────┘
+<!-- likec4-view: dev -->
+```mermaid
+---
+title: "Deployment: development"
+---
+flowchart TB
+  subgraph dev_appNet["notary-network"]
+    subgraph dev_appNet_pgadminHost["notary-pgadmin :5050"]
+      dev_appNet_pgadminHost_pgadmin["pgAdmin<br/><i>pgAdmin 4</i>"]
+    end
+    subgraph dev_appNet_frontendHost["notaire-frontend :3000"]
+      dev_appNet_frontendHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph dev_appNet_backendHost["notary-backend :8080"]
+      dev_appNet_backendHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph dev_appNet_dbHost["notary-postgres :5432<br/><i>postgres:16.15, volume postgres_data</i>"]
+      dev_appNet_dbHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  subgraph dev_opsNet["devsecops-network"]
+    subgraph dev_opsNet_grafanaHost["grafana"]
+      dev_opsNet_grafanaHost_grafana["Grafana<br/><i>Grafana 12.3</i>"]
+    end
+    subgraph dev_opsNet_promHost["prometheus :9090"]
+      dev_opsNet_promHost_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+      dev_opsNet_promHost_alertmanager["Alertmanager<br/><i>Alertmanager 0.34</i>"]
+    end
+    subgraph dev_opsNet_logsHost["loki :3100 + promtail"]
+      dev_opsNet_logsHost_loki["Loki<br/><i>Loki 3.7 + Promtail</i>"]
+    end
+    subgraph dev_opsNet_exportersHost["exporters"]
+      dev_opsNet_exportersHost_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
+    end
+    subgraph dev_opsNet_collectorHost["otel-collector"]
+      dev_opsNet_collectorHost_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+    end
+    subgraph dev_opsNet_tracesHost["tempo"]
+      dev_opsNet_tracesHost_tempo["Tempo<br/><i>Tempo 2.10</i>"]
+    end
+  end
+  dev_appNet_frontendHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> dev_appNet_backendHost_backend
+  dev_appNet_backendHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> dev_appNet_dbHost_database
+  dev_appNet_pgadminHost_pgadmin -- "Inspects (dev only)" --> dev_appNet_dbHost_database
+  dev_opsNet_promHost_prometheus -- "Fires alerts" --> dev_opsNet_promHost_alertmanager
+  dev_opsNet_collectorHost_otelCollector -. "Exports traces" .-> dev_opsNet_tracesHost_tempo
+  dev_opsNet_promHost_prometheus -. "Scrapes" .-> dev_opsNet_exportersHost_exporters
+  dev_opsNet_grafanaHost_grafana -- "Queries metrics" --> dev_opsNet_promHost_prometheus
+  dev_opsNet_grafanaHost_grafana -- "Queries logs" --> dev_opsNet_logsHost_loki
+  dev_opsNet_grafanaHost_grafana -- "Queries traces" --> dev_opsNet_tracesHost_tempo
+  dev_appNet_frontendHost_frontend -. "Browser traces via /api/otlp (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /api/metrics" .-> dev_appNet_frontendHost_frontend
+  dev_appNet_backendHost_backend -. "OTLP traces (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /actuator/prometheus (+2)" .-> dev_appNet_backendHost_backend
+  dev_opsNet_exportersHost_exporters -- "Reads pg_stat (+1)" --> dev_appNet_dbHost_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class dev_appNet_pgadminHost_pgadmin,dev_opsNet_grafanaHost_grafana,dev_opsNet_promHost_prometheus,dev_opsNet_logsHost_loki,dev_opsNet_promHost_alertmanager,dev_opsNet_exportersHost_exporters,dev_appNet_frontendHost_frontend,dev_appNet_backendHost_backend,dev_opsNet_collectorHost_otelCollector,dev_opsNet_tracesHost_tempo c_primary
+  class dev_appNet_dbHost_database c_indigo
 ```
+<!-- /likec4-view -->
+
+### Production (`docker-compose.prod.yml`)
+
+Host `:80` → reverse proxy → frontend (`/`) and backend (`/api`). PostgreSQL, backend and frontend publish no
+host port; no pgAdmin; `ENVIRONMENT=production`; Flyway baseline off. TLS terminates in front of the proxy.
+The proxy forwards only `/actuator/health` ([#2487](https://github.com/matiaspakua/notaire/issues/2487)); the
+backend requires the MFA key and gets the MFA policy and `COOKIE_SECURE=true`
+([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
+
+<!-- likec4-view: prod -->
+```mermaid
+---
+title: "Deployment: production"
+---
+flowchart TB
+  subgraph prod_edge["Public edge"]
+    prod_edge_proxyHost_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph prod_private["notary-network (private)"]
+    subgraph prod_private_feHost["frontend<br/><i>ghcr.io/matiaspakua/notaire/frontend</i>"]
+      prod_private_feHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph prod_private_beHost["backend<br/><i>ghcr.io/matiaspakua/notaire/backend</i>"]
+      prod_private_beHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph prod_private_pgHost["postgres<br/><i>postgres:16, volume postgres_data</i>"]
+      prod_private_pgHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  prod_private_feHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> prod_private_beHost_backend
+  prod_private_beHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> prod_private_pgHost_database
+  prod_edge_proxyHost_ingress -- "Routes / (UI)" --> prod_private_feHost_frontend
+  prod_edge_proxyHost_ingress -- "Routes /api (+2)" --> prod_private_beHost_backend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class prod_edge_proxyHost_ingress,prod_private_feHost_frontend,prod_private_beHost_backend c_primary
+  class prod_private_pgHost_database c_indigo
+```
+<!-- /likec4-view -->
+
+### Staging (`infra/deploy/kustomize/overlays/staging`, #901)
+
+Same four services, one replica each; PostgreSQL, backend and frontend are `ClusterIP`, the proxy is a
+`LoadBalancer`. Images are pinned to the release tag; secrets are placeholders. CD stays publish-only: apply the
+manifests to a cluster by hand. The PostgreSQL pod keeps its data on `emptyDir`, so a restart loses it
+([#2489](https://github.com/matiaspakua/notaire/issues/2489)).
+
+<!-- likec4-view: staging -->
+```mermaid
+---
+title: "Deployment: staging (Kubernetes)"
+---
+flowchart TB
+  subgraph staging_cluster_proxyPod["reverse-proxy (Service LoadBalancer :80)"]
+    staging_cluster_proxyPod_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph staging_cluster_fePod["frontend (ClusterIP :3000)"]
+    staging_cluster_fePod_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  end
+  subgraph staging_cluster_bePod["backend (ClusterIP :8080)"]
+    staging_cluster_bePod_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  end
+  subgraph staging_cluster_pgPod["postgres (ClusterIP :5432)"]
+    staging_cluster_pgPod_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  end
+  staging_cluster_proxyPod_ingress -- "Routes / (UI)" --> staging_cluster_fePod_frontend
+  staging_cluster_proxyPod_ingress -- "Routes /api (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_fePod_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_bePod_backend -- "Reads and writes, Flyway migrates on start (+3)" --> staging_cluster_pgPod_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class staging_cluster_proxyPod_ingress,staging_cluster_fePod_frontend,staging_cluster_bePod_backend c_primary
+  class staging_cluster_pgPod_database c_indigo
+```
+<!-- /likec4-view -->
 
 ## Deployment Steps
 

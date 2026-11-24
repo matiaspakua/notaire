@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import { ModelView } from "@/components/docs/ModelView";
 import { DOCS, REPO } from "@/lib/docs-content";
 import { pageMetadata } from "@/lib/site";
 
@@ -21,6 +23,8 @@ export default function DocsSecurityPage() {
           Open the Security section
         </Link>
       </p>
+      <ModelView id="security" headingLevel={2} />
+      <ModelView id="securityPipeline" headingLevel={2} />
       <ul className="space-y-2 text-sm">
         <li>
           <a className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current" href={`${DOCS}/200-architecture/206-security/ASSESSMENT-2026-11-05.md`}>

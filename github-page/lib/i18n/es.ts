@@ -55,6 +55,7 @@ export const TRANSLATED_ROUTES = [
   "/docs/",
   "/docs/artifacts/",
   "/docs/architecture/",
+  "/docs/architecture/model/",
   "/docs/engineering/",
   "/docs/testing/",
   "/docs/releases/",

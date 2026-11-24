@@ -1,0 +1,40 @@
+---
+title: "Containers"
+---
+flowchart TB
+  notary(["Notary"])
+  clerk(["Clerk"])
+  admin(["Administrator"])
+  subgraph observability["Observability and DevSecOps stack"]
+    observability_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+    observability_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+  end
+  subgraph notaire["Notaire"]
+    notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+    notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    notaire_assistant["AI assistant<br/><i>Spring AI 2.0 + local model (oMLX)</i>"]
+  end
+  localModel["Local model server"]
+  notary -- "Manages deeds, protocol and budgets" --> notaire_frontend
+  clerk -- "Runs procedures, payments and testimonies" --> notaire_frontend
+  admin -- "Administers users, roles, catalogs and audit" --> notaire_frontend
+  notaire_backend -- "Reads and writes, Flyway migrates on start" --> notaire_database
+  notaire_backend -- "Delegates assistant questions (planned)" --> notaire_assistant
+  notaire_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie" --> notaire_backend
+  notaire_ingress -- "Routes /api" --> notaire_backend
+  notaire_ingress -- "Routes / (UI)" --> notaire_frontend
+  notaire_assistant -- "Prompts (planned)" --> localModel
+  notaire_backend -. "OTLP traces" .-> observability_otelCollector
+  notaire_frontend -. "Browser traces via /api/otlp" .-> observability_otelCollector
+  observability_prometheus -. "Scrapes /actuator/prometheus" .-> notaire_backend
+  observability_prometheus -. "Scrapes /api/metrics" .-> notaire_frontend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class notary,clerk,admin c_green
+  class observability_prometheus,notaire_ingress,notaire_frontend,notaire_backend,observability_otelCollector c_primary
+  class notaire_database c_indigo
+  class notaire_assistant,localModel planned

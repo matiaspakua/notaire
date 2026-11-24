@@ -1,0 +1,20 @@
+---
+title: "Login with MFA"
+---
+sequenceDiagram
+  autonumber
+  actor notary as Notary
+  participant notaire_frontend_edge_bff as API route handlers
+  participant notaire_backend_security_mfaGate as MFA login gate
+  participant notaire_backend_security_lockout as Login lockout
+  participant notaire_backend_outbound_crypto_totpCipher as TOTP secret encryption
+  notary->>notaire_frontend_edge_bff: POST /api/v1/users/login
+  notaire_frontend_edge_bff->>notaire_backend_security_mfaGate: Credentials
+  notaire_backend_security_mfaGate->>notaire_backend_security_lockout: Check lockout and password
+  notaire_backend_security_lockout-->>notaire_backend_security_mfaGate: Password valid
+  notaire_backend_security_mfaGate-->>notaire_frontend_edge_bff: MFA challenge (no session yet)
+  notary->>notaire_frontend_edge_bff: POST /api/v1/users/login/mfa with the TOTP code
+  notaire_frontend_edge_bff->>notaire_backend_security_mfaGate: Challenge + code
+  notaire_backend_security_mfaGate->>notaire_backend_outbound_crypto_totpCipher: Decrypt secret, verify code
+  notaire_backend_security_mfaGate-->>notaire_frontend_edge_bff: Set-Cookie: httpOnly JWT
+  notaire_frontend_edge_bff-->>notary: Dashboard

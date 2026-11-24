@@ -1,0 +1,151 @@
+// System context and containers. Facts come from the code on main, not from older diagrams:
+// docker-compose*.yml, infra/observability/docker-compose.yml, infra/deploy/kustomize, frontend/src/app/api.
+
+model {
+  notary = person "Notary" {
+    description "Escribano. Signs deeds, owns protocol numbering and budgets."
+  }
+  clerk = person "Clerk" {
+    description "Office staff. Runs procedures, people, documents, payments and testimonies."
+  }
+  admin = person "Administrator" {
+    description "Manages users, roles, catalogs, workflows and reads the audit log."
+  }
+  operator = person "Operator" {
+    description "Runs the stack: dashboards, alerts, backups and releases."
+  }
+
+  notaire = system "Notaire" {
+    description "Notary office management: deed managements, deeds, protocol, budgets, payments and reports."
+    link https://github.com/matiaspakua/notaire
+
+    ingress = container "Reverse proxy" {
+      technology "nginx 1.27"
+      description "Single ingress in production and staging: / to the frontend, /api to the backend."
+    }
+
+    frontend = webapp "Web frontend" {
+      technology "Next.js 16, React 19, TypeScript"
+      description "Hexagonal UI (ADR-030). Route handlers proxy /api/v1 to the backend so the JWT stays in an httpOnly cookie."
+    }
+
+    backend = container "Backend API" {
+      technology "Spring Boot 4.1, Java 26"
+      description "REST API /api/v1 (OpenAPI). Ports and Adapters; ArchUnit R1-R7 baselines are empty."
+    }
+
+    database = database "Notarial database" {
+      technology "PostgreSQL 16"
+      description "Single schema owned by Flyway (ddl-auto=none). Only the backend connects."
+    }
+
+    pgadmin = container "pgAdmin" {
+      technology "pgAdmin 4"
+      description "Development-only database console."
+    }
+
+    assistant = container "AI assistant" {
+      #planned
+      technology "Spring AI 2.0 + local model (oMLX)"
+      description "CU88 / #1964 / ADR-031. Specified, waiting for Owner Gate 1; not implemented."
+      link https://github.com/matiaspakua/notaire/issues/1964
+    }
+  }
+
+  observability = system "Observability and DevSecOps stack" {
+    description "infra/observability/docker-compose.yml"
+
+    otelCollector = container "OpenTelemetry Collector" {
+      technology "otel-collector-contrib 0.162"
+      description "Receives OTLP traces from backend and frontend."
+    }
+    prometheus = container "Prometheus" {
+      technology "Prometheus 3.15"
+      description "Scrapes actuator/prometheus, exporters and blackbox probes; evaluates alert rules."
+    }
+    alertmanager = container "Alertmanager" {
+      technology "Alertmanager 0.34"
+      description "Routes alerts (infra/observability/alertmanager)."
+    }
+    loki = container "Loki" {
+      technology "Loki 3.7 + Promtail"
+      description "Structured JSON logs from every container."
+    }
+    tempo = container "Tempo" {
+      technology "Tempo 2.10"
+      description "Trace store fed by the collector."
+    }
+    grafana = container "Grafana" {
+      technology "Grafana 12.3"
+      description "Dashboards for metrics, logs and traces."
+    }
+    exporters = container "Exporters" {
+      technology "postgres-exporter, blackbox, node-exporter, cAdvisor"
+      description "Database, endpoint, host and container metrics."
+    }
+    sonarqube = container "SonarQube" {
+      technology "SonarQube Community 26.9"
+      description "Quality gate on new code (infra/scripts/run-sonar.sh)."
+    }
+    homer = container "Homer hub" {
+      technology "Homer"
+      description "Landing page for every operations tool and security report."
+    }
+  }
+
+  github = external "GitHub" {
+    description "Repository, Issues, Actions, GHCR images and GitHub Pages."
+
+    actions = container "GitHub Actions" {
+      description "CI, CD, CodeQL, ZAP, Pages and SDLC process workflows."
+    }
+    ghcr = container "GHCR" {
+      description "ghcr.io/matiaspakua/notaire/{backend,frontend} images."
+    }
+    pages = webapp "GitHub Pages" {
+      description "Portfolio, technical docs and this architecture model."
+    }
+  }
+
+  localModel = external "Local model server" {
+    #planned
+    description "oMLX on the office machine (ADR-031); no data leaves the office."
+  }
+
+  notary -> notaire.frontend "Manages deeds, protocol and budgets" {
+    technology "HTTPS"
+  }
+  clerk -> notaire.frontend "Runs procedures, payments and testimonies" {
+    technology "HTTPS"
+  }
+  admin -> notaire.frontend "Administers users, roles, catalogs and audit" {
+    technology "HTTPS"
+  }
+  operator -> observability.grafana "Watches dashboards and alerts"
+  operator -> github.actions "Releases and deploys"
+
+  notaire.ingress -[http]-> notaire.frontend "Routes / (UI)"
+  notaire.ingress -[http]-> notaire.backend "Routes /api"
+  notaire.frontend -[http]-> notaire.backend "Proxies /api/v1 with the httpOnly JWT cookie"
+  notaire.backend -[sql]-> notaire.database "Reads and writes; Flyway migrates on start"
+  notaire.pgadmin -[sql]-> notaire.database "Inspects (dev only)"
+  notaire.assistant -[http]-> localModel "Prompts (planned)"
+  notaire.backend -> notaire.assistant "Delegates assistant questions (planned)"
+
+  notaire.backend -[telemetry]-> observability.otelCollector "OTLP traces"
+  notaire.frontend -[telemetry]-> observability.otelCollector "Browser traces via /api/otlp"
+  observability.prometheus -[telemetry]-> notaire.backend "Scrapes /actuator/prometheus"
+  observability.prometheus -[telemetry]-> notaire.frontend "Scrapes /api/metrics"
+  observability.prometheus -[telemetry]-> observability.exporters "Scrapes"
+  observability.otelCollector -[telemetry]-> observability.tempo "Exports traces"
+  observability.prometheus -> observability.alertmanager "Fires alerts"
+  observability.grafana -> observability.prometheus "Queries metrics"
+  observability.grafana -> observability.loki "Queries logs"
+  observability.grafana -> observability.tempo "Queries traces"
+  observability.exporters -[sql]-> notaire.database "Reads pg_stat"
+  observability.sonarqube -> notaire "Analyses backend and frontend"
+
+  github.actions -> github.ghcr "Publishes signed images"
+  github.actions -> github.pages "Deploys the site"
+  github.ghcr -> notaire "Provides backend and frontend images"
+}

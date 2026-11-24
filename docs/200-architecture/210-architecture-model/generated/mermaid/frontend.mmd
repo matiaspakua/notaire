@@ -1,0 +1,49 @@
+---
+title: "Frontend hexagon"
+---
+flowchart TB
+  subgraph notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    subgraph notaire_frontend_ui["UI adapters"]
+      notaire_frontend_ui_i18n["i18n"]
+      notaire_frontend_ui_pages["Pages and components<br/><i>React 19, Tailwind, design tokens</i>"]
+      notaire_frontend_ui_hooks["Query hooks<br/><i>TanStack Query</i>"]
+    end
+    notaire_frontend_composition["Composition root<br/><i>composition/*.ts</i>"]
+    subgraph notaire_frontend_adapters["HTTP adapters"]
+      notaire_frontend_adapters_http["HTTP port adapters<br/><i>lib/api-client</i>"]
+    end
+    subgraph notaire_frontend_edge["Edge (Next.js server)"]
+      notaire_frontend_edge_bff["API route handlers<br/><i>app/api/*/route.ts</i>"]
+      notaire_frontend_edge_proxy["Route proxy<br/><i>src/proxy.ts</i>"]
+    end
+    subgraph notaire_frontend_core["Core"]
+      notaire_frontend_core_usecases["Use cases and ports<br/><i>TypeScript</i>"]
+      notaire_frontend_core_model["Domain types and rules<br/><i>TypeScript</i>"]
+    end
+  end
+  notary(["Notary"])
+  notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  subgraph observability["Observability and DevSecOps stack"]
+    observability_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+  end
+  notaire_frontend_edge_bff -- "Forwards the request and the httpOnly cookie" --> notaire_backend
+  notaire_frontend_composition -- "Provides use cases" --> notaire_frontend_ui_hooks
+  notaire_frontend_edge_proxy -- "Guards and adds CSP" --> notaire_frontend_ui_pages
+  notaire_frontend_ui_pages -- "Uses" --> notaire_frontend_ui_hooks
+  notaire_frontend_ui_hooks -- "Calls" --> notaire_frontend_core_usecases
+  notaire_frontend_core_usecases -- "Applies" --> notaire_frontend_core_model
+  notaire_frontend_composition -- "Wires" --> notaire_frontend_adapters_http
+  notaire_frontend_adapters_http -- "fetch /api/v1 (same origin)" --> notaire_frontend_edge_bff
+  notaire_frontend_adapters_http -- "Implements ports" --> notaire_frontend_core_usecases
+  notaire_backend -. "OTLP traces" .-> observability_otelCollector
+  notaire_frontend_edge_bff -. "Relays browser traces" .-> observability_otelCollector
+  notaire_frontend -- "Every /api/v1 call" --> notaire_backend
+  notary -- "Manages deeds, protocol and budgets" --> notaire_frontend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  class notaire_frontend_ui_i18n,notaire_frontend_composition,notaire_frontend_adapters_http,notaire_frontend_edge_bff,notaire_frontend_ui_pages,notaire_frontend_ui_hooks,notaire_frontend_core_usecases,notaire_frontend_core_model c_sky
+  class notary c_green
+  class notaire_frontend_edge_proxy c_red
+  class notaire_backend,observability_otelCollector c_primary

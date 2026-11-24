@@ -2,7 +2,9 @@
 
 > **arc42 Template v8.2** — based on [docs.arc42.org](https://docs.arc42.org/home/)
 >
-> **Version:** 3.5 | **Date:** 2026-11-01 | **Author:** Architecture Team
+> **Version:** 4.0 | **Date:** 2026-11-24 | **Author:** Architecture Team
+>
+> **Changelog v4.0**: Architecture views are generated from the [LikeC4 model](../210-architecture-model/README.md) ([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md), #2483): no PlantUML left. Corrected drift: no Swing client, no `jpa`/`service` packages, frontend hexagon complete, module grants and MFA enforced, ingress and observability in the topology, backend memory limits. §11 lists the findings of the modelling pass (#2484–#2490); #2484, #2487 and #2488 were fixed in the same cycle.
 >
 > **Changelog v3.5**: Spring Boot 4.1.2, Flyway through V53, and the technology assessment in [TECHNOLOGY-STACK.md](../TECHNOLOGY-STACK.md) (#1976).
 >
@@ -108,31 +110,48 @@ The system originated as a monolithic Java Swing desktop application with direct
 
 ### 3.1 Business Context
 
-```plantuml
-@startuml
-title System Context — Notaire (Business View)
+Who uses Notaire and what it depends on. Generated from the [LikeC4 model](../210-architecture-model/README.md); every view is also interactive on
+[GitHub Pages](https://matiaspakua.github.io/notaire/architecture-model/#/view/index/).
 
-actor "Notary\n(Escribano)" as Escribano
-actor "Clerk\n(Gestor)" as Gestor
-actor "Administrator" as Admin
-
-rectangle "Notaire" as Notaire {
-}
-
-database "Notarial\ndatabase" as DB
-
-Escribano --> Notaire : Deed managements, Deeds,\nBudgets, Reports
-Gestor --> Notaire : Procedures, People,\nDocuments, Payments
-Admin --> Notaire : Users, Roles,\nConfiguration, Audit
-
-Notaire --> DB : Persistence
-@enduml
+<!-- likec4-view: index -->
+```mermaid
+---
+title: "System context"
+---
+flowchart TB
+  notary(["Notary"])
+  clerk(["Clerk"])
+  admin(["Administrator"])
+  operator(["Operator"])
+  github["GitHub"]
+  notaire["Notaire"]
+  observability["Observability and DevSecOps stack"]
+  localModel["Local model server"]
+  notary -- "Manages deeds, protocol and budgets" --> notaire
+  clerk -- "Runs procedures, payments and testimonies" --> notaire
+  admin -- "Administers users, roles, catalogs and audit" --> notaire
+  operator -- "Watches dashboards and alerts" --> observability
+  notaire -. "OTLP traces (+3)" .-> observability
+  observability -- "Analyses backend and frontend (+6)" --> notaire
+  operator -- "Releases and deploys" --> github
+  github -- "Provides backend and frontend images" --> notaire
+  notaire -- "Prompts (planned)" --> localModel
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_muted fill:#f8fafc,stroke:#64748b,color:#334155
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class notary,clerk,admin,operator c_green
+  class github c_muted
+  class notaire,observability c_primary
+  class localModel planned
 ```
+<!-- /likec4-view -->
 
 **External Interfaces:**
 
 | Interface | Description |
 |-----------|-------------|
+| Reverse proxy | Production and staging ingress at `:80` (TLS terminates in front of it) |
 | Web Browser | Next.js frontend served at `:3000` |
 | REST API | Spring Boot backend at `:8080/api/v1` |
 | pgAdmin | Database administration at `:5050` |
@@ -140,34 +159,54 @@ Notaire --> DB : Persistence
 
 ### 3.2 Technical Context
 
-```plantuml
-@startuml
-title System Context — Notaire (Technical View)
+The browser only talks to the Next.js server: route handlers proxy `/api/v1` to the backend and keep the JWT in
+an httpOnly cookie. The backend is the only component that connects to PostgreSQL. The AI assistant
+(CU88, #1964) is specified but waits for Owner Gate 1, so it is drawn as planned.
 
-node "User Browser" as Browser
-node "Legacy Swing Client\n(deprecated)" as Swing #LightGray
-
-node "Frontend Container\n(Next.js 16 / :3000)" as FE
-node "Backend Container\n(Spring Boot 4.1 / :8080)" as BE
-database "PostgreSQL 16\n(:5432)" as DB
-
-node "Observability Stack" {
-  [Prometheus :9090] as Prom
-  [Grafana :3001] as Graf
-  [Loki :3100] as Loki
-}
-
-Browser --> FE : HTTPS
-FE --> BE : HTTP/JSON\n(JWT Bearer)
-Swing .down.> BE : HTTP/JSON\n(JWT Bearer)
-BE --> DB : JDBC\n(Flyway migrations)
-
-Prom --> BE : /actuator/prometheus
-Loki --> BE : Log scraping
-Graf --> Prom : Queries
-Graf --> Loki : Log queries
-@enduml
+<!-- likec4-view: containers -->
+```mermaid
+---
+title: "Containers"
+---
+flowchart TB
+  notary(["Notary"])
+  clerk(["Clerk"])
+  admin(["Administrator"])
+  subgraph observability["Observability and DevSecOps stack"]
+    observability_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+    observability_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+  end
+  subgraph notaire["Notaire"]
+    notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+    notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    notaire_assistant["AI assistant<br/><i>Spring AI 2.0 + local model (oMLX)</i>"]
+  end
+  localModel["Local model server"]
+  notary -- "Manages deeds, protocol and budgets" --> notaire_frontend
+  clerk -- "Runs procedures, payments and testimonies" --> notaire_frontend
+  admin -- "Administers users, roles, catalogs and audit" --> notaire_frontend
+  notaire_backend -- "Reads and writes, Flyway migrates on start" --> notaire_database
+  notaire_backend -- "Delegates assistant questions (planned)" --> notaire_assistant
+  notaire_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie" --> notaire_backend
+  notaire_ingress -- "Routes /api" --> notaire_backend
+  notaire_ingress -- "Routes / (UI)" --> notaire_frontend
+  notaire_assistant -- "Prompts (planned)" --> localModel
+  notaire_backend -. "OTLP traces" .-> observability_otelCollector
+  notaire_frontend -. "Browser traces via /api/otlp" .-> observability_otelCollector
+  observability_prometheus -. "Scrapes /actuator/prometheus" .-> notaire_backend
+  observability_prometheus -. "Scrapes /api/metrics" .-> notaire_frontend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class notary,clerk,admin c_green
+  class observability_prometheus,notaire_ingress,notaire_frontend,notaire_backend,observability_otelCollector c_primary
+  class notaire_database c_indigo
+  class notaire_assistant,localModel planned
 ```
+<!-- /likec4-view -->
 
 ---
 
@@ -191,54 +230,16 @@ Graf --> Loki : Log queries
 
 ### 4.2 Migration Strategy
 
-The modernization follows a **strangler fig pattern** — new features are built exclusively in the modern stack while legacy components are incrementally replaced.
+The modernization follows a **strangler fig pattern**: new features are built only in the modern stack while
+legacy components are replaced slice by slice.
 
-```plantuml
-@startuml
-title Migration Strategy — Strangler Fig Pattern
-
-rectangle "Phase 1\nAnalysis" #LightBlue {
-  (Document legacy)
-  (Catalog 73 use cases)
-  (Schema analysis)
-}
-
-rectangle "Phase 2\nFoundation" #LightGreen {
-  (Shared DTOs, retired in ADR-025)
-  (Maven multi-module)
-  (PostgreSQL + Docker)
-}
-
-rectangle "Phase 3\nBackend API" #LightYellow {
-  (Spring Boot REST)
-  (Spring Data JPA)
-  (JWT + RBAC)
-  (Flyway)
-}
-
-rectangle "Phase 4\nModern Frontend" #Orange {
-  (Next.js 16)
-  (Design tokens)
-  (TanStack Query)
-}
-
-rectangle "Phase 5\nObservability" #Pink {
-  (Prometheus + Grafana)
-  (SonarQube)
-  (Structured logging)
-}
-
-rectangle "Phase 6\nDeprecation" #Gray {
-  (Retire Swing)
-  (Remove jpa package)
-}
-
-"Phase 1\nAnalysis" -right-> "Phase 2\nFoundation"
-"Phase 2\nFoundation" -right-> "Phase 3\nBackend API"
-"Phase 3\nBackend API" -right-> "Phase 4\nModern Frontend"
-"Phase 4\nModern Frontend" -down-> "Phase 5\nObservability"
-"Phase 5\nObservability" -left-> "Phase 6\nDeprecation"
-@enduml
+```mermaid
+flowchart LR
+    p1["1 Analysis<br/>legacy docs, use cases, schema"] --> p2["2 Foundation<br/>Maven modules, PostgreSQL, Docker"]
+    p2 --> p3["3 Backend API<br/>Spring Boot REST, JPA, JWT, Flyway"]
+    p3 --> p4["4 Frontend<br/>Next.js, design tokens, TanStack Query"]
+    p4 --> p5["5 Observability<br/>Prometheus, Grafana, Loki, Tempo, SonarQube"]
+    p5 --> p6["6 Deprecation<br/>Swing, jpa and service removed, legacy JPA model next"]
 ```
 
 ### 4.3 Current Migration Status
@@ -250,7 +251,7 @@ rectangle "Phase 6\nDeprecation" #Gray {
 | Phase 3: Backend API | ✅ Complete | Controllers, repositories, entities, Flyway migrations |
 | Phase 4: Frontend | 🔄 In Progress | Next.js 16 app (`frontend/`) — Swing is not a target client |
 | Phase 5: Observability | ✅ Complete | Full LPG stack + SonarQube + Homer dashboard |
-| Phase 6: Deprecation | 🔶 Partial | Swing gone; ArchUnit hex DoD MET (#1693); residual `jpa` controllers until [#576](https://github.com/matiaspakua/notaire/issues/576) |
+| Phase 6: Deprecation | 🔶 Partial | Swing, `jpa` and `service` removed (#1046, #576, #1918); ArchUnit baselines empty (#1693). Left: the JPA model in `business`/`repository` ([#2486](https://github.com/matiaspakua/notaire/issues/2486)) and ports on legacy DTOs ([#2485](https://github.com/matiaspakua/notaire/issues/2485)) |
 
 Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/projects/1) /
 [docs/github/README.md](../../github/README.md). Phase narrative:
@@ -262,115 +263,192 @@ Live delivery status: [Delivery Board](https://github.com/users/matiaspakua/proj
 
 ### 5.1 Level 1 — System Decomposition
 
-```mermaid
-flowchart LR
-    user([Notary office staff]) -->|browser| FE
-    subgraph FE["frontend (Next.js 16)"]
-        ui["UI adapters: pages, components, hooks"]
-        core_fe["core: domain + use cases + ports"]
-        http_fe["HTTP adapters"]
-        ui --> core_fe
-        http_fe -.implements ports.-> core_fe
-    end
-    subgraph BE["backend-api (Spring Boot 4.1)"]
-        in_be["inbound adapters: REST, security"]
-        app_be["application: use cases + ports"]
-        dom_be["domain"]
-        out_be["outbound adapters: persistence, PDF"]
-        in_be --> app_be --> dom_be
-        out_be -.implements ports.-> app_be
-    end
-    http_fe -->|HTTP/JSON, JWT| in_be
-    out_be -->|Flyway + Hibernate| DB[(PostgreSQL 16)]
-```
-
-Both tiers follow Ports & Adapters (ADR-030). Dependencies point inward; infrastructure is reached only through
-ports. This is the target; sections 5.2 and 5.3 state how far each tier is from it.
+The containers are drawn in §3.2. Both tiers follow Ports & Adapters (ADR-030): dependencies point inward and
+infrastructure is reached only through ports. Sections 5.2 and 5.3 show each hexagon as built, including the
+debt that remains.
 
 ### 5.2 Level 2 — Backend API Internal Structure
 
-Target (ADR-030). Root package `com.licensis.notaire`.
+Root package `com.licensis.notaire`. Amber boxes are measured debt and red ones are findings, each with its Issue.
 
+<!-- likec4-view: backend -->
 ```mermaid
+---
+title: "Backend hexagon"
+---
 flowchart TB
-    subgraph IN["adapter.in.* (driving)"]
-        web["web.&lt;context&gt;: controllers, web DTOs, mappers"]
-        sec["security: JWT filter, authority resolution"]
+  notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  observability["Observability and DevSecOps stack"]
+  subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    subgraph notaire_backend_inbound["Inbound adapters"]
+      notaire_backend_inbound_openapi["OpenAPI contract<br/><i>springdoc</i>"]
+      notaire_backend_inbound_web["REST controllers<br/><i>Spring MVC</i>"]
+      notaire_backend_inbound_errors["Global exception handler<br/><i>@RestControllerAdvice</i>"]
     end
-    subgraph APP["application"]
-        pin["port.in.&lt;context&gt;: use-case interfaces"]
-        uc["usecase.&lt;context&gt;: @Service + @Transactional"]
-        pout["port.out.&lt;context&gt;: repository and gateway interfaces"]
+    subgraph notaire_backend_security["Security filter chain"]
+      notaire_backend_security_csrf["CSRF double submit<br/><i>Spring Security CSRF</i>"]
+      notaire_backend_security_lockout["Login lockout<br/><i>LoginAttemptService</i>"]
+      notaire_backend_security_jwtFilter["JWT authentication filter<br/><i>JwtAuthenticationFilter, JwtTokenService</i>"]
+      notaire_backend_security_mfaGate["MFA login gate<br/><i>TokenLoginMfaGate, TOTP</i>"]
+      notaire_backend_security_rateLimit["API rate limit<br/><i>ApiRateLimitFilter</i>"]
+      notaire_backend_security_moduleAuthz["Role-module authorization<br/><i>RoleModuleAuthorizationFilter</i>"]
     end
-    subgraph DOM["domain.&lt;context&gt;: entities, value objects, rules (JDK only)"]
+    subgraph notaire_backend_crosscutting["Cross-cutting"]
+      notaire_backend_crosscutting_config["Composition root<br/><i>config.*</i>"]
+      notaire_backend_crosscutting_audit["Audit aspect<br/><i>Spring AOP</i>"]
+      notaire_backend_crosscutting_flyway["Flyway migrations<br/><i>Flyway</i>"]
+      notaire_backend_crosscutting_observe["Observability<br/><i>Micrometer, OTLP, logback JSON</i>"]
     end
-    subgraph OUT["adapter.out.* (driven)"]
-        per["persistence.&lt;context&gt;: JpaEntity, JpaRepository, Mapper, Adapter"]
-        pdf["pdf, storage, other gateways"]
+    subgraph notaire_backend_outbound["Outbound adapters"]
+      notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+      notaire_backend_outbound_reports["PDF reports<br/><i>PDFBox</i>"]
+      notaire_backend_outbound_crypto["Security adapters<br/><i>AES-GCM, SecureRandom, Clock</i>"]
+      notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
     end
-    web --> pin
-    sec --> pin
-    uc -.implements.-> pin
-    uc --> pout
-    uc --> DOM
-    per -.implements.-> pout
-    pdf -.implements.-> pout
-    per --> DOM
-    cfg["config: composition root (Spring wiring, security, OpenAPI)"] -.wires.-> IN
-    cfg -.wires.-> OUT
+    subgraph notaire_backend_application["Application"]
+      notaire_backend_application_useCases["Use cases<br/><i>@Service @Transactional</i>"]
+      notaire_backend_application_legacyDtoPorts["Ports speaking legacy web DTOs"]
+      notaire_backend_application_portsOut["Outbound ports"]
+      notaire_backend_application_portsIn["Inbound ports"]
+    end
+    subgraph notaire_backend_domain["Domain"]
+      notaire_backend_domain_model["Domain model<br/><i>Java records and classes</i>"]
+      notaire_backend_domain_missingDomain["Contexts without a domain model"]
+    end
+  end
+  notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  notaire_backend_inbound_web -- "Exceptions mapped by" --> notaire_backend_inbound_errors
+  notaire_frontend -- "Every /api/v1 call" --> notaire_backend_security_jwtFilter
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
+  notaire_backend_security_moduleAuthz -- "Granted module" --> notaire_backend_inbound_web
+  notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
+  notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
+  notaire_backend_inbound_web -- "Calls" --> notaire_backend_application_portsIn
+  notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
+  notaire_backend_security_lockout -- "Records failed logins" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "Implements" --> notaire_backend_application_portsIn
+  notaire_backend_application_legacyDtoPorts -- "Part of" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "Uses" --> notaire_backend_application_portsOut
+  notaire_backend_application_useCases -- "Applies rules of" --> notaire_backend_domain_model
+  notaire_backend_outbound_persistence -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "Maps to and from" --> notaire_backend_domain_model
+  notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
+  notaire_backend_outbound_legacyJpa -- "Hibernate" --> notaire_database
+  notaire_backend_outbound_reports -- "Implements GenerateReportsUseCase (finding)" --> notaire_backend_application_portsIn
+  notaire_backend_outbound_reports -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_crypto -- "Implements" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
+  observability -. "Scrapes /actuator/prometheus" .-> notaire_backend_crosscutting_observe
+  notaire_backend_crosscutting_audit -- "Appends" --> notaire_database
+  notaire_backend_crosscutting_audit -- "Writes AuditRecord" --> notaire_backend_outbound_legacyJpa
+  notaire_backend_crosscutting_observe -. "Traces" .-> observability
+  notaire_backend_crosscutting_flyway -- "Migrates on start" --> notaire_database
+  observability -. "Scrapes /api/metrics" .-> notaire_frontend
+  notaire_ingress -- "Routes / (UI)" --> notaire_frontend
+  notaire_frontend -. "Browser traces via /api/otlp (+1)" .-> observability
+  observability -- "Reads pg_stat (+1)" --> notaire_database
+  notaire_backend_crosscutting_config -- "Builds" --> notaire_backend_security
+  notaire_frontend -- "Forwards the request and the httpOnly cookie" --> notaire_backend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  class notaire_ingress,observability,notaire_frontend c_primary
+  class notaire_backend_inbound_openapi,notaire_backend_crosscutting_config,notaire_backend_crosscutting_audit,notaire_backend_crosscutting_flyway,notaire_backend_crosscutting_observe,notaire_backend_outbound_persistence,notaire_backend_outbound_reports,notaire_backend_outbound_crypto,notaire_backend_inbound_web,notaire_backend_inbound_errors,notaire_backend_application_useCases,notaire_backend_application_portsOut,notaire_backend_application_portsIn,notaire_backend_domain_model c_sky
+  class notaire_backend_security_csrf,notaire_backend_security_lockout,notaire_backend_security_jwtFilter,notaire_backend_security_mfaGate,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
+  class notaire_backend_outbound_legacyJpa,notaire_backend_application_legacyDtoPorts,notaire_backend_domain_missingDomain finding
+  class notaire_database c_indigo
+  linkStyle 17 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
+<!-- /likec4-view -->
 
 | Package | Role |
 |---|---|
-| `config` | Composition root: Spring wiring, security configuration, OpenAPI, global exception handler |
-| `exception` | Application and domain exceptions; HTTP status mapping belongs to the inbound adapter |
-| `audit`, `observability` | Cross-cutting adapters (audit aspect, metrics, structured logging); no business rules |
+| `adapter.in.web.<context>` | 24 contexts: thin controllers, web DTOs, mappers; inbound ports only (R1) |
+| `application.port.in/out`, `application.usecase.<context>` | 24 use-case slices, `@Service` + `@Transactional` only (R2), acyclic (R7) |
+| `domain.<context>` | 19 contexts with a plain-Java model (R3) |
+| `adapter.out.persistence.<context>`, `.pdf`, `.report`, `.security` | Port implementations (R4) |
+| `config` | Composition root: Spring wiring, security chains, OpenAPI, global exception handler |
+| `exception` | Domain and application exceptions; the inbound adapter maps HTTP status |
+| `audit`, `observability`, `security` | Cross-cutting: audit aspect, metrics and logging, rate limit and module grants |
 
-**Current state** (measured on `main` post-#1915 @ `6ffe578fe`, epic #1693; the executable truth is the ArchUnit baseline
-`src/test/resources/architecture/hexagon-baseline.txt`, #1695 — **empty**, R1–R6 = 0):
+**Current state** (measured on `main` @ `68321620`, 2026-11-24; executable truth: the ArchUnit baselines in
+`src/test/resources/architecture/`, all empty):
 
 | Aspect | Today |
 |---|---|
-| ArchUnit R1–R6 | Empty baseline (DoD MET). Controllers / ports / use cases ratcheted via strangler slices under #1693 |
-| Ports speak domain / views | Entity-speaking ports removed for migrated contexts; helpers live under `adapter.out.persistence.*` |
-| Web controllers | Call inbound ports (R1 clear); REST contracts unchanged |
-| Pure `domain` vs `business` | Model remains `business` `@Entity` (model extraction is a later rule, not ArchUnit DoD) |
-| Legacy packages still present | `jpa` (~35 `*JpaController`s) + `service` (`JpaAdministrator`, `LegacyJpaEmfConfig`) — Owner-accepted residual until [#576](https://github.com/matiaspakua/notaire/issues/576) / [#1918](https://github.com/matiaspakua/notaire/issues/1918); `persistence.PersistenceConstants` moved out of `jpa` |
-
-ArchUnit DoD for #1693 is **MET**. Residual package delete is #576, not a re-open of the baseline.
+| ArchUnit R1–R8 | R1–R7 baselines empty; `jpa` and `service` packages deleted (#576, #1918); R8 lists 652 legacy-package dependents and only shrinks (#2484) |
+| JPA model | 36 `@Entity` classes (47 classes) in `business` and 36 Spring Data repositories in `repository`, used by the persistence adapters, `config`, `audit` and `security` ([#2486](https://github.com/matiaspakua/notaire/issues/2486)) |
+| Ports on legacy DTOs | 40 application files in 8 contexts import `com.licensis.notaire.dto` ([#2485](https://github.com/matiaspakua/notaire/issues/2485)); ArchUnit R8 stops new ones ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
+| Contexts without a domain model | audit, budget, item, report, catalog, documentcosttemplate; `GenerateReportsUseCase` is implemented in `adapter.out.report` ([#2486](https://github.com/matiaspakua/notaire/issues/2486)) |
 
 ### 5.3 Level 2 — Frontend Internal Structure
 
-Target (ADR-030). `frontend/src`:
+`frontend/src` (ADR-030). The server-side edge (`proxy.ts` and the `app/api` route handlers) keeps the token out
+of browser JavaScript.
 
+<!-- likec4-view: frontend -->
 ```mermaid
+---
+title: "Frontend hexagon"
+---
 flowchart TB
-    subgraph UI["adapters/ui: app/, components/, hooks/ (driving)"]
-        pages["pages and components"]
-        hooks["React Query hooks"]
+  subgraph notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    subgraph notaire_frontend_ui["UI adapters"]
+      notaire_frontend_ui_i18n["i18n"]
+      notaire_frontend_ui_pages["Pages and components<br/><i>React 19, Tailwind, design tokens</i>"]
+      notaire_frontend_ui_hooks["Query hooks<br/><i>TanStack Query</i>"]
     end
-    subgraph CORE["core/&lt;context&gt;"]
-        usecases["application: use cases + ports.ts"]
-        domain["domain: types, pure rules (no React, no fetch)"]
+    notaire_frontend_composition["Composition root<br/><i>composition/*.ts</i>"]
+    subgraph notaire_frontend_adapters["HTTP adapters"]
+      notaire_frontend_adapters_http["HTTP port adapters<br/><i>lib/api-client</i>"]
     end
-    subgraph HTTP["adapters/http/&lt;context&gt; (driven)"]
-        impl["port implementations + mappers"]
+    subgraph notaire_frontend_edge["Edge (Next.js server)"]
+      notaire_frontend_edge_bff["API route handlers<br/><i>app/api/*/route.ts</i>"]
+      notaire_frontend_edge_proxy["Route proxy<br/><i>src/proxy.ts</i>"]
     end
-    comp["composition/: builds use cases, one React provider"]
-    pages --> hooks --> usecases --> domain
-    impl -.implements.-> usecases
-    impl --> api["lib/api-client"]
-    comp -.wires.-> hooks
-    comp -.wires.-> impl
+    subgraph notaire_frontend_core["Core"]
+      notaire_frontend_core_usecases["Use cases and ports<br/><i>TypeScript</i>"]
+      notaire_frontend_core_model["Domain types and rules<br/><i>TypeScript</i>"]
+    end
+  end
+  notary(["Notary"])
+  notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  subgraph observability["Observability and DevSecOps stack"]
+    observability_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+  end
+  notaire_frontend_edge_bff -- "Forwards the request and the httpOnly cookie" --> notaire_backend
+  notaire_frontend_composition -- "Provides use cases" --> notaire_frontend_ui_hooks
+  notaire_frontend_edge_proxy -- "Guards and adds CSP" --> notaire_frontend_ui_pages
+  notaire_frontend_ui_pages -- "Uses" --> notaire_frontend_ui_hooks
+  notaire_frontend_ui_hooks -- "Calls" --> notaire_frontend_core_usecases
+  notaire_frontend_core_usecases -- "Applies" --> notaire_frontend_core_model
+  notaire_frontend_composition -- "Wires" --> notaire_frontend_adapters_http
+  notaire_frontend_adapters_http -- "fetch /api/v1 (same origin)" --> notaire_frontend_edge_bff
+  notaire_frontend_adapters_http -- "Implements ports" --> notaire_frontend_core_usecases
+  notaire_backend -. "OTLP traces" .-> observability_otelCollector
+  notaire_frontend_edge_bff -. "Relays browser traces" .-> observability_otelCollector
+  notaire_frontend -- "Every /api/v1 call" --> notaire_backend
+  notary -- "Manages deeds, protocol and budgets" --> notaire_frontend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  class notaire_frontend_ui_i18n,notaire_frontend_composition,notaire_frontend_adapters_http,notaire_frontend_edge_bff,notaire_frontend_ui_pages,notaire_frontend_ui_hooks,notaire_frontend_core_usecases,notaire_frontend_core_model c_sky
+  class notary c_green
+  class notaire_frontend_edge_proxy c_red
+  class notaire_backend,observability_otelCollector c_primary
 ```
+<!-- /likec4-view -->
 
-Supporting areas stay as they are: `theme` (design tokens and form patterns), `i18n` (locale files), `store`
-(client state), `lib` (API client, query client, logger, utilities).
+Supporting areas: `theme` (design tokens and form patterns), `i18n` (es/en), `store` (client state), `lib` (API
+client, query client, logger, utilities).
 
-**Current state** (same measurement): 22 files under `app/` and 43 of 49 hooks import `lib/api-client`
-directly; 12 files use `useQuery` or `useMutation` inline in pages; there are no ports, no domain module and no
-composition root. The import-boundary lint with a shrink-only baseline (#1696) turns these counts into a
-ratchet.
+**Current state** (same measurement): 34 `core/<context>` folders, 35 HTTP adapter contexts and a composition
+root. `frontend/eslint-suppressions.json` is `{}`: no page, component or hook imports `lib/api-client` or calls
+`fetch` (#1696 ratchet done).
 
 ### 5.4 Level 2 — Shared Module (retired)
 
@@ -382,148 +460,24 @@ services consume the REST API through the OpenAPI contract, not a Java library.
 
 ### 5.5 Core Domain Model
 
-```plantuml
-@startuml
-title Core Domain Model — Notaire
+Relationships between the core tables (columns live in the data dictionary below).
 
-entity "DeedManagement" as deedManagement {
-  * id : Long <<PK>>
-  --
-  number : Integer
-  start_date : Date
-  heading : String
-  fk_id_management_status : Long <<FK>>
-}
-
-entity "Deed" as deed {
-  * id : Long <<PK>>
-  --
-  number : Integer
-  deed_date : Date
-}
-
-entity "Person" as person {
-  * id : Long <<PK>>
-  --
-  first_name : String
-  last_name : String
-  identification_number : String
-  email : String
-}
-
-entity "Budget" as budget {
-  * id : Long <<PK>>
-  --
-  number : Integer
-  budget_date : Date
-  heading : String
-  fk_id_person : Long <<FK>>
-}
-
-entity "Procedure" as procedure {
-  * id : Long <<PK>>
-  --
-  name : String
-  number : Integer
-  fk_id_procedure_type : Long <<FK>>
-  fk_id_deed_management : Long <<FK>>
-  fk_id_deed : Long <<FK>>
-  fk_id_budget : Long <<FK>>
-}
-
-entity "ProcedureType" as procedureType {
-  * id : Long <<PK>>
-  --
-  name : String
-  fk_workflow_definition_id : Long <<FK>>
-}
-
-entity "Folio" as folio {
-  * id : Long <<PK>>
-  --
-  number : Integer
-  fk_id_folio_type : Long <<FK>>
-  fk_id_deed : Long <<FK>>
-}
-
-entity "Payment" as payment {
-  * id : Long <<PK>>
-  --
-  amount : BigDecimal
-  payment_date : Date
-  fk_id_budget : Long <<FK>>
-}
-
-entity "Testimony" as testimony {
-  * id : Long <<PK>>
-  --
-  fk_id_deed : Long <<FK>>
-}
-
-entity "SubmittedDocument" as document {
-  * id : Long <<PK>>
-  --
-  fk_id_procedure : Long <<FK>>
-  fk_id_document_type : Long <<FK>>
-}
-
-entity "User" as user {
-  * id : Long <<PK>>
-  --
-  username : String
-  password : String
-  fk_id_role : Long <<FK>>
-}
-
-entity "Role" as role {
-  * id : Long <<PK>>
-  --
-  name : String
-}
-
-entity "AuditRecord" as audit {
-  * id : Long <<PK>>
-  --
-  module : String
-  operation_detail : String
-  fk_id_user : Long <<FK>>
-}
-
-entity "WorkflowDefinition" as workflowDefinition {
-  * id_workflow_definition : Long <<PK>>
-  --
-  name : String
-}
-
-entity "WorkflowNode" as workflowNode {
-  * id_workflow_node : Long <<PK>>
-  --
-  node_type : String
-  fk_workflow_definition_id : Long <<FK>>
-}
-
-entity "WorkflowTransition" as workflowTransition {
-  * id_workflow_transition : Long <<PK>>
-  --
-  fk_origin_node_id : Long <<FK>>
-  fk_destination_node_id : Long <<FK>>
-}
-
-deedManagement |o--o{ procedure
-procedure }o--o| procedureType
-procedure }o--o| deed
-procedure }o--o| budget
-person ||--o{ budget
-budget ||--o{ payment
-deed |o--o{ folio
-deed ||--o{ testimony
-procedure |o--o{ document
-role |o--o{ user
-user ||--o{ audit
-workflowDefinition ||--o{ workflowNode
-workflowDefinition ||--o{ workflowTransition
-procedureType }o--o| workflowDefinition
-@enduml
+```mermaid
+erDiagram
+    DeedManagement |o--o{ Procedure : ""
+    Procedure }o--o| ProcedureType : ""
+    Procedure }o--o| Deed : ""
+    Procedure }o--o| Budget : ""
+    Person ||--o{ Budget : ""
+    Budget ||--o{ Payment : ""
+    Deed |o--o{ Folio : ""
+    Deed ||--o{ Testimony : ""
+    Procedure |o--o{ SubmittedDocument : ""
+    Role |o--o{ User : ""
+    User ||--o{ AuditRecord : ""
+    WorkflowDefinition ||--o{ WorkflowNode : ""
+    WorkflowDefinition ||--o{ WorkflowTransition : ""
+    ProcedureType }o--o| WorkflowDefinition : ""
 ```
 
 This is a simplified view of the core entities. The full 37-table
@@ -543,110 +497,123 @@ Domain lifecycles — management, deed, testimony, registration draft, documents
 budget, payment, procedure folder — are specified once in
 [CICLO-DE-VIDA.md](../203-design/CICLO-DE-VIDA.md). The step-by-step case
 process (use cases, dependencies, sequences) is
-[GESTION.md](../203-design/GESTION.md). The PlantUML sequences in
-this section are legacy runtime sketches ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)).
+[GESTION.md](../203-design/GESTION.md). The two flows below are generated from the architecture model
+([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md)); §6.3 is a hand-written Mermaid sequence.
 Do not add a second state machine here.
 
 ### 6.1 User Authentication Flow
 
-```plantuml
-@startuml
-title Runtime — User Authentication
+Login with a password, then a TOTP code when the role requires it (ADR-032, CU84). `LoginAttemptService` locks a
+username after repeated failures; the session is an httpOnly JWT cookie that `TokenRevocationService` revokes on
+logout.
 
-participant "Browser" as B
-participant "Next.js\nFrontend" as FE
-participant "SecurityAndCorsConfig\n+ JwtAuthenticationFilter" as Sec
-participant "UserController" as Ctrl
-participant "LoginAttemptService\n(in-memory, per-username)" as Login
-participant "AuditAspect" as Audit
-participant "JwtTokenService" as JWT
-participant "PostgreSQL" as DB
-
-B -> FE : Login form submit
-FE -> Sec : POST /api/v1/users/login\n{name, password}
-Sec -> Ctrl : Pass through (public endpoint)
-Ctrl -> Login : isLocked(name)
-Login --> Ctrl : locked? (ConcurrentHashMap lookup, no DB access)
-alt Too many attempts (5 failures / 15 min lockout)
-  Ctrl --> FE : 429 Too Many Requests
-else
-  Ctrl -> DB : find user by name
-  DB --> Ctrl : User entity
-  Ctrl -> Ctrl : BCrypt.matches(password)\n(BCrypt only; MD5 removed #1762)
-  alt Valid credentials
-    Ctrl -> Login : onLoginSucceeded(name)
-    Ctrl -> JWT : generateToken(name)
-    JWT --> Ctrl : JWT string
-    Ctrl -> Audit : AOP around login() —\nINSERT audit_records (LOGIN)
-    Audit -> DB : INSERT audit_records
-    Ctrl --> FE : 200 {valid, token, idUser,\nname, status, type, version, person}
-    FE -> FE : Store token in localStorage\n(Zustand persist, useAuthStore)
-    FE --> B : Redirect to /dashboard
-  else Invalid credentials
-    Ctrl -> Login : onLoginFailed(name)
-    Ctrl --> FE : 200 {valid: false}
-  end
-end
-@enduml
+<!-- likec4-view: loginMfa -->
+```mermaid
+---
+title: "Login with MFA"
+---
+sequenceDiagram
+  autonumber
+  actor notary as Notary
+  participant notaire_frontend_edge_bff as API route handlers
+  participant notaire_backend_security_mfaGate as MFA login gate
+  participant notaire_backend_security_lockout as Login lockout
+  participant notaire_backend_outbound_crypto_totpCipher as TOTP secret encryption
+  notary->>notaire_frontend_edge_bff: POST /api/v1/users/login
+  notaire_frontend_edge_bff->>notaire_backend_security_mfaGate: Credentials
+  notaire_backend_security_mfaGate->>notaire_backend_security_lockout: Check lockout and password
+  notaire_backend_security_lockout-->>notaire_backend_security_mfaGate: Password valid
+  notaire_backend_security_mfaGate-->>notaire_frontend_edge_bff: MFA challenge (no session yet)
+  notary->>notaire_frontend_edge_bff: POST /api/v1/users/login/mfa with the TOTP code
+  notaire_frontend_edge_bff->>notaire_backend_security_mfaGate: Challenge + code
+  notaire_backend_security_mfaGate->>notaire_backend_outbound_crypto_totpCipher: Decrypt secret, verify code
+  notaire_backend_security_mfaGate-->>notaire_frontend_edge_bff: Set-Cookie: httpOnly JWT
+  notaire_frontend_edge_bff-->>notary: Dashboard
 ```
+<!-- /likec4-view -->
 
-### 6.2 Create a deed management
+### 6.2 A request through both hexagons
 
-```plantuml
-@startuml
-title Runtime — Create a deed management
+A clerk saves a payment. The UI calls a use case, the HTTP adapter posts to the same-origin route handler, the
+backend filter chain authenticates, rate-limits and checks the module grant, and the use case persists through
+its outbound port. The `AuditAspect` records the mutation (CU73).
 
-participant "Notary" as User
-participant "Frontend\n(Next.js)" as Client
-participant "JwtAuthFilter" as Auth
-participant "ManagementController" as Ctrl
-participant "AuditAspect" as Audit
-participant "DeedManagementRepository" as Repo
-participant "PostgreSQL" as DB
-
-User -> Client : Fill management form + submit
-Client -> Auth : POST /api/v1/managements\nAuthorization: Bearer <jwt>
-Auth -> Auth : Validate JWT signature + expiry
-Auth -> Ctrl : Authorized request (user context)
-Ctrl -> Repo : save(entity)\n(controller calls repository directly —\nno intermediate service layer for this endpoint)
-Repo -> DB : INSERT INTO deed_managements
-DB --> Repo : Generated ID
-Repo --> Ctrl : Saved entity
-Ctrl -> Audit : AOP around create() —\nINSERT INTO audit_records\n(CREATE, management, user, timestamp)
-Audit -> DB : INSERT INTO audit_records
-Ctrl --> Client : 201 Created {entity}
-Client --> User : Show success + management number
-@enduml
+<!-- likec4-view: apiRequest -->
+```mermaid
+---
+title: "Request through both hexagons"
+---
+flowchart LR
+  notary(["Notary"])
+  notaire_frontend_ui_pages["Pages and components<br/><i>React 19, Tailwind, design tokens</i>"]
+  notaire_frontend_ui_hooks["Query hooks<br/><i>TanStack Query</i>"]
+  notaire_frontend_core_usecases["Use cases and ports<br/><i>TypeScript</i>"]
+  notaire_frontend_adapters_http["HTTP port adapters<br/><i>lib/api-client</i>"]
+  notaire_frontend_edge_bff["API route handlers<br/><i>app/api/*/route.ts</i>"]
+  notaire_backend_security_jwtFilter["JWT authentication filter<br/><i>JwtAuthenticationFilter, JwtTokenService</i>"]
+  notaire_backend_security_rateLimit["API rate limit<br/><i>ApiRateLimitFilter</i>"]
+  notaire_backend_security_moduleAuthz["Role-module authorization<br/><i>RoleModuleAuthorizationFilter</i>"]
+  notaire_backend_inbound_web["REST controllers<br/><i>Spring MVC</i>"]
+  notaire_backend_application_portsIn["Inbound ports"]
+  notaire_backend_application_useCases["Use cases<br/><i>@Service @Transactional</i>"]
+  notaire_backend_domain_model["Domain model<br/><i>Java records and classes</i>"]
+  notaire_backend_application_portsOut["Outbound ports"]
+  notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+  notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
+  notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  notary -- "1. Saves the form" --> notaire_frontend_ui_pages
+  notaire_frontend_ui_pages -- "2. mutate()" --> notaire_frontend_ui_hooks
+  notaire_frontend_ui_hooks -- "3. execute(command)" --> notaire_frontend_core_usecases
+  notaire_frontend_adapters_http -- "4. POST /api/v1/payments" --> notaire_frontend_edge_bff
+  notaire_frontend_edge_bff -- "5. Forwards with the httpOnly cookie" --> notaire_backend_security_jwtFilter
+  notaire_backend_security_jwtFilter -- "6. Token valid" --> notaire_backend_security_rateLimit
+  notaire_backend_security_rateLimit -- "7. Within quota" --> notaire_backend_security_moduleAuthz
+  notaire_backend_security_moduleAuthz -- "8. Module granted" --> notaire_backend_inbound_web
+  notaire_backend_inbound_web -- "9. Validated command" --> notaire_backend_application_portsIn
+  notaire_backend_application_useCases -- "10. Applies balance rules" --> notaire_backend_domain_model
+  notaire_backend_application_useCases -- "11. save(payment)" --> notaire_backend_application_portsOut
+  notaire_backend_outbound_persistence -- "12. Maps to the entity" --> notaire_backend_outbound_legacyJpa
+  notaire_backend_outbound_legacyJpa -- "13. INSERT" --> notaire_database
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  class notary c_green
+  class notaire_frontend_ui_pages,notaire_frontend_ui_hooks,notaire_frontend_core_usecases,notaire_frontend_adapters_http,notaire_frontend_edge_bff,notaire_backend_inbound_web,notaire_backend_application_portsIn,notaire_backend_application_useCases,notaire_backend_domain_model,notaire_backend_application_portsOut,notaire_backend_outbound_persistence c_sky
+  class notaire_backend_security_jwtFilter,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
+  class notaire_backend_outbound_legacyJpa finding
+  class notaire_database c_indigo
 ```
+<!-- /likec4-view -->
 
 ### 6.3 Report Generation
 
-```plantuml
-@startuml
-title Runtime — Generate Report
-
-participant "User" as U
-participant "Frontend" as FE
-participant "ReportController" as Ctrl
-participant "ReportService" as Svc
-participant "ReportDocumentFactory" as Factory
-participant "PostgreSQL\n(JPA repositories)" as DB
-participant "ReportRenderer port\n(PdfBoxReportRenderer)" as Renderer
-
-U -> FE : Select report + parameters
-FE -> Ctrl : GET /api/v1/reports/{report-name}/{params}\n(one endpoint per report, e.g. /budget/{id})
-Ctrl -> Svc : generate...Report(params)
-Svc -> Factory : build ReportDocument (read-only transaction)
-Factory -> DB : load the aggregate (budget, management, ...)
-DB --> Factory : entities, or none -> ResourceNotFoundException (404)
-Factory --> Svc : ReportDocument (title, field and table sections)
-Svc -> Renderer : render(document)
-Renderer --> Svc : byte[] (PDF)
-Svc --> Ctrl : byte[] (PDF)
-Ctrl --> FE : 200 application/pdf
-FE --> U : Open/download PDF
-@enduml
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant FE as Frontend
+    participant C as ReportController
+    participant S as ReportService (GenerateReportsUseCase)
+    participant F as ReportDocumentFactory
+    participant DB as PostgreSQL
+    participant R as PdfBoxReportRenderer (ReportRenderer port)
+    U->>FE: Select report and parameters
+    FE->>C: GET /api/v1/reports/{report}/{params}
+    C->>S: generate report
+    S->>F: build ReportDocument (read-only transaction)
+    F->>DB: load the aggregate
+    DB-->>F: rows, or none (404)
+    F-->>S: ReportDocument
+    S->>R: render(document)
+    R-->>S: PDF bytes
+    S-->>C: PDF bytes
+    C-->>FE: 200 application/pdf
 ```
+
+`ReportService` implements the inbound port but lives in `adapter.out.report`; moving the orchestration into
+`application.usecase.report` is part of [#2486](https://github.com/matiaspakua/notaire/issues/2486).
 
 Reports are generated in-house since #567: the six JasperReports 3.5.3 templates queried
 the legacy MySQL schema and were replaced by `ReportDocumentFactory` (current domain model)
@@ -661,91 +628,168 @@ See [pdf-report-design-system.md](pdf-report-design-system.md).
 
 ### 7.1 Development Environment
 
-```plantuml
-@startuml
-title Deployment View — Docker Compose (Development)
+`docker-compose.yml` plus `infra/observability/docker-compose.yml`. Published ports: frontend 3000, backend 8080,
+PostgreSQL 5432, pgAdmin 5050, Grafana 3001 (loopback), Prometheus 9090, Loki 3100, Alertmanager 9093, Homer 8888.
 
-node "Docker Host (Developer Machine)" {
-
-  node "docker-compose.yml\n(Application Stack)" {
-    artifact "notaire-frontend\n:3000" as FE <<Next.js 16>>
-    artifact "notaire-backend\n:8080" as BE <<Spring Boot 4.1>>
-    database "notary-postgres\n:5432" as DB <<PostgreSQL 16>>
-    artifact "notary-pgadmin\n:5050" as PGA <<pgAdmin 4>>
-  }
-
-  node "infra/observability/docker-compose.yml\n(DevSecOps Stack)" {
-    artifact "devsecops-prometheus\n:9090" as Prom <<Prometheus>>
-    artifact "devsecops-grafana\n:3001" as Graf <<Grafana>>
-    artifact "devsecops-loki\n:3100" as Loki <<Loki>>
-    artifact "devsecops-promtail" as Tail <<Promtail>>
-    artifact "devsecops-sonarqube\n:9000" as Sonar <<SonarQube>>
-    artifact "devsecops-postgres-exporter\n:9187" as PGExp <<postgres-exporter>>
-    artifact "devsecops-dashboard\n:8888" as Homer <<Homer>>
-    database "devsecops-sonar-db" as SonarDB <<PostgreSQL 15>>
-  }
-}
-
-actor "Developer" as Dev
-
-Dev --> FE : http://localhost:3000
-Dev --> BE : http://localhost:8080
-Dev --> PGA : http://localhost:5050
-Dev --> Graf : http://localhost:3001
-Dev --> Prom : http://localhost:9090
-Dev --> Sonar : http://localhost:9000
-Dev --> Homer : http://localhost:8888
-
-FE --> BE : /api/v1 BFF (runtime BACKEND_URL)
-BE --> DB : JDBC + Flyway
-PGA --> DB : Admin queries
-
-Prom --> BE : /actuator/prometheus
-Prom --> PGExp : :9187/metrics
-PGExp --> DB : pg_monitor role (V12 migration)
-Tail --> Loki : Push logs (Docker socket)
-Graf --> Prom : Metric dashboards
-Graf --> Loki : Log queries
-Sonar --> SonarDB : Analysis storage
-@enduml
+<!-- likec4-view: dev -->
+```mermaid
+---
+title: "Deployment: development"
+---
+flowchart TB
+  subgraph dev_appNet["notary-network"]
+    subgraph dev_appNet_pgadminHost["notary-pgadmin :5050"]
+      dev_appNet_pgadminHost_pgadmin["pgAdmin<br/><i>pgAdmin 4</i>"]
+    end
+    subgraph dev_appNet_frontendHost["notaire-frontend :3000"]
+      dev_appNet_frontendHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph dev_appNet_backendHost["notary-backend :8080"]
+      dev_appNet_backendHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph dev_appNet_dbHost["notary-postgres :5432<br/><i>postgres:16.15, volume postgres_data</i>"]
+      dev_appNet_dbHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  subgraph dev_opsNet["devsecops-network"]
+    subgraph dev_opsNet_grafanaHost["grafana"]
+      dev_opsNet_grafanaHost_grafana["Grafana<br/><i>Grafana 12.3</i>"]
+    end
+    subgraph dev_opsNet_promHost["prometheus :9090"]
+      dev_opsNet_promHost_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+      dev_opsNet_promHost_alertmanager["Alertmanager<br/><i>Alertmanager 0.34</i>"]
+    end
+    subgraph dev_opsNet_logsHost["loki :3100 + promtail"]
+      dev_opsNet_logsHost_loki["Loki<br/><i>Loki 3.7 + Promtail</i>"]
+    end
+    subgraph dev_opsNet_exportersHost["exporters"]
+      dev_opsNet_exportersHost_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
+    end
+    subgraph dev_opsNet_collectorHost["otel-collector"]
+      dev_opsNet_collectorHost_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+    end
+    subgraph dev_opsNet_tracesHost["tempo"]
+      dev_opsNet_tracesHost_tempo["Tempo<br/><i>Tempo 2.10</i>"]
+    end
+  end
+  dev_appNet_frontendHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> dev_appNet_backendHost_backend
+  dev_appNet_backendHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> dev_appNet_dbHost_database
+  dev_appNet_pgadminHost_pgadmin -- "Inspects (dev only)" --> dev_appNet_dbHost_database
+  dev_opsNet_promHost_prometheus -- "Fires alerts" --> dev_opsNet_promHost_alertmanager
+  dev_opsNet_collectorHost_otelCollector -. "Exports traces" .-> dev_opsNet_tracesHost_tempo
+  dev_opsNet_promHost_prometheus -. "Scrapes" .-> dev_opsNet_exportersHost_exporters
+  dev_opsNet_grafanaHost_grafana -- "Queries metrics" --> dev_opsNet_promHost_prometheus
+  dev_opsNet_grafanaHost_grafana -- "Queries logs" --> dev_opsNet_logsHost_loki
+  dev_opsNet_grafanaHost_grafana -- "Queries traces" --> dev_opsNet_tracesHost_tempo
+  dev_appNet_frontendHost_frontend -. "Browser traces via /api/otlp (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /api/metrics" .-> dev_appNet_frontendHost_frontend
+  dev_appNet_backendHost_backend -. "OTLP traces (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /actuator/prometheus (+2)" .-> dev_appNet_backendHost_backend
+  dev_opsNet_exportersHost_exporters -- "Reads pg_stat (+1)" --> dev_appNet_dbHost_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class dev_appNet_pgadminHost_pgadmin,dev_opsNet_grafanaHost_grafana,dev_opsNet_promHost_prometheus,dev_opsNet_logsHost_loki,dev_opsNet_promHost_alertmanager,dev_opsNet_exportersHost_exporters,dev_appNet_frontendHost_frontend,dev_appNet_backendHost_backend,dev_opsNet_collectorHost_otelCollector,dev_opsNet_tracesHost_tempo c_primary
+  class dev_appNet_dbHost_database c_indigo
 ```
+<!-- /likec4-view -->
+
+#### Production (`docker-compose.prod.yml`)
+
+The reverse proxy is the only published port; TLS terminates in front of it
+([HTTPS-TLS-RUNBOOK](../206-security/HTTPS-TLS-RUNBOOK.md)) and forwards only `/actuator/health`
+([#2487](https://github.com/matiaspakua/notaire/issues/2487)); the backend requires the MFA key and sends the session
+cookie `Secure` ([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
+
+<!-- likec4-view: prod -->
+```mermaid
+---
+title: "Deployment: production"
+---
+flowchart TB
+  subgraph prod_edge["Public edge"]
+    prod_edge_proxyHost_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph prod_private["notary-network (private)"]
+    subgraph prod_private_feHost["frontend<br/><i>ghcr.io/matiaspakua/notaire/frontend</i>"]
+      prod_private_feHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph prod_private_beHost["backend<br/><i>ghcr.io/matiaspakua/notaire/backend</i>"]
+      prod_private_beHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph prod_private_pgHost["postgres<br/><i>postgres:16, volume postgres_data</i>"]
+      prod_private_pgHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  prod_private_feHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> prod_private_beHost_backend
+  prod_private_beHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> prod_private_pgHost_database
+  prod_edge_proxyHost_ingress -- "Routes / (UI)" --> prod_private_feHost_frontend
+  prod_edge_proxyHost_ingress -- "Routes /api (+2)" --> prod_private_beHost_backend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class prod_edge_proxyHost_ingress,prod_private_feHost_frontend,prod_private_beHost_backend c_primary
+  class prod_private_pgHost_database c_indigo
+```
+<!-- /likec4-view -->
+
+#### Staging (Kustomize)
+
+<!-- likec4-view: staging -->
+```mermaid
+---
+title: "Deployment: staging (Kubernetes)"
+---
+flowchart TB
+  subgraph staging_cluster_proxyPod["reverse-proxy (Service LoadBalancer :80)"]
+    staging_cluster_proxyPod_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph staging_cluster_fePod["frontend (ClusterIP :3000)"]
+    staging_cluster_fePod_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  end
+  subgraph staging_cluster_bePod["backend (ClusterIP :8080)"]
+    staging_cluster_bePod_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  end
+  subgraph staging_cluster_pgPod["postgres (ClusterIP :5432)"]
+    staging_cluster_pgPod_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  end
+  staging_cluster_proxyPod_ingress -- "Routes / (UI)" --> staging_cluster_fePod_frontend
+  staging_cluster_proxyPod_ingress -- "Routes /api (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_fePod_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> staging_cluster_bePod_backend
+  staging_cluster_bePod_backend -- "Reads and writes, Flyway migrates on start (+3)" --> staging_cluster_pgPod_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class staging_cluster_proxyPod_ingress,staging_cluster_fePod_frontend,staging_cluster_bePod_backend c_primary
+  class staging_cluster_pgPod_database c_indigo
+```
+<!-- /likec4-view -->
+
+The staging PostgreSQL keeps its data on `emptyDir` ([#2489](https://github.com/matiaspakua/notaire/issues/2489)).
 
 ### 7.2 Network Configuration
 
 | Network | Services | Purpose |
 |---------|----------|---------|
 | `notary-network` | postgres, backend, pgadmin, frontend | Application communication |
-| `devsecops-network` | prometheus, grafana, loki, sonarqube | DevSecOps internal |
+| `devsecops-network` | prometheus, alertmanager, grafana, loki, promtail, tempo, otel-collector, exporters, sonarqube, homer | DevSecOps internal |
 | `notaire_notary-network` (external) | Shared between app and infra stacks | Cross-stack monitoring |
 
 ### 7.3 Container Resource Limits
 
 | Container | Memory Limit | Memory Reserved |
 |-----------|-------------|----------------|
-| `notaire-backend` | 512 MB | 256 MB |
+| `notary-backend` | 1024 MB | 512 MB |
 | All others | Docker defaults | — |
 
 ### 7.4 Startup Dependencies
 
-```plantuml
-@startuml
-title Container Startup Order
-
-[postgres] as DB
-[backend] as BE
-[frontend] as FE
-[pgadmin] as PGA
-[prometheus] as Prom
-[grafana] as Graf
-[loki] as Loki
-
-DB --> BE : depends_on (healthy)
-BE --> FE : depends_on (healthy)
-DB --> PGA : depends_on (healthy)
-DB --> Prom : via postgres-exporter
-Prom --> Graf : depends_on
-Loki --> Graf : depends_on
-@enduml
+```mermaid
+flowchart LR
+    db[(postgres)] -->|healthy| be[backend]
+    be -->|healthy| fe[frontend]
+    db -->|healthy| pga[pgadmin]
+    fe -->|healthy, prod| proxy[reverse-proxy]
+    be -->|healthy, prod| proxy
+    prom[prometheus] --> graf[grafana]
+    loki[loki] --> graf
 ```
 
 ### 7.5 Tenancy and Isolation
@@ -788,9 +832,11 @@ overwrite a tenant's changes.
 - Tenancy (ADR-029): one installation serves one notary; the office shares its files, so there is no
   per-record ownership check. Cross-notary isolation comes from the deployment (section 7.5).
 - Roles and their module grants (`roles`, `role_modules`) are the customizable permission model: a
-  standard template is seeded at database initialization and each tenant may change it. Server-side
-  enforcement of the grants is planned work (ADR-029 W1, W2); until then module access is not
-  restricted beyond the checks above.
+  standard template is seeded at database initialization and each tenant may change it.
+  `RoleModuleAuthorizationFilter` enforces the grants on every API path (ADR-029 W2, #1683), after
+  `JwtAuthenticationFilter` and `ApiRateLimitFilter` (per-user quota, ADR-018).
+- Administrators and notaries complete a TOTP challenge before a session is issued when the MFA policy
+  requires it (ADR-032, #1640); TOTP secrets are encrypted with AES-256-GCM.
 - Extending enforcement means adding a path in `SecurityAndCorsConfig` and a case
   in `RbacIntegrationTest` (see [API Authentication Guide](../206-security/API-AUTHENTICATION-GUIDE.md#extending-rbac)).
 
@@ -798,7 +844,10 @@ overwrite a tenant's changes.
 
 - CORS configured in `SecurityAndCorsConfig`.
 - All endpoints under `/api/v1/**` require JWT (except login).
-- Actuator endpoints secured with separate credentials.
+- Actuator endpoints secured with separate credentials; health and info are public.
+
+The controls, and the open findings on the production ingress, are drawn in the
+[security view](../206-security/README.md#security-architecture-views).
 
 ### 8.2 Error Handling
 
@@ -868,7 +917,8 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 **Metrics (Prometheus):**
 
 - Spring Boot Actuator exposes `/actuator/prometheus`.
-- Custom metrics via `MetricsUtil` and `SharedModuleMetrics`.
+- Custom metrics via `MetricsUtil`; the frontend exposes `/api/metrics`.
+- OTLP traces from backend and frontend go through the OpenTelemetry Collector to Tempo; Prometheus fires alerts to Alertmanager.
 - `ApplicationHealthIndicator` for custom health checks.
 - `postgres-exporter` provides database-level metrics.
 
@@ -888,8 +938,8 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 **Code Quality (SonarQube :9000):**
 
 - Static analysis on every build.
-- Coverage: enforced ratchet floor via JaCoCo (raised as coverage improves; long-term
-  target 80% line / 80% branch — see [Code Quality](../../300-development/303-testing/README.md)).
+- Coverage: raise-only floors, JaCoCo 85% line / 70% branch and Vitest 87/79/85/88; Owner target above 90%
+  (#2046, [Code Quality](../../300-development/303-testing/README.md)).
 
 ### 8.6 Design System (Frontend)
 
@@ -909,26 +959,30 @@ All errors follow a uniform response structure defined in `ErrorResponse`:
 
 ### 8.8 Testing Strategy
 
-| Level | Tool | Scope | Target |
+| Level | Tool | Scope | Size (2026-11-24) |
 |-------|------|-------|--------|
-| Unit (backend) | JUnit 5 + Mockito | Service/repository logic | Enforced ratchet floor (target 80%) |
-| Unit / Component (frontend) | Vitest + Testing Library | `frontend/src/**/*.test.ts(x)` | 19+ test files |
-| Integration | Spring Boot Test | Controller + DB (H2/PG) | API contract validation |
-| API | Bruno, yml collection format (`backend-api/api-test/`) | Full API endpoints, per use case | See `CU-API-MATRIX.csv` |
-| E2E (UI/UX) | Playwright | Frontend user flows, per use case (`cuNN-*.spec.ts`) | 33+ specs, critical paths |
-| Static Analysis | Checkstyle + SpotBugs + SonarQube | Code quality | Zero critical issues |
+| Unit + architecture (backend) | JUnit 5, Mockito, ArchUnit | Use cases, domain, mappers, R1–R7 | 430 test classes in `backend-api` |
+| Unit / Component (frontend) | Vitest + Testing Library | Core, adapters, hooks, components, boundaries | 148 test files |
+| Integration | Spring Boot Test, H2 and Testcontainers PostgreSQL | Controllers, security chains, Flyway, JPA | — |
+| API | Bruno (`backend-api/api-test/`) | Endpoints per use case (`CU-API-MATRIX.csv`) | 423 requests |
+| E2E (UI/UX) | Playwright + axe | User flows per use case at 320/768/1024 px | 107 specs |
+| Static Analysis | Checkstyle, SpotBugs, SonarQube | New code | No new blocker, critical or major |
 
-Full pyramid and use-case traceability documented in
-[`docs/300-development/303-testing/README.md`](../../300-development/303-testing/README.md).
+Which suite verifies which part of the system, and the gates around them, are drawn in
+[TEST-PLAN.md](../../300-development/303-testing/TEST-PLAN.md#architecture-views).
 
-### 8.9 Legacy Coexistence (`jpa` package)
+### 8.9 Legacy Coexistence
 
-The `jpa` package contains 26 `*JpaController` classes — a legacy data-access layer from the original Swing application. These classes contain raw EntityManager operations and are being incrementally replaced by:
+The `jpa` and `service` packages are gone (#576, #1918). What remains of the legacy layer:
 
-1. **Spring Data JPA Repositories** (`repository` package) — declarative query methods.
-2. **Service classes** (`service` package) — business logic extracted from JPA controllers.
+- `business`: the JPA model (36 `@Entity` classes among 47), used by the persistence adapters, `config`,
+  `audit` and `security` ([#2486](https://github.com/matiaspakua/notaire/issues/2486));
+- `repository`: 36 Spring Data repositories, same users;
+- `dto`: web DTOs that eight contexts still use in their ports and use cases
+  ([#2485](https://github.com/matiaspakua/notaire/issues/2485)).
 
-**Migration rule**: New code **must not** use `jpa` package classes. Services may temporarily delegate to them as fallback during the transition.
+**Rule**: no new dependents on these packages. ArchUnit R8 (`LegacyPackageArchitectureTest`) enforces it with a
+652-line shrink-only baseline ([#2484](https://github.com/matiaspakua/notaire/issues/2484)).
 
 ---
 
@@ -958,6 +1012,19 @@ All decisions are documented as Architecture Decision Records (ADRs) in `docs/20
 | [ADR-018](../202-ADR/ADR-018-rate-limiting-policy.md) | Rate-Limiting Policy | Accepted | Security |
 | [ADR-019](../202-ADR/ADR-019-secrets-management.md) | Secrets Management | Accepted | Security |
 | [ADR-020](../202-ADR/ADR-020-openapi-exposure-policy.md) | OpenAPI Exposure Policy | Accepted | Security & API |
+| [ADR-021](../202-ADR/ADR-021-hexagonal-architecture-pilot.md) | Hexagonal Architecture Pilot | Accepted | Code organization |
+| [ADR-022](../202-ADR/ADR-022-git-history-rewrite-and-large-binaries.md) | Git History Rewrite and Large Binaries | Accepted | Repository |
+| [ADR-023](../202-ADR/ADR-023-rest-resource-naming.md) | REST Resource Naming | Accepted | API |
+| [ADR-024](../202-ADR/ADR-024-repository-topology.md) | Repository Topology | Proposed | Repository |
+| [ADR-025](../202-ADR/ADR-025-retire-notaire-shared.md) | Retire notaire-shared | Accepted | Code organization |
+| [ADR-026](../202-ADR/ADR-026-module-separation.md) | Module Separation | Accepted | Code organization |
+| [ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md) | Mermaid Diagrams (amended by ADR-033) | Accepted | Documentation |
+| [ADR-028](../202-ADR/ADR-028-release-and-version-identity.md) | Release and Version Identity | Accepted | Release |
+| [ADR-029](../202-ADR/ADR-029-object-level-authorization.md) | Object-level Authorization | Proposed | Security |
+| [ADR-030](../202-ADR/ADR-030-hexagonal-architecture-full-adoption.md) | Full Ports & Adapters | Accepted | Code organization |
+| [ADR-031](../202-ADR/ADR-031-local-ai-assistant.md) | Local AI Assistant | Proposed | AI |
+| [ADR-032](../202-ADR/ADR-032-multi-factor-authentication-totp.md) | Multi-factor Authentication (TOTP) | Accepted | Security |
+| [ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md) | LikeC4 Architecture Model | Accepted | Documentation |
 
 ---
 
@@ -965,39 +1032,28 @@ All decisions are documented as Architecture Decision Records (ADRs) in `docs/20
 
 ### 10.1 Quality Tree
 
-```plantuml
-@startuml
-title Quality Tree — Notaire
-
-rectangle "System Quality" {
-  rectangle "Functional\nSuitability" as FS
-  rectangle "Reliability" as R
-  rectangle "Security" as S
-  rectangle "Maintainability" as M
-  rectangle "Performance\nEfficiency" as P
-  rectangle "Operability" as O
-}
-
-FS --> (Correctness)
-FS --> (Completeness)
-
-R --> (Availability 99.5%)
-R --> (Fault Tolerance)
-
-S --> (Authentication JWT)
-S --> (Authorization: authenticated-only)
-S --> (Audit Trail)
-
-M --> (Modularity)
-M --> (Testability ≥80%)
-M --> (Analyzability)
-
-P --> (Response <500ms)
-P --> (Resource limits)
-
-O --> (Observability LPG)
-O --> (Deployability Docker)
-@enduml
+```mermaid
+mindmap
+  root((Notaire quality))
+    Functional suitability
+      Correctness
+      Completeness
+    Reliability
+      Availability 99.5%
+      Backup and restore smoke
+    Security
+      JWT httpOnly session and MFA
+      Role-module grants
+      Append-only audit trail
+    Maintainability
+      Hexagon guarded by ArchUnit and ESLint
+      Coverage floors 85/70, target above 90%
+    Performance
+      Response under 500 ms
+      k6 load tests
+    Operability
+      Metrics, logs and traces
+      Docker and Kubernetes
 ```
 
 ### 10.2 Quality Scenarios
@@ -1009,7 +1065,7 @@ O --> (Deployability Docker)
 | QS-03 | Availability | System uptime during business hours | 99.5% |
 | QS-04 | Security | All create/update/delete operations (and logins) logged in audit trail; read-only GETs excluded | 100% coverage of mutating operations |
 | QS-05 | Security | Failed login attempts trigger a per-username lockout (`LoginAttemptService`, single-instance, not a general API rate limiter) | 5 failed attempts → 15 min lockout |
-| QS-06 | Testability | Code coverage across backend | ≥ 80% |
+| QS-06 | Testability | Code coverage across backend | Floor 85% line / 70% branch; target > 90% (#2046) |
 | QS-07 | Maintainability | New feature development time | < 6 months |
 | QS-08 | Maintainability | Developer onboarding time | < 2 weeks |
 | QS-09 | Scalability | Backend horizontal scaling | Stateless containers |
@@ -1023,7 +1079,8 @@ O --> (Deployability Docker)
 
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
-| Legacy `jpa` package coexists with modern `repository` | High — code duplication, inconsistent patterns | Certain | Incremental migration per entity; new code uses only `repository` |
+| JPA model and web DTOs still in legacy packages | High — persistence types and web DTOs reach ports | Certain | One context per PR ([#2485](https://github.com/matiaspakua/notaire/issues/2485), [#2486](https://github.com/matiaspakua/notaire/issues/2486)); ArchUnit R8 blocks new dependents ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
+| Kustomize PostgreSQL on `emptyDir` | High for any real use — data lost on restart | Certain in staging | PVC or a documented ephemeral base ([#2489](https://github.com/matiaspakua/notaire/issues/2489)) |
 | ~~`ControllerNegocio.java` (5,337 lines) — God class~~ (renamed `BusinessController`, removed in #900) | Resolved — only two identification-type lookups were reachable; now `business/IdentificationTypeLookup` | — | Done (#900) |
 | Legacy Swing client resurrected on `main` | Low — Dependabot noise / confusion | Low | Keep deleted (#1046); do not recreate; history in git |
 | No production deployment target defined | Medium — no deployment pipeline to production | Medium | Mitigated for topology: `docker-compose.prod.yml` (#1044) + staging Kustomize (#901). CD remains publish-only; TLS/backups/SLOs are separate issues |
@@ -1033,13 +1090,66 @@ O --> (Deployability Docker)
 
 | Item | Location | Severity | Effort |
 |------|----------|----------|--------|
-| ~35 legacy JPA controllers | `com.licensis.notaire.jpa` | High | Large — tracked by [#576](https://github.com/matiaspakua/notaire/issues/576) |
+| ~~~35 legacy JPA controllers~~ | `jpa` deleted (#576) | Resolved | — |
+| JPA model outside the persistence adapters | `business`, `repository` | High | Large — [#2486](https://github.com/matiaspakua/notaire/issues/2486) |
+| Ports and use cases on legacy web DTOs | `application.*` → `dto` (40 files) | Medium | Medium — [#2485](https://github.com/matiaspakua/notaire/issues/2485) |
 | ~~`ControllerNegocio.java` God class (5,337 lines)~~ | removed in #900 (`business/BusinessController.java` deleted) | Resolved | — |
-| `JpaAdministrator` + `LegacyJpaEmfConfig` | `service/` | Medium | Medium — residual until #576 (#1918) |
+| ~~`JpaAdministrator` + `LegacyJpaEmfConfig`~~ | `service` deleted (#1918) | Resolved | — |
 | ~~`ValidationAdministrator` / `SessionAdministrator`~~ | deleted in #1918 | Resolved | — |
 | Missing service classes for some entities | `service/` | Low | Superseded by hex adapters |
 | Legacy Swing tree deleted from `main` (#1046) | git history only | Resolved | — |
 | `GuiConstants.java` in audit package | `audit/GuiConstants.java` | Low | Small |
+
+The findings of the modelling pass, each with its Issue:
+
+<!-- likec4-view: findings -->
+```mermaid
+---
+title: "Architecture findings"
+---
+flowchart TB
+  subgraph notaire["Notaire"]
+    subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+      subgraph notaire_backend_outbound["Outbound adapters"]
+        notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
+        notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
+      end
+      subgraph notaire_backend_security["Security filter chain"]
+        notaire_backend_security_actuatorChain["Actuator chain<br/><i>HTTP Basic, @Order(1)</i>"]
+        notaire_backend_security_mfaGate["MFA login gate<br/><i>TokenLoginMfaGate, TOTP</i>"]
+      end
+      subgraph notaire_backend_domain["Domain"]
+        notaire_backend_domain_missingDomain["Contexts without a domain model"]
+      end
+      subgraph notaire_backend_application["Application"]
+        notaire_backend_application_legacyDtoPorts["Ports speaking legacy web DTOs"]
+        notaire_backend_application_portsIn["Inbound ports"]
+      end
+    end
+    notaire_assistant["AI assistant<br/><i>Spring AI 2.0 + local model (oMLX)</i>"]
+    notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
+  localModel["Local model server"]
+  notaire_assistant -- "Prompts (planned)" --> localModel
+  notaire_backend_application_legacyDtoPorts -- "Part of" --> notaire_backend_application_portsIn
+  notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
+  notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
+  notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
+  notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
+  classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class delivery_gates_ruleset,notaire_backend_outbound_legacyJpa,notaire_backend_domain_missingDomain,notaire_backend_application_legacyDtoPorts finding
+  class notaire_assistant,localModel planned
+  class notaire_ingress c_primary
+  class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
+  class notaire_backend_security_actuatorChain,notaire_backend_security_mfaGate c_red
+```
+<!-- /likec4-view -->
 
 ### 11.3 Evolution Roadmap
 
@@ -1152,17 +1262,14 @@ O --> (Deployability Docker)
 
 ### Diagram Sources
 
-**Active diagrams use Mermaid** ([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)). Module ownership
-Mermaid lives in [`MODULE-OWNERSHIP.md`](../../300-development/MODULE-OWNERSHIP.md) and on GitHub Pages
-`/docs/`. Policy: [`204-diagrams/README.md`](../204-diagrams/README.md).
+**Architecture views come from the [LikeC4 model](../210-architecture-model/README.md)**
+([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md)); the Mermaid blocks between `likec4-view` markers are
+generated by `npm run generate` and must not be edited by hand. The interactive model is published on
+[GitHub Pages](https://matiaspakua.github.io/notaire/architecture-model/). Other active diagrams are Mermaid
+([ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)); policy in [`204-diagrams/README.md`](../204-diagrams/README.md).
+The superseded architecture PlantUML files are archived in `docs/000-archive/200-architecture/204-diagrams/`.
 
-Legacy PlantUML sources remain in `docs/200-architecture/204-diagrams/` until migrated (do not add new
-`.puml` for active docs):
+Business PlantUML sources remain in `docs/200-architecture/204-diagrams/` until migrated:
 
-- `architecture-legacy.puml` — Legacy monolithic architecture
-- `architecture-target.puml` — Target three-tier architecture
-- `deployment-docker.puml` — Docker Compose deployment
-- `backend-package-structure.puml` — Backend internal structure
 - `data-model-core.puml` — Core entity relationships
-- `migration-phases.puml` — Migration phases overview
 - [`Casos de Uso/`](../204-diagrams/Casos%20de%20Uso/) — Use-case diagrams grouped by module (deed managements, administration, clients, payments, protocols, budgets). The folder name stays.

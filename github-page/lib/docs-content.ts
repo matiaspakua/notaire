@@ -40,20 +40,6 @@ flowchart TB
   WS --> SEC
 `;
 
-export const SYSTEM_CONTEXT_CHART = `
-flowchart LR
-  User[Notary staff] --> FE[frontend Next.js]
-  FE -->|HTTPS JWT| BE[backend-api Spring Boot]
-  BE --> PG[(PostgreSQL 16)]
-  BE --> AUD[Audit trail]
-  Ops[Operators] --> OBS[infra Prometheus Grafana Loki]
-  OBS --> BE
-  Agents[Cursor Cloud fleet] --> Repo[Monorepo modules]
-  Repo --> BE
-  Repo --> FE
-  Repo --> DOC[docs OpenSpec]
-`;
-
 export const MODULES = [
   {
     name: "backend-api",

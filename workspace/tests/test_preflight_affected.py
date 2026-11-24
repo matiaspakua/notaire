@@ -88,6 +88,16 @@ class PagesSectionTest(unittest.TestCase):
         self.assertIn("frontend/node_modules", pages)
         self.assertLess(pages.index("frontend/node_modules"), pages.index("npm run build:demo"))
 
+    def test_the_pages_build_checks_and_builds_the_architecture_model(self):
+        """#2483: the export links to /notaire/architecture-model/, as pages-ci.yml builds it."""
+        text = (Path(__file__).resolve().parents[2] / "workspace" / "sdlc" / "preflight.sh").read_text(encoding="utf-8")
+        pages = text[text.index('section "GitHub Pages app (github-page)"'):text.index('section "Server-backed suites"')]
+        model = "docs/200-architecture/210-architecture-model"
+        self.assertIn(f"{model}/node_modules", pages)
+        self.assertIn("npm run check", pages)
+        self.assertLess(pages.index(f"{model}/node_modules"), pages.index("npm run build:model"))
+        self.assertLess(pages.index("npm run build:model"), pages.index("check-links.mjs"))
+
 
 if __name__ == "__main__":
     unittest.main()

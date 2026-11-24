@@ -125,7 +125,7 @@ documented in OpenAPI/Swagger (CONSTITUTION.md §4).
 
 ## Docker & Configuration
 
-- Backend image: Eclipse Temurin 21 JRE; expose 8080; health via `/actuator/health`
+- Backend image: Eclipse Temurin 26 JRE (Alpine); expose 8080; health via `/actuator/health`
 - Postgres image: `postgres:16`; data on a named volume
 - Compose services read credentials from `.env` (never hard-code secrets)
 - Profiles: `dev`, `test`, `prod`; production must not use `ddl-auto=create/update`

@@ -1,0 +1,52 @@
+// Security controls and data protection (CU78). Source: SecurityAndCorsConfig, frontend/src/proxy.ts,
+// docs/200-architecture/206-security, security/cases/catalog.yml. Findings link to their Issues.
+
+model {
+  extend notaire.backend.security {
+    tokenRevocation = control "Token revocation" {
+      technology "TokenRevocationService"
+      description "Logout revokes the issued JWT before it expires."
+    }
+    actuatorChain = control "Actuator chain" {
+      technology "HTTP Basic, @Order(1)"
+      description "health and info are public; every other actuator endpoint needs the shared actuator credential."
+    }
+    credentialsGuard = control "Production credentials guard" {
+      technology "ProductionCredentialsGuard"
+      description "Refuses to start in production with default or weak admin, database or actuator secrets."
+    }
+  }
+
+  extend notaire.backend.outbound.crypto {
+    totpCipher = control "TOTP secret encryption" {
+      technology "AES-256-GCM"
+      description "TOTP secrets are encrypted at rest with NOTAIRE_MFA_ENCRYPTION_KEY."
+    }
+  }
+
+  extend notaire.database {
+    leastPrivilege = control "Least-privilege roles" {
+      technology "Flyway V12, V51 exporter role"
+      description "The metrics exporter connects with a SELECT-only role."
+    }
+    auditLog = control "Append-only audit log" {
+      technology "audit_records, V47 trigger"
+      description "Mutations and personal-data reads; a trigger rejects UPDATE, DELETE and TRUNCATE (CU73, #1636)."
+    }
+  }
+
+  notaire.backend.security.jwtFilter -> notaire.backend.security.tokenRevocation "Checks revoked tokens"
+  notaire.backend.security.mfaGate -> notaire.backend.outbound.crypto.totpCipher "Decrypts the TOTP secret"
+  notaire.backend.crosscutting.audit -> notaire.database.auditLog "Appends"
+  observability.exporters -> notaire.database.leastPrivilege "Connects as"
+  observability.prometheus -> notaire.backend.security.actuatorChain "Authenticates scrapes"
+
+  notaire.ingress -[http]-> notaire.backend.security.actuatorChain "Forwards only /actuator/health; other actuator paths answer 404" {
+    description "SR-18, #2487."
+    link https://github.com/matiaspakua/notaire/issues/2487
+  }
+  notaire.ingress -[http]-> notaire.backend.security.mfaGate "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" {
+    description "#2488."
+    link https://github.com/matiaspakua/notaire/issues/2488
+  }
+}

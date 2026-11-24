@@ -1,28 +1,29 @@
 # Architecture diagrams
 
-## Policy (ADR-027)
+## Policy (ADR-033, ADR-027)
 
-**Mermaid is the only diagram language for active documentation.**
+| Diagram | Source | Rule |
+|---------|--------|------|
+| Architecture: context, containers, hexagons, security, testing and delivery, deployment | [LikeC4 model](../210-architecture-model/README.md) | Edit the `.c4` files, run `npm run generate`; never edit a block between `likec4-view` markers |
+| Domain lifecycles, use cases, per-CU sequences, ER, process flows | Mermaid fences in the consuming doc | ADR-027 |
+| New PlantUML | — | Not allowed in active docs |
 
-| Do | Do not |
-|----|--------|
-| Add Mermaid fences (` ```mermaid `) in Markdown | Add new `.puml` files for active docs |
-| Put reusable Mermaid sources as `.mmd` next to the doc when helpful | Add new ` ```plantuml ` fences in SAD / ADRs / process docs |
-| Migrate a PlantUML diagram when you edit its consuming doc | Leave dual contradictory diagrams for the same view |
+Legacy PlantUML sources in this directory (`data-model-core.puml`, `Casos de Uso/`, `Secuencias/`,
+`Diagrama de Clases/`, `Diagrama de Estados/`) stay until migrated. They are **not** the source of truth for new
+work. The architecture PlantUML files that the model replaced (`architecture-legacy`, `architecture-target`,
+`deployment-docker`, `backend-package-structure`, `migration-phases`) are archived in
+[`docs/000-archive/200-architecture/204-diagrams/`](../../000-archive/200-architecture/204-diagrams/).
 
-Legacy PlantUML sources in this directory (`.puml`, including `Casos de Uso/`, `Secuencias/`,
-`Diagrama de Clases/`, `Diagrama de Estados/`) stay until migrated. They are **not** the source of
-truth for new work. Archived copies may also live under `docs/000-archive/`.
-
-## Canonical Mermaid views
+## Canonical views
 
 | View | Location |
 |------|----------|
+| Architecture model (14+ views, interactive) | [`210-architecture-model/`](../210-architecture-model/README.md), Pages `/docs/architecture/model/` and `/architecture-model/` |
 | Domain lifecycles (states, sequences, components) | [`CICLO-DE-VIDA.md`](../203-design/CICLO-DE-VIDA.md) |
 | Module ownership / dependencies | [`docs/300-development/MODULE-OWNERSHIP.md`](../../300-development/MODULE-OWNERSHIP.md) |
-| Pages Docs (rendered) | `github-page/app/docs/` |
 
 ## Related
 
+- [ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md)
 - [ADR-027](../202-ADR/ADR-027-mermaid-diagrams.md)
 - [SAD](../201-SAD/sad.md)
