@@ -11,8 +11,8 @@
 
 ## Decisions
 
-D1 Extend R2 and R6 rather than add a rule: same meaning, same baseline format, `baselineIsWellFormed` keeps `R[1-6]`.
-D2 Generate the new entries with `-Darchitecture.baseline=init` once: the other rules are empty, so init writes only the new R2/R6 lines. Later runs use shrink only.
+D1 A new rule R8 with its own baseline file instead of growing R2/R6: `aisdlc ratchet` refuses any line added to an existing baseline, and accepts a new baseline once (that is the sanctioned way to land a rule on legacy code).
+D2 Generate the baseline with `-Darchitecture.baseline=init` once; later runs use shrink only.
 
 ## Riesgos / Trade-offs
 
@@ -20,7 +20,7 @@ A large baseline can read as accepted debt: #2485 and #2486 track its removal an
 
 ## Testing Strategy
 
-`HexagonArchitectureTest` fails with the extended rules and the old baseline (red), passes with the generated baseline (green); `shrink` mode keeps it.
+`LegacyPackageArchitectureTest` fails without a baseline (red) and passes with the generated one (green); `aisdlc ratchet` reports it as a new baseline.
 
 ## Regression Strategy
 

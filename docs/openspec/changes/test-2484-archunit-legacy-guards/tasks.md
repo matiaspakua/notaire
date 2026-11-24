@@ -28,8 +28,8 @@
 
 ## 4. Implementación
 
-- [ ] 4.1 Extend R2 and R6 (red)
-- [ ] 4.2 Generate the first baseline for the new entries
+- [ ] 4.1 Add LegacyPackageArchitectureTest R8 (red)
+- [ ] 4.2 Generate its baseline and register the ratchet in .aisdlc/aisdlc.toml
 - [ ] 4.3 Update code-quality.md and the hexagonal rule
 
 ## 5. Actualizar tests existentes
