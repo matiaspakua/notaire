@@ -1,0 +1,31 @@
+---
+title: "Security scanning"
+---
+flowchart TB
+  subgraph delivery_securityScans["Security scanning"]
+    delivery_securityScans_secrets[["Secret scan<br/><i>security/scan_secrets.py</i>"]]
+    delivery_securityScans_threatModel[["Threat model<br/><i>STRIDE register, Threat Dragon</i>"]]
+    delivery_securityScans_sca[["SCA and images<br/><i>Trivy, Dependabot</i>"]]
+    delivery_securityScans_sast[["SAST<br/><i>Semgrep, CodeQL</i>"]]
+    delivery_securityScans_dast[["DAST<br/><i>OWASP ZAP baseline</i>"]]
+    delivery_securityScans_supplyChain[["Signed images and SBOM<br/><i>cosign keyless, CycloneDX</i>"]]
+  end
+  subgraph delivery_workflows["GitHub Actions workflows"]
+    delivery_workflows_ci["CI<br/><i>ci.yml</i>"]
+    delivery_workflows_securityWf["Security workflows<br/><i>codeql.yml, dast-zap.yml</i>"]
+    delivery_workflows_cd["CD<br/><i>cd.yml</i>"]
+  end
+  delivery_gates_preflight[["Local full preflight<br/><i>workspace/sdlc/preflight.sh --full</i>"]]
+  github_ghcr["GHCR"]
+  delivery_workflows_ci -- "Runs" --> delivery_securityScans_sca
+  delivery_workflows_securityWf -- "Runs CodeQL" --> delivery_securityScans_sast
+  delivery_workflows_securityWf -- "Runs ZAP" --> delivery_securityScans_dast
+  delivery_workflows_cd -- "Signs and attaches SBOM" --> delivery_securityScans_supplyChain
+  delivery_workflows_cd -- "Pushes images" --> github_ghcr
+  delivery_gates_preflight -- "Runs the local security gate" --> delivery_securityScans
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_amber fill:#fef3c7,stroke:#b45309,color:#0f172a
+  classDef c_slate fill:#e2e8f0,stroke:#334155,color:#0f172a
+  class delivery_securityScans_secrets,delivery_securityScans_threatModel,delivery_gates_preflight,delivery_securityScans_sca,delivery_securityScans_sast,delivery_securityScans_dast,delivery_securityScans_supplyChain c_amber
+  class delivery_workflows_ci,delivery_workflows_securityWf,delivery_workflows_cd c_slate
+  class github_ghcr c_primary

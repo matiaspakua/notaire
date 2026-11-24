@@ -1,0 +1,27 @@
+---
+title: "Deployment: production"
+---
+flowchart TB
+  subgraph prod_edge["Public edge"]
+    prod_edge_proxyHost_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
+  end
+  subgraph prod_private["notary-network (private)"]
+    subgraph prod_private_feHost["frontend<br/><i>ghcr.io/matiaspakua/notaire/frontend</i>"]
+      prod_private_feHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph prod_private_beHost["backend<br/><i>ghcr.io/matiaspakua/notaire/backend</i>"]
+      prod_private_beHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph prod_private_pgHost["postgres<br/><i>postgres:16, volume postgres_data</i>"]
+      prod_private_pgHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  prod_private_feHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> prod_private_beHost_backend
+  prod_private_beHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> prod_private_pgHost_database
+  prod_edge_proxyHost_ingress -- "Routes / (UI)" --> prod_private_feHost_frontend
+  prod_edge_proxyHost_ingress -- "Routes /api (+2)" --> prod_private_beHost_backend
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class prod_edge_proxyHost_ingress,prod_private_feHost_frontend,prod_private_beHost_backend c_primary
+  class prod_private_pgHost_database c_indigo
+  linkStyle 3 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

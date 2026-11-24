@@ -1,0 +1,29 @@
+---
+title: "System context"
+---
+flowchart TB
+  notary(["Notary"])
+  clerk(["Clerk"])
+  admin(["Administrator"])
+  operator(["Operator"])
+  github["GitHub"]
+  notaire["Notaire"]
+  observability["Observability and DevSecOps stack"]
+  localModel["Local model server"]
+  notary -- "Manages deeds, protocol and budgets" --> notaire
+  clerk -- "Runs procedures, payments and testimonies" --> notaire
+  admin -- "Administers users, roles, catalogs and audit" --> notaire
+  operator -- "Watches dashboards and alerts" --> observability
+  notaire -. "OTLP traces (+3)" .-> observability
+  observability -- "Analyses backend and frontend (+6)" --> notaire
+  operator -- "Releases and deploys" --> github
+  github -- "Provides backend and frontend images" --> notaire
+  notaire -- "Prompts (planned)" --> localModel
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  classDef c_muted fill:#f8fafc,stroke:#64748b,color:#334155
+  classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
+  class notary,clerk,admin,operator c_green
+  class github c_muted
+  class notaire,observability c_primary
+  class localModel planned

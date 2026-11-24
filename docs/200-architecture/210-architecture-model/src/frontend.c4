@@ -1,0 +1,74 @@
+// Frontend hexagon (ADR-030). frontend/src on main: eslint-suppressions.json is {} (boundary ratchet done).
+
+model {
+  extend notaire.frontend {
+
+    edge = layer "Edge (Next.js server)" {
+      description "Runs in the Node runtime of the standalone container."
+
+      proxy = control "Route proxy" {
+        #security
+        technology "src/proxy.ts"
+        description "Per-request CSP nonce, public-path allow list and admin route guard from the role cookie."
+      }
+      bff = component "API route handlers" {
+        technology "app/api/*/route.ts"
+        description "/api/v1/[...path] forwards to BACKEND_URL with the httpOnly JWT cookie (backend reads cookie or Bearer); /api/otlp, /api/metrics, /api/client-errors."
+      }
+    }
+
+    ui = layer "UI adapters" {
+      description "app/, components/, hooks/: never import lib/api-client or call fetch (ESLint boundaries)."
+
+      pages = component "Pages and components" {
+        technology "React 19, Tailwind, design tokens"
+        description "Dashboard routes per context; FormContainer, FormSection, FormField, FormActions."
+      }
+      hooks = component "Query hooks" {
+        technology "TanStack Query"
+        description "Wrap use cases with caching and invalidation."
+      }
+      i18n = component "i18n" {
+        description "es / en message catalogs."
+      }
+    }
+
+    core = layer "Core" {
+      description "core/<context>: no React, Next, adapters or lib (ESLint boundaries)."
+
+      usecases = component "Use cases and ports" {
+        technology "TypeScript"
+        description "34 contexts; ports.ts per context."
+      }
+      model = component "Domain types and rules" {
+        technology "TypeScript"
+        description "Pure types and rules."
+      }
+    }
+
+    adapters = layer "HTTP adapters" {
+      description "adapters/http/<context> implement the ports with lib/api-client."
+
+      http = component "HTTP port adapters" {
+        technology "lib/api-client"
+        description "35 contexts, mappers between wire DTOs and core types."
+      }
+    }
+
+    composition = component "Composition root" {
+      technology "composition/*.ts"
+      description "Builds the use cases with their adapters; one React provider."
+    }
+  }
+
+  notaire.frontend.ui.pages -> notaire.frontend.ui.hooks "Uses"
+  notaire.frontend.ui.hooks -> notaire.frontend.core.usecases "Calls"
+  notaire.frontend.core.usecases -> notaire.frontend.core.model "Applies"
+  notaire.frontend.adapters.http -[implements]-> notaire.frontend.core.usecases "Implements ports"
+  notaire.frontend.composition -> notaire.frontend.adapters.http "Wires"
+  notaire.frontend.composition -> notaire.frontend.ui.hooks "Provides use cases"
+  notaire.frontend.adapters.http -[http]-> notaire.frontend.edge.bff "fetch /api/v1 (same origin)"
+  notaire.frontend.edge.proxy -> notaire.frontend.ui.pages "Guards and adds CSP"
+  notaire.frontend.edge.bff -[http]-> notaire.backend "Forwards the request and the httpOnly cookie"
+  notaire.frontend.edge.bff -[telemetry]-> observability.otelCollector "Relays browser traces"
+}

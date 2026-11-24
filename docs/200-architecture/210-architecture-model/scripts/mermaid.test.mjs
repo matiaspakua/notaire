@@ -78,9 +78,12 @@ test("nodes with children become nested subgraphs", () => {
   assert.match(out, /subgraph s\["System"\]\n {4}subgraph s_c\["Container"\]\n {6}s_c_x\["X"\]\n {4}end\n {2}end/);
 });
 
-test("dashed and dotted lines use dotted arrows", () => {
-  const out = toMermaid(elementView([node("a"), node("b")], [edge("a", "b", "x", { line: "dashed" })]));
+test("dotted lines draw dotted, the default dashed line draws solid", () => {
+  const out = toMermaid(
+    elementView([node("a"), node("b")], [edge("a", "b", "x", { line: "dotted" }), edge("b", "a", "y", { line: "dashed" })]),
+  );
   assert.match(out, /a -. "x" .-> b/);
+  assert.match(out, /b -- "y" --> a/);
 });
 
 test("finding, debt and planned tags get their own classes", () => {
@@ -90,8 +93,7 @@ test("finding, debt and planned tags get their own classes", () => {
       [],
     ),
   );
-  assert.match(out, /class f finding/);
-  assert.match(out, /class d finding/);
+  assert.match(out, /class f,d finding/);
   assert.match(out, /class p planned/);
   assert.match(out, /classDef finding /);
 });

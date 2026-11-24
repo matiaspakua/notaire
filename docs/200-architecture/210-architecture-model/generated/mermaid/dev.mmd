@@ -1,0 +1,57 @@
+---
+title: "Deployment: development"
+---
+flowchart TB
+  subgraph dev_appNet["notary-network"]
+    subgraph dev_appNet_pgadminHost["notary-pgadmin :5050"]
+      dev_appNet_pgadminHost_pgadmin["pgAdmin<br/><i>pgAdmin 4</i>"]
+    end
+    subgraph dev_appNet_frontendHost["notaire-frontend :3000"]
+      dev_appNet_frontendHost_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+    end
+    subgraph dev_appNet_backendHost["notary-backend :8080"]
+      dev_appNet_backendHost_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+    end
+    subgraph dev_appNet_dbHost["notary-postgres :5432<br/><i>postgres:16.15, volume postgres_data</i>"]
+      dev_appNet_dbHost_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+    end
+  end
+  subgraph dev_opsNet["devsecops-network"]
+    subgraph dev_opsNet_grafanaHost["grafana"]
+      dev_opsNet_grafanaHost_grafana["Grafana<br/><i>Grafana 12.3</i>"]
+    end
+    subgraph dev_opsNet_promHost["prometheus :9090"]
+      dev_opsNet_promHost_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+      dev_opsNet_promHost_alertmanager["Alertmanager<br/><i>Alertmanager 0.34</i>"]
+    end
+    subgraph dev_opsNet_logsHost["loki :3100 + promtail"]
+      dev_opsNet_logsHost_loki["Loki<br/><i>Loki 3.7 + Promtail</i>"]
+    end
+    subgraph dev_opsNet_exportersHost["exporters"]
+      dev_opsNet_exportersHost_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
+    end
+    subgraph dev_opsNet_collectorHost["otel-collector"]
+      dev_opsNet_collectorHost_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+    end
+    subgraph dev_opsNet_tracesHost["tempo"]
+      dev_opsNet_tracesHost_tempo["Tempo<br/><i>Tempo 2.10</i>"]
+    end
+  end
+  dev_appNet_frontendHost_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie (+2)" --> dev_appNet_backendHost_backend
+  dev_appNet_backendHost_backend -- "Reads and writes, Flyway migrates on start (+3)" --> dev_appNet_dbHost_database
+  dev_appNet_pgadminHost_pgadmin -- "Inspects (dev only)" --> dev_appNet_dbHost_database
+  dev_opsNet_promHost_prometheus -- "Fires alerts" --> dev_opsNet_promHost_alertmanager
+  dev_opsNet_collectorHost_otelCollector -. "Exports traces" .-> dev_opsNet_tracesHost_tempo
+  dev_opsNet_promHost_prometheus -. "Scrapes" .-> dev_opsNet_exportersHost_exporters
+  dev_opsNet_grafanaHost_grafana -- "Queries metrics" --> dev_opsNet_promHost_prometheus
+  dev_opsNet_grafanaHost_grafana -- "Queries logs" --> dev_opsNet_logsHost_loki
+  dev_opsNet_grafanaHost_grafana -- "Queries traces" --> dev_opsNet_tracesHost_tempo
+  dev_appNet_frontendHost_frontend -. "Browser traces via /api/otlp (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /api/metrics" .-> dev_appNet_frontendHost_frontend
+  dev_appNet_backendHost_backend -. "OTLP traces (+1)" .-> dev_opsNet_collectorHost_otelCollector
+  dev_opsNet_promHost_prometheus -. "Scrapes /actuator/prometheus (+2)" .-> dev_appNet_backendHost_backend
+  dev_opsNet_exportersHost_exporters -- "Reads pg_stat (+1)" --> dev_appNet_dbHost_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  class dev_appNet_pgadminHost_pgadmin,dev_opsNet_grafanaHost_grafana,dev_opsNet_promHost_prometheus,dev_opsNet_logsHost_loki,dev_opsNet_promHost_alertmanager,dev_opsNet_exportersHost_exporters,dev_appNet_frontendHost_frontend,dev_appNet_backendHost_backend,dev_opsNet_collectorHost_otelCollector,dev_opsNet_tracesHost_tempo c_primary
+  class dev_appNet_dbHost_database c_indigo

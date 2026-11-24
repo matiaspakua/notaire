@@ -1,0 +1,160 @@
+// Backend hexagon (ADR-030). Root package com.licensis.notaire.
+// Measured on main @ 68321620: 24 web contexts, 24 persistence contexts, 24 use-case slices, 19 domain contexts,
+// ArchUnit hexagon baseline empty. Debt found while modelling is tagged #debt and linked to its Issue.
+
+model {
+  extend notaire.backend {
+
+    inbound = layer "Inbound adapters" {
+      description "adapter.in.web.<context>: thin controllers, web DTOs and mappers. Call inbound ports only (R1)."
+
+      web = component "REST controllers" {
+        technology "Spring MVC"
+        description "24 contexts: audit, budget, concept, copy, deed, document, folio, history, identification, item, management, mfa, notebook, payment, person, procedure, property, registrationdraft, report, substitution, support, testimony, user, workflow."
+      }
+      errors = component "Global exception handler" {
+        technology "@RestControllerAdvice"
+        description "config.GlobalExceptionHandler maps domain exceptions (exception.*) to the error contract; no stack traces leak."
+      }
+      openapi = component "OpenAPI contract" {
+        technology "springdoc"
+        description "contracts/ OpenAPI export; openapi-contract.yml fails on drift."
+      }
+    }
+
+    security = layer "Security filter chain" {
+      #security
+      description "config.SecurityAndCorsConfig: stateless chains for /actuator and /api."
+
+      jwtFilter = control "JWT authentication filter" {
+        technology "JwtAuthenticationFilter, JwtTokenService"
+        description "Resolves the token from the httpOnly cookie or the Bearer header (RequestTokenResolver), checks the signature, expiry and revocation list."
+      }
+      rateLimit = control "API rate limit" {
+        technology "ApiRateLimitFilter"
+        description "Per-user request quota; windows stored in memory or JPA (JpaApiRateWindowStore)."
+      }
+      moduleAuthz = control "Role-module authorization" {
+        technology "RoleModuleAuthorizationFilter"
+        description "Maps each API path to a module and checks the role grant (ADR-029 object-level rules in use cases)."
+      }
+      mfaGate = control "MFA login gate" {
+        technology "TokenLoginMfaGate, TOTP"
+        description "Admins and notaries complete a TOTP challenge before a full token is issued (#1640, ADR-032)."
+      }
+      lockout = control "Login lockout" {
+        technology "LoginAttemptService"
+        description "Locks an account after repeated failures (seq-001)."
+      }
+      csrf = control "CSRF double submit" {
+        technology "Spring Security CSRF"
+        description "Cookie-based browser sessions send the XSRF token header."
+      }
+    }
+
+    application = layer "Application" {
+      description "application.port.in / usecase / port.out. @Service + @Transactional only (R2); slices acyclic (R7)."
+
+      portsIn = component "Inbound ports" {
+        description "<Verb><Noun>UseCase interfaces per context; commands and results are records."
+      }
+      useCases = component "Use cases" {
+        technology "@Service @Transactional"
+        description "24 slices. Own the transaction and the business orchestration."
+      }
+      portsOut = component "Outbound ports" {
+        description "Repository, report, clock, cipher and random ports in domain terms."
+      }
+      legacyDtoPorts = component "Ports speaking legacy web DTOs" {
+        #debt #finding
+        description "40 files in 8 contexts import com.licensis.notaire.dto (testimony, procedure, management, history, concept, audit, registrationdraft, item). #2485; R2 does not guard it yet (#2484)."
+        link https://github.com/matiaspakua/notaire/issues/2485
+      }
+    }
+
+    domain = layer "Domain" {
+      description "domain.<context>: plain Java, JDK only (R3)."
+
+      model = component "Domain model" {
+        technology "Java records and classes"
+        description "19 contexts with a pure model."
+      }
+      missingDomain = component "Contexts without a domain model" {
+        #debt #finding
+        description "audit, budget, item, report, catalog, documentcosttemplate: ports carry view records and the rules sit in adapters. #2486."
+        link https://github.com/matiaspakua/notaire/issues/2486
+      }
+    }
+
+    outbound = layer "Outbound adapters" {
+      description "adapter.out.*: implement outbound ports (R4: never know inbound adapters)."
+
+      persistence = component "Persistence adapters" {
+        technology "Spring Data JPA, Hibernate 7"
+        description "adapter.out.persistence.<context>: 24 contexts, mappers and port adapters."
+      }
+      legacyJpa = component "Legacy JPA model" {
+        #debt #legacy #finding
+        technology "com.licensis.notaire.business, .repository"
+        description "36 @Entity classes (47 legacy model classes) and 36 Spring Data repositories still outside adapter.out.persistence. #2486."
+        link https://github.com/matiaspakua/notaire/issues/2486
+      }
+      reports = component "PDF reports" {
+        technology "PDFBox"
+        description "adapter.out.pdf + adapter.out.report: index book, sworn statements, registration drafts, testimony copies."
+      }
+      crypto = component "Security adapters" {
+        technology "AES-GCM, SecureRandom, Clock"
+        description "adapter.out.security: encrypts TOTP secrets at rest; deterministic clock and random for tests."
+      }
+    }
+
+    crosscutting = layer "Cross-cutting" {
+      description "Spring wiring and aspects (composition root)."
+
+      config = component "Composition root" {
+        technology "config.*"
+        description "Spring configuration, security chains, OpenAPI, caches, production credential guard."
+      }
+      audit = component "Audit aspect" {
+        technology "Spring AOP"
+        description "audit.AuditAspect records mutations and personal-data reads (CU73)."
+      }
+      observe = component "Observability" {
+        technology "Micrometer, OTLP, logback JSON"
+        description "observability.*: request logging, health, release info, metrics."
+      }
+      flyway = component "Flyway migrations" {
+        technology "Flyway"
+        description "db/migration V{n}__*.sql: the only schema source."
+      }
+    }
+  }
+
+  // Request path through the hexagon
+  notaire.backend.security.jwtFilter -> notaire.backend.security.rateLimit "Authenticated request"
+  notaire.backend.security.rateLimit -> notaire.backend.security.moduleAuthz "Within quota"
+  notaire.backend.security.moduleAuthz -> notaire.backend.inbound.web "Granted module"
+  notaire.backend.security.mfaGate -> notaire.backend.application.portsIn "Login and MFA use cases"
+  notaire.backend.security.lockout -> notaire.backend.application.portsIn "Records failed logins"
+  notaire.backend.inbound.web -> notaire.backend.application.portsIn "Calls"
+  notaire.backend.inbound.web -> notaire.backend.inbound.errors "Exceptions mapped by"
+  notaire.backend.application.useCases -[implements]-> notaire.backend.application.portsIn "Implements"
+  notaire.backend.application.useCases -> notaire.backend.domain.model "Applies rules of"
+  notaire.backend.application.useCases -> notaire.backend.application.portsOut "Uses"
+  notaire.backend.outbound.persistence -[implements]-> notaire.backend.application.portsOut "Implements"
+  notaire.backend.outbound.reports -[implements]-> notaire.backend.application.portsOut "Implements"
+  notaire.backend.outbound.crypto -[implements]-> notaire.backend.application.portsOut "Implements"
+  notaire.backend.outbound.persistence -> notaire.backend.domain.model "Maps to and from"
+  notaire.backend.outbound.persistence -> notaire.backend.outbound.legacyJpa "Still uses entities and repositories of"
+  notaire.backend.application.legacyDtoPorts -> notaire.backend.application.portsIn "Part of"
+  notaire.backend.outbound.persistence -> notaire.backend.domain.missingDomain "Holds the rules of"
+  notaire.backend.outbound.legacyJpa -[sql]-> notaire.database "Hibernate"
+  notaire.backend.crosscutting.flyway -[sql]-> notaire.database "Migrates on start"
+  notaire.backend.crosscutting.audit -> notaire.backend.outbound.legacyJpa "Writes AuditRecord"
+  notaire.backend.crosscutting.config -> notaire.backend.security "Builds"
+  notaire.backend.crosscutting.observe -[telemetry]-> observability.otelCollector "Traces"
+
+  notaire.frontend -[http]-> notaire.backend.security.jwtFilter "Every /api/v1 call"
+  observability.prometheus -[telemetry]-> notaire.backend.crosscutting.observe "Scrapes /actuator/prometheus"
+}
