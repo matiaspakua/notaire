@@ -14,12 +14,12 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Link | Reference | Status |
 |------|-----------|--------|
-| Issue | #<!-- number --> | <!-- open / in-progress / closed --> |
+| Issue | #2483 | in-progress |
 | Use Case | CU76 — Quality Assurance and Testing Infrastructure | exists |
 | Specification | `docs/openspec/changes/docs-2483-likec4-architecture-model/` | passed |
 | Branch | `docs/2483_likec4_architecture_model` | created |
-| Tasks | `tasks.md` | in progress |
-| Commits | pending | pending |
+| Tasks | `tasks.md` | implementation done |
+| Commits | 6bb60324 (Gate 1), 6d2ea527 (red), ed10bed4, 93ce8ff0, d140403e, 245a2d23, 955e75a6, 3d224eb2, fbbfeb79, 624c34c3 | done |
 | Pull Request | pending | pending |
 | CI run | pending | pending |
 | Merge commit | pending | pending |
@@ -35,11 +35,11 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| The model validates | test_architecture_model / mermaid.test.mjs / architecture-model.test.tsx | pending |
-| Findings carry their Issue | test_architecture_model / mermaid.test.mjs / architecture-model.test.tsx | pending |
-| A hand edit of a generated diagram fails | test_architecture_model / mermaid.test.mjs / architecture-model.test.tsx | pending |
-| A sequence view becomes a sequence diagram | test_architecture_model / mermaid.test.mjs / architecture-model.test.tsx | pending |
-| A view links into the interactive model | test_architecture_model / mermaid.test.mjs / architecture-model.test.tsx | pending |
+| The model validates | pages-ci `npm run validate`; `likec4 validate` run locally (8 files, 0 errors) | passed |
+| Findings carry their Issue | `test_every_finding_links_an_issue`; Vitest `lists the findings with their Issue` | passed |
+| A hand edit of a generated diagram fails | `test_docs_embed_the_required_views_verbatim`, `npm run check` | passed |
+| A sequence view becomes a sequence diagram | `mermaid.test.mjs`: `a sequence dynamic view becomes a numbered sequence diagram with returns` | passed |
+| A view links into the interactive model | Vitest `renders a view with its title, description and an interactive link`; Chromium check of `#/view/containers/` | passed |
 
 ## Permanent documentation updated
 
@@ -48,16 +48,16 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Document | Updated | Commit |
 |----------|---------|--------|
-| `docs/200-architecture/210-architecture-model/` | no | pending |
-| `docs/200-architecture/202-ADR/ADR-033-likec4-architecture-model.md` | no | pending |
-| `docs/200-architecture/201-SAD/sad.md` | no | pending |
-| `docs/200-architecture/206-security/README.md` | no | pending |
-| `docs/200-architecture/209-deployment/README.md` | no | pending |
-| `docs/200-architecture/207-monitoring/README.md` | no | pending |
-| `docs/300-development/303-testing/TEST-PLAN.md` | no | pending |
-| `docs/200-architecture/204-diagrams/README.md` | no | pending |
-| `.claude/rules/hooks.md` | no | pending |
-| `.claude/rules/refactoring.md` | no | pending |
+| `docs/200-architecture/210-architecture-model/` | yes | ed10bed4 |
+| `docs/200-architecture/202-ADR/ADR-033-likec4-architecture-model.md` | yes | d140403e |
+| `docs/200-architecture/201-SAD/sad.md` | yes | 245a2d23 |
+| `docs/200-architecture/206-security/README.md` | yes | 245a2d23 |
+| `docs/200-architecture/209-deployment/README.md` | yes | 245a2d23 |
+| `docs/200-architecture/207-monitoring/README.md` | yes | 245a2d23 |
+| `docs/300-development/303-testing/TEST-PLAN.md` | yes | 245a2d23 |
+| `docs/200-architecture/204-diagrams/README.md` | yes | 245a2d23 |
+| `.claude/rules/hooks.md` | yes | 955e75a6 |
+| `.claude/rules/refactoring.md` | yes | 955e75a6 |
 | `github-page/` | no | pending |
 
 ## Gate log
