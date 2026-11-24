@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| The search API returns an error | test_generate_github_page_metrics | pending |
-| Tests do not reach GitHub | test_generate_github_page_metrics | pending |
+| The search API returns an error | test_generate_github_page_metrics | passing |
+| Tests do not reach GitHub | test_generate_github_page_metrics | passing |
 
 ## Permanent documentation updated
 
