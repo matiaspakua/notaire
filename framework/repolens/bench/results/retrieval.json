@@ -12,7 +12,7 @@
    "recall@10": 0.182,
    "recall@20": 0.28,
    "mrr": 0.136,
-   "latency_ms": 1132.1,
+   "latency_ms": 1147.145,
    "output_bytes": 209184.909,
    "output_bytes_tail": 209184.909
   },
@@ -21,7 +21,7 @@
    "recall@10": 0.815,
    "recall@20": 0.896,
    "mrr": 0.763,
-   "latency_ms": 23.6,
+   "latency_ms": 25.973,
    "output_bytes": 2336.091,
    "output_bytes_tail": 3356.182
   },
@@ -30,7 +30,7 @@
    "recall@10": 0.904,
    "recall@20": 0.917,
    "mrr": 0.788,
-   "latency_ms": 27.309,
+   "latency_ms": 27.709,
    "output_bytes": 2354.273,
    "output_bytes_tail": 3357.091
   }
@@ -40,7 +40,7 @@
    "task": "totp-verify",
    "category": "lexical",
    "arm": "grep",
-   "latency_ms": 875.0,
+   "latency_ms": 961.2,
    "output_bytes": 60376,
    "output_bytes_tail": 60376,
    "files": [
@@ -74,7 +74,7 @@
    "task": "totp-verify",
    "category": "lexical",
    "arm": "hybrid",
-   "latency_ms": 61.2,
+   "latency_ms": 87.8,
    "output_bytes": 2318,
    "output_bytes_tail": 3415,
    "files": [
@@ -108,7 +108,7 @@
    "task": "totp-verify",
    "category": "lexical",
    "arm": "graph",
-   "latency_ms": 22.0,
+   "latency_ms": 23.1,
    "output_bytes": 2425,
    "output_bytes_tail": 3408,
    "files": [
@@ -142,7 +142,7 @@
    "task": "mfa-policy",
    "category": "lexical",
    "arm": "grep",
-   "latency_ms": 999.0,
+   "latency_ms": 1044.8,
    "output_bytes": 75118,
    "output_bytes_tail": 75118,
    "files": [
@@ -210,7 +210,7 @@
    "task": "mfa-policy",
    "category": "lexical",
    "arm": "graph",
-   "latency_ms": 20.0,
+   "latency_ms": 20.6,
    "output_bytes": 2114,
    "output_bytes_tail": 3185,
    "files": [
@@ -244,7 +244,7 @@
    "task": "mfa-enroll-cross-stack",
    "category": "cross-stack",
    "arm": "grep",
-   "latency_ms": 1233.7,
+   "latency_ms": 1242.9,
    "output_bytes": 173645,
    "output_bytes_tail": 173645,
    "files": [
@@ -278,7 +278,7 @@
    "task": "mfa-enroll-cross-stack",
    "category": "cross-stack",
    "arm": "hybrid",
-   "latency_ms": 17.8,
+   "latency_ms": 19.4,
    "output_bytes": 2232,
    "output_bytes_tail": 3541,
    "files": [
@@ -312,7 +312,7 @@
    "task": "mfa-enroll-cross-stack",
    "category": "cross-stack",
    "arm": "graph",
-   "latency_ms": 26.7,
+   "latency_ms": 27.2,
    "output_bytes": 2223,
    "output_bytes_tail": 3302,
    "files": [
@@ -346,7 +346,7 @@
    "task": "person-create",
    "category": "cross-stack",
    "arm": "grep",
-   "latency_ms": 1970.5,
+   "latency_ms": 1966.2,
    "output_bytes": 550437,
    "output_bytes_tail": 550437,
    "files": [
@@ -380,7 +380,7 @@
    "task": "person-create",
    "category": "cross-stack",
    "arm": "hybrid",
-   "latency_ms": 31.5,
+   "latency_ms": 32.6,
    "output_bytes": 1993,
    "output_bytes_tail": 2975,
    "files": [
@@ -414,7 +414,7 @@
    "task": "person-create",
    "category": "cross-stack",
    "arm": "graph",
-   "latency_ms": 39.0,
+   "latency_ms": 38.7,
    "output_bytes": 2087,
    "output_bytes_tail": 3137,
    "files": [
@@ -448,7 +448,7 @@
    "task": "mfa-table",
    "category": "multi-hop",
    "arm": "grep",
-   "latency_ms": 1106.6,
+   "latency_ms": 1095.7,
    "output_bytes": 97400,
    "output_bytes_tail": 97400,
    "files": [
@@ -482,7 +482,7 @@
    "task": "mfa-table",
    "category": "multi-hop",
    "arm": "hybrid",
-   "latency_ms": 13.9,
+   "latency_ms": 13.7,
    "output_bytes": 2260,
    "output_bytes_tail": 3159,
    "files": [
@@ -515,7 +515,7 @@
    "task": "mfa-table",
    "category": "multi-hop",
    "arm": "graph",
-   "latency_ms": 22.9,
+   "latency_ms": 23.1,
    "output_bytes": 1952,
    "output_bytes_tail": 2976,
    "files": [
@@ -547,7 +547,7 @@
    "task": "folio-slice",
    "category": "multi-hop",
    "arm": "grep",
-   "latency_ms": 1435.5,
+   "latency_ms": 1440.4,
    "output_bytes": 437012,
    "output_bytes_tail": 437012,
    "files": [
@@ -581,7 +581,7 @@
    "task": "folio-slice",
    "category": "multi-hop",
    "arm": "hybrid",
-   "latency_ms": 24.7,
+   "latency_ms": 23.9,
    "output_bytes": 2300,
    "output_bytes_tail": 3504,
    "files": [
@@ -615,7 +615,7 @@
    "task": "folio-slice",
    "category": "multi-hop",
    "arm": "graph",
-   "latency_ms": 30.4,
+   "latency_ms": 31.4,
    "output_bytes": 2370,
    "output_bytes_tail": 3467,
    "files": [
@@ -649,7 +649,7 @@
    "task": "storeport-impact",
    "category": "impact",
    "arm": "grep",
-   "latency_ms": 778.0,
+   "latency_ms": 778.8,
    "output_bytes": 215811,
    "output_bytes_tail": 215811,
    "files": [
@@ -683,7 +683,7 @@
    "task": "storeport-impact",
    "category": "impact",
    "arm": "hybrid",
-   "latency_ms": 29.3,
+   "latency_ms": 29.0,
    "output_bytes": 2596,
    "output_bytes_tail": 3855,
    "files": [
@@ -717,7 +717,7 @@
    "task": "storeport-impact",
    "category": "impact",
    "arm": "graph",
-   "latency_ms": 37.8,
+   "latency_ms": 38.7,
    "output_bytes": 2699,
    "output_bytes_tail": 3821,
    "files": [
@@ -751,7 +751,7 @@
    "task": "enroll-tests",
    "category": "tests",
    "arm": "grep",
-   "latency_ms": 554.3,
+   "latency_ms": 551.5,
    "output_bytes": 14621,
    "output_bytes_tail": 14621,
    "files": [
@@ -785,7 +785,7 @@
    "task": "enroll-tests",
    "category": "tests",
    "arm": "hybrid",
-   "latency_ms": 6.8,
+   "latency_ms": 7.1,
    "output_bytes": 2603,
    "output_bytes_tail": 3528,
    "files": [
@@ -819,7 +819,7 @@
    "task": "enroll-tests",
    "category": "tests",
    "arm": "graph",
-   "latency_ms": 15.6,
+   "latency_ms": 16.6,
    "output_bytes": 2677,
    "output_bytes_tail": 3746,
    "files": [
@@ -853,7 +853,7 @@
    "task": "folio-api-tests",
    "category": "tests",
    "arm": "grep",
-   "latency_ms": 1062.0,
+   "latency_ms": 1078.6,
    "output_bytes": 345378,
    "output_bytes_tail": 345378,
    "files": [
@@ -887,7 +887,7 @@
    "task": "folio-api-tests",
    "category": "tests",
    "arm": "hybrid",
-   "latency_ms": 12.1,
+   "latency_ms": 12.2,
    "output_bytes": 2340,
    "output_bytes_tail": 3232,
    "files": [
@@ -921,7 +921,7 @@
    "task": "folio-api-tests",
    "category": "tests",
    "arm": "graph",
-   "latency_ms": 20.5,
+   "latency_ms": 21.2,
    "output_bytes": 2478,
    "output_bytes_tail": 3149,
    "files": [
@@ -955,7 +955,7 @@
    "task": "hex-adr",
    "category": "docs",
    "arm": "grep",
-   "latency_ms": 1298.1,
+   "latency_ms": 1310.1,
    "output_bytes": 162267,
    "output_bytes_tail": 162267,
    "files": [
@@ -989,7 +989,7 @@
    "task": "hex-adr",
    "category": "docs",
    "arm": "hybrid",
-   "latency_ms": 17.4,
+   "latency_ms": 18.0,
    "output_bytes": 2321,
    "output_bytes_tail": 3130,
    "files": [
@@ -1023,7 +1023,7 @@
    "task": "hex-adr",
    "category": "docs",
    "arm": "graph",
-   "latency_ms": 26.4,
+   "latency_ms": 25.8,
    "output_bytes": 2436,
    "output_bytes_tail": 3363,
    "files": [
@@ -1057,7 +1057,7 @@
    "task": "mfa-docs",
    "category": "docs",
    "arm": "grep",
-   "latency_ms": 1140.4,
+   "latency_ms": 1148.4,
    "output_bytes": 168969,
    "output_bytes_tail": 168969,
    "files": [
@@ -1091,7 +1091,7 @@
    "task": "mfa-docs",
    "category": "docs",
    "arm": "hybrid",
-   "latency_ms": 32.8,
+   "latency_ms": 29.9,
    "output_bytes": 2445,
    "output_bytes_tail": 3309,
    "files": [
@@ -1125,7 +1125,7 @@
    "task": "mfa-docs",
    "category": "docs",
    "arm": "graph",
-   "latency_ms": 39.1,
+   "latency_ms": 38.4,
    "output_bytes": 2436,
    "output_bytes_tail": 3374,
    "files": [
