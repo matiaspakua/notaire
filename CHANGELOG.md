@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.1](https://github.com/matiaspakua/notaire/compare/v0.11.0...v0.11.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* **pages:** release history shows the 0.11.0 release (Refs [#2473](https://github.com/matiaspakua/notaire/issues/2473)) ([5645a6a](https://github.com/matiaspakua/notaire/commit/5645a6a828d084fd838acd70ddf699ead21ef92d))
+* **release:** v0.11 factory evidence train and the next v0.12 kit extraction train (Refs [#2473](https://github.com/matiaspakua/notaire/issues/2473)) ([8ed6943](https://github.com/matiaspakua/notaire/commit/8ed6943a05e970f3e1609a9df04e14ceed1dae81))
+
 ## [0.11.0](https://github.com/matiaspakua/notaire/compare/v0.10.0...v0.11.0) (2026-11-23)
 
 
