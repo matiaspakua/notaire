@@ -15,6 +15,21 @@ A high-risk PR (authentication, Flyway on existing rows, a REST contract others 
 server-backed suites of its groups with `PREFLIGHT_FULL=1 git push`. Everything a PR skipped runs before the
 release, and again in the version-tag CI.
 
+Which groups a branch touches comes from `workspace/sdlc/preflight_affected.py --base origin/main`:
+
+| Changed path | Groups |
+|--------------|--------|
+| `backend-api/`, `contracts/` | backend, stack |
+| root `pom.xml` | backend, stack |
+| `frontend/` | frontend, stack |
+| `testing/` | testing, stack |
+| `infra/`, `workspace/stack/`, `docker-compose*`, a root `Dockerfile` | stack (server-backed: `--full`, `--all`) |
+| `github-page/`, `docs/`, `CHANGELOG.md`, `release/` | pages |
+| `framework/ai-sdlc/`, `local-ai/`, `.aisdlc/` | kit (`framework/` also runs the extraction boundaries with `--full`) |
+| `workspace/sdlc/`, `.githooks/`, `.claude/` | none: the process self-tests, which always run, cover them |
+
+No path selects every group (#2497); only a missing comparison base does, and `--all` does on request.
+
 `preflight.sh` records each pass in `$(git rev-parse --git-common-dir)/preflight-pass/<sha>.<mode>` when the tree is
 clean; the hook accepts a pass of the same or a more complete mode (pr < full < all), so a run by hand is never
 repeated on push.

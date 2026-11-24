@@ -11,30 +11,24 @@ import argparse
 import subprocess
 import sys
 
+# Build files select the groups they can break (#2497): compose files, a root Dockerfile and the stack scripts select
+# only the server-backed suites, the root POM also the backend build. No path selects every group; `--all` before a
+# release runs them all (#2493).
 GROUPS = {
-    "backend": ("backend-api/", "contracts/"),
+    "backend": ("backend-api/", "contracts/", "pom.xml"),
     "frontend": ("frontend/",),
     "testing": ("testing/",),
     "pages": ("github-page/", "docs/", "CHANGELOG.md", "release/", "workspace/release/"),
-    "stack": ("backend-api/", "frontend/", "testing/", "infra/", "contracts/"),
+    "stack": ("backend-api/", "frontend/", "testing/", "infra/", "contracts/", "workspace/stack/", "docker-compose",
+              "Dockerfile", "pom.xml"),
     "kit": ("framework/ai-sdlc/", "local-ai/", ".aisdlc/"),
     "boundaries": ("framework/",),
 }
 ALL = frozenset(GROUPS)
 
-# Shared infrastructure every suite depends on: a change here runs everything.
-# The build and the stack change what every suite runs against. The gate scripts themselves do not: the process
-# self-tests cover them, and `preflight.sh --all` before a release runs everything (#2493).
-FORCE_ALL = ("workspace/stack/", "pom.xml")
-
-
-def _forces_all(path: str) -> bool:
-    name = path.rsplit("/", 1)[-1]
-    return (path.startswith(FORCE_ALL) or name.startswith("docker-compose") or name.startswith("Dockerfile"))
-
 
 def groups(paths: list[str] | None) -> frozenset[str] | set[str]:
-    if paths is None or any(_forces_all(p) for p in paths):
+    if paths is None:
         return ALL
     return {name for name, prefixes in GROUPS.items() if any(p.startswith(prefixes) for p in paths)}
 
