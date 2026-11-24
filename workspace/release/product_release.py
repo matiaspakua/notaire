@@ -66,6 +66,8 @@ RELEASE_TRAINS = (
     "v0.8 · Observable self-managing factory (2027-03)",
     "v0.9 · Factory control plane (2027-03)",
     "v0.10 · Factory production line & delivery gates (2027-03)",
+    "v0.11 · Factory evidence & kit-only SDLC (2027-03)",
+    "v0.12 · Factory kit extraction (2027-03)",
     "v1.0 · GA: legacy-free (2027-04)",
 )
 

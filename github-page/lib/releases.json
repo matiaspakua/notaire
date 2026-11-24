@@ -1,13 +1,20 @@
 {
-  "productVersion": "0.10.0",
-  "train": "v0.10 · Factory production line & delivery gates (2027-03)",
-  "tag": "v0.10.0",
+  "productVersion": "0.11.0",
+  "train": "v0.11 · Factory evidence & kit-only SDLC (2027-03)",
+  "tag": "v0.11.0",
   "components": {
-    "backend": "0.10.0",
-    "frontend": "0.10.0",
+    "backend": "0.11.0",
+    "frontend": "0.11.0",
     "databaseSchema": "55"
   },
   "releases": [
+    {
+      "version": "0.11.0",
+      "date": "2026-11-23",
+      "tag": "v0.11.0",
+      "train": "v0.11 · Factory evidence & kit-only SDLC (2027-03)",
+      "url": "https://github.com/matiaspakua/notaire/releases/tag/v0.11.0"
+    },
     {
       "version": "0.10.0",
       "date": "2026-11-23",

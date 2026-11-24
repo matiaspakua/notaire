@@ -85,6 +85,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # #2473: the committed snapshots (releases.json, testing inventory, RepoLens bench) lag a
+      # release; regenerate them from the tree before the tests read them.
+      - name: Regenerate Pages data from the tree
+        run: npm run prebuild
+
       - name: Component tests (Vitest)
         run: npm test
 

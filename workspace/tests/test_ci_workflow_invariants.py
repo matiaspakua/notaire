@@ -16,6 +16,7 @@ python3 workspace/tests/test_ci_workflow_invariants.py
 """
 import os
 import unittest
+from pathlib import Path
 
 import yaml
 
@@ -346,6 +347,13 @@ class PlaywrightShardInvariantsTest(unittest.TestCase):
         script = "\n".join(s.get("run", "") for s in steps if isinstance(s.get("run"), str))
         self.assertIn("needs.e2e-tests.result", script)
 
+class PagesCiRegeneratesDataTest(unittest.TestCase):
+    """#2473: the committed releases.json lagged the release; vitest ran before the prebuild generators."""
+
+    def test_pages_ci_runs_the_prebuild_generators_before_vitest(self):
+        text = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "pages-ci.yml").read_text(encoding="utf-8")
+        self.assertIn("npm run prebuild", text)
+        self.assertLess(text.index("npm run prebuild"), text.index("run: npm test"))
 
 if __name__ == "__main__":
     unittest.main()
