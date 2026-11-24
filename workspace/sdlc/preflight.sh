@@ -251,15 +251,11 @@ if touches kit; then
 else
     not_affected "kit self-tests"
 fi
+# One process per test file, in parallel (#2502): same discover semantics, a fraction of the wall time.
 run "process script self-tests" bash -c \
-    "python3 -m unittest discover -s workspace/tests \
-     && python3 -m unittest workspace.sdlc.test_milestone_policy \
-     && python3 -m unittest discover -s contracts/tests \
-     && python3 -m unittest discover -s security/tests \
-     && python3 -m unittest discover -s infra/tests \
-     && python3 -m unittest discover -s testing/tests \
-     && python3 -m unittest discover -s docs/tests \
-     && python3 -m unittest discover -s backend-api/tools/tests"
+    "python3 workspace/sdlc/run_self_tests.py workspace/tests contracts/tests security/tests infra/tests \
+         testing/tests docs/tests backend-api/tools/tests \
+     && python3 -m unittest workspace.sdlc.test_milestone_policy"
 
 # repolens module gate (#2298): lint, tests with its coverage floor, wheel build and smoke search, when the
 # branch touches it. Its stack (numpy, scipy, tree-sitter, fastembed, mcp) is heavier than the stdlib-only
