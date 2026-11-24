@@ -176,6 +176,24 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
             self.assertTrue(out.is_file(), f"generator did not write {out}")
             return json.loads(out.read_text(encoding="utf-8"))
 
+    # #2475: the Pages showed a 70% / 25% floor, an 80% target and "4 AI tools" typed by hand.
+    def test_coverage_floors_come_from_the_build_files(self) -> None:
+        import re
+
+        data = self._run(live={})
+        pom = (REPO_ROOT / "backend-api" / "pom.xml").read_text(encoding="utf-8")
+        line, branch = (round(float(m) * 100) for m in re.findall(r"<minimum>(0\.\d+)</minimum>", pom)[:2])
+        self.assertEqual({"backendLine": line, "backendBranch": branch}, {
+            k: data["coverageFloors"][k] for k in ("backendLine", "backendBranch")})
+        self.assertGreaterEqual(data["coverageFloors"]["frontendLines"], 80)
+        self.assertEqual(90, data["coverageTarget"])
+
+    def test_ai_tools_are_the_harnesses_configured_in_the_repository(self) -> None:
+        data = self._run(live={})
+        self.assertIn("Claude Code", data["aiToolNames"])
+        self.assertIn("Junie", data["aiToolNames"])
+        self.assertEqual(len(data["aiToolNames"]), data["aiTools"])
+
     def test_missing_snapshot_and_missing_live_do_not_publish_zero_coverage(self) -> None:
         data = self._run(live={})
         coverage = data["coverage"]
