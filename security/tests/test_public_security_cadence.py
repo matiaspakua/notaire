@@ -69,6 +69,8 @@ class PublicCadenceTest(unittest.TestCase):
                 self.assertTrue(on.get("schedule"), entry["id"])
                 self.assertNotIn("tags", push, entry["id"])
                 self.assertIn("workflow_dispatch", on, entry["id"])
+            elif trigger == "manual":  # #2477: releases are cut by the Owner's dispatch
+                self.assertEqual(["workflow_dispatch"], list(on), entry["id"])
             elif trigger == "main":
                 self.assertIn("main", branches, entry["id"])
                 self.assertIn("workflow_dispatch", on, entry["id"])

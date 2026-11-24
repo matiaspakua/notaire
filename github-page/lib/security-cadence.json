@@ -87,8 +87,8 @@
       "id": "release-please",
       "tool": "Release Please",
       "family": "release",
-      "where": "Push to main. It opens the release pull request and dispatches the tag workflows.",
-      "trigger": "main",
+      "where": "Manual dispatch by the Owner only. The first run opens the release pull request; after it merges, the next run cuts the tag and dispatches the tag workflows.",
+      "trigger": "manual",
       "workflow": "release-please.yml",
       "local": null
     },

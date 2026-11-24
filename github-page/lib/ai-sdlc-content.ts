@@ -381,7 +381,7 @@ export const WORKFLOWS: { file: string; name: string; when: string; role: string
   { file: "cd.yml", name: "CD - Build & Publish Docker", when: "version tag · manual", role: "Sign and publish images to GHCR. A merge to main does not publish", tier: "release" },
   { file: "codeql.yml", name: "CodeQL", when: "version tag · Monday 06:30 UTC · manual", role: "Advanced-setup static analysis. Uploads SARIF. Does not fail on findings. Never beside default setup", tier: "release" },
   { file: "test-coverage-report.yml", name: "Test Coverage Report", when: "version tag · manual", role: "Coverage artifact. Enforcement stays in the test workflows", tier: "release" },
-  { file: "release-please.yml", name: "Release Please", when: "push to main · manual", role: "Release pull request from Conventional Commits, then the tag that dispatches product CI", tier: "main" },
+  { file: "release-please.yml", name: "Release Please", when: "manual (Owner)", role: "Release pull request from Conventional Commits, then the tag that dispatches product CI", tier: "main" },
   { file: "deploy-github-page.yml", name: "Deploy GitHub Page", when: "push to main · manual", role: "Publishes this portfolio. Does not wait for product CI", tier: "main" },
   { file: "dast-zap.yml", name: "DAST — OWASP ZAP Baseline", when: "version tag · Monday 05:00 UTC · manual", role: "Blocking ZAP baseline with a reviewed allowlist. Not on a pull request", tier: "release" },
   { file: "performance-test.yml", name: "Performance - k6 Load Test", when: "Monday 04:00 UTC · manual", role: "k6 load test against a live API", tier: "schedule" },

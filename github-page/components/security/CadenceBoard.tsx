@@ -13,6 +13,7 @@ const FILTERS: { id: "all" | CadenceTrigger; label: string }[] = [
   { id: "release-schedule", label: "Tag and weekly" },
   { id: "schedule", label: "Weekly" },
   { id: "main", label: "Main" },
+  { id: "manual", label: "Manual" },
   { id: "platform", label: "GitHub app" },
 ];
 

@@ -269,10 +269,10 @@ class ReleaseOnlyWorkflowTriggersTest(unittest.TestCase):
         crons = [item.get("cron") for item in (on.get("schedule") or [])]
         self.assertIn("30 6 * * 1", crons)
 
-    def test_release_please_still_runs_on_main(self):
+    def test_release_please_runs_only_when_the_owner_dispatches_it(self):
+        """#2477: releases are manual. A push to main must not open a bot release PR or cut a tag."""
         release = load_workflow("release-please.yml")
-        self.assertIn("main", branches_for(release, "push"))
-        self.assertIn("workflow_dispatch", trigger_types(release))
+        self.assertEqual(["workflow_dispatch"], sorted(trigger_types(release)))
 
     def test_operational_schedules_remain(self):
         for name, cron in (
