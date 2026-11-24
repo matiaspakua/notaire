@@ -635,6 +635,34 @@ class WholeRunFakeGitHubTests(unittest.TestCase):
         self.assertEqual(check_milestone_metadata(list(gh.milestones.values())), 0)
 
 
+
+class SnapshotOnlyTests(unittest.TestCase):
+    """#2475: the Pages roadmap snapshot was only written at the end of --apply, which also moves issues,
+    labels and project items; it went five weeks stale. --snapshot reads GitHub and writes only the files."""
+
+    def test_snapshot_mode_writes_the_files_and_changes_nothing_on_github(self):
+        import tempfile
+        from unittest import mock
+
+        import apply_milestone_policy as amp
+
+        gh = FakeGitHub()
+        for number, title in enumerate(WANTED, start=1):
+            gh.milestones[title] = {"number": number, "title": title, "open_issues": 0, "closed_issues": 0,
+                                    "description": MILESTONE_DESCRIPTION.get(title), "due_on": MILESTONE_DUE.get(title),
+                                    "state": "open"}
+        with tempfile.TemporaryDirectory() as tmp:
+            docs, page = Path(tmp) / "docs.json", Path(tmp) / "page.json"
+            with mock.patch.object(amp, "GitHub", return_value=gh), \
+                    mock.patch.object(amp, "load_issues", return_value=[]), \
+                    mock.patch.object(amp, "SNAPSHOT", docs), mock.patch.object(amp, "PAGE_SNAPSHOT", page), \
+                    mock.patch.object(sys, "argv", ["apply_milestone_policy.py", "--snapshot"]):
+                self.assertEqual(0, amp.main())
+            self.assertTrue(docs.is_file())
+            self.assertEqual(docs.read_text(), page.read_text())
+        self.assertEqual([], gh.posts)
+
+
 if __name__ == "__main__":
     unittest.main()
 

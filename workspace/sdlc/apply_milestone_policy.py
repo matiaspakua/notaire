@@ -856,6 +856,7 @@ def main() -> int:
     mode.add_argument("--check", action="store_true")
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--apply", action="store_true")
+    mode.add_argument("--snapshot", action="store_true", help="read GitHub and write only the snapshot files")
     args = parser.parse_args()
     try:
         gh = GitHub()
@@ -869,6 +870,10 @@ def main() -> int:
     issues = load_issues(gh)
     if args.check:
         return check(gh, issues)
+    if args.snapshot:
+        write_snapshot(snapshot(issues, ensure_milestones(gh, False)))
+        print(f"wrote {SNAPSHOT} and {PAGE_SNAPSHOT}")
+        return 0
     apply = args.apply
     milestones = ensure_milestones(gh, apply)
     moves = assign_issues(gh, issues, milestones, apply)

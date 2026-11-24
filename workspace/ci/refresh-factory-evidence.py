@@ -11,7 +11,7 @@ ancestry, not by timestamp (timestamps follow the data, #2429).
 USAGE
   python3 workspace/ci/refresh-factory-evidence.py               # free refresh, in order
   python3 workspace/ci/refresh-factory-evidence.py --agent       # also the paid agent bench
-  python3 workspace/ci/refresh-factory-evidence.py --history     # also the GitHub history (needs gh)
+  python3 workspace/ci/refresh-factory-evidence.py --history     # also history, delivery and roadmap from GitHub (needs gh)
   python3 workspace/ci/refresh-factory-evidence.py --dry-run     # print the steps only
   python3 workspace/ci/refresh-factory-evidence.py --check       # exit 1 when anything is stale
   python3 workspace/ci/refresh-factory-evidence.py --check --brief   # engines and bench stamps only (session start)
@@ -62,7 +62,11 @@ def steps(agent: bool = False, history: bool = False, evidence: Path | None = No
         ("factory metrics snapshot", [*own, "--factory-metrics"]),
     ]
     if history:
-        plan.append(("ai sdlc history", ["python3", "workspace/ci/generate-ai-sdlc-history.py"]))
+        plan += [
+            ("ai sdlc history", ["python3", "workspace/ci/generate-ai-sdlc-history.py"]),
+            ("delivery metrics", ["python3", "workspace/ci/generate-delivery-metrics.py"]),
+            ("roadmap snapshot", ["python3", "workspace/sdlc/apply_milestone_policy.py", "--snapshot"]),
+        ]
     return plan
 
 
@@ -151,7 +155,7 @@ def refresh(plan: list[tuple[str, list[str]]], dry_run: bool) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--agent", action="store_true", help="also run the paid agent bench")
-    parser.add_argument("--history", action="store_true", help="also refresh the GitHub history (needs gh)")
+    parser.add_argument("--history", action="store_true", help="also the AI SDLC history, delivery metrics and roadmap snapshot from GitHub (needs gh)")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--check", action="store_true", help="report stale engines and evidence; exit 1 if any")
     parser.add_argument("--brief", action="store_true", help="with --check: engines and bench stamps only")
