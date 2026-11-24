@@ -4,7 +4,7 @@
  */
 import cadenceFile from "./security-cadence.json";
 
-export type CadenceTrigger = "release" | "release-schedule" | "schedule" | "main" | "local" | "platform";
+export type CadenceTrigger = "release" | "release-schedule" | "schedule" | "main" | "manual" | "local" | "platform";
 
 export type CadenceEntry = {
   id: string;
@@ -27,6 +27,7 @@ export const TRIGGER_LABEL: Record<CadenceTrigger, string> = {
   "release-schedule": "Tag and weekly",
   schedule: "Weekly",
   main: "Push to main",
+  manual: "Manual dispatch",
   local: "Local only",
   platform: "GitHub app",
 };

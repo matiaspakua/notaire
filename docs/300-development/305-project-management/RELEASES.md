@@ -66,7 +66,7 @@ Reviewed against the 0.2.0 release-please pull request and the live releases:
   CD still accepts `notaire-v*` so 0.1.1 and 0.1.2 can be republished.
 - A release does not move the board and does not close RF, CU, or RNF anchors.
 - The foreman does not implement on a release-please branch. Process fixes
-  land on their own issue branch, then release-please opens the next cut.
+  land on their own issue branch; the Owner starts the next cut by hand (#2477).
 
 ## Worked example: the 0.8.0 / 0.9.0 cuts (#2408)
 
