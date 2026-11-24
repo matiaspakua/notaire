@@ -35,9 +35,9 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Production compose refuses to start without the MFA key | test_prod_auth_config | pending |
-| The session cookie is Secure in production | test_prod_auth_config | pending |
-| Kustomize reads the MFA key from the Secret | test_prod_auth_config | pending |
+| Production compose refuses to start without the MFA key | test_prod_auth_config | passing |
+| The session cookie is Secure in production | test_prod_auth_config | passing |
+| Kustomize reads the MFA key from the Secret | test_prod_auth_config | passing |
 
 ## Permanent documentation updated
 
