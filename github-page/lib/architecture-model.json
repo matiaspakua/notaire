@@ -147,7 +147,7 @@
       "kind": "relationship",
       "id": "10t5m5p",
       "title": "PDF reports → Inbound ports: Implements GenerateReportsUseCase (finding)",
-      "description": "",
+      "description": "adapter.out.report.ReportService is the report use case: an inbound port implemented inside an outbound adapter. #2486.",
       "issue": "https://github.com/matiaspakua/notaire/issues/2486"
     },
     {

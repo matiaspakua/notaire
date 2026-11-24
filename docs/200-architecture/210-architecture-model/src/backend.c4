@@ -151,6 +151,7 @@ model {
   notaire.backend.outbound.persistence -> notaire.backend.domain.missingDomain "Holds the rules of"
   notaire.backend.outbound.reports -[implements]-> notaire.backend.application.portsIn "Implements GenerateReportsUseCase (finding)" {
     #finding
+    description "adapter.out.report.ReportService is the report use case: an inbound port implemented inside an outbound adapter. #2486."
     link https://github.com/matiaspakua/notaire/issues/2486
   }
   notaire.backend.outbound.legacyJpa -[sql]-> notaire.database "Hibernate"
