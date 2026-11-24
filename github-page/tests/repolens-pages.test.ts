@@ -45,15 +45,13 @@ describe("RepoLens Pages showcase (#2315)", () => {
 
     expect(tune.tasks).toBe(11);
     expect(hold.tasks).toBe(12);
-    expect(tune.summary.graph["recall@10"] / tune.summary.grep["recall@10"]).toBeCloseTo(4.967, 3);
-    expect(hold.summary.graph["recall@10"] / hold.summary.grep["recall@10"]).toBeCloseTo(2.5686, 3);
-    expect(tune.summary.grep.latency_ms / tune.summary.graph.latency_ms).toBeCloseTo(41.258, 2);
-    expect(tune.summary.grep.output_bytes / tune.summary.graph.output_bytes).toBeCloseTo(88.853, 2);
-
-    expect(factors.tuningRecallLabel).toBe("5.0x more");
-    expect(factors.holdoutRecallLabel).toBe("2.6x more");
-    expect(factors.latencyLabel).toBe("41x faster");
-    expect(factors.bytesLabel).toBe("89x less");
+    // #2473: a refresh re-measures latency and bytes, so derive each label from the committed JSON
+    // (same rounding as bench/report.py::_factor) instead of pinning one measurement.
+    const label = (ratio: number, word: string) => `${ratio >= 10 ? ratio.toFixed(0) : ratio.toFixed(1)}x ${word}`;
+    expect(factors.tuningRecallLabel).toBe(label(tune.summary.graph["recall@10"] / tune.summary.grep["recall@10"], "more"));
+    expect(factors.holdoutRecallLabel).toBe(label(hold.summary.graph["recall@10"] / hold.summary.grep["recall@10"], "more"));
+    expect(factors.latencyLabel).toBe(label(tune.summary.grep.latency_ms / tune.summary.graph.latency_ms, "faster"));
+    expect(factors.bytesLabel).toBe(label(tune.summary.grep.output_bytes / tune.summary.graph.output_bytes, "less"));
     expect(factors.sonnetToolCallsLabel).toBe("2.0x fewer");
     expect(agent.summary.baseline.tool_calls).toBe(4);
     expect(agent.summary.graph.tool_calls).toBe(2);

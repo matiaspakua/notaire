@@ -51,7 +51,15 @@ class TrainAndTagTest(unittest.TestCase):
         self.assertEqual(self.mod.train_for("0.9.1"), "v0.9 · Factory control plane (2027-03)")
         self.assertEqual(self.mod.train_for("0.10.0"), "v0.10 · Factory production line & delivery gates (2027-03)")
         self.assertEqual(self.mod.train_for("0.10.2"), "v0.10 · Factory production line & delivery gates (2027-03)")
+        self.assertEqual(self.mod.train_for("0.11.0"), "v0.11 · Factory evidence & kit-only SDLC (2027-03)")
+        self.assertEqual(self.mod.train_for("0.12.0"), "v0.12 · Factory kit extraction (2027-03)")
         self.assertEqual(self.mod.train_for("1.0.4"), "v1.0 · GA: legacy-free (2027-04)")
+
+    def test_the_next_minor_already_has_a_train(self):
+        """#2473: 0.10.0 and 0.11.0 each shipped before their train existed and broke CD, CI and Pages.
+        The train for the minor after the current release must exist before that release is cut."""
+        major, minor, _ = self.mod.manifest_version(Path(REPO_ROOT)).split(".")
+        self.mod.train_for(f"{major}.{int(minor) + 1}.0")
 
     def test_release_trains_match_the_milestone_policy(self):
         sys.path.insert(0, os.path.join(REPO_ROOT, "workspace", "sdlc"))
