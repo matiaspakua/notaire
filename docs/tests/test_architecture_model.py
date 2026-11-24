@@ -28,7 +28,7 @@ REQUIRED_VIEWS = {
     },
     "docs/200-architecture/206-security/README.md": {"security", "securityPipeline", "loginMfa"},
     "docs/200-architecture/209-deployment/README.md": {"dev", "prod", "staging"},
-    "docs/200-architecture/207-monitoring/README.md": {"dev"},
+    "docs/200-architecture/207-monitoring/README.md": {"observability"},
     "docs/300-development/303-testing/TEST-PLAN.md": {"testing", "delivery"},
 }
 

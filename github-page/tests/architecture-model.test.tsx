@@ -20,7 +20,7 @@ describe("LikeC4 architecture model on Pages", () => {
   it("publishes every view family the docs promise", () => {
     const ids = MODEL_VIEWS.map((v) => v.id);
     for (const id of ["index", "containers", "backend", "frontend", "security", "securityPipeline", "loginMfa",
-      "apiRequest", "testing", "delivery", "dev", "prod", "staging", "findings"]) {
+      "apiRequest", "testing", "delivery", "observability", "dev", "prod", "staging", "findings"]) {
       expect(ids, id).toContain(id);
     }
   });

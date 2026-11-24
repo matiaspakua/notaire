@@ -77,8 +77,10 @@ model {
         description "Required before a PR: GitHub does not re-run the suites on pull requests (#2001)."
       }
       ruleset = gate "protect-main ruleset" {
+        #finding
         technology "GitHub ruleset 24128115"
-        description "PR-only merges, no deletion, no force-push. No required status checks: the local preflight is the PR gate (#2001)."
+        description "Desired: PR-only merges, no deletion, no force-push, no required checks (the local preflight is the PR gate, #2001). Live: still requires the five retired product-CI checks. #2490."
+        link https://github.com/matiaspakua/notaire/issues/2490
       }
     }
 

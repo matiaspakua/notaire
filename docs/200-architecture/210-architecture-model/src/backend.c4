@@ -81,7 +81,7 @@ model {
       }
       missingDomain = component "Contexts without a domain model" {
         #debt #finding
-        description "audit, budget, item, report, catalog, documentcosttemplate: ports carry view records and the rules sit in adapters. #2486."
+        description "audit, budget, item, report, catalog, documentcosttemplate: ports carry view records and the rules sit in adapters. The report inbound port (GenerateReportsUseCase) is implemented by adapter.out.report.ReportService, a use case inside an outbound adapter. #2486."
         link https://github.com/matiaspakua/notaire/issues/2486
       }
     }
@@ -149,6 +149,10 @@ model {
   notaire.backend.outbound.persistence -> notaire.backend.outbound.legacyJpa "Still uses entities and repositories of"
   notaire.backend.application.legacyDtoPorts -> notaire.backend.application.portsIn "Part of"
   notaire.backend.outbound.persistence -> notaire.backend.domain.missingDomain "Holds the rules of"
+  notaire.backend.outbound.reports -[implements]-> notaire.backend.application.portsIn "Implements GenerateReportsUseCase (finding)" {
+    #finding
+    link https://github.com/matiaspakua/notaire/issues/2486
+  }
   notaire.backend.outbound.legacyJpa -[sql]-> notaire.database "Hibernate"
   notaire.backend.crosscutting.flyway -[sql]-> notaire.database "Migrates on start"
   notaire.backend.crosscutting.audit -> notaire.backend.outbound.legacyJpa "Writes AuditRecord"

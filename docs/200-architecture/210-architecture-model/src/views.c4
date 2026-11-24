@@ -68,6 +68,16 @@ views {
     exclude delivery
   }
 
+  view observability of observability {
+    title "Observability"
+    description "Metrics, logs, traces and alerts around the application (infra/observability)."
+    include
+      *,
+      notaire.backend, notaire.frontend, notaire.database,
+      operator
+    exclude notaire
+  }
+
   view security {
     title "Security controls"
     description "Controls along the request path and on stored data (CU78). Red dashed arrows are open findings."

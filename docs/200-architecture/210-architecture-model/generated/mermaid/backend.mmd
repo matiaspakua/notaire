@@ -60,6 +60,7 @@ flowchart TB
   notaire_backend_outbound_persistence -- "Maps to and from" --> notaire_backend_domain_model
   notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
   notaire_backend_outbound_legacyJpa -- "Hibernate" --> notaire_database
+  notaire_backend_outbound_reports -- "Implements GenerateReportsUseCase (finding)" --> notaire_backend_application_portsIn
   notaire_backend_outbound_reports -- "Implements" --> notaire_backend_application_portsOut
   notaire_backend_outbound_crypto -- "Implements" --> notaire_backend_application_portsOut
   notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
@@ -85,3 +86,4 @@ flowchart TB
   class notaire_backend_outbound_legacyJpa,notaire_backend_application_legacyDtoPorts,notaire_backend_domain_missingDomain finding
   class notaire_database c_indigo
   linkStyle 2 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
+  linkStyle 17 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

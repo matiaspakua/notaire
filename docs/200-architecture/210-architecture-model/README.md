@@ -1,7 +1,7 @@
 # Architecture model (LikeC4)
 
-The single source of the Notaire architecture views ([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md),
-#2483). The model is written from the code, not from older diagrams; each gap found while writing it is tagged
+The single source of the Notaire architecture views
+([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md), issue #2483). The model is written from the code, not from older diagrams; each gap found while writing it is tagged
 `#finding` and links its GitHub Issue.
 
 | File | Holds |

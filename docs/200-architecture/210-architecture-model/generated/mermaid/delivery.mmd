@@ -52,8 +52,8 @@ flowchart TB
   classDef c_amber fill:#fef3c7,stroke:#b45309,color:#0f172a
   classDef c_slate fill:#e2e8f0,stroke:#334155,color:#0f172a
   classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
-  class delivery_gates_contract,delivery_gates_openspecGate,delivery_gates_staticAnalysis,delivery_gates_preflight,delivery_gates_coverage,delivery_gates_boundaries,delivery_gates_ruleset c_amber
-  class delivery_gates_guardGap finding
+  class delivery_gates_contract,delivery_gates_openspecGate,delivery_gates_staticAnalysis,delivery_gates_preflight,delivery_gates_coverage,delivery_gates_boundaries c_amber
+  class delivery_gates_guardGap,delivery_gates_ruleset finding
   class delivery_workflows_ci,delivery_workflows_prValidation,delivery_workflows_frontendCi,delivery_workflows_e2eWf,delivery_workflows_scheduled,delivery_workflows_securityWf,delivery_workflows_cd,delivery_workflows_pagesWf c_slate
   class github_actions,github_ghcr,github_pages c_primary
   class delivery_tests,delivery_securityScans c_secondary

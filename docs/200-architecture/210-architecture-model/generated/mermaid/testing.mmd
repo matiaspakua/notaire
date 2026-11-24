@@ -40,7 +40,7 @@ flowchart TB
   notaire_backend_security -- "Login and MFA use cases (+1)" --> notaire_backend_application
   delivery_tests_integration -. "Persistence and reports" .-> notaire_backend_outbound
   notaire_backend_security -- "Decrypts the TOTP secret" --> notaire_backend_outbound
-  notaire_backend_outbound -- "Implements" --> notaire_backend_application
+  notaire_backend_outbound -- "Implements (+3)" --> notaire_backend_application
   notaire_backend_outbound -- "Maps to and from (+1)" --> notaire_backend_domain
   delivery_tests_bruno -. "REST contract" .-> notaire_backend_inbound
   notaire_backend_security -- "Granted module" --> notaire_backend_inbound
@@ -60,3 +60,4 @@ flowchart TB
   class delivery_workflows,notaire_backend_security,notaire_frontend_adapters,notaire_backend_outbound,notaire_backend_inbound,notaire_frontend_core,notaire_backend_application,notaire_backend_domain c_secondary
   class delivery_tests_archunit,delivery_tests_unit,delivery_tests_integration,delivery_tests_vitest,delivery_tests_dbvv,delivery_tests_e2e,delivery_tests_perf,delivery_tests_bruno c_green
   class notaire_database c_indigo
+  linkStyle 13 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
