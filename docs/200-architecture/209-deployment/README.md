@@ -148,6 +148,7 @@ only for intentional parallel stacks. `docker-compose.prod.yml` and
 - **Services**: `postgres`, `backend`, `frontend`, `reverse-proxy` (**no pgAdmin**)
 - **Host ports**: only the reverse proxy (`:80`); postgres/backend/frontend stay on the Docker network
 - **Secrets**: required via `${VAR:?...}` — compose fails fast if `.env` is incomplete; no `admin` defaults
+- **MFA and session cookie** (#2488): `NOTAIRE_MFA_ENCRYPTION_KEY` is required (`infra/scripts/ensure-mfa-encryption-key.sh .env` writes one); `NOTAIRE_MFA_POLICY` defaults to `OPTIONAL` (ADR-032); `COOKIE_SECURE` defaults to `true` because TLS terminates in front of the proxy (set `false` only on a plain-HTTP lab). The Kustomize base reads the key from `notaire-secrets`
 - **Backend**: `ENVIRONMENT=production` (activates `ProductionCredentialsGuard`); least-privilege env (no Grafana/pgAdmin/exporter credential keys); `SPRING_FLYWAY_BASELINE_ON_MIGRATE=false`
 - **Proxy config**: `infra/deploy/kustomize/base/nginx.conf` — `/` → frontend, `/api/` and `/actuator/` → backend
 - **TLS**: terminate TLS in front of this proxy (or extend the nginx config); see [HTTPS-TLS-RUNBOOK.md](../206-security/HTTPS-TLS-RUNBOOK.md) (#254)
