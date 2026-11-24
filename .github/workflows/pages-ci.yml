@@ -71,6 +71,7 @@ jobs:
           cache-dependency-path: |
             github-page/package-lock.json
             frontend/package-lock.json
+            docs/200-architecture/210-architecture-model/package-lock.json
 
       - name: Install
         run: npm ci
@@ -78,6 +79,18 @@ jobs:
       - name: Install the frontend (for the demo build)
         working-directory: frontend
         run: npm ci
+
+      # #2483: the architecture views are generated from the LikeC4 model; a stale copy fails here.
+      - name: Install the architecture model (LikeC4)
+        working-directory: docs/200-architecture/210-architecture-model
+        run: npm ci
+
+      - name: Architecture model is valid and generated
+        working-directory: docs/200-architecture/210-architecture-model
+        run: |
+          npm run validate
+          node --test scripts/
+          npm run check
 
       - name: Typecheck
         run: npm run typecheck
@@ -98,6 +111,9 @@ jobs:
 
       - name: Build the read-only demo into the export
         run: npm run build:demo
+
+      - name: Build the LikeC4 architecture site into the export
+        run: npm run build:model
 
       - name: Internal link check
         run: npm run check:links
