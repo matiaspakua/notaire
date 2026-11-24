@@ -12,7 +12,7 @@ export type HomeModel = {
   proof: { key: "openspec" | "tests" | "bruno" | "e2e" | "adrs" | "skills"; value: string; href: string }[];
   workflows: number | null;
   observability: number;
-  before: { then: string; now: string }[];
+  before: { then: string; thenEs: string; now: string; nowEs: string }[];
   flow: { nodes: FlowNode[]; edges: FlowEdge[]; steps: FlowStep[]; width: number; height: number };
   shots: { file: string }[];
   outcomes: { key: "median" | "p90" | "week" | "failure" | "issues" | "releases"; value: string }[];
@@ -115,8 +115,8 @@ export function HomeView({ model }: { model: HomeModel }) {
                 {model.before.map((row, i) => (
                   <tr key={c.beforeAreas[i]} className="border-t border-slate-100 align-top">
                     <th scope="row" className="px-4 py-3 text-left font-medium text-slate-900">{c.beforeAreas[i]}</th>
-                    <td className="px-4 py-3 text-slate-600">{row.then}</td>
-                    <td className="px-4 py-3 text-slate-900">{row.now}</td>
+                    <td className="px-4 py-3 text-slate-600">{locale === "es" ? row.thenEs : row.then}</td>
+                    <td className="px-4 py-3 text-slate-900">{locale === "es" ? row.nowEs : row.now}</td>
                   </tr>
                 ))}
               </tbody>
