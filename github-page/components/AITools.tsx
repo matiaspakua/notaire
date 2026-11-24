@@ -16,6 +16,18 @@ const tools = [
     badge: "Fleet",
   },
   {
+    name: "Junie",
+    maker: "JetBrains",
+    role: "Factory Worker — one step per run (spec, red, green, docs, archive), reviewed by the Foreman",
+    badge: "Worker",
+  },
+  {
+    name: "Codex",
+    maker: "OpenAI",
+    role: "Worker for small, well-specified tasks dispatched by the Foreman",
+    badge: "Worker",
+  },
+  {
     name: "OpenCode",
     maker: "OpenCode",
     role: "Terminal-native AI coding agent, integrated directly into the shell workflow",

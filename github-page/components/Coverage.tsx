@@ -19,6 +19,9 @@ interface CoverageMetric {
   stale?: boolean;
 }
 
+/** A floor or target from metrics.json; "—" when this build did not record one (#2475). */
+const floor = (value?: number) => (value === undefined ? "—" : `${value}%`);
+
 function buildCoverageData(metrics: SiteMetrics): CoverageMetric[] {
   const { coverage } = metrics;
   const measured = coverageIsMeasured(coverage);
@@ -230,19 +233,21 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Unit + Integration (JUnit 5)</span>
-                  <span className="text-brand-700 font-mono">{metrics.backendTestClasses} classes</span>
+                  <span className="text-brand-700 font-mono">{metrics.backendTestClasses} <span>classes</span></span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Integration Tests</span>
                   <span className="text-brand-700 font-mono">H2 + Postgres</span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-neutral-600">JaCoCo Enforcement</span>
-                  <span className="text-brand-700 font-mono">70% line / 25% branch floor</span>
+                  <span className="text-neutral-600">JaCoCo floor</span>
+                  <span className="text-brand-700 font-mono">
+                    {floor(metrics.coverageFloors?.backendLine)} <span>line</span> / {floor(metrics.coverageFloors?.backendBranch)} <span>branch</span>
+                  </span>
                 </li>
                 <li className="flex justify-between items-center">
-                  <span className="text-neutral-600">Target Coverage</span>
-                  <span className="text-emerald-700 font-mono">80%</span>
+                  <span className="text-neutral-600">Owner target</span>
+                  <span className="text-emerald-700 font-mono">&gt;{floor(metrics.coverageTarget)}</span>
                 </li>
               </ul>
             </div>
@@ -257,16 +262,22 @@ export function Coverage({ metrics }: { metrics: SiteMetrics }) {
                   </span>
                 </li>
                 <li className="flex justify-between items-center">
+                  <span className="text-neutral-600">Vitest floor</span>
+                  <span className="text-emerald-700 font-mono">
+                    {floor(metrics.coverageFloors?.frontendLines)} <span>lines</span> / {floor(metrics.coverageFloors?.frontendBranches)} <span>branches</span>
+                  </span>
+                </li>
+                <li className="flex justify-between items-center">
                   <span className="text-neutral-600">Unit / component tests (Vitest)</span>
-                  <span className="text-emerald-700 font-mono">{metrics.frontendTestClasses} test files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.frontendTestClasses} <span>test files</span></span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">E2E Suites (Playwright)</span>
-                  <span className="text-emerald-700 font-mono">{metrics.e2eSpecFiles} spec files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.e2eSpecFiles} <span>spec files</span></span>
                 </li>
                 <li className="flex justify-between items-center">
                   <span className="text-neutral-600">API Tests</span>
-                  <span className="text-emerald-700 font-mono">{metrics.apiTestFiles} request files</span>
+                  <span className="text-emerald-700 font-mono">{metrics.apiTestFiles} <span>request files</span></span>
                 </li>
               </ul>
             </div>

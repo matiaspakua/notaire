@@ -25,7 +25,7 @@ function formatDate(dateStr: string): string {
 function buildStats(metrics: SiteMetrics): StatItem[] {
   return [
     { value: metrics.commits, label: "Total Commits", suffix: "+", color: "var(--ai-cyan)", icon: "⚡", sub: `Since ${formatDate(metrics.firstCommitDate)}` },
-    { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "Opened, from GitHub search" },
+    { value: metrics.pullRequests, label: "Pull Requests", suffix: "", color: "var(--spring-green)", icon: "🔀", sub: "All pull requests, from GitHub search" },
     { value: metrics.useCases, label: "Use Cases", suffix: "", color: "var(--ai-purple)", icon: "📋", sub: `CU-01 → CU-${metrics.useCases}` },
     { value: metrics.functionalRequirements, label: "Functional Requirements", suffix: "", color: "#ff9500", icon: "📌", sub: `RF-01 → RF-${metrics.functionalRequirements}` },
     {
@@ -41,7 +41,7 @@ function buildStats(metrics: SiteMetrics): StatItem[] {
     { value: metrics.testClasses, label: "Test Classes", suffix: "", color: "#22d3ee", icon: "🧪", sub: "Unit + Integration + E2E" },
     { value: metrics.dockerServices, label: "Docker Services", suffix: "", color: "#a78bfa", icon: "🐳", sub: "App + Infra stacks" },
     { value: metrics.grafanaDashboards, label: "Grafana Dashboards", suffix: "", color: "#f97316", icon: "📊", sub: "Custom provisioned" },
-    { value: metrics.aiTools, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: "Claude, Copilot, Gemini, OpenCode" },
+    { value: metrics.aiTools, label: "AI Tools", suffix: "", color: "#10b981", icon: "🤖", sub: metrics.aiToolNames?.join(", ") ?? "Configured in the repository" },
     { value: metrics.adrCount, label: "Architecture Decisions", suffix: "", color: "#6366f1", icon: "🏛️", sub: `ADR-001 → ADR-0${metrics.adrCount}` },
     { value: metrics.contributors, label: "Contributors", suffix: "", color: "#f43f5e", icon: "👥", sub: "Active development" },
   ];
