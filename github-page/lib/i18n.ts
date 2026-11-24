@@ -59,7 +59,7 @@ export function chrome(locale: Locale) {
     reports: es ? "Informes" : "Reports",
     liveReports: es ? "Informes en vivo" : "Live reports",
     untranslated: "Esta página sigue en inglés. La navegación está en español.",
-    github: "Notaire on GitHub",
+    github: es ? "Notaire en GitHub" : "Notaire on GitHub",
   };
 }
 
