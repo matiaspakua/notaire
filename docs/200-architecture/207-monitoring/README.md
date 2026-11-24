@@ -11,49 +11,54 @@ authoritative, up-to-date service list, ports, and credentials.
 
 ## Architecture
 
-```text
-┌──────────────────────────────────────────────────────────────┐
-│                      Notaire Application                     │
-├───────────────────────────┬────────────────────────────────┤
-│  Backend API (Spring Boot) │  PostgreSQL 16                  │
-│  :8080                     │  :5432                          │
-└──────────┬──────────────────┴───────────────┬─────────────────┘
-           │ /actuator/prometheus              │ pg_stat_* views
-           │ (Micrometer, Basic Auth)          │
-           ▼                                    ▼
-┌──────────────────────────────────────────────────────────────┐
-│                      Prometheus :9090                        │
-│   Scrapes: notaire-backend, notaire-postgres (via exporter)  │
-└──────────┬──────────────────────────────────────┬─────────────┘
-           │                                        │
-           ▼                                        │
-┌───────────────────────┐                            │
-│   Grafana :3001       │◄────────────────────────────┘
-│   Dashboards:         │
-│   - notaire-backend   │        ┌──────────────────────┐
-│   - notaire-postgres  │◄───────┤   Loki :3100          │
-│   - notaire-logs      │        │   (log storage)       │
-│   - notaire-auth      │        └───────────┬────────────┘
-│   - notaire-security  │
-└───────────────────────┘                    ▲
-                                             ▲
-                                             │
-                                  ┌──────────┴──────────┐
-                                  │      Promtail        │
-                                  │ (Docker log shipper)  │
-                                  └──────────┬──────────┘
-                                             │
-                          ┌──────────────────┴──────────────────┐
-                          │  notary-backend / notary-postgres    │
-                          │         container logs               │
-                          └───────────────────────────────────────┘
+Generated from the [LikeC4 model](../210-architecture-model/README.md) (ADR-033). Prometheus scrapes the backend
+(`/actuator/prometheus`, Basic Auth), the frontend (`/api/metrics`), the exporters and blackbox probes, and fires
+alerts to Alertmanager. Promtail ships container logs to Loki. Backend and frontend send OTLP traces to the
+collector, which exports them to Tempo. Grafana (`:3001`) reads all three; Homer (`:8888`) links every tool.
 
-                    ┌──────────────────────────┐
-                    │  Homer Hub :8888          │
-                    │  (landing page linking     │
-                    │   every service above)     │
-                    └──────────────────────────┘
+<!-- likec4-view: observability -->
+```mermaid
+---
+title: "Observability"
+---
+flowchart TB
+  operator(["Operator"])
+  subgraph observability["Observability and DevSecOps stack"]
+    observability_grafana["Grafana<br/><i>Grafana 12.3</i>"]
+    observability_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
+    observability_loki["Loki<br/><i>Loki 3.7 + Promtail</i>"]
+    observability_alertmanager["Alertmanager<br/><i>Alertmanager 0.34</i>"]
+    observability_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
+    observability_sonarqube["SonarQube<br/><i>SonarQube Community 26.9</i>"]
+    observability_homer["Homer hub<br/><i>Homer</i>"]
+    observability_otelCollector["OpenTelemetry Collector<br/><i>otel-collector-contrib 0.162</i>"]
+    observability_tempo["Tempo<br/><i>Tempo 2.10</i>"]
+  end
+  notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+  notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+  notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  operator -- "Watches dashboards and alerts" --> observability_grafana
+  observability_otelCollector -. "Exports traces" .-> observability_tempo
+  observability_prometheus -- "Fires alerts" --> observability_alertmanager
+  observability_prometheus -. "Scrapes" .-> observability_exporters
+  observability_grafana -- "Queries metrics" --> observability_prometheus
+  observability_grafana -- "Queries logs" --> observability_loki
+  observability_grafana -- "Queries traces" --> observability_tempo
+  observability_prometheus -. "Scrapes /actuator/prometheus" .-> notaire_backend
+  notaire_backend -. "OTLP traces" .-> observability_otelCollector
+  observability_prometheus -. "Scrapes /api/metrics" .-> notaire_frontend
+  notaire_frontend -. "Browser traces via /api/otlp" .-> observability_otelCollector
+  notaire_frontend -- "Proxies /api/v1 with the httpOnly JWT cookie" --> notaire_backend
+  observability_exporters -- "Reads pg_stat" --> notaire_database
+  notaire_backend -- "Reads and writes, Flyway migrates on start" --> notaire_database
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  class operator c_green
+  class observability_grafana,observability_prometheus,observability_loki,observability_alertmanager,observability_exporters,observability_sonarqube,observability_homer,notaire_frontend,notaire_backend,observability_otelCollector,observability_tempo c_primary
+  class notaire_database c_indigo
 ```
+<!-- /likec4-view -->
 
 ## Services Overview
 

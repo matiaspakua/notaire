@@ -14,6 +14,6 @@ for two reasons:
 
 The **current** backend class structure, checked against the source, is documented in:
 
-- [`backend-package-structure.puml`](../backend-package-structure.puml) — package structure of `backend-api`
+- Package structure of `backend-api`: the [backend hexagon view](../../210-architecture-model/README.md) of the LikeC4 model (the old `backend-package-structure.puml` is archived)
 - [SAD § 5.5 — Core Domain Model](../../201-SAD/sad.md#55-core-domain-model) — domain entities and their relationships
 - [SAD § 5.2 — Building Block View: backend-api](../../201-SAD/sad.md#52-level-2--backend-api-internal-structure)

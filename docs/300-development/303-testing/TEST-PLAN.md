@@ -88,6 +88,147 @@ Developers, QA, AI coding agents, and reviewers operating under the AI SDLC
 
 Live counts: **[INVENTORY.md](INVENTORY.md)** (generated; do not copy numbers here).
 
+### Architecture views
+
+Generated from the [LikeC4 model](../../200-architecture/210-architecture-model/README.md) (ADR-033). Which suite
+verifies which part of the system:
+
+<!-- likec4-view: testing -->
+```mermaid
+---
+title: "Test pyramid"
+---
+flowchart TB
+  delivery_workflows["GitHub Actions workflows"]
+  subgraph delivery_tests["Test pyramid"]
+    delivery_tests_archunit["Architecture tests<br/><i>ArchUnit</i>"]
+    delivery_tests_unit["Backend unit tests<br/><i>JUnit 5, Mockito, AssertJ</i>"]
+    delivery_tests_integration["Backend integration tests<br/><i>Spring Boot Test, Testcontainers PostgreSQL</i>"]
+    delivery_tests_vitest["Frontend unit tests<br/><i>Vitest, Testing Library</i>"]
+    delivery_tests_dbvv["Database V&V<br/><i>psql checks</i>"]
+    delivery_tests_e2e["End-to-end tests<br/><i>Playwright, axe-core</i>"]
+    delivery_tests_perf["Load tests<br/><i>k6</i>"]
+    delivery_tests_bruno["API tests<br/><i>Bruno CLI</i>"]
+  end
+  subgraph notaire["Notaire"]
+    subgraph notaire_frontend["Web frontend<br/><i>Next.js 16, React 19, TypeScript</i>"]
+      notaire_frontend_adapters["HTTP adapters"]
+      notaire_frontend_core["Core"]
+    end
+    subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
+      notaire_backend_security["Security filter chain"]
+      notaire_backend_outbound["Outbound adapters"]
+      notaire_backend_inbound["Inbound adapters"]
+      notaire_backend_application["Application"]
+      notaire_backend_domain["Domain"]
+    end
+    notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
+  end
+  delivery_workflows -- "Runs" --> delivery_tests_unit
+  delivery_workflows -- "Runs" --> delivery_tests_integration
+  delivery_workflows -- "Runs" --> delivery_tests_vitest
+  delivery_workflows -- "Runs" --> delivery_tests_dbvv
+  delivery_workflows -- "Runs" --> delivery_tests_e2e
+  delivery_workflows -- "Runs" --> delivery_tests_perf
+  delivery_tests_unit -. "Use cases and ports" .-> notaire_backend_application
+  delivery_tests_unit -. "Domain rules" .-> notaire_backend_domain
+  notaire_backend_application -- "Applies rules of" --> notaire_backend_domain
+  delivery_tests_integration -. "Filter chains" .-> notaire_backend_security
+  notaire_backend_security -- "Login and MFA use cases (+1)" --> notaire_backend_application
+  delivery_tests_integration -. "Persistence and reports" .-> notaire_backend_outbound
+  notaire_backend_security -- "Decrypts the TOTP secret" --> notaire_backend_outbound
+  notaire_backend_outbound -- "Implements (+3)" --> notaire_backend_application
+  notaire_backend_outbound -- "Maps to and from (+1)" --> notaire_backend_domain
+  delivery_tests_bruno -. "REST contract" .-> notaire_backend_inbound
+  notaire_backend_security -- "Granted module" --> notaire_backend_inbound
+  notaire_backend_inbound -- "Calls" --> notaire_backend_application
+  delivery_tests_vitest -. "Use cases" .-> notaire_frontend_core
+  delivery_tests_vitest -. "HTTP adapters" .-> notaire_frontend_adapters
+  notaire_frontend_adapters -- "Implements ports" --> notaire_frontend_core
+  delivery_tests_dbvv -. "Schema and roles" .-> notaire_database
+  notaire_backend_outbound -- "Hibernate" --> notaire_database
+  delivery_tests_perf -. "Latency under load" .-> notaire_backend
+  delivery_tests_archunit -. "Package dependencies" .-> notaire_backend
+  delivery_tests_e2e -. "User journeys" .-> notaire_frontend
+  notaire_frontend -- "Every /api/v1 call" --> notaire_backend_security
+  classDef c_secondary fill:#ede9fe,stroke:#6d28d9,color:#0f172a
+  classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
+  classDef c_green fill:#dcfce7,stroke:#15803d,color:#0f172a
+  class delivery_workflows,notaire_backend_security,notaire_frontend_adapters,notaire_backend_outbound,notaire_backend_inbound,notaire_frontend_core,notaire_backend_application,notaire_backend_domain c_secondary
+  class delivery_tests_archunit,delivery_tests_unit,delivery_tests_integration,delivery_tests_vitest,delivery_tests_dbvv,delivery_tests_e2e,delivery_tests_perf,delivery_tests_bruno c_green
+  class notaire_database c_indigo
+  linkStyle 13 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
+```
+<!-- /likec4-view -->
+
+From Gate 1 to the release. The local `preflight.sh --full` is the PR gate (#2001); the GitHub workflows run on
+a version tag, on dispatch and on schedules. The red gate is a finding: ArchUnit does not yet guard the legacy
+`dto`, `business` and `repository` packages ([#2484](https://github.com/matiaspakua/notaire/issues/2484)).
+
+<!-- likec4-view: delivery -->
+```mermaid
+---
+title: "CI/CD and quality gates"
+---
+flowchart TB
+  subgraph delivery_gates["Quality gates"]
+    delivery_gates_contract[["API contract<br/><i>OpenAPI export diff</i>"]]
+    delivery_gates_guardGap[["Legacy-package guards missing<br/><i>HexagonArchitectureTest R2, R6</i>"]]
+    delivery_gates_openspecGate[["Gate 1: OpenSpec<br/><i>openspec validate --strict, validate-sdlc-plan.sh</i>"]]
+    delivery_gates_staticAnalysis[["Static analysis<br/><i>Checkstyle, SpotBugs, SonarQube new code</i>"]]
+    delivery_gates_preflight[["Local full preflight<br/><i>workspace/sdlc/preflight.sh --full</i>"]]
+    delivery_gates_coverage[["Coverage floors<br/><i>JaCoCo 85/70, Vitest 87/79/85/88</i>"]]
+    delivery_gates_boundaries[["Architecture boundaries<br/><i>ArchUnit baselines, ESLint boundaries</i>"]]
+    delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
+  end
+  subgraph delivery_workflows["GitHub Actions workflows"]
+    delivery_workflows_ci["CI<br/><i>ci.yml</i>"]
+    delivery_workflows_prValidation["PR Validation<br/><i>pr-validation.yml, sdlc-process.yml</i>"]
+    delivery_workflows_frontendCi["Frontend CI<br/><i>frontend-ci.yml</i>"]
+    delivery_workflows_e2eWf["Playwright E2E<br/><i>playwright-e2e.yml</i>"]
+    delivery_workflows_scheduled["Scheduled checks<br/><i>performance-test.yml, backup-restore-smoke.yml, database-vv.yml</i>"]
+    delivery_workflows_securityWf["Security workflows<br/><i>codeql.yml, dast-zap.yml</i>"]
+    delivery_workflows_cd["CD<br/><i>cd.yml</i>"]
+    delivery_workflows_pagesWf["Pages<br/><i>pages-ci.yml, deploy-github-page.yml</i>"]
+  end
+  github_actions["GitHub Actions"]
+  github_ghcr["GHCR"]
+  github_pages["GitHub Pages"]
+  delivery_tests["Test pyramid"]
+  delivery_securityScans["Security scanning"]
+  delivery_gates_openspecGate -- "Precedes" --> delivery_gates_preflight
+  delivery_gates_preflight -- "Enforces" --> delivery_gates_coverage
+  delivery_gates_preflight -- "Enforces" --> delivery_gates_boundaries
+  delivery_gates_preflight -- "Precedes the PR" --> delivery_gates_ruleset
+  delivery_workflows_ci -- "Runs" --> delivery_gates_staticAnalysis
+  delivery_workflows_prValidation -- "Checks" --> delivery_gates_openspecGate
+  delivery_gates_preflight -- "Runs the suites the branch touches" --> delivery_tests
+  delivery_workflows_ci -- "Runs" --> delivery_tests
+  delivery_workflows_frontendCi -- "Runs" --> delivery_tests
+  delivery_workflows_e2eWf -- "Runs" --> delivery_tests
+  delivery_workflows_scheduled -- "Runs" --> delivery_tests
+  delivery_gates_preflight -- "Runs the local security gate" --> delivery_securityScans
+  delivery_workflows_ci -- "Runs" --> delivery_securityScans
+  delivery_workflows_securityWf -- "Runs CodeQL (+1)" --> delivery_securityScans
+  delivery_workflows_cd -- "Signs and attaches SBOM" --> delivery_securityScans
+  delivery_workflows_cd -- "Pushes images" --> github_ghcr
+  delivery_workflows_pagesWf -- "Deploys" --> github_pages
+  github_actions -- "Publishes signed images" --> github_ghcr
+  github_actions -- "Deploys the site" --> github_pages
+  delivery_workflows -- "Run on" --> github_actions
+  classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
+  classDef c_secondary fill:#ede9fe,stroke:#6d28d9,color:#0f172a
+  classDef c_amber fill:#fef3c7,stroke:#b45309,color:#0f172a
+  classDef c_slate fill:#e2e8f0,stroke:#334155,color:#0f172a
+  classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
+  class delivery_gates_contract,delivery_gates_openspecGate,delivery_gates_staticAnalysis,delivery_gates_preflight,delivery_gates_coverage,delivery_gates_boundaries c_amber
+  class delivery_gates_guardGap,delivery_gates_ruleset finding
+  class delivery_workflows_ci,delivery_workflows_prValidation,delivery_workflows_frontendCi,delivery_workflows_e2eWf,delivery_workflows_scheduled,delivery_workflows_securityWf,delivery_workflows_cd,delivery_workflows_pagesWf c_slate
+  class github_actions,github_ghcr,github_pages c_primary
+  class delivery_tests,delivery_securityScans c_secondary
+```
+<!-- /likec4-view -->
+
 ### 3.3 Identification (artifact IDs)
 
 | Kind | Pattern | Example | Role |

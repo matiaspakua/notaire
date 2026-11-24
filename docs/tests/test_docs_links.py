@@ -24,7 +24,8 @@ EXEMPT_REASONS = {
 
 def active_documents():
     docs = [p for p in (REPO_ROOT / "docs").rglob("*.md")
-            if not any(p.relative_to(REPO_ROOT).as_posix().startswith(s) for s in SKIPPED_DIRS)]
+            if not any(p.relative_to(REPO_ROOT).as_posix().startswith(s) for s in SKIPPED_DIRS)
+            and "node_modules" not in p.parts]
     return sorted(docs + [REPO_ROOT / name for name in ROOT_DOCS])
 
 
