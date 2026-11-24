@@ -1,7 +1,10 @@
 name: Release Please
 
-# Opens/updates a release PR from Conventional Commits, then creates the v*
-# GitHub Release + tag when that PR merges. Does not bypass protect-main.
+# Releases are manual (#2477): this runs only when the Owner dispatches it.
+# First dispatch: opens or updates the release PR from Conventional Commits.
+# After the Owner merges that PR, a second dispatch creates the v* tag and the
+# GitHub Release and dispatches the tag workflows. A push to main starts nothing.
+# Does not bypass protect-main.
 # Day-to-day and release PRs are gated by `bash workspace/sdlc/preflight.sh --full`.
 # After #2001 the heavy workflows do not run on pull_request, so the Owner must
 # drop the retired required checks from protect-main (#1040) or the release PR
@@ -11,8 +14,6 @@ name: Release Please
 # with GITHUB_TOKEN does not start on.push.tags workflows (#1599); this job
 # dispatches them. See RELEASE.md.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
