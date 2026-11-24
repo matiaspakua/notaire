@@ -10,11 +10,11 @@ Product GitHub workflows do not run on a pull request or on push to `main`.
 A pull request is ready when this has passed on the head:
 
 ```bash
-bash workspace/sdlc/preflight.sh --full
+bash workspace/sdlc/preflight.sh
 ```
 
-A run without `--full` is not sufficient. GitHub will not re-run the skipped
-suites. CodeQL stays weekly (and on version tags) and is not local.
+That is the pull-request gate (#2493). The server-backed suites it skips run with `preflight.sh --all` before a
+release and in the version-tag CI; a high-risk PR adds them with `PREFLIGHT_FULL=1 git push`. CodeQL stays weekly (and on version tags) and is not local.
 
 `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when those workflows were
 not started for the head. It still fails if one was dispatched and is pending
@@ -23,7 +23,7 @@ or red. Do not wait for check names that will never appear.
 ## Who may merge
 
 The **Foreman merge rule** (CONSTITUTION §5 step 21, #1624): the Foreman merges
-a Worker PR once `preflight.sh --full` has passed and `check-heavy-ci.sh` exits 0.
+a Worker PR once `preflight.sh` has passed and `check-heavy-ci.sh` exits 0.
 The Owner merges Constitution amendments, `sdlc-exception` PRs and PRs that change
 the Foreman's harness or merge path. Workers never merge.
 

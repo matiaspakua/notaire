@@ -10,8 +10,9 @@
 # `mvn verify` does not invoke Spotless (unbound in backend-api/pom.xml, #705),
 # so a branch can look green under Maven and still fail format here.
 #
-# A run WITHOUT --full is NOT sufficient to open a pull request. There is no
-# GitHub safety net on the pull request for the suites --full adds.
+# The default run is the pull-request gate (#2493): what the pre-push hook runs. The server-backed suites
+# that --full and --all add gate the release: run --all before release-please is dispatched; the
+# version-tag CI repeats the heavy workflows.
 #
 # KEEPING IT HONEST
 # -----------------
@@ -21,12 +22,12 @@
 # GitHub (weekly Monday plus version tags) and is not replicated locally.
 #
 # USAGE
-#   bash workspace/sdlc/preflight.sh            # not sufficient to open a pull request
+#   bash workspace/sdlc/preflight.sh            # the pull-request gate (pre-push hook)
 #   bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
-#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; not sufficient to open a pull request
-#   bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR: Playwright, Bruno, Docker, database V&V
-#                                               # for the suite groups the branch touches (#2413)
-#   bash workspace/sdlc/preflight.sh --all      # every suite group, whatever changed (releases, cross-cutting)
+#   bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
+#   bash workspace/sdlc/preflight.sh --full     # + Playwright, Bruno, Docker, database V&V for the groups the branch
+#                                               # touches (#2413); opt in for risky changes (auth, Flyway, REST contract)
+#   bash workspace/sdlc/preflight.sh --all      # every suite group, whatever changed: the release gate (#2493)
 #   bash workspace/sdlc/preflight.sh --list     # show local-check -> release-workflow mapping
 #
 # Exit code is non-zero if any blocking check fails.
@@ -480,7 +481,7 @@ if [ "$MODE_FAST" = "0" ]; then
     if [ "$MODE_FULL" = "1" ]; then
         run "pages playwright + axe" bash -c "cd github-page && ./node_modules/.bin/playwright test"
     else
-        skip "pages playwright + axe" "not --full; this run is not sufficient to open a pull request"
+        skip "pages playwright + axe" "not --full; runs with --all before a release"
     fi
 else
     skip "pages vitest / build / links" "--fast"
@@ -586,7 +587,7 @@ if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
         fail "docker build/smoke test: docker not running — start Docker; GitHub will not run this on the pull request"
     fi
 elif [ "$MODE_FULL" = "0" ]; then
-    skip "playwright e2e / bruno api / docker build" "not --full; this run is not sufficient to open a pull request"
+    skip "playwright e2e / bruno api / docker build" "not --full; runs with --all before a release"
 fi
 
 # ---------------------------------------------------------------------------
@@ -604,8 +605,16 @@ if [ "${#FAILED[@]}" -gt 0 ]; then
 fi
 
 printf '\n%sPREFLIGHT PASSED%s\n' "$GREEN" "$NC"
-if [ "$MODE_FAST" = "1" ] || [ "$MODE_FULL" = "0" ]; then
-    printf '%sNote:%s this run is not sufficient to open a pull request. GitHub will not re-run the skipped suites.\n' "$YELLOW" "$NC"
-    printf 'Run: bash workspace/sdlc/preflight.sh --full\n'
+if [ "$MODE_FAST" = "1" ]; then
+    printf '%sNote:%s --fast checks format, lint, compile and typecheck only; run bash workspace/sdlc/preflight.sh before a pull request.\n' "$YELLOW" "$NC"
+elif [ "$MODE_FIX" = "0" ]; then
+    # Record the pass so the pre-push hook does not repeat it (#2493); only a clean tree is what gets pushed.
+    PASS_MODE=pr; [ "$MODE_FULL" = "1" ] && PASS_MODE=full; [ "$MODE_ALL" = "1" ] && PASS_MODE=all
+    if [ -z "$(git status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+        PASS_DIR="$(git rev-parse --path-format=absolute --git-common-dir)/preflight-pass"
+        mkdir -p "$PASS_DIR" && touch "$PASS_DIR/$(git rev-parse HEAD).$PASS_MODE"
+    fi
+    printf 'The pull-request gate passed (mode %s).\n' "$PASS_MODE"
+    [ "$MODE_ALL" = "0" ] && printf 'before a release: bash workspace/sdlc/preflight.sh --all\n'
 fi
 exit 0

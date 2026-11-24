@@ -22,10 +22,10 @@ lessons only in chat.
 | 13–15 Test | Unit + integration + coverage, Bruno API, Playwright for any UI change | `mvn verify -pl backend-api`; `bash testing/scripts/test.sh`; `cd testing/e2e && npx playwright test` |
 | 16 Docs (**Gate 3**) | Update permanent docs; move outdated ones to `docs/000-archive/` | CONSTITUTION §8 |
 | 17 Atomic commits | One logical change per commit, Conventional Commits. Only the commit that completes the Issue carries `Closes #<n>`; the others carry `Refs #<n>` | `.claude/rules/general.md` rule 6.1 |
-| 17.5 Pipeline | Must exit 0 before the PR. Includes the security case catalog | `bash workspace/sdlc/run_pipeline.sh` (`python3 security/run_gates.py --profile local`) |
+| 17.5 Pipeline | Must exit 0 before a release (and before a high-risk PR). Includes the security case catalog (#2493) | `bash workspace/sdlc/run_pipeline.sh` (`python3 security/run_gates.py --profile local`) |
 | 18 PR | Title `[#<n>] <type>: <description>`, body from `.github/PULL_REQUEST_TEMPLATE.md` | Prefer `gh pr create`; on `createPullRequest` 403 use ManagePullRequest on a `cursor/*` tip, else Owner compare-link (`FLEET-IDENTITY.md` #2231); then `gh pr view <n> --json mergeable,mergeStateStatus` must be `MERGEABLE` |
-| 19 Local full preflight | A PR is ready when `preflight.sh --full` has passed. It runs the suites the branch touches; the hook skips a commit that already passed (#2413). GitHub does not re-run that suite on the pull request (#2001) | `bash workspace/sdlc/preflight.sh --full` (`--all` for every suite) |
-| 20–21 Review + merge (**Gate 4**) | Foreman merge rule (CONSTITUTION §5 step 21): the Foreman merges a Worker PR when local `--full` passed and `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs; Workers never merge | `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0, then `gh pr merge` |
+| 19 Local preflight | A PR is ready when `preflight.sh` (the pre-push hook) has passed: unit-level suites of the touched groups; a pass is recorded per commit and never repeated (#2413, #2493). GitHub does not re-run it (#2001). High-risk PRs add `PREFLIGHT_FULL=1`; the release needs `--all` | `bash workspace/sdlc/preflight.sh` (`--all` before a release) |
+| 20–21 Review + merge (**Gate 4**) | Foreman merge rule (CONSTITUTION §5 step 21): the Foreman merges a Worker PR when the local preflight passed and `check-heavy-ci.sh` exits 0; the Owner merges Constitution, `sdlc-exception` and harness PRs; Workers never merge | `bash workspace/sdlc/check-heavy-ci.sh <pr>` exit 0, then `gh pr merge` |
 | 18 Archive in the PR | Archive the implemented OpenSpec change before merge (`multi_pr: true` if later PRs continue it); the checker fails otherwise. Then `markdownlint-cli2 --fix` on touched `docs/openspec/specs/<cap>/spec.md` (#1689) | `cd docs && openspec archive <change> --yes` |
 | 22–24 Deploy, smoke test, close (**Gate 5**) | The Issue closes after merge, deploy and smoke test — not when the PR is opened | `cd.yml` |
 
@@ -135,7 +135,7 @@ no probe Issues):
 - ❌ Commit failing tests, `@Disabled` tests without approval, or secrets
 - ❌ Leave dead code, duplicate code or outdated docs
 - ❌ Open probe Issues to test permissions, or start the next hex domain before the current PR merges
-- ❌ Open a PR before `preflight.sh --full` passes — GitHub will not re-run the suite
+- ❌ Open a PR before `preflight.sh` passes, or cut a release before `preflight.sh --all` passes — GitHub will not re-run them
 - ❌ Claim Mac local green equals CI green, or move packages without updating `docs/tests` path refs
 - ❌ Open parallel heavy-CI PRs when one tip is still queued (fleet cost)
 - ❌ Put `closes #N` (or markdown `#N` links for open multi_pr epics) in CHANGELOG `[Unreleased]` — Release Please will close the issue early (#2033)

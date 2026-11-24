@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Guards #2413 (CU76): the pre-push hook does not gate again a commit that already passed.
+"""Guards #2413 and #2493 (CU76): the pre-push hook does not gate again a commit that already passed.
 
 The real hook runs against a throwaway repository whose preflight is a stub that counts its runs.
 
@@ -86,6 +86,25 @@ class HookCacheTest(unittest.TestCase):
         self.assertEqual(2, self.runs())
         self.push(sha)
         self.assertEqual(2, self.runs())
+
+    def marker(self, sha, mode):
+        cache = Path(self.git("rev-parse", "--path-format=absolute", "--git-common-dir")) / "preflight-pass"
+        cache.mkdir(exist_ok=True)
+        (cache / f"{sha}.{mode}").touch()
+
+    def test_a_manual_pass_of_any_complete_mode_covers_the_pull_request_gate(self):
+        for mode in ("pr", "full", "all"):
+            sha = self.commit(f"manual {mode}")
+            self.marker(sha, mode)
+            result = self.push(sha)
+            self.assertIn("already passed", result.stdout, mode)
+        self.assertEqual(0, self.runs())
+
+    def test_a_pull_request_pass_does_not_cover_the_full_gate(self):
+        sha = self.git("rev-parse", "HEAD")
+        self.marker(sha, "pr")
+        self.push(sha, PREFLIGHT_FULL="1")
+        self.assertEqual(1, self.runs())
 
 
 if __name__ == "__main__":
