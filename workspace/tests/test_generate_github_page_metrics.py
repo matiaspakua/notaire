@@ -123,6 +123,8 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
         frontend_summary: dict | None = None,
         playwright_results: dict | None = None,
         bruno_results: list | None = None,
+        gh_stdout: str = "1305",
+        gh_exit: int = 0,
     ) -> dict:
         self.assertTrue(SCRIPT.is_file(), f"missing {SCRIPT}")
         with tempfile.TemporaryDirectory() as tmp:
@@ -131,8 +133,17 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
             live_path = tmp_path / "live-metrics.json"
             live_path.write_text(json.dumps(live if live is not None else {}), encoding="utf-8")
 
+            # A stub gh on PATH (#2507): the tests never call the GitHub API, and can play its failures.
+            bin_dir = tmp_path / "bin"
+            bin_dir.mkdir()
+            gh = bin_dir / "gh"
+            gh.write_text(f"#!/usr/bin/env bash\nprintf '%s' {json.dumps(gh_stdout)}\nexit {gh_exit}\n",
+                          encoding="utf-8")
+            gh.chmod(0o755)
+
             env = {
                 **os.environ,
+                "PATH": f"{bin_dir}{os.pathsep}{os.environ.get('PATH', '')}",
                 "OUTPUT_FILE": str(out),
                 "LIVE_METRICS_URL": live_path.resolve().as_uri(),
                 "GH_REPO": "matiaspakua/notaire",
@@ -175,6 +186,16 @@ class GenerateGithubPageMetricsHonestyTest(unittest.TestCase):
             )
             self.assertTrue(out.is_file(), f"generator did not write {out}")
             return json.loads(out.read_text(encoding="utf-8"))
+
+    # #2507: on an API error gh prints the error object to stdout; `|| echo 0` used to append a 0 to it.
+    def test_a_failing_github_api_keeps_the_file_valid_and_uses_the_live_count(self) -> None:
+        error = '{"message":"API rate limit exceeded","status":"403"}'
+        data = self._run(live={"pullRequests": 1200}, gh_stdout=error, gh_exit=1)
+        self.assertEqual(1200, data["pullRequests"])
+
+    def test_a_failing_github_api_without_a_live_count_writes_zero(self) -> None:
+        data = self._run(live={}, gh_stdout="not a number", gh_exit=0)
+        self.assertEqual(0, data["pullRequests"])
 
     # #2475: the Pages showed a 70% / 25% floor, an 80% target and "4 AI tools" typed by hand.
     def test_coverage_floors_come_from_the_build_files(self) -> None:
