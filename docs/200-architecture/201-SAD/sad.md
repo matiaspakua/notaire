@@ -4,7 +4,7 @@
 >
 > **Version:** 4.0 | **Date:** 2026-11-24 | **Author:** Architecture Team
 >
-> **Changelog v4.0**: Architecture views are generated from the [LikeC4 model](../210-architecture-model/README.md) ([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md), #2483): no PlantUML left. Corrected drift: no Swing client, no `jpa`/`service` packages, frontend hexagon complete, module grants and MFA enforced, ingress and observability in the topology, backend memory limits. §11 lists the findings of the modelling pass (#2484–#2489).
+> **Changelog v4.0**: Architecture views are generated from the [LikeC4 model](../210-architecture-model/README.md) ([ADR-033](../202-ADR/ADR-033-likec4-architecture-model.md), #2483): no PlantUML left. Corrected drift: no Swing client, no `jpa`/`service` packages, frontend hexagon complete, module grants and MFA enforced, ingress and observability in the topology, backend memory limits. §11 lists the findings of the modelling pass (#2484–#2490); #2484, #2487 and #2488 were fixed in the same cycle.
 >
 > **Changelog v3.5**: Spring Boot 4.1.2, Flyway through V53, and the technology assessment in [TECHNOLOGY-STACK.md](../TECHNOLOGY-STACK.md) (#1976).
 >
@@ -205,7 +205,6 @@ flowchart TB
   class observability_prometheus,notaire_ingress,notaire_frontend,notaire_backend,observability_otelCollector c_primary
   class notaire_database c_indigo
   class notaire_assistant,localModel planned
-  linkStyle 6 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
@@ -321,7 +320,7 @@ flowchart TB
   notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
   notaire_backend_inbound_web -- "Exceptions mapped by" --> notaire_backend_inbound_errors
   notaire_frontend -- "Every /api/v1 call" --> notaire_backend_security_jwtFilter
-  notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
   notaire_backend_security_moduleAuthz -- "Granted module" --> notaire_backend_inbound_web
   notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
   notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
@@ -361,7 +360,6 @@ flowchart TB
   class notaire_backend_security_csrf,notaire_backend_security_lockout,notaire_backend_security_jwtFilter,notaire_backend_security_mfaGate,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
   class notaire_backend_outbound_legacyJpa,notaire_backend_application_legacyDtoPorts,notaire_backend_domain_missingDomain finding
   class notaire_database c_indigo
-  linkStyle 2 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
   linkStyle 17 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
@@ -699,8 +697,8 @@ flowchart TB
 
 The reverse proxy is the only published port; TLS terminates in front of it
 ([HTTPS-TLS-RUNBOOK](../206-security/HTTPS-TLS-RUNBOOK.md)) and forwards only `/actuator/health`
-([#2487](https://github.com/matiaspakua/notaire/issues/2487)). Red arrows are open findings:
-[#2488](https://github.com/matiaspakua/notaire/issues/2488) (MFA key, MFA policy and `COOKIE_SECURE` missing).
+([#2487](https://github.com/matiaspakua/notaire/issues/2487)); the backend requires the MFA key and sends the session
+cookie `Secure` ([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
 
 <!-- likec4-view: prod -->
 ```mermaid
@@ -730,7 +728,6 @@ flowchart TB
   classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
   class prod_edge_proxyHost_ingress,prod_private_feHost_frontend,prod_private_beHost_backend c_primary
   class prod_private_pgHost_database c_indigo
-  linkStyle 3 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
@@ -762,7 +759,6 @@ flowchart TB
   classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
   class staging_cluster_proxyPod_ingress,staging_cluster_fePod_frontend,staging_cluster_bePod_backend c_primary
   class staging_cluster_pgPod_database c_indigo
-  linkStyle 1 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
@@ -1084,7 +1080,6 @@ mindmap
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
 | JPA model and web DTOs still in legacy packages | High — persistence types and web DTOs reach ports | Certain | One context per PR ([#2485](https://github.com/matiaspakua/notaire/issues/2485), [#2486](https://github.com/matiaspakua/notaire/issues/2486)); ArchUnit R8 blocks new dependents ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
-| Production deployments omit the MFA key, the MFA policy and `COOKIE_SECURE` | High — MFA cannot be enrolled, session cookie without `Secure` | Certain | Wire them in compose and Kustomize ([#2488](https://github.com/matiaspakua/notaire/issues/2488)) |
 | Kustomize PostgreSQL on `emptyDir` | High for any real use — data lost on restart | Certain in staging | PVC or a documented ephemeral base ([#2489](https://github.com/matiaspakua/notaire/issues/2489)) |
 | ~~`ControllerNegocio.java` (5,337 lines) — God class~~ (renamed `BusinessController`, removed in #900) | Resolved — only two identification-type lookups were reachable; now `business/IdentificationTypeLookup` | — | Done (#900) |
 | Legacy Swing client resurrected on `main` | Low — Dependabot noise / confusion | Low | Keep deleted (#1046); do not recreate; history in git |
@@ -1141,7 +1136,7 @@ flowchart TB
   notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
   notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
   notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
-  notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
   notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
   classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
   classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
@@ -1153,7 +1148,6 @@ flowchart TB
   class notaire_ingress c_primary
   class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
   class notaire_backend_security_actuatorChain,notaire_backend_security_mfaGate c_red
-  linkStyle 5 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 

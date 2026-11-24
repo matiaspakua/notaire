@@ -30,7 +30,7 @@ flowchart TB
   notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
   notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
   notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
-  notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
   notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
   classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
   classDef c_sky fill:#e0f2fe,stroke:#0369a1,color:#0f172a
@@ -42,4 +42,3 @@ flowchart TB
   class notaire_ingress c_primary
   class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
   class notaire_backend_security_actuatorChain,notaire_backend_security_mfaGate c_red
-  linkStyle 5 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

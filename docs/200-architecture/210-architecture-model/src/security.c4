@@ -45,9 +45,8 @@ model {
     description "SR-18, #2487."
     link https://github.com/matiaspakua/notaire/issues/2487
   }
-  notaire.ingress -[http]-> notaire.backend.security.mfaGate "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" {
-    #finding
-    description "MFA enrolment fails and the JWT cookie lacks Secure in production. #2488."
+  notaire.ingress -[http]-> notaire.backend.security.mfaGate "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" {
+    description "#2488."
     link https://github.com/matiaspakua/notaire/issues/2488
   }
 }

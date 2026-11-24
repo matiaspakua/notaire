@@ -45,7 +45,7 @@ flowchart TB
   notaire_database[("Notarial database<br/><i>PostgreSQL 16</i>")]
   notaire_backend_inbound_web -- "Exceptions mapped by" --> notaire_backend_inbound_errors
   notaire_frontend -- "Every /api/v1 call" --> notaire_backend_security_jwtFilter
-  notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
   notaire_backend_security_moduleAuthz -- "Granted module" --> notaire_backend_inbound_web
   notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
   notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
@@ -85,5 +85,4 @@ flowchart TB
   class notaire_backend_security_csrf,notaire_backend_security_lockout,notaire_backend_security_jwtFilter,notaire_backend_security_mfaGate,notaire_backend_security_rateLimit,notaire_backend_security_moduleAuthz c_red
   class notaire_backend_outbound_legacyJpa,notaire_backend_application_legacyDtoPorts,notaire_backend_domain_missingDomain finding
   class notaire_database c_indigo
-  linkStyle 2 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
   linkStyle 17 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

@@ -78,8 +78,8 @@ flowchart TB
 
 Host `:80` → reverse proxy → frontend (`/`) and backend (`/api`). PostgreSQL, backend and frontend publish no
 host port; no pgAdmin; `ENVIRONMENT=production`; Flyway baseline off. TLS terminates in front of the proxy.
-The proxy forwards only `/actuator/health` ([#2487](https://github.com/matiaspakua/notaire/issues/2487)). Open
-finding (red): the backend gets no MFA key, MFA policy or `COOKIE_SECURE`
+The proxy forwards only `/actuator/health` ([#2487](https://github.com/matiaspakua/notaire/issues/2487)); the
+backend requires the MFA key and gets the MFA policy and `COOKIE_SECURE=true`
 ([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
 
 <!-- likec4-view: prod -->
@@ -110,7 +110,6 @@ flowchart TB
   classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
   class prod_edge_proxyHost_ingress,prod_private_feHost_frontend,prod_private_beHost_backend c_primary
   class prod_private_pgHost_database c_indigo
-  linkStyle 3 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
@@ -147,7 +146,6 @@ flowchart TB
   classDef c_indigo fill:#e0e7ff,stroke:#4338ca,color:#0f172a
   class staging_cluster_proxyPod_ingress,staging_cluster_fePod_frontend,staging_cluster_bePod_backend c_primary
   class staging_cluster_pgPod_database c_indigo
-  linkStyle 1 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 

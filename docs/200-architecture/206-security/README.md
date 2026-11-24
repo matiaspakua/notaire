@@ -102,9 +102,9 @@ DFD used by the threat model stays in [`diagrams/trust-boundaries.puml`](diagram
 
 ### Controls along the request path and on stored data
 
-The production ingress forwards only `/actuator/health` (SR-18, [#2487](https://github.com/matiaspakua/notaire/issues/2487)).
-Red dashed arrows are open findings: [#2488](https://github.com/matiaspakua/notaire/issues/2488) (production
-deployments omit the MFA key, the MFA policy and `COOKIE_SECURE`).
+The production ingress forwards only `/actuator/health` (SR-18, [#2487](https://github.com/matiaspakua/notaire/issues/2487)),
+and production deployments wire the MFA key, the MFA policy and `COOKIE_SECURE`
+([#2488](https://github.com/matiaspakua/notaire/issues/2488)). Red dashed elements are open findings.
 
 <!-- likec4-view: security -->
 ```mermaid
@@ -145,7 +145,7 @@ flowchart TB
     observability_prometheus["Prometheus<br/><i>Prometheus 3.15</i>"]
     observability_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
   end
-  notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
+  notaire_ingress -- "Login and MFA challenge (production wires the MFA key, policy and COOKIE_SECURE)" --> notaire_backend_security_mfaGate
   notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
   notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
   notaire_backend_security_jwtFilter -- "Checks revoked tokens" --> notaire_backend_security_tokenRevocation
@@ -163,7 +163,6 @@ flowchart TB
   class notaire_frontend_edge_proxy,notaire_backend_security_lockout,notaire_backend_security_csrf,notaire_backend_security_credentialsGuard,notaire_database_auditLog,notaire_database_leastPrivilege,notaire_backend_security_jwtFilter,notaire_backend_security_mfaGate,notaire_backend_security_actuatorChain,notaire_backend_security_rateLimit,notaire_backend_security_tokenRevocation,notaire_backend_security_moduleAuthz,notaire_backend_outbound_crypto_totpCipher c_red
   class notaire_frontend_edge_bff,notaire_backend_crosscutting_audit c_sky
   class observability_prometheus,observability_exporters,notaire_ingress c_primary
-  linkStyle 0 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
