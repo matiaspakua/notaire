@@ -40,10 +40,9 @@ OpenSpec and the Constitution: see [`docs/openspec/NOTAIRE-ADAPTATIONS.md`](../o
 2. When a change moves a domain state, update
    [CICLO-DE-VIDA.md](../200-architecture/203-design/CICLO-DE-VIDA.md). The artifact
    and traceability method is in [`INGENIERIA.md`](INGENIERIA.md).
-3. Run `bash workspace/sdlc/preflight.sh --full` before every push and before
-   opening a pull request (see [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md); a run
-   without `--full`, and `mvn verify` alone, are not enough). GitHub does not
-   re-run that suite on the pull request.
+3. Run `bash workspace/sdlc/preflight.sh` before every push and pull request (the pre-push hook does it;
+   `mvn verify` alone is not enough) and `bash workspace/sdlc/preflight.sh --all` before a release (see
+   [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md), #2493). GitHub does not re-run the suites on the pull request.
 
 ## Navigation
 

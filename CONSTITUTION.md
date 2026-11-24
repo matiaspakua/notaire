@@ -268,25 +268,31 @@ affected by the change (see [section 8](#8-documentation-rules)). → **Gate 3.*
 **17. Atomic Commits.** Commit in small, focused, self-contained units using
 Conventional Commits; each commit references the issue (`Closes #<issue-number>`).
 
-**17.5 Run the full pipeline.** Before opening the PR, run
-`bash workspace/sdlc/run_pipeline.sh` — the single, dashboarded pre-PR gate. It brings
+**17.5 Run the full pipeline.** Before a release, and before a PR only when the change is
+high-risk (authentication, Flyway on existing rows, a consumed contract), run
+`bash workspace/sdlc/run_pipeline.sh` — the dashboarded complete gate (#2493). It brings
 the Docker stack up itself and composes `validate-sdlc-plan.sh` +
 `python3 security/run_gates.py --profile local` (threat-model, secret, SAST, and SCA
 cases, then the DAST baseline once the API is up) + `preflight.sh --full` + a
 markdown-lint pass, writing one HTML dashboard under
-`reports/pipeline/<timestamp>/index.html`. Do not open the PR until it passes.
+`reports/pipeline/<timestamp>/index.html`.
 The case catalog is `security/cases/catalog.yml`. CI runs the same catalog and
 adds CodeQL and OWASP ZAP.
 
 **18. Create the pull request.** Open a PR from the branch to `main` using
 `.github/PULL_REQUEST_TEMPLATE.md`, referencing the Issue and Use Case.
 
-**19. Local full preflight.** A pull request is ready when
-`bash workspace/sdlc/preflight.sh --full` has passed on the branch. GitHub
-Actions does not re-run that suite on the pull request or on push to `main`
-(#2001). The pre-push hook runs `--full`. A run without `--full` is not
-sufficient to open a pull request. CodeQL stays on GitHub (weekly Monday and
-on version tags) and is not replicated locally.
+**19. Local preflight.** A pull request is ready when
+`bash workspace/sdlc/preflight.sh` (the pull-request gate the pre-push hook runs:
+format, lint, compile, typecheck, process checks, and the unit tests and builds
+of the suite groups the branch touches) has passed on the branch (#2493). GitHub
+Actions does not re-run it on the pull request or on push to `main` (#2001).
+The server-backed suites (Playwright, Bruno, Docker, database V&V) gate the
+**release**: `bash workspace/sdlc/preflight.sh --all` must pass on the release
+commit before release-please is dispatched, and the version-tag CI repeats the
+heavy workflows. A high-risk change may opt in at the PR with
+`PREFLIGHT_FULL=1 git push`. CodeQL stays on GitHub (weekly Monday and on
+version tags) and is not replicated locally.
 
 **20. Code Review.** Address review feedback in new commits. The PR is ready to
 merge when it is reviewed by the code owner **or** passes the Foreman's Gate 4
@@ -302,7 +308,7 @@ repo history). Never push directly to `main`.
 
 **Foreman merge rule.** The Owner delegates merge authority to the Foreman
 (#1624). The Foreman may merge a Worker's PR only when
-`bash workspace/sdlc/preflight.sh --full` has passed on the head,
+`bash workspace/sdlc/preflight.sh` has passed on the head,
 `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0, the PR is `MERGEABLE`,
 and Gate 4 has no open item. Product CI does not run on the pull request
 (#2001); `check-heavy-ci.sh` fails only when a heavy workflow was actually
@@ -594,14 +600,14 @@ Mandatory:
 - Branches: `<type>/<issue-number>_<description>`, created from an updated `main`.
 - Commits: atomic, descriptive, Conventional Commits, referencing the issue.
 - PRs: mandatory for every change; merge only via Pull Request.
-- Merge requires: `bash workspace/sdlc/preflight.sh --full` passed, code review
+- Merge requires: `bash workspace/sdlc/preflight.sh` passed, code review
   approval, no conflicts (Gate 4); the Owner or, under the Foreman merge rule
   (§5 step 21), the Foreman merges. GitHub does not re-run that suite on the PR.
 - No secrets in commits; `.env` is git-ignored.
 - Before pushing or opening a pull request, run
-  `bash workspace/sdlc/preflight.sh --full` (the `pre-push` hook does this after
-  `bash workspace/sdlc/install-git-hooks.sh`). A run without `--full` is not
-  sufficient to open a pull request.
+  `bash workspace/sdlc/preflight.sh` (the `pre-push` hook does this after
+  `bash workspace/sdlc/install-git-hooks.sh`). Before a release, run
+  `bash workspace/sdlc/preflight.sh --all` (#2493).
 - **Continuous publication (#1681):** work lives on GitHub, not only on a disk. Push
   the branch **immediately** after creating it; after **each group of atomic commits**
   (spec, failing tests, implementation, docs) push the commits **and** comment on the
@@ -622,7 +628,7 @@ the full workflow in [section 5](#5-official-sdlc-workflow) and may **never**:
 - ❌ Generate code without a Specification (Gate 1)
 - ❌ Write code before its failing tests (Gate 2)
 - ❌ Ignore any Quality Gate
-- ❌ Create a PR before `bash workspace/sdlc/preflight.sh --full` passes, or with missing/outdated docs or reduced coverage
+- ❌ Create a PR before `bash workspace/sdlc/preflight.sh` passes, or cut a release before `--all` passes, or with missing/outdated docs or reduced coverage
 - ❌ Skip the documentation update step
 - ❌ Commit to `main`, skip tests, or leave failing tests
 - ❌ Mark an Issue closed before deploy + smoke test (Gate 5)
@@ -650,7 +656,7 @@ An AI agent **must**:
   re-check, then stop; every PR states `Risk: <item> (<reason>)` or `Risk: none`. Operational detail:
   `.claude/rules/ai-agent-workflow.md` § Decisions, deviations, corrections and risk
 - ✅ **Merge authority:** only the Foreman merges, and only under the Foreman
-  merge rule (§5 step 21). A PR is ready when `bash workspace/sdlc/preflight.sh --full`
+  merge rule (§5 step 21). A PR is ready when `bash workspace/sdlc/preflight.sh`
   has passed. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0; it does
   not wait for GitHub jobs that no longer run on pull requests. The `merge` stage of
   `.aisdlc/aisdlc.toml` runs `aisdlc protected`: a PR that touches an owner-only path
@@ -768,14 +774,14 @@ Agent-specific entry points:
   label. A PR that carries no OpenSpec change must have that label, and the
   label is only valid on such a PR (`workspace/sdlc/check-sdlc-exception.sh`).
 - **Enforcement:**
-  - Local: `workspace/sdlc/preflight.sh --full` + pre-push git hook. A run
-    without `--full` is not sufficient to open a PR. `--full` runs the suite
-    groups the branch touches compared with origin/main; changes to shared
-    infrastructure run every group, and `--all` runs every group on request
-    (releases, cross-cutting changes). The hook does not gate again a commit
-    that already passed (#2413).
-    `workspace/sdlc/run_pipeline.sh` is the dashboarded final check before
-    opening a PR (→ Gate 3) and already includes `preflight.sh --full`.
+  - Local: `workspace/sdlc/preflight.sh` + pre-push git hook is the PR gate; it
+    runs the unit-level suites of the groups the branch touches compared with
+    origin/main (#2413, #2493). `--full` adds the server-backed suites for those
+    groups; `--all` runs every group and is the release gate. A pass is recorded
+    per commit and mode, and the hook does not run again for a commit that
+    passed the same or a more complete mode.
+    `workspace/sdlc/run_pipeline.sh` is the dashboarded complete check before a
+    release and includes `preflight.sh --full`.
   - Release CI: GitHub Actions product workflows run on version tags and
     manual dispatch, not on pull requests. `sdlc-process.yml` checks the
     process on a tag; the same checks run in preflight on every PR.
@@ -822,11 +828,11 @@ drift.
 | Lint / format | Spotless (CI "Code Lint"), Checkstyle, ESLint |
 | Frontend | `frontend-ci.yml` (TypeScript, ESLint, Vitest, Next.js build) |
 | E2E | `playwright-e2e.yml` (Playwright suite in `testing/e2e` + Bruno API suite) |
-| Local preflight | `bash workspace/sdlc/preflight.sh --full` is mandatory before push/PR (`--fix` / `--fast` are not sufficient to open a PR); pre-push hook runs `--full`, which runs the suites the branch touches; `--all` runs every suite (#2413) |
+| Local preflight | `bash workspace/sdlc/preflight.sh` is the PR gate the pre-push hook runs (unit-level suites of the touched groups); `--full` adds the server-backed suites; `--all` runs every suite and gates the release (#2413, #2493) |
 | Product version coherence (#1591) | `python3 workspace/sdlc/check-product-version-coherence.py` (`--tag`, `--packaged`); mirrored in `preflight.sh`, `sdlc-process.yml`, `ci.yml`, and `cd.yml` `release-identity` |
-| Pre-PR pipeline gate (Gate 3) | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
+| Release pipeline gate | `bash workspace/sdlc/run_pipeline.sh` — composes `validate-sdlc-plan.sh` + `python3 security/run_gates.py --profile local` + `preflight.sh --full` + markdown-lint (ratchet vs `origin/main`); writes `reports/pipeline/<timestamp>/index.html` dashboard |
 | CI/CD | Product workflows (`ci.yml`, `pr-validation.yml`, `sdlc-process.yml`, `frontend-ci.yml`, `playwright-e2e.yml`, `cd.yml`, …) run on tags `v*` / `notaire-v*` and `workflow_dispatch`, not on pull requests (#2001). `cd.yml` publishes images only then. Release Please stays on push to `main`. |
-| **Merge gate** | `bash workspace/sdlc/preflight.sh --full` on the branch. `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when GitHub did not start the heavy suite ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
+| **Merge gate** | `bash workspace/sdlc/preflight.sh` on the branch. `bash workspace/sdlc/check-heavy-ci.sh <pr>` exits 0 when GitHub did not start the heavy suite ([CI-MERGE-GATE.md](docs/300-development/304-ai-sdlc-cloud/CI-MERGE-GATE.md)) |
 | Release-only triggers | Tag + `workflow_dispatch` for product CI; path-filter jobs still force a full suite when the event is not `pull_request`. Invariants in `workspace/tests/test_ci_workflow_invariants.py` (#2001, formerly path-scoped #1257) |
 | Security | Local case catalog `security/cases/catalog.yml` via `python3 security/run_gates.py` (Semgrep, secret scan, Trivy, DAST baseline). CI adds CodeQL and OWASP ZAP and runs the same catalog. `security/` module for rulesets-as-code |
 | Deploy | `cd.yml` → build, scan, sign (cosign) and publish backend and frontend images to GHCR on `v*` / `notaire-v*` or `workflow_dispatch` only; attach product, database, and image SBOMs on those tags; no automated smoke test; no publish on merge to `main` |
