@@ -42,6 +42,8 @@ class StepsTest(unittest.TestCase):
         names = [name for name, _ in load().steps(agent=True, history=True)]
         self.assertIn("agent bench", names)
         self.assertIn("ai sdlc history", names)
+        self.assertIn("delivery metrics", names)  # #2475: every Pages snapshot from one command
+        self.assertIn("roadmap snapshot", names)
         self.assertLess(names.index("agent bench"), names.index("bench report"))
 
     def test_dry_run_prints_the_steps_and_runs_nothing(self):
