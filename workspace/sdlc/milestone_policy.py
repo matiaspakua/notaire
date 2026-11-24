@@ -19,6 +19,8 @@ AI_FACTORY = "v0.7 · AI Factory & repo knowledge (2027-03)"
 OBSERVABLE_FACTORY = "v0.8 · Observable self-managing factory (2027-03)"
 CONTROL_PLANE = "v0.9 · Factory control plane (2027-03)"
 PRODUCTION_LINE = "v0.10 · Factory production line & delivery gates (2027-03)"
+EVIDENCE = "v0.11 · Factory evidence & kit-only SDLC (2027-03)"
+KIT_EXTRACTION = "v0.12 · Factory kit extraction (2027-03)"
 GA = "v1.0 · GA: legacy-free (2027-04)"
 BACKLOG = "Backlog · Unscheduled"
 CATALOG = "Catalog · Requirements & use cases"
@@ -40,7 +42,8 @@ HISTORY_Q2 = "H · 2026 Q2 cohort: foundations & API"
 HISTORY_Q3 = "H · 2026 Q3 cohort: product build & UI/UX"
 HISTORY_Q4 = "H · 2026 Q4 cohort: cloud AI SDLC"
 
-SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, OBSERVABLE_FACTORY, CONTROL_PLANE, PRODUCTION_LINE, GA)
+SCHEDULED = (RELEASE, FRONTEND, QUALITY, PLATFORM, AI_FACTORY, OBSERVABLE_FACTORY, CONTROL_PLANE, PRODUCTION_LINE, EVIDENCE,
+             KIT_EXTRACTION, GA)
 CONTINUOUS = (BACKLOG, CATALOG)
 SHIPPED = (V01, V02)
 HISTORY_STAGES = (H0, H1, H2, H3, H4, H5, H6, H7, H8)
@@ -180,6 +183,8 @@ MILESTONE_WINDOW = {
     OBSERVABLE_FACTORY: ("2027-03-01", "2027-03-31"),
     CONTROL_PLANE: ("2027-03-01", "2027-03-31"),
     PRODUCTION_LINE: ("2027-03-01", "2027-03-31"),
+    EVIDENCE: ("2027-03-01", "2027-03-31"),
+    KIT_EXTRACTION: ("2027-03-01", "2027-03-31"),
     GA: ("2027-04-01", "2027-04-30"),
 }
 ROADMAP_WINDOW = {title: MILESTONE_WINDOW[title] for title in SCHEDULED}
@@ -216,7 +221,15 @@ MILESTONE_DESCRIPTION = {
     PRODUCTION_LINE: _describe("factory production line and delivery gates: station diagram, step inputs and outputs, change-aware preflight",
                                "v0.10.z cuts, 2027-03-01 → 2027-03-31",
                                "#2407, #2410, #2411, #2413, #2414, #2434, #2435 production-line dashboard, step I/O, stack lock, change-aware gate",
-                               "every station's work and gate is visible and the preflight runs only what a branch touches", GA),
+                               "every station's work and gate is visible and the preflight runs only what a branch touches", EVIDENCE),
+    EVIDENCE: _describe("Notaire runs its process only through aisdlc; factory and RepoLens evidence refresh with one command",
+                        "v0.11.z cuts, 2027-03-01 → 2027-03-31",
+                        "#2456 slices 1-2, #2466, #2469, #2452 aisdlc-only checks, evidence refresh, RepoLens explainer",
+                        "no generic check duplicated outside the kit; benches and metrics stamped and current", KIT_EXTRACTION),
+    KIT_EXTRACTION: _describe("the AI SDLC kit is self-contained and ready for its own repository",
+                              "v0.12.z cuts, 2027-03-01 → 2027-03-31",
+                              "#2456 slices 3-7 (#2459–#2463): process gates, OpenSpec plugin, tracker policy, preflight engine, docs",
+                              "workspace/sdlc holds only Notaire policy and shims; the kit extracts with its tests green", GA),
     GA: _describe("general availability with no legacy code", "v1.0.z cuts, 2027-04-01 → 2027-04-30",
                   "#899 Phase 6 deprecation, legacy packages removed, Owner GA decision",
                   "Owner tags v1.0.0", "next minor train"),

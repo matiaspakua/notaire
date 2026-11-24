@@ -75,6 +75,8 @@ Backlog, Catalog and the cohorts use a one-line purpose instead.
 | `v0.8 · Observable self-managing factory (2027-03)` | 2027-03 | observable factory: production line, intents, live state, store, config as code |
 | `v0.9 · Factory control plane (2027-03)` | 2027-03 | intents, live status, telemetry, configuration as code, catalog-owned AI config |
 | `v0.10 · Factory production line & delivery gates (2027-03)` | 2027-03 | production-line dashboard, step inputs and outputs, stack lock, change-aware preflight |
+| `v0.11 · Factory evidence & kit-only SDLC (2027-03)` | 2027-03 | aisdlc-only process checks, one-command evidence refresh, RepoLens explainer |
+| `v0.12 · Factory kit extraction (2027-03)` | 2027-03 | kit self-contained: process gates, OpenSpec plugin, tracker policy, preflight engine move into aisdlc |
 | `v1.0 · GA: legacy-free (2027-04)` | 2027-04 | Phase 6, Owner GA decision |
 | `Backlog · Unscheduled` | – | unscheduled work |
 | `Catalog · Requirements & use cases` | – | requirement anchors |
