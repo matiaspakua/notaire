@@ -69,6 +69,11 @@ services:
       ACTUATOR_PASSWORD: ${ACTUATOR_PASSWORD:?Set ACTUATOR_PASSWORD in .env}
       APP_ADMIN_USER: ${APP_ADMIN_USER:?Set APP_ADMIN_USER in .env}
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:?Set APP_ADMIN_PASSWORD in .env}
+      # MFA TOTP (#1640, ADR-032; wired for production by #2488). Key: openssl rand -base64 32
+      NOTAIRE_MFA_ENCRYPTION_KEY: ${NOTAIRE_MFA_ENCRYPTION_KEY:?Set NOTAIRE_MFA_ENCRYPTION_KEY in .env (openssl rand -base64 32)}
+      NOTAIRE_MFA_POLICY: ${NOTAIRE_MFA_POLICY:-OPTIONAL}
+      # TLS terminates in front of the proxy (HTTPS-TLS-RUNBOOK), so the session cookie is Secure.
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,metrics,prometheus,info,threaddump
       MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED: "true"
       MANAGEMENT_HEALTH_DISKSPACE_ENABLED: "false"
