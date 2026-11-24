@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| Health stays reachable through the ingress | test_ingress_actuator | pending |
-| Other actuator endpoints are not published | test_ingress_actuator | pending |
+| Health stays reachable through the ingress | test_ingress_actuator | passing |
+| Other actuator endpoints are not published | test_ingress_actuator | passing |
 
 ## Permanent documentation updated
 
