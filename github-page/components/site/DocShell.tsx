@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { actLabel, chrome, factoryPageSummary, factoryPageTitle, pageIsTranslated } from "@/lib/i18n";
 import { tr } from "@/lib/i18n/es";
 import "@/lib/i18n/strings";
 import { actOf, groupsFor, REPORTS, sectionOf } from "@/lib/site";
 import { Breadcrumbs } from "./Breadcrumbs";
-import { Es, trs } from "./Es";
+import { Es } from "./Es";
 import { PrevNext } from "./PrevNext";
 import { usePreferences } from "./Preferences";
 import { ReadingProgress } from "./ReadingProgress";
@@ -31,34 +31,6 @@ export function DocShell({ children }: { children: ReactNode }) {
   const security = section === "security";
   const title = factory ? "AI Factory" : product ? t.nav.product : security ? t.nav.security : t.nav.docs;
   const act = factory ? actOf(pathname) : undefined;
-  const articleRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const root = articleRef.current;
-    if (!root) return;
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes: Text[] = [];
-    let current = walker.nextNode();
-    while (current) {
-      nodes.push(current as Text);
-      current = walker.nextNode();
-    }
-    for (const node of nodes) {
-      const parent = node.parentElement;
-      if (!parent || parent.closest("script, style, pre")) continue;
-      const record = node as Text & { __en?: string };
-      if (locale === "es") {
-        const source = record.__en ?? node.nodeValue ?? "";
-        const next = trs(source);
-        if (next !== source) {
-          record.__en = source;
-          node.nodeValue = next;
-        }
-      } else if (record.__en) {
-        node.nodeValue = record.__en;
-        delete record.__en;
-      }
-    }
-  }, [locale, pathname]);
   const groups = groupsFor(section).map((group) => ({
     ...group,
     label: actLabel(group.label, locale),
@@ -112,7 +84,7 @@ export function DocShell({ children }: { children: ReactNode }) {
               {t.untranslated}
             </p>
           )}
-          <div ref={articleRef} lang={locale === "es" && !pageIsTranslated(pathname) ? "en" : undefined} className={product ? "product-body" : "doc-body"}>
+          <div lang={locale === "es" && !pageIsTranslated(pathname) ? "en" : undefined} className={product ? "product-body" : "doc-body"}>
             <Es>{children}</Es>
           </div>
           <PrevNext pathname={pathname} />

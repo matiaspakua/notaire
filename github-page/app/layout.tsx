@@ -5,6 +5,7 @@ import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { LocalizeMain } from "@/components/site/LocalizeMain";
 import { PreferencesProvider } from "@/components/site/Preferences";
 import { SkipLink } from "@/components/site/SkipLink";
 import { PREFERENCE_BOOT } from "@/lib/preference-boot";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main" tabIndex={-1} className="focus:outline-none">
             {children}
           </main>
+          <LocalizeMain />
           <SiteFooter version={productVersion} />
         </PreferencesProvider>
       </body>
