@@ -150,6 +150,17 @@ class PageDeployWorkflowInvariantsTest(unittest.TestCase):
             self.assertNotIn("jacoco:report", line)
             self.assertNotIn(" -am", line)
 
+    def test_page_deploy_uploads_in_build_and_deploys_in_its_own_job(self):
+        """#2481: in one job, deploy-pages could not yet see the artifact it had just uploaded."""
+        jobs = self.page["jobs"]
+        build_uses = [s.get("uses", "") for s in jobs["build"]["steps"]]
+        deploy_uses = [s.get("uses", "") for s in jobs["deploy"]["steps"]]
+        self.assertTrue(any(u.startswith("actions/upload-pages-artifact@") for u in build_uses))
+        self.assertFalse(any(u.startswith("actions/deploy-pages@") for u in build_uses))
+        self.assertEqual(["actions/deploy-pages@v5"], [u for u in deploy_uses if u])
+        self.assertEqual("build", jobs["deploy"]["needs"])
+        self.assertEqual("github-pages", jobs["deploy"]["environment"]["name"])
+
     def test_page_deploy_workflow_has_workflow_dispatch_trigger(self):
         self.assertIn("workflow_dispatch", trigger_types(self.page))
 
