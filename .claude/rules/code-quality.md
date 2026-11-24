@@ -169,6 +169,17 @@ mvn test -pl backend-api -Dtest=HexagonArchitectureTest -Darchitecture.baseline=
 and commit the smaller file. Never add a line by hand; `-Darchitecture.baseline=init` is only for the first
 generation. The goal is an empty baseline.
 
+### Legacy package dependents (R8, #2484)
+
+`LegacyPackageArchitectureTest` fails when a class outside the legacy packages gains a dependency on
+`repository`, `business` or `dto`: a port or use case on a legacy web DTO, or a new user of the JPA model outside
+the persistence adapters. The 652 dependencies of 2026-11-24 are in
+`src/test/resources/architecture/legacy-dependents-baseline.txt`, its own `aisdlc` ratchet (#2485, #2486 shrink it):
+
+```bash
+mvn test -pl backend-api -Dtest=LegacyPackageArchitectureTest -Darchitecture.baseline=shrink
+```
+
 ### Use-case slice no-cycles (R7, #1725)
 
 `UseCaseSliceCycleArchitectureTest` fails when `application.usecase.<slice>` packages form a dependency cycle.
