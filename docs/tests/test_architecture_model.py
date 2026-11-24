@@ -75,6 +75,13 @@ class ArchitectureModelTest(unittest.TestCase):
         for finding in data["findings"]:
             self.assertRegex(finding["issue"], r"^https://github\.com/matiaspakua/notaire/issues/\d+$", finding)
 
+    def test_finding_ids_do_not_depend_on_the_checkout(self):
+        """LikeC4 relationship ids are hashes that change with the checkout path; the generated data must not."""
+        data = json.loads(PAGES_DATA.read_text(encoding="utf-8"))
+        for finding in data["findings"]:
+            if finding["kind"] == "relationship":
+                self.assertIn(" -> ", finding["id"], finding)
+
     def test_the_sad_has_no_plantuml_left(self):
         sad = (ROOT / "docs/200-architecture/201-SAD/sad.md").read_text(encoding="utf-8")
         self.assertNotIn("```plantuml", sad)
