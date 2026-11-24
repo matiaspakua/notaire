@@ -4,7 +4,7 @@
 **Date:** 2026-11-24
 **Deciders:** Owner direction via issue #2483 (CU76)
 **Related:** ADR-027 (amended), ADR-030 (hexagon), ADR-026 (modules), ADR-022 (no large binaries),
-[OpenSpec change](../../openspec/changes/docs-2483-likec4-architecture-model/proposal.md)
+[OpenSpec change](../../openspec/changes/archive/2026-11-24-docs-2483-likec4-architecture-model/proposal.md)
 
 ## Context
 
