@@ -107,7 +107,11 @@ function findingsOf(model) {
     .map((e) => finding(e, "element", e.title));
   const relations = [...model.relationships()]
     .filter((r) => r.tags.includes("finding"))
-    .map((r) => finding(r, "relationship", `${r.source.title} → ${r.target.title}: ${r.title}`));
+    // LikeC4 relationship ids hash the source location, so they change with the checkout path; build a stable one.
+    .map((r) => ({
+      ...finding(r, "relationship", `${r.source.title} → ${r.target.title}: ${r.title}`),
+      id: `${r.source.id} -> ${r.target.id}: ${r.title}`,
+    }));
   const nodes = [...model.deployment.elements()]
     .filter((n) => n.tags.includes("finding"))
     .map((n) => ({ ...finding(n, "deployment", n.title), description: text(n.$node?.description ?? n.description) }));
