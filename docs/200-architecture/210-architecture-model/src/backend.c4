@@ -67,7 +67,7 @@ model {
       }
       legacyDtoPorts = component "Ports speaking legacy web DTOs" {
         #debt #finding
-        description "40 files in 8 contexts import com.licensis.notaire.dto (testimony, procedure, management, history, concept, audit, registrationdraft, item). #2485; R2 does not guard it yet (#2484)."
+        description "40 files in 8 contexts import com.licensis.notaire.dto (testimony, procedure, management, history, concept, audit, registrationdraft, item). #2485; ArchUnit R8 stops new ones (#2484)."
         link https://github.com/matiaspakua/notaire/issues/2485
       }
     }

@@ -102,9 +102,9 @@ DFD used by the threat model stays in [`diagrams/trust-boundaries.puml`](diagram
 
 ### Controls along the request path and on stored data
 
-Red dashed arrows are open findings: [#2487](https://github.com/matiaspakua/notaire/issues/2487) (the production
-ingress forwards every actuator endpoint) and [#2488](https://github.com/matiaspakua/notaire/issues/2488)
-(production deployments omit the MFA key, the MFA policy and `COOKIE_SECURE`).
+The production ingress forwards only `/actuator/health` (SR-18, [#2487](https://github.com/matiaspakua/notaire/issues/2487)).
+Red dashed arrows are open findings: [#2488](https://github.com/matiaspakua/notaire/issues/2488) (production
+deployments omit the MFA key, the MFA policy and `COOKIE_SECURE`).
 
 <!-- likec4-view: security -->
 ```mermaid
@@ -146,7 +146,7 @@ flowchart TB
     observability_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
   end
   notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
-  notaire_ingress -- "Forwards every /actuator/* path to the internet-facing ingress" --> notaire_backend_security_actuatorChain
+  notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
   notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
   notaire_backend_security_jwtFilter -- "Checks revoked tokens" --> notaire_backend_security_tokenRevocation
   notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
@@ -164,7 +164,6 @@ flowchart TB
   class notaire_frontend_edge_bff,notaire_backend_crosscutting_audit c_sky
   class observability_prometheus,observability_exporters,notaire_ingress c_primary
   linkStyle 0 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
-  linkStyle 1 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 
@@ -219,7 +218,7 @@ flowchart TB
     delivery_workflows_securityWf["Security workflows<br/><i>codeql.yml, dast-zap.yml</i>"]
     delivery_workflows_cd["CD<br/><i>cd.yml</i>"]
   end
-  delivery_gates_preflight[["Local full preflight<br/><i>workspace/sdlc/preflight.sh --full</i>"]]
+  delivery_gates_preflight[["Local preflight<br/><i>workspace/sdlc/preflight.sh (PR), --all (release)</i>"]]
   github_ghcr["GHCR"]
   delivery_workflows_ci -- "Runs" --> delivery_securityScans_sca
   delivery_workflows_securityWf -- "Runs CodeQL" --> delivery_securityScans_sast

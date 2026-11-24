@@ -4,10 +4,9 @@ title: "CI/CD and quality gates"
 flowchart TB
   subgraph delivery_gates["Quality gates"]
     delivery_gates_contract[["API contract<br/><i>OpenAPI export diff</i>"]]
-    delivery_gates_guardGap[["Legacy-package guards missing<br/><i>HexagonArchitectureTest R2, R6</i>"]]
     delivery_gates_openspecGate[["Gate 1: OpenSpec<br/><i>openspec validate --strict, validate-sdlc-plan.sh</i>"]]
     delivery_gates_staticAnalysis[["Static analysis<br/><i>Checkstyle, SpotBugs, SonarQube new code</i>"]]
-    delivery_gates_preflight[["Local full preflight<br/><i>workspace/sdlc/preflight.sh --full</i>"]]
+    delivery_gates_preflight[["Local preflight<br/><i>workspace/sdlc/preflight.sh (PR), --all (release)</i>"]]
     delivery_gates_coverage[["Coverage floors<br/><i>JaCoCo 85/70, Vitest 87/79/85/88</i>"]]
     delivery_gates_boundaries[["Architecture boundaries<br/><i>ArchUnit baselines, ESLint boundaries</i>"]]
     delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
@@ -53,7 +52,7 @@ flowchart TB
   classDef c_slate fill:#e2e8f0,stroke:#334155,color:#0f172a
   classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
   class delivery_gates_contract,delivery_gates_openspecGate,delivery_gates_staticAnalysis,delivery_gates_preflight,delivery_gates_coverage,delivery_gates_boundaries c_amber
-  class delivery_gates_guardGap,delivery_gates_ruleset finding
   class delivery_workflows_ci,delivery_workflows_prValidation,delivery_workflows_frontendCi,delivery_workflows_e2eWf,delivery_workflows_scheduled,delivery_workflows_securityWf,delivery_workflows_cd,delivery_workflows_pagesWf c_slate
   class github_actions,github_ghcr,github_pages c_primary
+  class delivery_gates_ruleset finding
   class delivery_tests,delivery_securityScans c_secondary

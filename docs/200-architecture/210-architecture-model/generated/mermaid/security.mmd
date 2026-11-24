@@ -36,7 +36,7 @@ flowchart TB
     observability_exporters["Exporters<br/><i>postgres-exporter, blackbox, node-exporter, cAdvisor</i>"]
   end
   notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
-  notaire_ingress -- "Forwards every /actuator/* path to the internet-facing ingress" --> notaire_backend_security_actuatorChain
+  notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
   notaire_backend_security_jwtFilter -- "Authenticated request" --> notaire_backend_security_rateLimit
   notaire_backend_security_jwtFilter -- "Checks revoked tokens" --> notaire_backend_security_tokenRevocation
   notaire_backend_security_rateLimit -- "Within quota" --> notaire_backend_security_moduleAuthz
@@ -54,4 +54,3 @@ flowchart TB
   class notaire_frontend_edge_bff,notaire_backend_crosscutting_audit c_sky
   class observability_prometheus,observability_exporters,notaire_ingress c_primary
   linkStyle 0 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
-  linkStyle 1 stroke:#b91c1c,stroke-width:2px,color:#b91c1c

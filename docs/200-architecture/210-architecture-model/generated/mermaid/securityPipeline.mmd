@@ -15,7 +15,7 @@ flowchart TB
     delivery_workflows_securityWf["Security workflows<br/><i>codeql.yml, dast-zap.yml</i>"]
     delivery_workflows_cd["CD<br/><i>cd.yml</i>"]
   end
-  delivery_gates_preflight[["Local full preflight<br/><i>workspace/sdlc/preflight.sh --full</i>"]]
+  delivery_gates_preflight[["Local preflight<br/><i>workspace/sdlc/preflight.sh (PR), --all (release)</i>"]]
   github_ghcr["GHCR"]
   delivery_workflows_ci -- "Runs" --> delivery_securityScans_sca
   delivery_workflows_securityWf -- "Runs CodeQL" --> delivery_securityScans_sast

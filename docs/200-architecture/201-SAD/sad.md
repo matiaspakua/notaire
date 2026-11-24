@@ -381,9 +381,9 @@ flowchart TB
 
 | Aspect | Today |
 |---|---|
-| ArchUnit R1–R7 | Empty baselines; `jpa` and `service` packages deleted (#576, #1918) |
+| ArchUnit R1–R8 | R1–R7 baselines empty; `jpa` and `service` packages deleted (#576, #1918); R8 lists 652 legacy-package dependents and only shrinks (#2484) |
 | JPA model | 36 `@Entity` classes (47 classes) in `business` and 36 Spring Data repositories in `repository`, used by the persistence adapters, `config`, `audit` and `security` ([#2486](https://github.com/matiaspakua/notaire/issues/2486)) |
-| Ports on legacy DTOs | 40 application files in 8 contexts import `com.licensis.notaire.dto` ([#2485](https://github.com/matiaspakua/notaire/issues/2485)); R2 does not forbid it and R6 only watches the empty legacy packages ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
+| Ports on legacy DTOs | 40 application files in 8 contexts import `com.licensis.notaire.dto` ([#2485](https://github.com/matiaspakua/notaire/issues/2485)); ArchUnit R8 stops new ones ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
 | Contexts without a domain model | audit, budget, item, report, catalog, documentcosttemplate; `GenerateReportsUseCase` is implemented in `adapter.out.report` ([#2486](https://github.com/matiaspakua/notaire/issues/2486)) |
 
 ### 5.3 Level 2 — Frontend Internal Structure
@@ -698,8 +698,8 @@ flowchart TB
 #### Production (`docker-compose.prod.yml`)
 
 The reverse proxy is the only published port; TLS terminates in front of it
-([HTTPS-TLS-RUNBOOK](../206-security/HTTPS-TLS-RUNBOOK.md)). Red arrows are open findings:
-[#2487](https://github.com/matiaspakua/notaire/issues/2487) (actuator on the ingress) and
+([HTTPS-TLS-RUNBOOK](../206-security/HTTPS-TLS-RUNBOOK.md)) and forwards only `/actuator/health`
+([#2487](https://github.com/matiaspakua/notaire/issues/2487)). Red arrows are open findings:
 [#2488](https://github.com/matiaspakua/notaire/issues/2488) (MFA key, MFA policy and `COOKIE_SECURE` missing).
 
 <!-- likec4-view: prod -->
@@ -985,8 +985,8 @@ The `jpa` and `service` packages are gone (#576, #1918). What remains of the leg
 - `dto`: web DTOs that eight contexts still use in their ports and use cases
   ([#2485](https://github.com/matiaspakua/notaire/issues/2485)).
 
-**Rule**: no new dependents on these packages. ArchUnit does not enforce it yet
-([#2484](https://github.com/matiaspakua/notaire/issues/2484)).
+**Rule**: no new dependents on these packages. ArchUnit R8 (`LegacyPackageArchitectureTest`) enforces it with a
+652-line shrink-only baseline ([#2484](https://github.com/matiaspakua/notaire/issues/2484)).
 
 ---
 
@@ -1083,8 +1083,7 @@ mindmap
 
 | Risk | Impact | Probability | Mitigation |
 |------|--------|-------------|------------|
-| JPA model and web DTOs still in legacy packages | High — persistence types and web DTOs reach ports | Certain | One context per PR ([#2485](https://github.com/matiaspakua/notaire/issues/2485), [#2486](https://github.com/matiaspakua/notaire/issues/2486)); guard them in ArchUnit ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
-| Production ingress publishes every actuator endpoint | High — threaddump, loggers and mappings behind one shared credential | Certain | Forward only `/actuator/health` ([#2487](https://github.com/matiaspakua/notaire/issues/2487)) |
+| JPA model and web DTOs still in legacy packages | High — persistence types and web DTOs reach ports | Certain | One context per PR ([#2485](https://github.com/matiaspakua/notaire/issues/2485), [#2486](https://github.com/matiaspakua/notaire/issues/2486)); ArchUnit R8 blocks new dependents ([#2484](https://github.com/matiaspakua/notaire/issues/2484)) |
 | Production deployments omit the MFA key, the MFA policy and `COOKIE_SECURE` | High — MFA cannot be enrolled, session cookie without `Secure` | Certain | Wire them in compose and Kustomize ([#2488](https://github.com/matiaspakua/notaire/issues/2488)) |
 | Kustomize PostgreSQL on `emptyDir` | High for any real use — data lost on restart | Certain in staging | PVC or a documented ephemeral base ([#2489](https://github.com/matiaspakua/notaire/issues/2489)) |
 | ~~`ControllerNegocio.java` (5,337 lines) — God class~~ (renamed `BusinessController`, removed in #900) | Resolved — only two identification-type lookups were reachable; now `business/IdentificationTypeLookup` | — | Done (#900) |
@@ -1114,22 +1113,18 @@ The findings of the modelling pass, each with its Issue:
 title: "Architecture findings"
 ---
 flowchart TB
-  subgraph delivery["Delivery and quality system"]
-    delivery_gates_guardGap[["Legacy-package guards missing<br/><i>HexagonArchitectureTest R2, R6</i>"]]
-    delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
-  end
   subgraph notaire["Notaire"]
     subgraph notaire_backend["Backend API<br/><i>Spring Boot 4.1, Java 26</i>"]
       subgraph notaire_backend_outbound["Outbound adapters"]
         notaire_backend_outbound_persistence["Persistence adapters<br/><i>Spring Data JPA, Hibernate 7</i>"]
         notaire_backend_outbound_legacyJpa["Legacy JPA model<br/><i>com.licensis.notaire.business, .repository</i>"]
       end
-      subgraph notaire_backend_domain["Domain"]
-        notaire_backend_domain_missingDomain["Contexts without a domain model"]
-      end
       subgraph notaire_backend_security["Security filter chain"]
         notaire_backend_security_actuatorChain["Actuator chain<br/><i>HTTP Basic, @Order(1)</i>"]
         notaire_backend_security_mfaGate["MFA login gate<br/><i>TokenLoginMfaGate, TOTP</i>"]
+      end
+      subgraph notaire_backend_domain["Domain"]
+        notaire_backend_domain_missingDomain["Contexts without a domain model"]
       end
       subgraph notaire_backend_application["Application"]
         notaire_backend_application_legacyDtoPorts["Ports speaking legacy web DTOs"]
@@ -1139,13 +1134,13 @@ flowchart TB
     notaire_assistant["AI assistant<br/><i>Spring AI 2.0 + local model (oMLX)</i>"]
     notaire_ingress["Reverse proxy<br/><i>nginx 1.27</i>"]
   end
+  delivery_gates_ruleset[["protect-main ruleset<br/><i>GitHub ruleset 24128115</i>"]]
   localModel["Local model server"]
-  delivery_gates_guardGap -- "Lets new dependents in" --> notaire_backend_application_legacyDtoPorts
   notaire_assistant -- "Prompts (planned)" --> localModel
   notaire_backend_application_legacyDtoPorts -- "Part of" --> notaire_backend_application_portsIn
   notaire_backend_outbound_persistence -- "Holds the rules of" --> notaire_backend_domain_missingDomain
   notaire_backend_outbound_persistence -- "Still uses entities and repositories of" --> notaire_backend_outbound_legacyJpa
-  notaire_ingress -- "Forwards every /actuator/* path to the internet-facing ingress" --> notaire_backend_security_actuatorChain
+  notaire_ingress -- "Forwards only /actuator/health, other actuator paths answer 404" --> notaire_backend_security_actuatorChain
   notaire_ingress -- "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" --> notaire_backend_security_mfaGate
   notaire_backend_security_mfaGate -- "Login and MFA use cases" --> notaire_backend_application_portsIn
   classDef c_primary fill:#dbeafe,stroke:#1d4ed8,color:#0f172a
@@ -1153,13 +1148,12 @@ flowchart TB
   classDef c_red fill:#fee2e2,stroke:#b91c1c,color:#0f172a
   classDef finding fill:#fee2e2,stroke:#b91c1c,stroke-width:2px,stroke-dasharray:6 3,color:#0f172a
   classDef planned fill:#f8fafc,stroke:#64748b,stroke-dasharray:2 3,color:#334155
-  class delivery_gates_guardGap,delivery_gates_ruleset,notaire_backend_outbound_legacyJpa,notaire_backend_domain_missingDomain,notaire_backend_application_legacyDtoPorts finding
-  class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
+  class delivery_gates_ruleset,notaire_backend_outbound_legacyJpa,notaire_backend_domain_missingDomain,notaire_backend_application_legacyDtoPorts finding
   class notaire_assistant,localModel planned
   class notaire_ingress c_primary
+  class notaire_backend_outbound_persistence,notaire_backend_application_portsIn c_sky
   class notaire_backend_security_actuatorChain,notaire_backend_security_mfaGate c_red
   linkStyle 5 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
-  linkStyle 6 stroke:#b91c1c,stroke-width:2px,color:#b91c1c
 ```
 <!-- /likec4-view -->
 

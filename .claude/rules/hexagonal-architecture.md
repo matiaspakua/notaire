@@ -20,7 +20,7 @@ adapter.out.* ->  application (port.out)  ->  domain
 - The domain is plain Java. JPA entities (`FooJpaEntity`), Spring Data repositories and mappers live in
   `adapter.out.persistence.<context>`.
 - Domain exceptions carry no HTTP status; the global handler maps them.
-- `jpa`, `service`, `repository`, `business` and `dto` are legacy: no new dependents.
+- `jpa`, `service`, `repository`, `business` and `dto` are legacy: no new dependents (ArchUnit R8, #2484).
 
 ## Frontend dependency rules
 

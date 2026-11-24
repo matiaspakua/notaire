@@ -4,9 +4,20 @@
 
 GitHub Actions does not re-run product CI on a pull request or on push to `main`
 (#2001). Those workflows run on a version tag (`v*` / `notaire-v*`) or on
-`workflow_dispatch`. This script is the gate. A run **without `--full` is not
-sufficient to open a pull request**. There is no GitHub safety net for the
-suites `--full` adds.
+`workflow_dispatch`. This script is the gate, in two strengths (#2493):
+
+| Gate | Command | Runs | Measured (Mac, 2026-11-24) |
+|------|---------|------|-----------------------------|
+| **Pull request** (pre-push hook) | `bash workspace/sdlc/preflight.sh` | Format, lint, compile, typecheck, process checks, unit tests and builds of the groups the branch touches | 3–6 min (was 24 min with `--full` on a docs and Pages branch) |
+| **Release** | `bash workspace/sdlc/preflight.sh --all` | Every group, plus Playwright, Bruno, Docker build and smoke, database V&V, extraction boundaries | about 25 min |
+
+A high-risk PR (authentication, Flyway on existing rows, a REST contract others consume) opts in to the
+server-backed suites of its groups with `PREFLIGHT_FULL=1 git push`. Everything a PR skipped runs before the
+release, and again in the version-tag CI.
+
+`preflight.sh` records each pass in `$(git rev-parse --git-common-dir)/preflight-pass/<sha>.<mode>` when the tree is
+clean; the hook accepts a pass of the same or a more complete mode (pr < full < all), so a run by hand is never
+repeated on push.
 
 The release workflows are:
 
@@ -30,7 +41,7 @@ mvn verify -pl backend-api   # ✅ green locally
 git push                     # ❌ "Code Lint" fails in CI
 ```
 
-That happened on PR #721. `workspace/sdlc/preflight.sh --full` is now the only run of those gates before a pull request.
+That happened on PR #721. `workspace/sdlc/preflight.sh` is now the run of those gates before a pull request.
 
 ## Usage
 
@@ -42,15 +53,16 @@ bash workspace/sdlc/install-git-hooks.sh
 
 That sets `core.hooksPath=.githooks`, so the hooks are version-controlled, apply
 to every worktree, and update on `git pull`. From then on `git push` runs
-`preflight.sh --full` and refuses a push that would open an unproven pull request.
+`preflight.sh` (the pull-request gate) and refuses a push that fails it.
 
 Run it by hand any time:
 
 ```bash
-bash workspace/sdlc/preflight.sh            # NOT sufficient to open a pull request
+bash workspace/sdlc/preflight.sh            # the pull-request gate (what the hook runs)
 bash workspace/sdlc/preflight.sh --fix      # auto-fix what is fixable, then verify
-bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only; NOT sufficient to open a PR
-bash workspace/sdlc/preflight.sh --full     # mandatory before push/PR
+bash workspace/sdlc/preflight.sh --fast     # format/lint/compile/typecheck only
+bash workspace/sdlc/preflight.sh --full     # + server-backed suites of the touched groups (high-risk PRs)
+bash workspace/sdlc/preflight.sh --all      # every suite: the release gate
 bash workspace/sdlc/preflight.sh --list     # local check -> release-workflow mapping
 ```
 
@@ -97,8 +109,8 @@ Suite aggregator names (`CI`, `Frontend CI`, `Playwright E2E`, …) stay so a ta
 run can still publish them. They are not required on pull requests. The Owner
 drops them from `protect-main` (#1040).
 
-Local `preflight.sh --full` is the pull-request gate. Path filters are not a
-license to skip it.
+Local `preflight.sh` is the pull-request gate and `preflight.sh --all` the release gate. Path filters
+are not a license to skip either.
 
 Guards: `python3 workspace/tests/test_ci_workflow_invariants.py`.
 
@@ -213,13 +225,13 @@ with `gh pr view` and skips that one check while the branch has no PR yet.
 
 ## Merge gate
 
-`bash workspace/sdlc/preflight.sh --full` is the proof. GitHub does not re-run
+`bash workspace/sdlc/preflight.sh` is the proof. GitHub does not re-run
 it on the pull request. `check-heavy-ci.sh` exits 0 when those workflows were
 not started on the head, and fails if one was started and is pending or red.
 See [`304-ai-sdlc-cloud/CI-MERGE-GATE.md`](304-ai-sdlc-cloud/CI-MERGE-GATE.md).
 
 ```bash
-bash workspace/sdlc/preflight.sh --full
+bash workspace/sdlc/preflight.sh
 bash workspace/sdlc/check-heavy-ci.sh <pr-number>
 ```
 

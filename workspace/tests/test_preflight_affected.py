@@ -62,10 +62,15 @@ class AffectedGroupsTest(unittest.TestCase):
     def test_the_e2e_suite_runs_its_lint_and_the_server_backed_suites(self):
         self.assertEqual({"testing", "stack"}, self.mod.groups(["testing/e2e/tests/TS-0001.spec.ts"]))
 
-    def test_changing_the_gate_runs_everything(self):
-        for path in ("workspace/sdlc/preflight.sh", ".githooks/pre-push", "workspace/stack/start.sh",
-                     "docker-compose.yml", "docker-compose.prod.yml", "pom.xml", "backend-api/Dockerfile"):
+    def test_changing_the_build_or_the_stack_runs_everything(self):
+        for path in ("workspace/stack/start.sh", "docker-compose.yml", "docker-compose.prod.yml", "pom.xml",
+                     "backend-api/Dockerfile"):
             self.assertEqual(self.mod.ALL, self.mod.groups([path]), path)
+
+    def test_changing_the_gate_itself_runs_only_its_own_tests(self):
+        """#2493: the process self-tests cover the preflight and the hook; --all before a release runs the rest."""
+        for path in ("workspace/sdlc/preflight.sh", "workspace/sdlc/preflight_affected.py", ".githooks/pre-push"):
+            self.assertEqual(set(), self.mod.groups([path]), path)
 
     def test_no_comparison_base_runs_everything(self):
         self.assertEqual(self.mod.ALL, self.mod.groups(None))

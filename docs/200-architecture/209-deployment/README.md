@@ -78,9 +78,9 @@ flowchart TB
 
 Host `:80` → reverse proxy → frontend (`/`) and backend (`/api`). PostgreSQL, backend and frontend publish no
 host port; no pgAdmin; `ENVIRONMENT=production`; Flyway baseline off. TLS terminates in front of the proxy.
-Open findings (red): the proxy also forwards every `/actuator/` path
-([#2487](https://github.com/matiaspakua/notaire/issues/2487)), and the backend gets no MFA key, MFA policy or
-`COOKIE_SECURE` ([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
+The proxy forwards only `/actuator/health` ([#2487](https://github.com/matiaspakua/notaire/issues/2487)). Open
+finding (red): the backend gets no MFA key, MFA policy or `COOKIE_SECURE`
+([#2488](https://github.com/matiaspakua/notaire/issues/2488)).
 
 <!-- likec4-view: prod -->
 ```mermaid

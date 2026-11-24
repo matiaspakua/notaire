@@ -112,8 +112,8 @@ pair(
 );
 pair("protect-main ruleset", "Ruleset protect-main");
 pair(
-  "Desired: PR-only merges, no deletion, no force-push, no required checks (the local preflight is the PR gate, #2001). Live: still requires the five retired product-CI checks. #2490.",
-  "Deseado: merges solo por PR, sin borrado, sin force-push, sin checks requeridos (el preflight local es la gate del PR, #2001). En vivo: todavía exige los cinco checks retirados del CI de producto. #2490.",
+  "Desired: active, PR-only merges, no deletion, no force-push, no required checks (#2001, #2493). Live: enforcement disabled, so main is unprotected, and it still lists the five retired product-CI checks. #2490.",
+  "Deseado: activo, merges solo por PR, sin borrado, sin force-push, sin checks requeridos (#2001, #2493). En vivo: la aplicación está desactivada, así que main no tiene protección, y todavía lista los cinco checks retirados del CI de producto. #2490.",
 );
 pair(
   "PDF reports → Inbound ports: Implements GenerateReportsUseCase (finding)",

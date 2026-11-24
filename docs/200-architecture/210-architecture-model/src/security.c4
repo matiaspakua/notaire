@@ -41,9 +41,8 @@ model {
   observability.exporters -> notaire.database.leastPrivilege "Connects as"
   observability.prometheus -> notaire.backend.security.actuatorChain "Authenticates scrapes"
 
-  notaire.ingress -[http]-> notaire.backend.security.actuatorChain "Forwards every /actuator/* path to the internet-facing ingress" {
-    #finding
-    description "Only /actuator/health is needed outside the private network. #2487."
+  notaire.ingress -[http]-> notaire.backend.security.actuatorChain "Forwards only /actuator/health; other actuator paths answer 404" {
+    description "SR-18, #2487."
     link https://github.com/matiaspakua/notaire/issues/2487
   }
   notaire.ingress -[http]-> notaire.backend.security.mfaGate "Production compose and Kustomize omit the MFA key, policy and COOKIE_SECURE" {

@@ -4,13 +4,16 @@
 #
 # Installed by: bash workspace/sdlc/install-git-hooks.sh  (sets core.hooksPath=.githooks)
 #
-# Runs `bash workspace/sdlc/preflight.sh --full`, the mandatory gate (#2001). It runs the
-# suites the branch touches (#2413); GitHub Actions does not re-run them on the pull request.
-# A push is aborted if any check fails. A commit that already passed in the same mode is not
-# gated again (markers in $(git rev-parse --git-common-dir)/preflight-pass/).
+# Runs `bash workspace/sdlc/preflight.sh`, the pull-request gate (#2493): format, lint, compile, typecheck,
+# process checks and the unit tests and builds of the suite groups the branch touches (#2413). The
+# server-backed suites (Playwright, Bruno, Docker, database V&V) gate the release: `preflight.sh --all`
+# before release-please is dispatched, then the version-tag CI. A push is aborted if any check fails.
+# A commit that already passed in the same or a more complete mode (pr < full < all) is not gated again;
+# preflight.sh records the pass itself ($(git rev-parse --git-common-dir)/preflight-pass/).
 #
-#   PREFLIGHT_ALL=1 git push …     run every suite (releases, cross-cutting changes)
-# Escape hatches (use deliberately, not habitually; not sufficient to open a PR):
+#   PREFLIGHT_FULL=1 git push …    add the server-backed suites (risky change: auth, Flyway, REST contract)
+#   PREFLIGHT_ALL=1 git push …     every suite (the release gate)
+# Escape hatches (use deliberately, not habitually):
 #   PREFLIGHT_SKIP=1 git push …    skip entirely (e.g. pushing a WIP spike)
 #   PREFLIGHT_FAST=1 git push …    format/lint/compile/typecheck only
 #   git push --no-verify …         bypass all hooks (git built-in)
@@ -37,10 +40,12 @@ done
 
 if [ "${PREFLIGHT_ALL:-0}" = "1" ]; then
     ARGS=(--all); MODE=all
+elif [ "${PREFLIGHT_FULL:-0}" = "1" ]; then
+    ARGS=(--full); MODE=full
 elif [ "${PREFLIGHT_FAST:-0}" = "1" ]; then
     ARGS=(--fast); MODE=fast
 else
-    ARGS=(--full); MODE=full
+    ARGS=(); MODE=pr
 fi
 
 # The gate checks the checked-out commit, so a recorded pass only counts when that is what is pushed.
@@ -50,18 +55,29 @@ ONLY_HEAD=1
 for sha in "${PUSHED[@]}"; do
     [ "$sha" = "$HEAD_SHA" ] || ONLY_HEAD=0
 done
+# A pass covers its own mode and every weaker one: pr < full < all.
 passed() {
-    [ -f "$CACHE_DIR/$HEAD_SHA.all" ] || { [ "$MODE" = "full" ] && [ -f "$CACHE_DIR/$HEAD_SHA.full" ]; }
+    local covering
+    case "$MODE" in
+        pr)   covering="pr full all" ;;
+        full) covering="full all" ;;
+        all)  covering="all" ;;
+        *)    return 1 ;;
+    esac
+    for m in $covering; do
+        [ -f "$CACHE_DIR/$HEAD_SHA.$m" ] && return 0
+    done
+    return 1
 }
 if [ "$MODE" != "fast" ] && [ "$ONLY_HEAD" = "1" ] && passed; then
     echo "pre-push: $HEAD_SHA already passed preflight ($MODE); not running it again."
     exit 0
 fi
 
-echo "pre-push: running local CI gates (workspace/sdlc/preflight.sh ${ARGS[*]})…"
+echo "pre-push: running the pull-request gate (workspace/sdlc/preflight.sh ${ARGS[*]:-}, mode $MODE)…"
 echo "          skip with PREFLIGHT_SKIP=1, or git push --no-verify"
 
-if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" "${ARGS[@]}"; then
+if bash "$REPO_ROOT/workspace/sdlc/preflight.sh" ${ARGS[@]+"${ARGS[@]}"}; then
     if [ "$MODE" != "fast" ]; then
         mkdir -p "$CACHE_DIR" && touch "$CACHE_DIR/$HEAD_SHA.$MODE"
     fi
@@ -70,11 +86,11 @@ fi
 
 cat <<'MSG'
 
-pre-push: BLOCKED — these checks are the pull-request gate. GitHub will not
-re-run them on the pull request.
+pre-push: BLOCKED — the pull-request gate failed. GitHub does not re-run it on the
+pull request.
 
   fix automatically :  bash workspace/sdlc/preflight.sh --fix
-  re-check          :  bash workspace/sdlc/preflight.sh --full   (every suite: --all)
+  re-check          :  bash workspace/sdlc/preflight.sh
   push anyway       :  PREFLIGHT_SKIP=1 git push …   (or: git push --no-verify)
 MSG
 exit 1

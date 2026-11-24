@@ -165,12 +165,12 @@ Full stack (Prometheus, Grafana, SonarQube, Homer): `bash workspace/stack/start-
 ```bash
 mvn test -pl backend-api                 # backend unit + integration
 cd testing/e2e && npm test              # Playwright E2E
-bash workspace/sdlc/preflight.sh --full         # the pull-request gate: suites this branch touches
-bash workspace/sdlc/preflight.sh --all          # every suite
+bash workspace/sdlc/preflight.sh                # the pull-request gate: unit-level suites this branch touches
+bash workspace/sdlc/preflight.sh --all          # every suite, server-backed included: the release gate
 ```
 
-The pre-push hook runs `--full` and skips a commit that already passed (#2413). GitHub does not
-re-run the heavy suites on a pull request, so a local `--full` pass is the proof.
+The pre-push hook runs the pull-request gate and never repeats a commit that already passed (#2413, #2493).
+GitHub does not re-run the suites on a pull request; `--all` before a release and the tag CI run the rest.
 
 Coverage floors (raise-only): backend JaCoCo **85% lines / 70% branches**, frontend Vitest
 **87% statements / 79% branches / 85% functions / 88% lines**. The Owner's target is more than 90%
