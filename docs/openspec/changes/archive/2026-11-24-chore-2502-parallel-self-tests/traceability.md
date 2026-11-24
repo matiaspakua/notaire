@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| A failing file fails the run and is named | test_run_self_tests | pending |
-| Passing files run concurrently | test_run_self_tests | pending |
+| A failing file fails the run and is named | test_run_self_tests | passing |
+| Passing files run concurrently | test_run_self_tests | passing |
 
 ## Permanent documentation updated
 
