@@ -750,3 +750,4 @@ pair("Tool calls", "Llamadas a herramientas");
 pair("Time", "Tiempo");
 pair("Environment", "Entorno");
 pair("Tools", "Herramientas");
+pair("frontend/ (the only active client; the old Swing client was removed in #1046)", "frontend/ (el único cliente activo; el viejo cliente Swing se quitó en #1046)");
