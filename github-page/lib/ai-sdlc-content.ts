@@ -203,7 +203,7 @@ sequenceDiagram
   else Constitution / sdlc-exception / harness PR
     O->>GH: merge
   end
-  GH->>CI: Pages + Release Please on main; product CI and CD on the version tag
+  GH->>CI: Pages + Release Please on main · product CI and CD on the version tag
   F->>GH: smoke evidence, close Issue, board Done
 `;
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T21:22:10.818921+00:00",
+  "generated_at": "2026-11-24T07:43:56.942787+00:00",
   "method": "python3 workspace/ci/generate-factory-metrics.py (aisdlc metrics factory --json)",
   "overall": {
     "intents": 14,
@@ -22,7 +22,7 @@
       "output": 1626490,
       "total": 561020355
     },
-    "repolens_calls": 196,
+    "repolens_calls": 231,
     "repolens_p50_ms": 40.7
   },
   "intents": [

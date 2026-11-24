@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-11-23T15:04:23+00:00",
+  "generated_at": "2026-11-24T07:44:19+00:00",
   "generated_by": "python3 workspace/ci/generate-ai-sdlc-history.py",
   "notes": "process_prs: merged PR titles naming the SDLC itself (sdlc, openspec, agents, fleet, harness, constitution, preflight, skills, archive\u2026); bug_issues: issues labelled type:bug by creation month; Dependabot PRs excluded.",
   "legacy_commits": 24,
   "totals": {
-    "commits": 2809,
-    "merged_prs": 1256,
-    "merged_prs_without_bots": 1121,
-    "issues": 1160,
-    "bug_issues": 184
+    "commits": 2959,
+    "merged_prs": 1271,
+    "merged_prs_without_bots": 1135,
+    "issues": 1181,
+    "bug_issues": 191
   },
   "months": [
     {
@@ -90,10 +90,10 @@
     },
     {
       "month": "2026-11",
-      "commits": 611,
-      "merged_prs": 278,
-      "process_prs": 32,
-      "bug_issues": 15
+      "commits": 761,
+      "merged_prs": 292,
+      "process_prs": 34,
+      "bug_issues": 22
     }
   ],
   "mechanisms": [

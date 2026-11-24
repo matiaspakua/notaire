@@ -50,6 +50,25 @@ CONTRIBUTORS=$(git log --format="%aE" | sort -u | wc -l | tr -d ' ')
 # `set -o pipefail`.
 FIRST_COMMIT=$(git log --format="%aI" | tail -1)
 
+# Coverage floors as enforced by the builds, and the Owner's target (#2046, #2475): never typed in the page.
+pct() { awk -v v="$1" 'BEGIN { printf "%d", v * 100 + 0.5 }'; }
+FLOORS=$(grep -o '<minimum>0\.[0-9]*</minimum>' backend-api/pom.xml | grep -o '0\.[0-9]*' | head -2 | tr '\n' ' ')
+BACKEND_LINE_FLOOR=$(pct "$(echo "$FLOORS" | cut -d' ' -f1)")
+BACKEND_BRANCH_FLOOR=$(pct "$(echo "$FLOORS" | cut -d' ' -f2)")
+FRONTEND_LINES_FLOOR=$(grep -o 'lines: *[0-9]*' frontend/vitest.config.ts | head -1 | grep -o '[0-9]*$')
+FRONTEND_BRANCHES_FLOOR=$(grep -o 'branches: *[0-9]*' frontend/vitest.config.ts | head -1 | grep -o '[0-9]*$')
+COVERAGE_TARGET=90  # Owner target >90% across the pyramid (#2046, .claude/rules/code-quality.md)
+
+# AI harnesses configured in this repository (#2475): one per configuration file an agent reads.
+AI_TOOL_NAMES=()
+[ -f CLAUDE.md ] && AI_TOOL_NAMES+=("Claude Code")
+[ -d .codex ] && AI_TOOL_NAMES+=("Codex")
+[ -d .cursor ] && AI_TOOL_NAMES+=("Cursor")
+[ -d .junie ] && AI_TOOL_NAMES+=("Junie")
+[ -f opencode.json ] && AI_TOOL_NAMES+=("OpenCode")
+[ -f .github/copilot-instructions.md ] && AI_TOOL_NAMES+=("GitHub Copilot")
+AI_TOOLS_JSON=$(printf '%s\n' "${AI_TOOL_NAMES[@]}" | jq -R . | jq -cs .)
+
 # Last known-good deployed metrics -- the fallback source of truth when this
 # run can't produce fresh numbers for a given field. Never fatal if this is
 # unreachable (e.g. first-ever deploy).
@@ -167,7 +186,11 @@ GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   printf '  "functionalRequirements": %s,\n' "${RF_COUNT}"
   printf '  "dockerServices": %s,\n' "${DOCKER_COUNT}"
   printf '  "grafanaDashboards": %s,\n' "${GRAFANA_COUNT}"
-  printf '  "aiTools": 4,\n'
+  printf '  "aiTools": %s,\n' "${#AI_TOOL_NAMES[@]}"
+  printf '  "aiToolNames": %s,\n' "${AI_TOOLS_JSON}"
+  printf '  "coverageFloors": {"backendLine": %s, "backendBranch": %s, "frontendLines": %s, "frontendBranches": %s},\n' \
+    "${BACKEND_LINE_FLOOR}" "${BACKEND_BRANCH_FLOOR}" "${FRONTEND_LINES_FLOOR}" "${FRONTEND_BRANCHES_FLOOR}"
+  printf '  "coverageTarget": %s,\n' "${COVERAGE_TARGET}"
   printf '  "contributors": %s,\n' "${CONTRIBUTORS}"
   printf '  "firstCommitDate": "%s",\n' "${FIRST_COMMIT}"
   printf '  "coverage": %s\n' "${COVERAGE_JSON}"

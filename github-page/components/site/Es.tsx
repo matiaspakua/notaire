@@ -1,7 +1,7 @@
 "use client";
 
 import { cloneElement, isValidElement, type ReactNode } from "react";
-import { ES } from "@/lib/i18n/es";
+import { trs } from "@/lib/i18n/dom";
 import "@/lib/i18n/strings";
 import { usePreferences } from "./Preferences";
 
@@ -29,19 +29,7 @@ const SKIP = new Set([
   "dir",
 ]);
 
-function norm(value: string): string {
-  return value.replace(/\s+/g, " ").trim();
-}
-
-/** Spanish for an exact English sentence. Whitespace around the node is kept. */
-export function trs(value: string): string {
-  const key = norm(value);
-  const es = key ? ES[key] : undefined;
-  if (!es) return value;
-  const lead = value.match(/^\s*/)?.[0] ?? "";
-  const tail = value.match(/\s*$/)?.[0] ?? "";
-  return `${lead}${es}${tail}`;
-}
+export { trs };
 
 /** Walks the rendered tree and replaces English sentences that have a Spanish entry. */
 export function translateNode(node: ReactNode): ReactNode {

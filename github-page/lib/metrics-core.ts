@@ -31,6 +31,11 @@ export interface SiteMetrics {
   dockerServices: number;
   grafanaDashboards: number;
   aiTools: number;
+  /** Harnesses configured in the repository (#2475). */
+  aiToolNames?: string[];
+  /** Floors enforced by the builds (pom.xml, vitest.config.ts) and the Owner's target (#2046, #2475). */
+  coverageFloors?: { backendLine: number; backendBranch: number; frontendLines: number; frontendBranches: number };
+  coverageTarget?: number;
   contributors: number;
   firstCommitDate: string;
   coverage: CoverageSnapshot;

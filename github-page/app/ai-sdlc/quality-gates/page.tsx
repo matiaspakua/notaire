@@ -74,7 +74,7 @@ export default function QualityGatesPage() {
       <Table
         head={["Level", "Where", "Gate"]}
         rows={[
-          ["Unit + integration (backend)", "backend-api/src/test/java/…/unit, …/integration", "JaCoCo ratchet floor in mvn verify (80% line / 65% branch)"],
+          ["Unit + integration (backend)", "backend-api/src/test/java/…/unit, …/integration", "JaCoCo ratchet floor in mvn verify (85% line / 70% branch)"],
           ["Component (frontend)", "frontend/src/**/*.test.tsx (Vitest)", "raise-only floors in vitest.config.ts"],
           ["API contract", "Bruno suite + OpenAPI", "CU-API matrix + oasdiff breaking diff"],
           ["E2E", "testing/e2e/tests/TS-nnnn-*.spec.ts", "≥1 suite per critical Use Case; inventory drift guard"],

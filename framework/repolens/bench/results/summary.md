@@ -4,8 +4,8 @@
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 976 | 230.4 | n/a |
-| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 22 | 2.4 | 3.3 |
+| grep (keyword ripgrep) | 0.17 | 0.31 | 0.45 | 0.22 | 971 | 230.4 | n/a |
+| repolens hybrid (no graph) | 0.63 | 0.80 | 0.88 | 0.83 | 21 | 2.4 | 3.3 |
 | repolens graph | 0.63 | 0.79 | 0.96 | 0.90 | 26 | 2.4 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
@@ -21,9 +21,9 @@
 
 | arm | recall@5 | recall@10 | recall@20 | MRR | latency ms | output KB (top 10) | output KB (top 10 + 10 one-line) |
 |---|---|---|---|---|---|---|---|
-| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,132 | 204.3 | n/a |
-| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 24 | 2.3 | 3.3 |
-| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 27 | 2.3 | 3.3 |
+| grep (keyword ripgrep) | 0.09 | 0.18 | 0.28 | 0.14 | 1,147 | 204.3 | n/a |
+| repolens hybrid (no graph) | 0.62 | 0.81 | 0.90 | 0.76 | 26 | 2.3 | 3.3 |
+| repolens graph | 0.67 | 0.90 | 0.92 | 0.79 | 28 | 2.3 | 3.3 |
 
 | category | grep (keyword ripgrep) | repolens hybrid (no graph) | repolens graph |
 |---|---|---|---|

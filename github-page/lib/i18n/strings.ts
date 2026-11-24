@@ -4,6 +4,7 @@ import "./strings-content";
 import "./strings-rest";
 import "./strings-docs";
 import "./strings-anatomy";
+import "./strings-pages";
 import "./strings-mermaid";
 import "../repolens-content";
 

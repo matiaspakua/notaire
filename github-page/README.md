@@ -28,6 +28,13 @@ hexagonal architecture, the database, the API, security docs and the roadmap. An
 Mermaid sentence labels and Diagram captions use the same dictionary (`lib/i18n/`). Technical terms such as Issue,
 pull request, gate, OpenSpec, Flyway, commit, kit and Owner stay in English; identifiers stay as in the repository.
 
+Pages render English; `components/site/LocalizeMain.tsx` swaps each text node and accessibility label (`aria-label`,
+`title`, `alt`, `placeholder`) under `#main` for its Spanish pair, and keeps doing so for content that renders later
+(Mermaid, interactive figures). A pair's key is the exact English text node, whitespace-normalised, so a sentence
+split by `<strong>` or `<Code>` needs one pair per fragment. A text with a live number is built in both languages
+where it is rendered instead. `e2e/spanish-coverage.spec.ts` reads every translated route in Spanish and fails on
+English prose (#2475): add the missing pair to `lib/i18n/strings-pages.ts`.
+
 ## Commands
 
 ```bash
