@@ -20,9 +20,10 @@ describes the hooks and why they exist — it does not duplicate the process.
 ## Why the push guard exists
 
 GitHub enforces protection on `main` via the repository ruleset `protect-main`
-(id `24128115`): pull-request-only merges, required status checks (`CI`,
-`Frontend CI`, `Playwright E2E`, `Code Lint`, `PR Validation`), and blocked
-force-push/deletion. Re-applied 2026-10-13 (#1040); verify with
+(id `24128115`): pull-request-only merges and blocked force-push/deletion. Since #2001
+product CI runs on version tags, so the desired ruleset (`security/rulesets/protect-main.desired.json`)
+requires no status checks; the local `preflight.sh --full` is the PR gate. The live ruleset still
+requires the retired checks until the Owner applies the desired one (#2490). Verify with
 `bash security/assert-protect-main-ruleset.sh`. Classic (legacy) branch protection is
 intentionally unused — do not layer it on top of the ruleset. See
 `docs/200-architecture/208-devsecops/README.md` and issue #1040; apply/assert
