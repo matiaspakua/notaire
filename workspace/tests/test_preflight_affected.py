@@ -62,10 +62,21 @@ class AffectedGroupsTest(unittest.TestCase):
     def test_the_e2e_suite_runs_its_lint_and_the_server_backed_suites(self):
         self.assertEqual({"testing", "stack"}, self.mod.groups(["testing/e2e/tests/TS-0001.spec.ts"]))
 
-    def test_changing_the_build_or_the_stack_runs_everything(self):
-        for path in ("workspace/stack/start.sh", "docker-compose.yml", "docker-compose.prod.yml", "pom.xml",
-                     "backend-api/Dockerfile"):
-            self.assertEqual(self.mod.ALL, self.mod.groups([path]), path)
+    def test_compose_files_and_the_stack_select_the_server_backed_group(self):
+        """#2497: a compose change cannot break a unit suite; --full and --all run the stack."""
+        for path in ("docker-compose.yml", "docker-compose.prod.yml", "workspace/stack/start.sh", "Dockerfile"):
+            self.assertEqual({"stack"}, self.mod.groups([path]), path)
+
+    def test_the_root_pom_selects_the_backend(self):
+        self.assertEqual({"backend", "stack"}, self.mod.groups(["pom.xml"]))
+
+    def test_a_module_dockerfile_selects_its_module(self):
+        self.assertEqual({"backend", "stack"}, self.mod.groups(["backend-api/Dockerfile"]))
+        self.assertEqual({"frontend", "stack"}, self.mod.groups(["frontend/Dockerfile"]))
+
+    def test_no_path_selects_every_group(self):
+        for path in ("docker-compose.yml", "pom.xml", "workspace/stack/start.sh", "workspace/sdlc/preflight.sh"):
+            self.assertNotEqual(self.mod.ALL, self.mod.groups([path]), path)
 
     def test_changing_the_gate_itself_runs_only_its_own_tests(self):
         """#2493: the process self-tests cover the preflight and the hook; --all before a release runs the rest."""
