@@ -1,23 +1,10 @@
 # release-only-github-actions Specification
 
 ## Purpose
+
 Product GitHub Actions for build, test, contract, database V&V, process, and coverage run when a version is released, not on every pull request. Day-to-day proof is the local full preflight.
 
 ## Requirements
-
-### Requirement: Pull requests are gated locally with full preflight
-
-A pull request SHALL be ready for review when `bash workspace/sdlc/preflight.sh --full` has passed on that branch. A preflight run without `--full` SHALL NOT be described as sufficient to open a pull request. GitHub Actions SHALL NOT re-run that suite on `pull_request`.
-
-#### Scenario: Default preflight is not the PR gate
-
-- **WHEN** `workspace/sdlc/preflight.sh` help text or its end-of-run note is read for a run that did not pass `--full`
-- **THEN** the text says that run is not sufficient to open a pull request and names `bash workspace/sdlc/preflight.sh --full`
-
-#### Scenario: Skipped full suites do not promise a pull-request rerun
-
-- **WHEN** `workspace/sdlc/preflight.sh` skips a `--full` suite
-- **THEN** the skip reason does not say that CI will run that suite on the pull request
 
 ### Requirement: Heavy product workflows run on version tags and manual dispatch
 
