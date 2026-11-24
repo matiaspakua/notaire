@@ -11,8 +11,8 @@ Owners: `CONSTITUTION.md` §5, `docs/300-development/304-ai-sdlc-cloud/CI-MERGE-
 
 ## 1. Read the whole PR first
 
-Merge state and open review threads. A PR is ready when `bash workspace/sdlc/preflight.sh --full`
-has passed on the head. It runs the suites the branch touches; `--all` runs every suite (#2413). `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
+Merge state and open review threads. A PR is ready when `bash workspace/sdlc/preflight.sh`
+has passed on the head (the pre-push hook; touched groups, #2413, #2493). `--all` is the release gate. `bash workspace/sdlc/check-heavy-ci.sh <pr>` must exit 0 (needs `gh`).
 Product workflows do not run on the pull request (#2001). The script fails only when a heavy
 workflow was started on that head and is pending or red.
 
@@ -33,8 +33,8 @@ After **each land** on `main`, sync remaining open tips the same way before more
 
 ## 4. Local gate red
 
-Reproduce with `bash workspace/sdlc/preflight.sh --full` before pushing a fix. A run without
-`--full` is not sufficient to open a pull request. GitHub will not re-run the suite.
+Reproduce with `bash workspace/sdlc/preflight.sh` (add `--full` when the failing suite is server-backed)
+before pushing a fix. GitHub will not re-run the suite.
 Fix the cause; never skip, `@Disabled` or quarantine a test, never push an empty commit.
 
 **Redundant pre-push `--full` (#2023):** the pre-push hook also runs `--full`. When the

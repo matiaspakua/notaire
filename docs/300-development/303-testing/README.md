@@ -12,7 +12,6 @@ python3 workspace/sdlc/generate-testing-inventory.py   # → INVENTORY.generated
 python3 workspace/sdlc/validate-testing-inventory.py
 ```
 
-
 Black-box runners and how-to guides: [`testing/README.md`](../../../testing/README.md).
 
 ```text
@@ -42,7 +41,8 @@ cd frontend && npm test
 bash testing/scripts/run.sh database
 bash workspace/stack/start.sh   # then:
 bash testing/scripts/run.sh e2e
-bash workspace/sdlc/preflight.sh --full
+bash workspace/sdlc/preflight.sh          # pull-request gate
+bash workspace/sdlc/preflight.sh --all    # release gate: every suite, server-backed included
 ```
 
 ## Coverage floors

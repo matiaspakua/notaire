@@ -23,8 +23,9 @@ GROUPS = {
 ALL = frozenset(GROUPS)
 
 # Shared infrastructure every suite depends on: a change here runs everything.
-FORCE_ALL = ("workspace/sdlc/preflight.sh", "workspace/sdlc/preflight_affected.py", ".githooks/",
-             "workspace/stack/", "pom.xml")
+# The build and the stack change what every suite runs against. The gate scripts themselves do not: the process
+# self-tests cover them, and `preflight.sh --all` before a release runs everything (#2493).
+FORCE_ALL = ("workspace/stack/", "pom.xml")
 
 
 def _forces_all(path: str) -> bool:

@@ -72,7 +72,7 @@ or approve pull requests".
 
 A PR opened or updated with `GITHUB_TOKEN` does not trigger other workflows.
 Product CI no longer runs on pull requests (#2001). The release PR is ready
-when `bash workspace/sdlc/preflight.sh --full` has passed on its branch. The
+when `bash workspace/sdlc/preflight.sh --all` has passed on its branch (the release gate, #2493). The
 Owner must drop retired required checks from `protect-main` (#1040) or the
 release PR cannot merge. Switching the action's `token` to a fine-grained token
 or GitHub App is not required for those checks.
@@ -85,7 +85,9 @@ the first release notes.
 
 ## Cutting a release (manual, #2477)
 
-1. Check `main` is green and the train for this minor and the next one exist (`test_the_next_minor_already_has_a_train`).
+1. Run the release gate on `main`: `bash workspace/sdlc/preflight.sh --all` (every suite, server-backed included;
+   pull requests only ran the fast gate, #2493). Then check the train for this minor and the next one exist
+   (`test_the_next_minor_already_has_a_train`).
 2. Dispatch Release Please: `gh workflow run release-please.yml --ref main`. It opens or updates the
    release PR (`chore(main): release X.Y.Z`) and runs the version coherence step for the new tag.
 3. Review and merge the release PR.
@@ -112,8 +114,8 @@ the chosen tag in the PR that cuts it.
 ## Operator steps (ongoing)
 
 1. Land features/fixes on `main` via PRs with Conventional Commits
-   (`feat:`, `fix:`, `feat!:`, …). The gate is local
-   `bash workspace/sdlc/preflight.sh --full`. **protect-main** (#1040) must not
+   (`feat:`, `fix:`, `feat!:`, …). The PR gate is local
+   `bash workspace/sdlc/preflight.sh`. **protect-main** (#1040) must not
    require checks the pull request does not report. Squash titles
    may start with an optional `[#n]` for Notaire gates, but release-please
    only treats the commit as user-facing when the type (`feat`/`fix`/…) is
@@ -122,7 +124,7 @@ the chosen tag in the PR that cuts it.
    or land a follow-up `fix:`/`feat:` commit without a leading `[#n]`.
 2. Wait for `Release Please` workflow on `main` to open/update the release PR.
 3. Review the release PR (CHANGELOG + version bumps in `pom.xml` /
-   `frontend/package.json`). Merge it after local `--full` preflight. A merge
+   `frontend/package.json`). Merge it after local `--all` preflight. A merge
    to `main` does not publish images.
 4. release-please creates `vX.Y.Z` + GitHub Release on the following run.
 5. The same job dispatches `cd.yml` and the heavy release workflows on that tag
@@ -146,7 +148,7 @@ the chosen tag in the PR that cuts it.
 
 ## protect-main interaction (#1040)
 
-- Release PRs are normal PRs. They are gated by `preflight.sh --full`, not by
+- Release PRs are normal PRs. They are gated by `preflight.sh --all`, not by
   GitHub checks named `CI`, `Frontend CI`, `Playwright E2E`, `Code Lint`, or
   `PR Validation` (#2001). The Owner updates `protect-main` (#1040).
 - Tag + Release creation uses `contents: write` on the release-please workflow
