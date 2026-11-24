@@ -35,8 +35,8 @@ Issue → Specification → Tasks → Commits → PR → Merge → Release
 
 | Scenario (Acceptance Criterion) | Test | Status |
 |---------------------------------|------|--------|
-| A compose change runs only the server-backed group | test_preflight_affected | pending |
-| The root POM runs the backend | test_preflight_affected | pending |
+| A compose change runs only the server-backed group | test_preflight_affected | passing |
+| The root POM runs the backend | test_preflight_affected | passing |
 
 ## Permanent documentation updated
 
