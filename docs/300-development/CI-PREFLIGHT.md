@@ -15,6 +15,11 @@ A high-risk PR (authentication, Flyway on existing rows, a REST contract others 
 server-backed suites of its groups with `PREFLIGHT_FULL=1 git push`. Everything a PR skipped runs before the
 release, and again in the version-tag CI.
 
+The process self-tests (workspace, contracts, security, infra, testing, docs, backend tools: 357 files) run on
+every PR gate, one process per file in parallel (`workspace/sdlc/run_self_tests.py`, #2502): 15 s instead of 67 s
+serial (93 s in the preflight before). Their tests stub external services; a test that calls the network or
+writes a shared file fails intermittently under the runner, which is how #2507 was found.
+
 Which groups a branch touches comes from `workspace/sdlc/preflight_affected.py --base origin/main`:
 
 | Changed path | Groups |
