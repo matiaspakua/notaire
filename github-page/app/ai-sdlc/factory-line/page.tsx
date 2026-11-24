@@ -545,13 +545,13 @@ export default function FactoryLinePage() {
       <PageHeader
         eyebrow="AI Factory · Production Line"
         title="From Issue to PR — the full factory floor"
-        lead="Every change rides a conveyor through 16 stations across 5 phases. The intent (GitHub issue) is the input; a merged PR is the output. Agents work at each station, gates stop the line until checks pass, and the human Owner decides at critical points."
+        lead="Every change rides a conveyor through 17 stations across 5 phases. The intent (GitHub issue) is the input; a merged PR is the output. Agents work at each station, gates stop the line until checks pass, and the human Owner decides at critical points."
       />
 
       {/* Overview diagram */}
       <Diagram
         chart={FACTORY_LINE_DIAGRAM}
-        caption="The AI SDLC production line: 5 phases, 16 stations, 5 hard gates. Each station has an agent, skills, tools, and integration points."
+        caption="The AI SDLC production line: 5 phases, 17 stations, 5 hard gates. Each station has an agent, skills, tools, and integration points."
       />
 
       {/* Tab navigation */}
@@ -608,7 +608,7 @@ export default function FactoryLinePage() {
         <div>
           <SectionTitle>Event Stream</SectionTitle>
           <p className="mb-4 text-sm text-slate-600">
-            Watch a sample run flow through all 16 stations. Each event shows the agent, action, and result.
+            Watch a sample run flow through all 17 stations. Each event shows the agent, action, and result.
             This is how the factory processes a change from issue intake to deployment.
           </p>
           <EventStream />
