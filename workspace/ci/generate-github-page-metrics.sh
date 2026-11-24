@@ -28,7 +28,8 @@ LIVE_METRICS_URL="${LIVE_METRICS_URL:-https://matiaspakua.github.io/notaire/metr
 OUTPUT_FILE="${OUTPUT_FILE:-github-page/public/metrics.json}"
 
 COMMIT_COUNT=$(git rev-list --count HEAD)
-PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || echo "0")
+# On an API error gh prints the error object to stdout; only a number is accepted (checked below, #2507).
+PR_COUNT=$(gh api "search/issues?q=repo:${REPO}+type:pr&per_page=1" --jq '.total_count' 2>/dev/null || true)
 MD_COUNT=$(find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" | wc -l | tr -d ' ')
 BACKEND_TEST_COUNT=$(find backend-api/src/test -name "*Test.java" 2>/dev/null | wc -l | tr -d ' ')
 # Vitest unit/component tests (issue #1982) — not Playwright.
@@ -74,6 +75,11 @@ AI_TOOLS_JSON=$(printf '%s\n' "${AI_TOOL_NAMES[@]}" | jq -R . | jq -cs .)
 # unreachable (e.g. first-ever deploy).
 LIVE_METRICS=$(curl -sf "$LIVE_METRICS_URL" 2>/dev/null || echo '{}')
 LIVE_COVERAGE=$(echo "$LIVE_METRICS" | jq -c '.coverage // {}' 2>/dev/null || echo '{}')
+if ! [[ "$PR_COUNT" =~ ^[0-9]+$ ]]; then
+  echo "::warning::GitHub search API gave no PR count -- reusing the live value (0 on a first deploy)"
+  PR_COUNT=$(echo "$LIVE_METRICS" | jq -r '.pullRequests // 0 | floor' 2>/dev/null || echo 0)
+  [[ "$PR_COUNT" =~ ^[0-9]+$ ]] || PR_COUNT=0
+fi
 LIVE_UPDATED=$(echo "$LIVE_COVERAGE" | jq -r '.lastUpdated // "unknown"' 2>/dev/null || echo "unknown")
 LIVE_IS_MEASURED=0
 if [ -n "$LIVE_UPDATED" ] && [ "$LIVE_UPDATED" != "unknown" ] && [ "$LIVE_UPDATED" != "null" ]; then
