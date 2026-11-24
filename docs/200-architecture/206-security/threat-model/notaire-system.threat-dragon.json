@@ -215,6 +215,16 @@
                   "modelType": "STRIDE",
                   "description": "Denial of service affecting api. The register row is the engineering record.",
                   "mitigation": "ApiQuotaSharedStoreIntegrationTest; api_rate_windows shared across instances (#2010)"
+                },
+                {
+                  "id": "SR-18",
+                  "title": "SR-18",
+                  "status": "Mitigated",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "modelType": "STRIDE",
+                  "description": "Information disclosure affecting api. The register row is the engineering record.",
+                  "mitigation": "infra/tests/test_ingress_actuator.py; the ingress forwards only /actuator/health (#2487)"
                 }
               ]
             }

@@ -22,7 +22,7 @@ observability/quality infrastructure stack.
 ┌─────────────────────────────────────────────────────────────────────┐
 │           Production stack (docker-compose.prod.yml)                 │
 │                                                                      │
-│   Host :80 → reverse-proxy → frontend (/) + backend (/api,/actuator)│
+│   Host :80 → reverse-proxy → frontend (/) + backend (/api, health)  │
 │   postgres / backend / frontend: internal only (no host ports)       │
 │   No pgAdmin · ENVIRONMENT=production · Flyway baseline off          │
 └───────────────────────────────────────────────────────────────────────┘

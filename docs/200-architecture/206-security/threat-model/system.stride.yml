@@ -56,6 +56,11 @@ requirements:
     asset: session
     status: Partial
     verification: MfaLoginFlowIntegrationTest; ENFORCE is opt-in via notaire.mfa.policy (#1640, ADR-032)
+  - id: SR-18
+    stride: Information disclosure
+    asset: api
+    status: Mitigated
+    verification: infra/tests/test_ingress_actuator.py; the ingress forwards only /actuator/health (#2487)
 linddun:
   - id: LD-1
     threat: Identifiability of Person fields
