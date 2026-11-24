@@ -395,6 +395,11 @@ kind = "baseline"
 file = "backend-api/src/test/resources/architecture/usecase-cycle-baseline.txt"
 
 [[ratchets]]
+name = "legacy package dependents (R8)"
+kind = "baseline"
+file = "backend-api/src/test/resources/architecture/legacy-dependents-baseline.txt"
+
+[[ratchets]]
 name = "controller loose returns"
 kind = "baseline"
 file = "backend-api/src/test/resources/architecture/controller-loose-returns.txt"
