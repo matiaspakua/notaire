@@ -42,9 +42,16 @@ npm ci
 npm run dev              # http://localhost:3000
 npm run typecheck && npm run lint && npm test
 npm run build            # static export to out/
+npm run build:model      # LikeC4 architecture site into out/architecture-model (npm ci in docs/200-architecture/210-architecture-model first)
 npm run check:links      # every internal link and fragment in out/
 npm run test:smoke       # Playwright + axe at 375 and 1280 px, against out/ (build first)
 ```
+
+## Architecture model
+
+`lib/architecture-model.json` is generated from the LikeC4 model (ADR-033): edit
+`docs/200-architecture/210-architecture-model/src/*.c4` and run `npm run generate` there, never the JSON.
+`/docs/architecture/model/` shows every view; `components/docs/ModelView.tsx` embeds one view on any page.
 
 ## Anatomy figures
 

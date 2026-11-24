@@ -98,6 +98,7 @@ export const DOCS_GROUPS: PageGroup[] = [
       { href: "/docs/business/", title: "Business", summary: "Requirements, use cases, actors and manuals.", keywords: "use cases cu rf rnf requirements" },
       { href: "/docs/modules/", title: "Modules", summary: "Module ownership and boundaries.", keywords: "frontend backend modules ownership" },
       { href: "/docs/architecture/", title: "Architecture", summary: "System context, every ADR and the SAD.", keywords: "adr decisions sad c4 diagrams" },
+      { href: "/docs/architecture/model/", title: "Architecture model", summary: "LikeC4 model of the system, every view and the findings.", keywords: "likec4 c4 model views deployment security testing findings interactive" },
     ],
   },
   {

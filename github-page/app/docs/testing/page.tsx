@@ -1,5 +1,6 @@
 import { Code, PageHeader, SectionTitle, Sources, Table } from "@/components/FactoryUI";
 import { StatGrid } from "@/components/DocsUI";
+import { ModelView } from "@/components/docs/ModelView";
 import { TestPyramid } from "@/components/diagrams/TestPyramid";
 import { src } from "@/lib/ai-sdlc-content";
 import { pageMetadata } from "@/lib/site";
@@ -51,6 +52,10 @@ export default function DocsTestingPage() {
         rows={LAYERS.map(([layer, owner, cmd]) => [layer, owner, <Code key={layer}>{cmd}</Code>])}
       />
       <p className="text-sm text-slate-600">Bruno and the PostgreSQL integration suite stay with the backend module (#1190).</p>
+
+      <SectionTitle id="model">Views from the architecture model</SectionTitle>
+      <ModelView id="testing" />
+      <ModelView id="delivery" />
 
       <SectionTitle id="gates">Gates agents must run</SectionTitle>
       <ol className="list-decimal space-y-2 pl-5">

@@ -46,7 +46,8 @@ for (const page of pages) {
     if (DEPLOY_ONLY.some((d) => rel.startsWith(d))) continue;
     const file = target(rel);
     if (!file) broken.push(`${here}: ${href} (no such page)`);
-    else if (frag && !idsOf(file).has(frag)) broken.push(`${here}: ${href} (no #${frag} on the page)`);
+    // A fragment that starts with "/" is a hash route of a single-page app (the LikeC4 model, #2483), not an id.
+    else if (frag && !frag.startsWith("/") && !idsOf(file).has(frag)) broken.push(`${here}: ${href} (no #${frag} on the page)`);
   }
 }
 if (broken.length) {
