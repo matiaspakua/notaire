@@ -1,6 +1,6 @@
 # ADR-027: Mermaid as the Canonical Diagram Language for Active Documentation
 
-**Status:** Accepted  
+**Status:** Accepted — amended by [ADR-033](ADR-033-likec4-architecture-model.md) (2026-11-24)  
 **Date:** 2026-10-10  
 **Deciders:** Owner direction via issue #1415 / CU76  
 **Related:** ADR-024, ADR-026, #921, #1197, #1414 (Pages Docs tab)
@@ -39,6 +39,12 @@ and produce inconsistent public docs.
 - SAD primary views used on Pages are rewritten or summarized in Mermaid when touched.
 - `docs/200-architecture/204-diagrams/README.md` carries the policy for contributors.
 - Agents and OpenSpec design docs use Mermaid exclusively going forward.
+
+## Amendment (ADR-033, 2026-11-24)
+
+Architecture views (context, containers, hexagons, security, testing and delivery, deployment) now come from the
+LikeC4 model in `210-architecture-model/`. Markdown still carries Mermaid, generated from the model between
+`likec4-view` markers. Every other diagram keeps this ADR unchanged.
 
 ## Navigation
 

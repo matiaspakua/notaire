@@ -32,12 +32,13 @@ Architecture Decision Records document the important architecture decisions for 
 | [024](ADR-024-repository-topology.md) | Repository topology — evidence-gated decomposition | Proposed | 2026-10-05 | Repository structure |
 | [025](ADR-025-retire-notaire-shared.md) | Retire the notaire-shared module | Accepted | 2026-10-05 | Code organization |
 | [026](ADR-026-module-separation.md) | Module separation inside the repository | Accepted | 2026-10-06 | Code organization |
-| [027](ADR-027-mermaid-diagrams.md) | Mermaid as the canonical diagram language | Accepted | 2026-10-10 | Documentation |
+| [027](ADR-027-mermaid-diagrams.md) | Mermaid as the canonical diagram language (amended by ADR-033) | Accepted | 2026-10-10 | Documentation |
 | [028](ADR-028-release-and-version-identity.md) | Release and version identity | Accepted | 2026-10-13 | DevOps and release |
 | [029](ADR-029-object-level-authorization.md) | Object-level authorization (record ownership) | Proposed | 2026-10-14 | Security |
 | [030](ADR-030-hexagonal-architecture-full-adoption.md) | Full Ports & Adapters architecture for backend and frontend | Accepted | 2026-10-14 | Code organization |
 | [031](ADR-031-local-ai-assistant.md) | Local AI assistant through Spring AI behind hexagonal ports | Proposed | 2026-10-28 | Architecture / AI |
 | [032](ADR-032-multi-factor-authentication-totp.md) | Multi-factor authentication with TOTP (RFC 6238) | Accepted | 2026-11-08 | Security |
+| [033](ADR-033-likec4-architecture-model.md) | LikeC4 as the architecture model | Accepted | 2026-11-24 | Documentation |
 
 Dates for ADR-005, ADR-006, and ADR-007 match the date in each decision file.
 
@@ -133,6 +134,7 @@ Each ADR uses this structure:
 ### Documentation
 
 - **ADR-027**: Mermaid for active diagrams
+- **ADR-033**: LikeC4 model for architecture views; Mermaid generated from it
 
 ## Principles drawn from the accepted ADRs
 
