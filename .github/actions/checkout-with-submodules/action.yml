@@ -1,0 +1,45 @@
+name: init-private-submodules
+description: >-
+  After actions/checkout, initialize private git submodules (RepoLens at
+  framework/repolens). Pass repository secret SUBMODULES_READ_TOKEN (PAT with
+  read access to draclab/repolens). Alternatively set REPOLENS_SUBMODULE_SSH_KEY
+  and this action will fetch over SSH.
+
+inputs:
+  token:
+    description: GitHub PAT that can read draclab/repolens (preferred)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Initialize submodules over HTTPS
+      if: ${{ inputs.token != '' }}
+      shell: bash
+      env:
+        TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        git config --local url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/"
+        git submodule sync --recursive
+        git submodule update --init --recursive
+
+    - name: Initialize submodules over SSH deploy key
+      if: ${{ inputs.token == '' }}
+      uses: webfactory/ssh-agent@v0.9.1
+      with:
+        ssh-private-key: ${{ env.REPOLENS_SUBMODULE_SSH_KEY }}
+
+    - name: git submodule update (SSH)
+      if: ${{ inputs.token == '' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -z "${REPOLENS_SUBMODULE_SSH_KEY:-}" ]; then
+          echo "::error::Pass token input (SUBMODULES_READ_TOKEN) or set REPOLENS_SUBMODULE_SSH_KEY."
+          exit 1
+        fi
+        git submodule sync --recursive
+        git config submodule.framework/repolens.url git@github.com:draclab/repolens.git
+        git submodule update --init --recursive
