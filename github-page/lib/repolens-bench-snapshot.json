@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T07:43:37Z",
+  "generated_at": "2026-11-27T10:20:45Z",
   "method": "python3 workspace/ci/generate-repolens-bench.py",
   "sources": [
     {
@@ -45,7 +45,7 @@
           "recall_at_10": 0.182,
           "recall_at_20": 0.28,
           "mrr": 0.136,
-          "latency_ms": 1147.145,
+          "latency_ms": 1146.982,
           "output_bytes": 209184.909
         },
         "hybrid": {
@@ -53,7 +53,7 @@
           "recall_at_10": 0.815,
           "recall_at_20": 0.896,
           "mrr": 0.763,
-          "latency_ms": 25.973,
+          "latency_ms": 26.036,
           "output_bytes": 2336.091
         },
         "graph": {
@@ -61,7 +61,7 @@
           "recall_at_10": 0.904,
           "recall_at_20": 0.917,
           "mrr": 0.788,
-          "latency_ms": 27.709,
+          "latency_ms": 27.8,
           "output_bytes": 2354.273
         }
       }
@@ -78,7 +78,7 @@
           "recall_at_10": 0.306,
           "recall_at_20": 0.451,
           "mrr": 0.221,
-          "latency_ms": 971.292,
+          "latency_ms": 1034.275,
           "output_bytes": 235905.5
         },
         "hybrid": {
@@ -86,7 +86,7 @@
           "recall_at_10": 0.801,
           "recall_at_20": 0.881,
           "mrr": 0.833,
-          "latency_ms": 21.442,
+          "latency_ms": 25.125,
           "output_bytes": 2410.0
         },
         "graph": {
@@ -94,7 +94,7 @@
           "recall_at_10": 0.786,
           "recall_at_20": 0.958,
           "mrr": 0.896,
-          "latency_ms": 25.625,
+          "latency_ms": 32.192,
           "output_bytes": 2418.083
         }
       }
