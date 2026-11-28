@@ -118,7 +118,7 @@ file = ".aisdlc/flags.json"
 owner = "the Owner (CODEOWNERS)"
 paths = [
   "CONSTITUTION.md", "CONSTITUTION-AGENT-CARD.md", "AGENTS.md", "CLAUDE.md",
-  ".aisdlc/**", "framework/ai-sdlc/**",
+  ".aisdlc/**", "framework/ai-sdlc", "infra", "ops/**",
   ".claude/settings.json", ".claude/hooks/**", ".claude/agents/cloud-foreman.md", ".githooks/**",
   ".github/CODEOWNERS", ".github/workflows/sdlc-process.yml",
   "workspace/sdlc/preflight.sh", "workspace/sdlc/run_pipeline.sh", "workspace/sdlc/check-heavy-ci.sh",
@@ -264,7 +264,7 @@ worktree = "."
 write_set = [
   "docs/openspec/**",
   "docs/300-development/306-ai-sdlc-framework/**",
-  "framework/ai-sdlc/**",
+  "framework/ai-sdlc",
   ".aisdlc/**",
 ]
 required_checks = ["OpenSpec plans conform (live issue check)"]
