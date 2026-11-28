@@ -3,9 +3,10 @@
 **Status:** Hard-deprecated. Issue [#811](https://github.com/matiaspakua/notaire/issues/811),
 CU76, ADR-012.
 
-The Swing desktop client (`frontend-swing` / `deprecated-frontend-swing`) was
-removed from the repository. The GitHub Actions workflow `e2e-swing.yml` is
-retired and must not return. Active UI E2E is Playwright under `testing/e2e/tests/`.
+The Swing desktop client was removed. Active UI E2E lives in
+[matiaspakua/notaire-testing](https://github.com/matiaspakua/notaire-testing)
+(`e2e/`). This stub remains in the product so Dependabot/hygiene guards keep
+forbidding Swing CI wiring after the testing extract (#2514).
 
 ## Forbidden
 
@@ -13,18 +14,3 @@ retired and must not return. Active UI E2E is Playwright under `testing/e2e/test
   `robot` against this directory.
 - Do **not** build Swing modules (`mvn -pl frontend-swing` /
   `deprecated-frontend-swing`).
-- Do **not** treat `run_tests.sh` / `setup_env.sh` as supported operator docs.
-
-## Why these files remain
-
-Historical Robot suites and `requirements.txt` stay on disk so ignore-rule
-hygiene (#1050) keeps working and so git history retains context. They are
-**not** a supported test path.
-
-## Supported E2E
-
-```bash
-cd testing/e2e && npm test
-```
-
-See `docs/300-development/303-testing/README.md`.

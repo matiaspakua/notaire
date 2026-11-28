@@ -79,35 +79,32 @@ because agents read `CLAUDE.md` and `.claude/` from the repository they run in a
 (`check-agent-rules.sh`, `sdlc-process.yml`). Extracting those requires a source-of-truth repository
 with a sync workflow and a drift guard; do it only when a second project consumes them.
 
-## 6. Phase 3: `notaire-testing`
+## 6. Phase 3: `notaire-testing` + `notaire-security` — **done (#2514)**
 
-Benefit is ownership and release independence of the QA suites, not speed: the Playwright job stays
-on the PR critical path. Start only if the Owner wants a separate QA lifecycle.
+**As built (hybrid C):**
 
-Required design (gate 3): the core PR calls a reusable workflow from the testing repository.
+- **QA** — [`matiaspakua/notaire-testing`](https://github.com/matiaspakua/notaire-testing):
+  filtered `testing/` history, reusable workflows `e2e.yml` / `database-vv.yml`,
+  `COMPATIBILITY.md`, `NOTAIRE_APP_ROOT` / `NOTAIRE_TESTING_ROOT`. Notaire keeps a stub
+  `testing/README.md` and pins callers in `.github/workflows/playwright-e2e.yml` and
+  `database-vv.yml`. Bruno / pg-integration / unit stay in the product (#1190).
+  Rollback tag: `pre-extract-testing`.
+- **Sec** — [`matiaspakua/notaire-security`](https://github.com/matiaspakua/notaire-security):
+  filtered `security/` history, program/procedure docs, `SECURITY-FLEET-CONTRACT.md`.
+  Notaire consumes it as git submodule `security/`. Threat models stay under
+  `docs/200-architecture/206-security/`. Rollback tag: `pre-extract-security`.
+- **Governance** — [`MULTI-TEAM-CONTRACT.md`](MULTI-TEAM-CONTRACT.md) documents the four-fleet
+  parallel flow (`app-ref`, pins, stable check names).
 
 ```yaml
-# core: .github/workflows/e2e.yml (sketch)
+# core callers (as built)
 jobs:
   e2e:
     uses: matiaspakua/notaire-testing/.github/workflows/e2e.yml@<pinned-sha>
     with:
       app-ref: ${{ github.sha }}
+      testing-ref: <pinned-sha>
 ```
-
-The reusable workflow runs in the caller's context, checks out the core at `app-ref`, builds and
-starts the stack exactly as `playwright-e2e.yml` does today, and checks out the testing repository
-at the pinned SHA for the specs. The result is a required check on the core PR, so nothing is
-deferred, and a spec change is a PR in the testing repository followed by a pin bump in the core.
-
-Further conditions:
-
-- Constitution sections 4 and 7 amended (Owner-reviewed PR, section 12).
-- Bruno API tests and `pg-integration` stay with the backend module (#1190); a reversal is a
-  separate Owner decision recorded in #1190, not a side effect of this plan.
-- `testing/tools/generate_e2e_coverage_report.py` and the CU-API matrix validator parameterised with
-  `NOTAIRE_APP_ROOT` and `NOTAIRE_TESTING_ROOT`.
-- A compatibility table in the testing repository maps spec tags to core releases.
 
 ## 7. Extraction recipe
 

@@ -13,6 +13,7 @@ Exit 0 on success; non-zero with a human-readable report on failure.
 from __future__ import annotations
 
 import argparse
+import os
 import csv
 import re
 import sys
@@ -127,8 +128,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path(__file__).resolve().parents[2],
-        help="repository root (default: parent of scripts/)",
+        default=Path(os.environ["NOTAIRE_APP_ROOT"]) if os.environ.get("NOTAIRE_APP_ROOT") else Path(__file__).resolve().parents[2],
+        help="repository root (NOTAIRE_APP_ROOT or parent of workspace/sdlc)",
     )
     parser.add_argument(
         "--matrix",

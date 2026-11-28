@@ -21,9 +21,11 @@ modules:
     depends_on: [backend-api]
   testing:
     path: testing
-    responsibility: Black-box QA suites (E2E, integration smoke, database V&V)
+    responsibility: >-
+      QA fleet pin — suites live in matiaspakua/notaire-testing; Notaire keeps a
+      stub README and pins reusable workflows (see testing/README.md)
     fleet: qa
-    verify: bash testing/verify.sh
+    verify: python3 workspace/tests/test_testing_workflow_pin.py
     depends_on: [backend-api, frontend]
   local-ai:
     path: local-ai

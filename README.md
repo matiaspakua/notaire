@@ -96,6 +96,8 @@ notaire/
 │   ├── 300-development/   # Setup, standards, testing
 │   └── 000-archive/       # Historical or superseded documentation
 ├── infra/                 # git submodule → matiaspakua/infrastructure (observability, deploy, k6)
+├── security/              # git submodule → matiaspakua/notaire-security (gates, policy, program docs)
+├── testing/               # stub → matiaspakua/notaire-testing (reusable workflow pins)
 ├── framework/
 │   └── ai-sdlc/           # git submodule → draclab/ai_sdlc @ aisdlc-v1.1.0
 ├── github-page/           # Informational/portfolio site (Next.js, deployed to GitHub Pages)
@@ -169,7 +171,8 @@ Full stack (Prometheus, Grafana, SonarQube, Homer): `bash workspace/stack/start-
 
 ```bash
 mvn test -pl backend-api                 # backend unit + integration
-cd testing/e2e && npm test              # Playwright E2E
+# Playwright E2E: clone matiaspakua/notaire-testing and set NOTAIRE_TESTING_ROOT
+#   (see testing/README.md); Bruno API tests stay under backend-api/api-test/
 bash workspace/sdlc/preflight.sh                # the pull-request gate: unit-level suites this branch touches
 bash workspace/sdlc/preflight.sh --all          # every suite, server-backed included: the release gate
 ```
@@ -206,6 +209,12 @@ plan, failing tests first, gates and evidence:
   [`matiaspakua/infrastructure`](https://github.com/matiaspakua/infrastructure); Notaire publishes
   [`ops/system.yaml`](ops/system.yaml) and runtime metrics/logs/traces
   ([system contract](https://github.com/matiaspakua/infrastructure/blob/main/docs/SYSTEM-CONTRACT.md)).
+- **Security fleet** — git submodule [`security/`](security/README.md) →
+  [`matiaspakua/notaire-security`](https://github.com/matiaspakua/notaire-security); threat models stay
+  under [`docs/200-architecture/206-security/`](docs/200-architecture/206-security/).
+- **QA fleet** — [`matiaspakua/notaire-testing`](https://github.com/matiaspakua/notaire-testing) via
+  pinned reusable workflows (`testing/README.md` stub); Bruno/pg-integration stay here.
+- **Multi-team contract** — [`docs/300-development/MULTI-TEAM-CONTRACT.md`](docs/300-development/MULTI-TEAM-CONTRACT.md).
 - **AI SDLC Factory** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
   the factory drawn as a production line. Each station shows its gates and cost, plus what the
   run's steps received and produced.

@@ -18,6 +18,7 @@ which define the mandatory workflow.
 | [`ASSESSMENT-REFRESH-2026-10-18.md`](ASSESSMENT-REFRESH-2026-10-18.md) | Current PE assessment (2026-10-18): live gate evidence, corrected RBAC/hex/coverage claims |
 | [`ASSESSMENT-2026-10.md`](ASSESSMENT-2026-10.md) | Historical baseline assessment (2026-10-04); superseded by the refresh above |
 | [`REPO-SPLIT-PLAN.md`](REPO-SPLIT-PLAN.md) | Phased plan and exit criteria for the repository topology (#1197, ADR-024) |
+| [`MULTI-TEAM-CONTRACT.md`](MULTI-TEAM-CONTRACT.md) | Four-fleet sync (product, infra, QA, Sec): pins, `app-ref`, stable checks (#2514) |
 | [`MODULE-OWNERSHIP.md`](MODULE-OWNERSHIP.md) | In-repo module map (ADR-026): paths, fleets, verify, Mermaid deps — #1197 Phase 0 |
 | [`REPO-METRICS-BASELINE.md`](REPO-METRICS-BASELINE.md) | Reproducible repo metrics for topology decisions (#1256 / #1417) |
 | [`CI-PREFLIGHT.md`](CI-PREFLIGHT.md) | Map of local checks (`workspace/sdlc/preflight.sh`) to CI jobs |
