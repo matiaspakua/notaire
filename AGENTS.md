@@ -50,9 +50,12 @@ prefer skills over pasting full rule bodies into context.
 
 ## Repository knowledge (repolens)
 
-RepoLens is the default mechanism for code knowledge and navigation in this
-factory. The kit reaches it through the `[knowledge]` command (`aisdlc knowledge`
-and the MCP server). It does not import the package.
+RepoLens lives in the git submodule `framework/repolens`
+([`draclab/repolens`](https://github.com/draclab/repolens)). After clone or pull:
+`git submodule update --init --recursive`. It is the default mechanism for code
+knowledge and navigation in this factory. The kit reaches it through the
+`[knowledge]` command (`aisdlc knowledge` and the MCP server). It does not
+import the package.
 
 Route the lookup. Do not send every question to RepoLens.
 

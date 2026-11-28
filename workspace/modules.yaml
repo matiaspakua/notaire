@@ -45,7 +45,7 @@ modules:
     depends_on: [ai-sdlc-framework]
   repolens:
     path: framework/repolens
-    responsibility: Local code knowledge graph for AI agents (CLI, HTTP API, MCP); no product consumer
+    responsibility: Local code knowledge graph for AI agents (CLI, HTTP API, MCP); git submodule of draclab/repolens; no product consumer
     fleet: ai
     verify: bash framework/repolens/verify.sh
     depends_on: []

@@ -1,8 +1,8 @@
 name: init-submodules
 description: >-
-  After actions/checkout, initialize git submodules (public matiaspakua/infrastructure
-  at infra/, private draclab/ai_sdlc at framework/ai-sdlc, and optionally
-  framework/repolens). Prefer repository secret SUBMODULES_READ_TOKEN (PAT with
+  After actions/checkout, initialize git submodules: public matiaspakua/infrastructure
+  at infra/, private draclab/ai_sdlc at framework/ai-sdlc, and private draclab/repolens
+  at framework/repolens. Prefer repository secret SUBMODULES_READ_TOKEN (PAT with
   read access to private draclab repos). Alternatively set REPOLENS_SUBMODULE_SSH_KEY
   (or SUBMODULES_SSH_KEY) for SSH fetch of private remotes.
 
