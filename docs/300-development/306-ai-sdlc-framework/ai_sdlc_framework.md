@@ -4,7 +4,7 @@
 |-------|-------|
 | Status | v1.0 — first adopter: Notaire |
 | Issue | [#1958](https://github.com/matiaspakua/notaire/issues/1958) · Use Case CU-76 |
-| Kit | [`framework/ai-sdlc/`](../../../framework/ai-sdlc/) (adoption guide: [`README.md`](../../../framework/ai-sdlc/README.md)) |
+| Kit | git submodule [`framework/ai-sdlc/`](../../../framework/ai-sdlc/) → [`draclab/ai_sdlc`](https://github.com/draclab/ai_sdlc) `@aisdlc-v1.1.0` (adoption guide: [`README.md`](../../../framework/ai-sdlc/README.md)) |
 | Notaire profile | [`.aisdlc/aisdlc.toml`](../../../.aisdlc/aisdlc.toml) |
 | Data snapshot | [`github-page/lib/ai-sdlc-history.json`](../../../github-page/lib/ai-sdlc-history.json) (2026-10-28) |
 | Public case study | GitHub Pages → AI Factory → Case study / Framework |

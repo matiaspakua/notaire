@@ -101,8 +101,8 @@ pair("docs/100-business/ on GitHub →", "docs/100-business/ en GitHub →");
 
 pair("Module ownership", "Dueño de cada módulo");
 pair(
-  "Phase 0 of repository topology: keep one monorepo, give every folder a clear responsibility (ADR-026). Live Owner umbrella",
-  "Fase 0 de la topología del repositorio: un solo monorepo, y cada carpeta con una responsabilidad clara (ADR-026). El paraguas abierto del Owner es",
+  "Repository topology: Phase 0 ownership (ADR-026) plus Phase 1 products — infrastructure and ai-sdlc as git submodules (#2512). Live Owner umbrella",
+  "Topología del repositorio: ownership de Fase 0 (ADR-026) y productos de Fase 1 — infrastructure y ai-sdlc como submódulos git (#2512). El paraguas abierto del Owner es",
 );
 pair("(prior #1197 closed by keyword parsing). Extraction happens later, only behind evidence gates.", "(el #1197 anterior se cerró por un parseo de palabras clave). La extracción viene después, y solo detrás de gates de evidencia.");
 pair("Dependencies", "Dependencias");

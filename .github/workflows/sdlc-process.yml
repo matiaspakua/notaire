@@ -33,6 +33,13 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Init submodules
+        uses: ./.github/actions/checkout-with-submodules
+        with:
+          token: ${{ secrets.SUBMODULES_READ_TOKEN }}
+        env:
+          SUBMODULES_SSH_KEY: ${{ secrets.SUBMODULES_SSH_KEY }}
+          REPOLENS_SUBMODULE_SSH_KEY: ${{ secrets.REPOLENS_SUBMODULE_SSH_KEY }}
 
       # The event base SHA is the base from when the PR opened. Checkout is the
       # merge into current main, so a stale base makes main's later commits look
@@ -153,6 +160,13 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - name: Init submodules
+        uses: ./.github/actions/checkout-with-submodules
+        with:
+          token: ${{ secrets.SUBMODULES_READ_TOKEN }}
+        env:
+          SUBMODULES_SSH_KEY: ${{ secrets.SUBMODULES_SSH_KEY }}
+          REPOLENS_SUBMODULE_SSH_KEY: ${{ secrets.REPOLENS_SUBMODULE_SSH_KEY }}
 
       # A tag run checks out a detached tag: base-scoped gates (signal, committer) need origin/main (#2440).
       - name: Fetch origin/main

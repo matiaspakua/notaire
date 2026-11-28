@@ -3,7 +3,11 @@
 ## Overview
 
 This guide covers how to deploy the complete Notaire system: the application stack and the
-observability/quality infrastructure stack.
+observability/quality infrastructure stack. Application compose stays in this repository;
+the observability/deploy product is the git submodule
+[`infra/`](../../../infra/README.md) →
+[`matiaspakua/infrastructure`](https://github.com/matiaspakua/infrastructure), driven by
+[`ops/system.yaml`](../../../ops/system.yaml).
 
 ## Architecture
 

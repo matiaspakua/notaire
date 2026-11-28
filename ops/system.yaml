@@ -1,0 +1,27 @@
+system:
+  id: notaire
+  display_name: Notaire
+network:
+  external_name: notaire_notary-network
+scrape:
+  - job: backend
+    target: notary-backend:8080
+    path: /actuator/prometheus
+    auth_env: [ACTUATOR_USER, ACTUATOR_PASSWORD]
+  - job: frontend
+    target: notaire-frontend:3000
+    path: /api/metrics
+  - job: postgres
+    target: postgres-exporter:9187
+    path: /metrics
+otel:
+  endpoint: http://devsecops-otel-collector:4317
+  resource_attributes:
+    service.namespace: notaire
+dashboards:
+  folder: notaire
+probes:
+  - name: backend-health
+    url: http://notary-backend:8080/actuator/health/liveness
+  - name: frontend
+    url: http://notaire-frontend:3000/

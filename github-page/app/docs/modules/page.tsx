@@ -12,16 +12,29 @@ export default function DocsModulesPage() {
           Module ownership
         </h1>
         <p className="text-neutral-600 max-w-3xl leading-relaxed">
-          Phase 0 of repository topology: keep one monorepo, give every folder a clear
-          responsibility (ADR-026). Live Owner umbrella{" "}
+          Phase 0 of repository topology keeps clear folder ownership (ADR-026). Phase 1
+          extraction (#2512) publishes infrastructure at{" "}
+          <a
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+            href="https://github.com/matiaspakua/infrastructure"
+          >
+            matiaspakua/infrastructure
+          </a>{" "}
+          (submodule <code>infra/</code>) and pins the AI SDLC kit from{" "}
+          <a
+            className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
+            href="https://github.com/draclab/ai_sdlc"
+          >
+            draclab/ai_sdlc
+          </a>{" "}
+          at <code>aisdlc-v1.1.0</code>. Owner umbrella{" "}
           <a
             className="text-brand-700 underline decoration-brand-700/30 underline-offset-2 hover:decoration-current"
             href="https://github.com/matiaspakua/notaire/issues/1445"
           >
             #1445
-          </a>{" "}
-          (prior #1197 closed by keyword parsing). Extraction happens later, only behind evidence
-          gates.
+          </a>
+          .
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
           <a

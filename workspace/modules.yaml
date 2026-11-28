@@ -15,7 +15,7 @@ modules:
     depends_on: [backend-api]
   infra:
     path: infra
-    responsibility: Observability, quality stack, Kubernetes and load-test assets
+    responsibility: git submodule of matiaspakua/infrastructure — observability, quality stack, Kustomize and k6; Notaire publishes ops/system.yaml
     fleet: infrastructure
     verify: bash infra/verify.sh
     depends_on: [backend-api]
@@ -33,7 +33,7 @@ modules:
     depends_on: []
   ai-sdlc-framework:
     path: framework/ai-sdlc
-    responsibility: Stack-agnostic AI SDLC kit (aisdlc CLI, policy and agent templates); knows no adopter
+    responsibility: git submodule of draclab/ai_sdlc @ aisdlc-v1.1.0 — stack-agnostic aisdlc kit; knows no adopter
     fleet: ai
     verify: bash framework/ai-sdlc/verify.sh
     depends_on: []

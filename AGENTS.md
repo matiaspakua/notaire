@@ -80,9 +80,21 @@ Foreman: `.claude/agents/cloud-foreman.md`. Does not use `local-ai/`.
 Hex-fleet do/don’t (#1693): `docs/300-development/304-ai-sdlc-cloud/FLEET-LESSONS-HEX-1693.md`
 (+ `MAC-LOCAL-VS-CI.md`).
 
+## Submodules (#2512)
+
+After clone or pull: `git submodule update --init --recursive`.
+
+| Path | Product | Pin |
+|------|---------|-----|
+| `infra/` | https://github.com/matiaspakua/infrastructure | submodule SHA |
+| `framework/ai-sdlc/` | https://github.com/draclab/ai_sdlc | tag `aisdlc-v1.1.0` |
+
+Notaire publishes [`ops/system.yaml`](ops/system.yaml) so infrastructure can manage the system
+(metrics/logs/traces + descriptor). Kit releases are owned by `draclab/ai_sdlc`, not this repo.
+
 ## AI SDLC framework (#1958)
 
-Stack-agnostic kit `framework/ai-sdlc/` (Notaire profile `.aisdlc/aisdlc.toml`):
+Stack-agnostic kit submodule `framework/ai-sdlc/` (Notaire profile `.aisdlc/aisdlc.toml`):
 `python3 framework/ai-sdlc/bin/aisdlc --profile .aisdlc/aisdlc.toml gate --list`.
 Baselines only shrink (`… ratchet`); the skills catalog is linted (`… skills`).
 
