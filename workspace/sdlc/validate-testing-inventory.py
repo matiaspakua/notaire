@@ -11,12 +11,14 @@ Prints discovered suite counts. Does NOT diff a committed count table (#2117).
 from __future__ import annotations
 
 import importlib.util
+import os
 import re
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
-E2E_TESTS = REPO / "testing" / "e2e" / "tests"
+REPO = Path(os.environ["NOTAIRE_APP_ROOT"]) if os.environ.get("NOTAIRE_APP_ROOT") else Path(__file__).resolve().parents[2]
+_TESTING = Path(os.environ["NOTAIRE_TESTING_ROOT"]) if os.environ.get("NOTAIRE_TESTING_ROOT") else REPO / "testing"
+E2E_TESTS = _TESTING / "e2e" / "tests"
 BACKEND_TEST = REPO / "backend-api" / "src" / "test"
 FRONTEND_SRC = REPO / "frontend" / "src"
 BRUNO = REPO / "backend-api" / "api-test"

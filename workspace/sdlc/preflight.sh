@@ -35,6 +35,13 @@ set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
+# TESTING_APP_SEAM: suites may live in a separate checkout (notaire-testing).
+export NOTAIRE_APP_ROOT="${NOTAIRE_APP_ROOT:-$REPO_ROOT}"
+TESTING_ROOT="${NOTAIRE_TESTING_ROOT:-$REPO_ROOT/testing}"
+if [ ! -d "$TESTING_ROOT/e2e" ] && [ -d "${HOME}/workspace/notaire-testing/e2e" ]; then
+  TESTING_ROOT="${HOME}/workspace/notaire-testing"
+fi
+export NOTAIRE_TESTING_ROOT="$TESTING_ROOT"
 # The pre-push hook exports GIT_DIR (in a linked worktree: .git/worktrees/<name>). Self-tests
 # that build throwaway repositories would run git init/config against it and rewrite the shared
 # .git/config (core.bare = true, fixture identity). From the root, discovery is correct (#1958).
@@ -184,9 +191,9 @@ touches() { [ "$AFFECTED" = "all" ] || [[ " $AFFECTED " == *" $1 "* ]]; }
 not_affected() { skip "$1" "not affected by this branch; preflight.sh --all runs it"; }
 # A fresh worktree has no testing/e2e/node_modules; install before any e2e binary runs (#2442).
 ensure_e2e_deps() {
-    if [ ! -d testing/e2e/node_modules ]; then
+    if [ -d "$TESTING_ROOT/e2e" ] && [ ! -d "$TESTING_ROOT/e2e/node_modules" ]; then
         echo "installing E2E suite deps (npm ci)…"
-        (cd testing/e2e && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
+        (cd "$TESTING_ROOT/e2e" && npm ci) >/dev/null 2>&1 || warn "npm ci failed (testing/e2e)"
     fi
 }
 
@@ -209,7 +216,11 @@ run "product version coherence" python3 workspace/sdlc/check-product-version-coh
 run "CU-API matrix validation" python3 workspace/sdlc/validate-cu-api-matrix.py
 
 # Living testing inventory + TS-nnnn Playwright naming (#1511, CU76).
-run "testing inventory validation" python3 workspace/sdlc/validate-testing-inventory.py
+if [ -d "$TESTING_ROOT/e2e/tests" ]; then
+    run "testing inventory validation" env NOTAIRE_TESTING_ROOT="$TESTING_ROOT" python3 workspace/sdlc/validate-testing-inventory.py
+else
+    skip "testing inventory validation" "NOTAIRE_TESTING_ROOT has no e2e/tests (suites live in notaire-testing)"
+fi
 
 # Process checks over the branch (sdlc-process.yml). Labels come from the open
 # PR, if there is one: the sdlc-exception label is a human decision.
@@ -442,12 +453,14 @@ fi
 # ---------------------------------------------------------------------------
 section "E2E suite (testing/e2e)"
 # ---------------------------------------------------------------------------
-if ! touches testing; then
+if [ ! -d "$TESTING_ROOT/e2e" ]; then
+    skip "e2e typecheck / eslint" "NOTAIRE_TESTING_ROOT has no e2e/ (pin notaire-testing locally)"
+elif ! touches testing; then
     not_affected "e2e typecheck / eslint"
 else
 ensure_e2e_deps
-run "e2e typecheck" bash -c "cd testing/e2e && ./node_modules/.bin/tsc --noEmit"
-run "e2e eslint" bash -c "cd testing/e2e && ./node_modules/.bin/eslint . --max-warnings=0"
+run "e2e typecheck" bash -c "cd \"$TESTING_ROOT/e2e\" && ./node_modules/.bin/tsc --noEmit"
+run "e2e eslint" bash -c "cd \"$TESTING_ROOT/e2e\" && ./node_modules/.bin/eslint . --max-warnings=0"
 fi
 
 # ---------------------------------------------------------------------------
@@ -535,7 +548,7 @@ if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
     fi
     if curl -sf http://localhost:8080/actuator/health >/dev/null 2>&1 \
        && curl -sf -o /dev/null http://localhost:3000 2>/dev/null; then
-        run "http integration suite" bash -c "cd testing/integration/http && bash test-all-endpoints-v2.sh"
+        run "http integration suite" bash -c "cd \"$TESTING_ROOT/integration/http\" && bash test-all-endpoints-v2.sh"
         ensure_e2e_deps
         # Cursor (and some sandboxes) set PLAYWRIGHT_BROWSERS_PATH to an empty
         # cache dir; Chromium then fails to launch even when the user cache has
@@ -546,7 +559,7 @@ if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
                     unset PLAYWRIGHT_BROWSERS_PATH
                 fi
             fi
-            cd testing/e2e && ./node_modules/.bin/playwright test
+            cd \"$TESTING_ROOT/e2e\" && ./node_modules/.bin/playwright test
         '
 
         # Mirrors playwright-e2e.yml's "API Tests (Bruno)" job: fetch a JWT up
@@ -566,7 +579,7 @@ if [ "$MODE_FULL" = "1" ] && touches stack && [ "$STACK_READY" = "1" ]; then
     fi
 
     if docker info >/dev/null 2>&1; then
-        run "database v&v suite" bash testing/scripts/run.sh database
+        run "database v&v suite" bash -c '"$TESTING_ROOT/scripts/run.sh" database'  # run.sh database
     else
         fail "database v&v suite: docker not running — start Docker; GitHub will not run this on the pull request"
     fi

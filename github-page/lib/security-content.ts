@@ -1,6 +1,6 @@
 /**
  * Public security story for the portfolio (#2003). Demo labels only.
- * The dated evidence is docs/200-architecture/206-security/ASSESSMENT-2026-11-05.md.
+ * The dated evidence stub is docs/200-architecture/206-security/ASSESSMENT-2026-11-05.md (normative copy in matiaspakua/notaire-security).
  */
 import cadenceFile from "./security-cadence.json";
 

@@ -1,9 +1,16 @@
 # Security Policy
 
-The cybersecurity program (Sec by Design, SAMM snapshot, toolchain, monitoring)
-is [CYBERSECURITY-PROGRAM.md](CYBERSECURITY-PROGRAM.md). The system threat model
-is [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md). The 2026-11-05 evidence
-review is [ASSESSMENT-2026-11-05.md](ASSESSMENT-2026-11-05.md).
+**Fleet split (#2514):** program/procedure docs (CYBERSECURITY-PROGRAM, assessment,
+SECURITY-TOOLS, MONITORING, HTTPS-TLS runbook, installation-isolation checklist)
+live in [matiaspakua/notaire-security](https://github.com/matiaspakua/notaire-security)
+(`docs/`). This directory keeps **code-tied** threat models, diagrams and guides.
+Stubs in this folder link to the fleet copies.
+
+The system threat model is [THREAT-MODEL-SYSTEM.md](THREAT-MODEL-SYSTEM.md).
+Program entry points: [CYBERSECURITY-PROGRAM.md](CYBERSECURITY-PROGRAM.md) (stub → fleet),
+[ASSESSMENT-2026-11-05.md](ASSESSMENT-2026-11-05.md) (stub → fleet).
+Gates run from the `security/` submodule (`bash security/verify.sh`,
+`python3 security/run_gates.py`).
 
 ## Supported Versions
 
@@ -260,8 +267,8 @@ When deploying Notaire:
 3. **API Security**
    - JWT authentication on every `/api/**` endpoint (see [API Authentication Guide](API-AUTHENTICATION-GUIDE.md))
    - Login brute-force lockout per username (`LoginAttemptService`, counters in the shared `login_attempts` table)
-   - Enable HTTPS in production ([HTTPS-TLS-RUNBOOK.md](./HTTPS-TLS-RUNBOOK.md))
-   - Run the [installation isolation checklist](./INSTALLATION-ISOLATION-CHECKLIST.md) before go-live
+   - Enable HTTPS in production ([HTTPS-TLS-RUNBOOK.md](./HTTPS-TLS-RUNBOOK.md) (stub → fleet))
+   - Run the [installation isolation checklist](./INSTALLATION-ISOLATION-CHECKLIST.md) (stub → fleet) before go-live
    - General API rate limiting is not implemented. Only login attempts are throttled (#2010)
 
 4. **Docker**

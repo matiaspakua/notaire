@@ -1,11 +1,6 @@
 name: Database V&V
 
-# Issue #1191 / CU76 / CU75. Black-box database verification: empty PostgreSQL, Flyway CLI migrate,
-# SQL checks (testing/database). Runs on a version tag and on manual dispatch. GitHub does not
-# apply paths filters to tag pushes, so a release always runs the suite. Former pull-request
-# filters were testing/database/**, backend-api/src/main/resources/db/migration/**,
-# testing/scripts/run.sh and .github/workflows/database-vv.yml.
-# Mirrored locally by `bash workspace/sdlc/preflight.sh --full` ("database v&v suite").
+# Caller for matiaspakua/notaire-testing reusable database V&V (#2514).
 on:
   push:
     tags:
@@ -23,10 +18,7 @@ concurrency:
 jobs:
   database-vv:
     name: Database V&V
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Run the database suite
-        run: bash testing/scripts/run.sh database
+    uses: matiaspakua/notaire-testing/.github/workflows/database-vv.yml@e2bfc27200439898f5d7c0a29a218ceb0358cb28
+    with:
+      app-ref: ${{ github.sha }}
+      testing-ref: e2bfc27200439898f5d7c0a29a218ceb0358cb28

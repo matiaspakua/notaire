@@ -351,8 +351,8 @@ export const STAGES: Stage[] = [
         why: "It makes the cadence explicit, so a missing scan is a visible gap rather than a surprise.",
         how: "Semgrep, Trivy, CodeQL and ZAP; security/run_gates.py runs the catalog.",
         links: [
-          { label: "SECURITY-TOOLS.md", href: src("docs/200-architecture/206-security/SECURITY-TOOLS.md") },
-          { label: "CYBERSECURITY-PROGRAM.md", href: src("docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md") },
+          { label: "SECURITY-TOOLS.md (fleet → notaire-security)", href: src("docs/200-architecture/206-security/SECURITY-TOOLS.md") },
+          { label: "CYBERSECURITY-PROGRAM.md (fleet → notaire-security)", href: src("docs/200-architecture/206-security/CYBERSECURITY-PROGRAM.md") },
           { label: "security/cases/catalog.yml", href: src("security/cases/catalog.yml") },
         ],
         count: { key: "securityCases", unit: "security cases" },
@@ -401,7 +401,7 @@ export const STAGES: Stage[] = [
         how: "Prometheus, Grafana, Loki and OpenTelemetry; runbooks per procedure; manuals per audience.",
         links: [
           { label: "207-monitoring/", href: src("docs/200-architecture/207-monitoring/README.md") },
-          { label: "HTTPS-TLS-RUNBOOK.md", href: src("docs/200-architecture/206-security/HTTPS-TLS-RUNBOOK.md") },
+          { label: "HTTPS-TLS-RUNBOOK.md (fleet → notaire-security)", href: src("docs/200-architecture/206-security/HTTPS-TLS-RUNBOOK.md") },
           { label: "105-manuals/", href: src("docs/100-business/105-manuals") },
         ],
       },

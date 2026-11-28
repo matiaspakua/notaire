@@ -1,63 +1,30 @@
-# Notaire QA — verification and validation
+# testing/ (moved)
 
-Everything a QA team needs to verify and validate Notaire as **black-box modules**, from
-integration to acceptance. This folder is self-contained and prepared to live in its own
-repository; for now it sits inside the application repository (#1190, #1191).
+Product-level QA suites live in **[matiaspakua/notaire-testing](https://github.com/matiaspakua/notaire-testing)**.
 
-Unit tests and API tests stay with `backend-api/` and `frontend/` because they are part of each
-module's development loop. The project-level Master Test Plan and process architecture stay in
-[`docs/300-development/303-testing/`](../docs/300-development/303-testing/README.md)
-([`TEST-PLAN.md`](../docs/300-development/303-testing/TEST-PLAN.md),
-[`INVENTORY.md`](../docs/300-development/303-testing/INVENTORY.md)); everything
-specific to running and extending these suites is documented here.
+Notaire pins reusable workflows (do not vendor a second copy of the suites):
 
-## Guides
-
-| Guide | Answers |
-|-------|---------|
-| [PREPARATION](docs/PREPARATION.md) | What do I need installed and running first? |
-| [CONFIGURATION](docs/CONFIGURATION.md) | Which variables and overrides do I set? |
-| [DEFINITION](docs/DEFINITION.md) | What does each suite verify, and where does it touch the application? |
-| [OPERATION](docs/OPERATION.md) | How do I run, read, extend and troubleshoot the suites? |
-
-## Suites
-
-| Suite | What it verifies | Needs | Command |
-|-------|------------------|-------|---------|
-| `integration` | The running stack through its HTTP surface (cURL suite and a stack smoke) | A running stack | `bash testing/scripts/run.sh integration` |
-| `e2e` | The running UI through a browser (Playwright, one spec per Use Case scenario `TS-nnnn`) | A running stack | `bash testing/scripts/run.sh e2e` |
-| `database` | An **empty** PostgreSQL migrated by Flyway: history, configuration, roles, seed data, schema, idempotence, tamper detection | Docker only | `bash testing/scripts/run.sh database` |
-
-`bash testing/scripts/run.sh --list` prints the suites. `testing/scripts/test.sh` is kept as the
-stable entry point for the integration suite (Constitution step 14 and the agent rules call it).
-
-## Layout
-
-```text
-testing/
-  scripts/       run.sh (runner), test.sh (stable wrapper), generate-coverage-report.sh
-  integration/   http/ (cURL suite), e2e-login-and-stack.sh (stack smoke)
-  database/      docker-compose.yml, run.sh, checks/*.sql
-  e2e/           Playwright suite: tests/, playwright.config.ts, own package.json, tsconfig and ESLint
-  docs/          the four guides above
-  e2e-swing/     retired Swing Robot suite, kept on disk (see DEFINITION)
-  .env.example   variables these suites use
+```yaml
+jobs:
+  e2e:
+    uses: matiaspakua/notaire-testing/.github/workflows/e2e.yml@e2bfc27200439898f5d7c0a29a218ceb0358cb28
+    with:
+      app-ref: ${{ github.sha }}
+      testing-ref: e2bfc27200439898f5d7c0a29a218ceb0358cb28
+  database-vv:
+    uses: matiaspakua/notaire-testing/.github/workflows/database-vv.yml@e2bfc27200439898f5d7c0a29a218ceb0358cb28
+    with:
+      app-ref: ${{ github.sha }}
+      testing-ref: e2bfc27200439898f5d7c0a29a218ceb0358cb28
 ```
 
-## Quick start
+## Local development
 
 ```bash
-cp testing/.env.example testing/.env     # once
-bash testing/scripts/run.sh database      # needs Docker; about 10 seconds
-bash workspace/stack/start.sh                     # start the application, then:
-bash testing/scripts/run.sh integration
-bash testing/scripts/run.sh e2e           # first run installs the suite dependencies (npm ci)
+git clone https://github.com/matiaspakua/notaire-testing.git ~/workspace/notaire-testing
+export NOTAIRE_APP_ROOT=$(pwd)
+export NOTAIRE_TESTING_ROOT=~/workspace/notaire-testing
+bash "$NOTAIRE_TESTING_ROOT/verify.sh"
 ```
 
-## Not here, on purpose
-
-| Asset | Where | Why |
-|-------|-------|-----|
-| Unit, Spring and Testcontainers tests, Vitest | `backend-api/`, `frontend/` | Module development loop |
-| Bruno API collection | `backend-api/api-test/` | API tests belong to the backend |
-| k6 load test | `infra/performance/k6` | Infrastructure assets belong to the infra repository |
+Bruno API tests and `pg-integration` remain in this repository (#1190).

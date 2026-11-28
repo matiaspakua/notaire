@@ -7,3 +7,6 @@
 [submodule "framework/ai-sdlc"]
 	path = framework/ai-sdlc
 	url = https://github.com/draclab/ai_sdlc.git
+[submodule "security"]
+	path = security
+	url = https://github.com/matiaspakua/notaire-security.git

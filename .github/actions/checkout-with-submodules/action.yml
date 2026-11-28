@@ -1,8 +1,8 @@
 name: init-submodules
 description: >-
   After actions/checkout, initialize git submodules: public matiaspakua/infrastructure
-  at infra/, private draclab/ai_sdlc at framework/ai-sdlc, and private draclab/repolens
-  at framework/repolens. Prefer repository secret SUBMODULES_READ_TOKEN (PAT with
+  at infra/, public matiaspakua/notaire-security at security/, private draclab/ai_sdlc
+  at framework/ai-sdlc, and private draclab/repolens at framework/repolens. Prefer repository secret SUBMODULES_READ_TOKEN (PAT with
   read access to private draclab repos). Alternatively set REPOLENS_SUBMODULE_SSH_KEY
   (or SUBMODULES_SSH_KEY) for SSH fetch of private remotes.
 
@@ -31,12 +31,13 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        # Public remotes (infrastructure) init anonymously; private ones need a token/SSH key.
+        # Public remotes (infrastructure, notaire-security) init anonymously; private ones need a token/SSH key.
         git submodule sync --recursive
         if git config --file .gitmodules --get-regexp path | grep -q 'framework/ai-sdlc\|framework/repolens'; then
           echo "::warning::Private submodules need SUBMODULES_READ_TOKEN or SUBMODULES_SSH_KEY; initializing reachable remotes only."
         fi
         git submodule update --init infra || true
+        git submodule update --init security || true
         git submodule update --init --recursive || true
 
     - name: Initialize submodules over SSH deploy key
