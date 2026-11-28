@@ -39,8 +39,11 @@ export default function FrameworkPage() {
         lead="The process that builds Notaire, with Notaire taken out. A stack-agnostic AI SDLC framework: a policy document that names no tool, a TOML profile that holds every project-specific command, and a zero-dependency kit (aisdlc) that runs gates by exit code, enforces ratchets and keeps the evidence."
       />
       <div className="flex flex-wrap gap-3">
-        <a href={src("framework/ai-sdlc/")} className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600">
-          Get the kit ↗
+        <a href="https://github.com/draclab/ai_sdlc" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-violet-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600">
+          Kit product (draclab/ai_sdlc) ↗
+        </a>
+        <a href={src("framework/ai-sdlc/")} className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-800 hover:border-violet-400">
+          Submodule path ↗
         </a>
         <a href={src("docs/300-development/306-ai-sdlc-framework/ai_sdlc_framework.md")} className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-800 hover:border-violet-400">
           Read the report ↗

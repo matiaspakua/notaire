@@ -50,21 +50,26 @@ An extraction starts only when all gates pass; each is verified by a command or 
 6. **Rollback ready**: tag `pre-extract-<area>` on the core and a read-only stub left in place for one release.
 7. **Owner approval** recorded in the issue.
 
-## 4. Phase 1: `notaire-infra`
+## 4. Phase 1: `notaire-infra` — **done (#2512)**
 
 Why first: the guard (#1179) exists, the area is 40 files, the seam is narrow (image names,
 environment variable names and the actuator and Prometheus endpoints), and nothing in the product
 build imports from it.
 
+**As built (deviation from the stub/`NOTAIRE_INFRA_DIR` sketch):** the product is
+[`matiaspakua/infrastructure`](https://github.com/matiaspakua/infrastructure) (multi-system
+contract + `SYSTEM_DESCRIPTOR`). Notaire consumes it as a **git submodule at `infra/`** and
+publishes [`ops/system.yaml`](../../ops/system.yaml). Rollback tag: `pre-extract-infra`.
+
 | Step | Detail |
 |------|--------|
-| 1 | Pass gates 1 to 4; decide the owner namespace (user account or a new organisation) |
+| 1 | Pass gates 1 to 4; owner namespace `matiaspakua` |
 | 2 | Extract with the recipe in section 7 using `--path infra/ --path-rename infra/:` |
-| 3 | In the new repository add CI (`kustomize build`, `docker compose config`, k6 smoke), ruleset, `LICENSE`, `SECURITY.md`, `CODEOWNERS` |
-| 4 | In the core, replace `infra/` with a stub `README.md`, point `workspace/stack/start-all.sh` and `docker-compose.prod.yml` consumers to `NOTAIRE_INFRA_DIR`, keep `docker-compose*.yml` for the dev stack |
-| 5 | Move `infra/tests/test_infra_standalone.py` and the infra part of `workspace/sdlc/preflight.sh` to the new repository; the core keeps a seam guard that checks image names and variable names |
-| 6 | Update `CLAUDE.md`, `docs/200-architecture/208-devsecops`, ADR-024 status table |
-| Exit | Core CI green without `infra/`; `bash workspace/stack/start-all.sh` works with `NOTAIRE_INFRA_DIR`; infra CI green; rollback tag exists |
+| 3 | Product CI, `LICENSE`, `SECURITY.md`, system schema/contract |
+| 4 | Core: submodule at `infra/` + `ops/system.yaml` (paths preserved) |
+| 5 | Infra tests live in the product; Notaire keeps seam/adoption guards |
+| 6 | README, AGENTS, monitoring/deployment docs, GitHub Pages |
+| Exit | Submodule pin green; `bash infra/verify.sh` with descriptor; kit pin `aisdlc-v1.1.0` |
 
 ## 5. Phase 2: local AI engine
 

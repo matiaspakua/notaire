@@ -5,9 +5,12 @@
 This document describes the monitoring and observability infrastructure for the Notaire
 system. The backend API and PostgreSQL database are monitored through a unified
 observability stack: **Prometheus**, **Grafana**, **Loki**, **Promtail**, and
-**postgres-exporter**, fronted by a **Homer** landing page. The stack is defined in
-`infra/observability/docker-compose.yml`; see [`infra/README.md`](../../../infra/README.md) for the
-authoritative, up-to-date service list, ports, and credentials.
+**postgres-exporter**, fronted by a **Homer** landing page. The stack lives in the
+[`matiaspakua/infrastructure`](https://github.com/matiaspakua/infrastructure) product
+(git submodule at `infra/`); see [`infra/README.md`](../../../infra/README.md) and the
+[system contract](https://github.com/matiaspakua/infrastructure/blob/main/docs/SYSTEM-CONTRACT.md).
+Notaire publishes [`ops/system.yaml`](../../../ops/system.yaml) plus runtime metrics, logs and
+traces so the stack can manage this system.
 
 ## Architecture
 

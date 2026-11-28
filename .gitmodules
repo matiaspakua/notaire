@@ -1,3 +1,9 @@
 [submodule "framework/repolens"]
 	path = framework/repolens
 	url = https://github.com/draclab/repolens.git
+[submodule "infra"]
+	path = infra
+	url = https://github.com/matiaspakua/infrastructure.git
+[submodule "framework/ai-sdlc"]
+	path = framework/ai-sdlc
+	url = https://github.com/draclab/ai_sdlc.git

@@ -63,6 +63,13 @@ jobs:
         working-directory: github-page
     steps:
       - uses: actions/checkout@v7
+      - name: Init submodules
+        uses: ./.github/actions/checkout-with-submodules
+        with:
+          token: ${{ secrets.SUBMODULES_READ_TOKEN }}
+        env:
+          SUBMODULES_SSH_KEY: ${{ secrets.SUBMODULES_SSH_KEY }}
+          REPOLENS_SUBMODULE_SSH_KEY: ${{ secrets.REPOLENS_SUBMODULE_SSH_KEY }}
 
       - uses: actions/setup-node@v7
         with:

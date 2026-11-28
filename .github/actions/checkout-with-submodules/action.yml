@@ -1,13 +1,14 @@
-name: init-private-submodules
+name: init-submodules
 description: >-
-  After actions/checkout, initialize private git submodules (RepoLens at
-  framework/repolens). Pass repository secret SUBMODULES_READ_TOKEN (PAT with
-  read access to draclab/repolens). Alternatively set REPOLENS_SUBMODULE_SSH_KEY
-  and this action will fetch over SSH.
+  After actions/checkout, initialize git submodules: public matiaspakua/infrastructure
+  at infra/, private draclab/ai_sdlc at framework/ai-sdlc, and private draclab/repolens
+  at framework/repolens. Prefer repository secret SUBMODULES_READ_TOKEN (PAT with
+  read access to private draclab repos). Alternatively set REPOLENS_SUBMODULE_SSH_KEY
+  (or SUBMODULES_SSH_KEY) for SSH fetch of private remotes.
 
 inputs:
   token:
-    description: GitHub PAT that can read draclab/repolens (preferred)
+    description: GitHub PAT that can read private submodule remotes (preferred)
     required: false
     default: ""
 
@@ -25,21 +26,35 @@ runs:
         git submodule sync --recursive
         git submodule update --init --recursive
 
-    - name: Initialize submodules over SSH deploy key
-      if: ${{ inputs.token == '' }}
-      uses: webfactory/ssh-agent@v0.9.1
-      with:
-        ssh-private-key: ${{ env.REPOLENS_SUBMODULE_SSH_KEY }}
-
-    - name: git submodule update (SSH)
-      if: ${{ inputs.token == '' }}
+    - name: Initialize public submodules without a private token
+      if: ${{ inputs.token == '' && env.REPOLENS_SUBMODULE_SSH_KEY == '' && env.SUBMODULES_SSH_KEY == '' }}
       shell: bash
       run: |
         set -euo pipefail
-        if [ -z "${REPOLENS_SUBMODULE_SSH_KEY:-}" ]; then
-          echo "::error::Pass token input (SUBMODULES_READ_TOKEN) or set REPOLENS_SUBMODULE_SSH_KEY."
-          exit 1
-        fi
+        # Public remotes (infrastructure) init anonymously; private ones need a token/SSH key.
         git submodule sync --recursive
-        git config submodule.framework/repolens.url git@github.com:draclab/repolens.git
+        if git config --file .gitmodules --get-regexp path | grep -q 'framework/ai-sdlc\|framework/repolens'; then
+          echo "::warning::Private submodules need SUBMODULES_READ_TOKEN or SUBMODULES_SSH_KEY; initializing reachable remotes only."
+        fi
+        git submodule update --init infra || true
+        git submodule update --init --recursive || true
+
+    - name: Initialize submodules over SSH deploy key
+      if: ${{ inputs.token == '' && (env.REPOLENS_SUBMODULE_SSH_KEY != '' || env.SUBMODULES_SSH_KEY != '') }}
+      uses: webfactory/ssh-agent@v0.9.1
+      with:
+        ssh-private-key: ${{ env.SUBMODULES_SSH_KEY || env.REPOLENS_SUBMODULE_SSH_KEY }}
+
+    - name: git submodule update (SSH)
+      if: ${{ inputs.token == '' && (env.REPOLENS_SUBMODULE_SSH_KEY != '' || env.SUBMODULES_SSH_KEY != '') }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        git submodule sync --recursive
+        if git config --file .gitmodules --get-regexp path | grep -q 'framework/repolens'; then
+          git config submodule.framework/repolens.url git@github.com:draclab/repolens.git
+        fi
+        if git config --file .gitmodules --get-regexp path | grep -q 'framework/ai-sdlc'; then
+          git config submodule.framework/ai-sdlc.url git@github.com:draclab/ai_sdlc.git
+        fi
         git submodule update --init --recursive

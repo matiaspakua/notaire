@@ -74,6 +74,32 @@ class WiringTest(unittest.TestCase):
         self.assertIn("ai-sdlc-framework", modules)
         self.assertEqual("framework/ai-sdlc", modules["ai-sdlc-framework"]["path"])
 
+    def test_framework_is_submodule_pinned_to_aisdlc_v1_1_0(self):
+        import configparser
+        import subprocess
+
+        gitmodules = REPO_ROOT / ".gitmodules"
+        self.assertTrue(gitmodules.is_file())
+        parser = configparser.ConfigParser()
+        parser.read(gitmodules)
+        paths = {parser[s].get("path"): parser[s].get("url") for s in parser.sections()}
+        self.assertIn("framework/ai-sdlc", paths)
+        self.assertIn("draclab/ai_sdlc", paths["framework/ai-sdlc"])
+        mode = subprocess.check_output(
+            ["git", "ls-files", "-s", "framework/ai-sdlc"],
+            cwd=REPO_ROOT,
+            text=True,
+        ).split()[0]
+        self.assertEqual("160000", mode)
+        version = (KIT / "aisdlc" / "__init__.py").read_text(encoding="utf-8")
+        self.assertIn('__version__ = "1.1.0"', version)
+        tags = subprocess.check_output(
+            ["git", "describe", "--tags", "--exact-match"],
+            cwd=KIT,
+            text=True,
+        ).strip()
+        self.assertEqual("aisdlc-v1.1.0", tags)
+
     def test_profile_declares_signal_stage(self):
         """#2159: cheap signal stage = ratchet + skills so preflight can record evidence."""
         listed = aisdlc("gate", "--list")

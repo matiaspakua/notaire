@@ -89,12 +89,15 @@ Historical snapshots: [`docs/000-archive/github/`](docs/000-archive/github/).
 notaire/
 ├── backend-api/          # Spring Boot 4 REST API (Java 26)
 ├── frontend/              # Next.js 16 web app
+├── ops/system.yaml        # System descriptor published to infrastructure
 ├── docs/                  # Documentation (see docs/README.md)
 │   ├── 100-business/      # Requirements, use cases, data model
 │   ├── 200-architecture/  # SAD, ADRs, design, diagrams, security, deploy
 │   ├── 300-development/   # Setup, standards, testing
 │   └── 000-archive/       # Historical or superseded documentation
-├── infra/                 # Infrastructure (repo-ready): observability, deploy (Kustomize, nginx), k6 — see infra/README.md
+├── infra/                 # git submodule → matiaspakua/infrastructure (observability, deploy, k6)
+├── framework/
+│   └── ai-sdlc/           # git submodule → draclab/ai_sdlc @ aisdlc-v1.1.0
 ├── github-page/           # Informational/portfolio site (Next.js, deployed to GitHub Pages)
 ├── docs/openspec/               # SDLC specifications (schema notaire-sdlc)
 ├── docker-compose.yml      # Development stack (published ports, pgAdmin)
@@ -196,8 +199,13 @@ Local ↔ CI mapping of each gate: [`docs/300-development/CI-PREFLIGHT.md`](docs
 Notaire is built by a governed AI SDLC factory. Every change goes through an Issue, an OpenSpec
 plan, failing tests first, gates and evidence:
 
-- **Kit** — [`framework/ai-sdlc/`](framework/ai-sdlc/README.md): stack-agnostic `aisdlc` CLI and
-  HTTP contract, with intents, runs, workflows, catalogs, gates and a hash-chained evidence ledger.
+- **Kit** — git submodule [`framework/ai-sdlc/`](framework/ai-sdlc/README.md) →
+  [`draclab/ai_sdlc`](https://github.com/draclab/ai_sdlc) pinned to tag `aisdlc-v1.1.0`
+  (adopter profile stays in [`.aisdlc/aisdlc.toml`](.aisdlc/aisdlc.toml)).
+- **Infrastructure** — git submodule [`infra/`](infra/README.md) →
+  [`matiaspakua/infrastructure`](https://github.com/matiaspakua/infrastructure); Notaire publishes
+  [`ops/system.yaml`](ops/system.yaml) and runtime metrics/logs/traces
+  ([system contract](https://github.com/matiaspakua/infrastructure/blob/main/docs/SYSTEM-CONTRACT.md)).
 - **AI SDLC Factory** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
   the factory drawn as a production line. Each station shows its gates and cost, plus what the
   run's steps received and produced.

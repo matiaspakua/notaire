@@ -1,7 +1,0 @@
-{
-  "listen": { "host": "127.0.0.1", "port": 18866 },
-  "workspaces": [
-    { "id": "e2e", "label": "E2E factory", "kit": "http://127.0.0.1:18865" },
-    { "id": "offline", "label": "Offline host", "kit": "http://127.0.0.1:18899" }
-  ]
-}

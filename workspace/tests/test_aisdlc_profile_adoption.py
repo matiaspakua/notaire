@@ -42,8 +42,8 @@ class ProfileAdoptionTest(unittest.TestCase):
 
     def test_policy_and_merge_path_are_owner_only(self):
         paths = self.profile["protected"]["paths"]
-        for required in ("CONSTITUTION.md", "AGENTS.md", ".aisdlc/**", "framework/ai-sdlc/**",
-                         ".claude/hooks/**", "workspace/sdlc/check-heavy-ci.sh"):
+        for required in ("CONSTITUTION.md", "AGENTS.md", ".aisdlc/**", "framework/ai-sdlc",
+                         "infra", "ops/**", ".claude/hooks/**", "workspace/sdlc/check-heavy-ci.sh"):
             self.assertIn(required, paths)
 
     def test_every_owner_only_glob_matches_a_tracked_file(self):
