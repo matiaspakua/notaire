@@ -133,8 +133,10 @@ Node.js 22+ / npm 10+
 ### With Docker (recommended)
 
 ```bash
-git clone https://github.com/matiaspakua/notaire.git
+git clone --recurse-submodules https://github.com/matiaspakua/notaire.git
 cd notaire
+# If you already cloned without submodules:
+#   git submodule update --init --recursive
 cp .env.example .env
 bash workspace/stack/start.sh          # starts PostgreSQL + backend
 bash scripts/health.sh         # checks that everything is up
@@ -199,8 +201,10 @@ plan, failing tests first, gates and evidence:
 - **AI SDLC Factory** — [`framework/ai-sdlc/factory-dashboard/`](framework/ai-sdlc/factory-dashboard/README.md):
   the factory drawn as a production line. Each station shows its gates and cost, plus what the
   run's steps received and produced.
-- **RepoLens** — [`framework/repolens/`](framework/repolens/): the code knowledge graph agents use to
-  find code; measured in [`bench/results/`](framework/repolens/bench/results/factory-learning-log.md).
+- **RepoLens** — git submodule [`framework/repolens/`](framework/repolens/) →
+  [`draclab/repolens`](https://github.com/draclab/repolens) (MIT): the code knowledge graph agents
+  use to find code; measured in
+  [`bench/results/`](framework/repolens/bench/results/factory-learning-log.md).
 - **Results** — [factory results of 2026-11-23](framework/ai-sdlc/docs/retrospectives/2026-11-23-factory-results.md),
   and the [AI SDLC case study on GitHub Pages](https://matiaspakua.github.io/notaire/ai-sdlc/).
 

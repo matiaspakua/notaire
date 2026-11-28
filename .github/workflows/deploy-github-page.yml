@@ -29,6 +29,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Initialize private submodules (RepoLens)
+        uses: ./.github/actions/checkout-with-submodules
+        with:
+          token: ${{ secrets.SUBMODULES_READ_TOKEN }}
+
       - uses: actions/setup-node@v7
         with:
           node-version: "22"

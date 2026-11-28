@@ -70,6 +70,28 @@ class RepolensHarnessWiringTest(unittest.TestCase):
         self.assertEqual([], drift, "run `bash framework/repolens/bin/repolens setup` and commit")
 
 
+class RepolensSubmoduleTest(unittest.TestCase):
+    """Guards #2510 (CU76): RepoLens is the independent product, linked as a submodule."""
+
+    def test_gitmodules_points_at_the_product_repository(self):
+        text = (ROOT / ".gitmodules").read_text(encoding="utf-8")
+        self.assertIn("[submodule \"framework/repolens\"]", text)
+        self.assertIn("path = framework/repolens", text)
+        self.assertIn("github.com/draclab/repolens", text)
+
+    def test_gitlink_is_recorded_in_the_index(self):
+        out = subprocess.run(
+            ["git", "ls-files", "-s", "framework/repolens"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        )
+        # mode 160000 = gitlink (submodule), not a regular tree
+        self.assertTrue(out.stdout.startswith("160000 "), out.stdout)
+
+
 class RepolensFactoryProfileTest(unittest.TestCase):
     def setUp(self):
         self.profile = tomllib.loads((ROOT / ".aisdlc" / "aisdlc.toml").read_text(encoding="utf-8"))
